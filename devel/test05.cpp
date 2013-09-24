@@ -23,7 +23,7 @@ int main(void)
 		using namespace EAGine::base;
 
 		string s = "Blable";
-		const_strref sr = s;
+		const_string_ref sr = s;
 
 		std::cout.write(sr.c_str(), sr.size()) << std::endl;
 

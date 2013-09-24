@@ -114,13 +114,13 @@ BOOST_AUTO_TEST_CASE(base_string_clear)
 BOOST_AUTO_TEST_CASE(base_string_ref_default_construction)
 {
 	EAGine::base::string_ref sr;
-	EAGine::base::const_strref csr;
+	EAGine::base::const_string_ref csr;
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_c_str)
 {
 	const char* c_str = "a string";
-	EAGine::base::const_strref csr(c_str);
+	EAGine::base::const_string_ref csr(c_str);
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_array)
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(string_lit_construction)
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_const_string)
 {
 	const EAGine::base::string cs = "a string";
-	EAGine::base::const_strref csr(cs);
+	EAGine::base::const_string_ref csr(cs);
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_string)
@@ -151,8 +151,8 @@ BOOST_AUTO_TEST_CASE(base_string_ref_copy_construction)
 	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr1 = c_str;
 	EAGine::base::string_ref sr2 = sr1;
-	EAGine::base::const_strref csr1 = sr2;
-	EAGine::base::const_strref csr2 = csr1;
+	EAGine::base::const_string_ref csr1 = sr2;
+	EAGine::base::const_string_ref csr2 = csr1;
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_empty)
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(base_string_ref_data)
 	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string str("a string");
 	EAGine::base::string_ref sr = c_str;
-	EAGine::base::const_strref csr = c_str;
+	EAGine::base::const_string_ref csr = c_str;
 
 	BOOST_ASSERT(sizeof(c_str)/sizeof(c_str[0]) == sr.size());
 	BOOST_ASSERT(str.size() == csr.size());

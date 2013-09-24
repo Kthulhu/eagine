@@ -47,6 +47,11 @@ public:
 		return that;
 	}
 
+	string str(void) const
+	{
+		return string(_message);
+	}
+
 	friend std::ostream& operator << (std::ostream&, const format&);
 };
 #endif // !EAGINE_USE_BOOST_LOCALE

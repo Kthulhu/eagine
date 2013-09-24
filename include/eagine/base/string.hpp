@@ -202,15 +202,18 @@ public:
 };
 
 typedef basic_string_ref<char> string_ref;
-typedef basic_string_ref<const char> const_strref;
+typedef basic_string_ref<const char> const_string_ref;
+
+typedef string_ref strref;
+typedef const_string_ref cstrref;
 
 class string_lit
- : public const_strref
+ : public const_string_ref
 {
 public:
 	template <std::size_t Size>
 	string_lit(const_value_type (&lit)[Size])
-	 : const_strref(lit, Size)
+	 : const_string_ref(lit, Size)
 	{ }
 };
 
