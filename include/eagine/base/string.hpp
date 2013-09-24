@@ -27,6 +27,19 @@ private:
 	std::size_t _len;
 
 	typedef const basic_string_ref& pcself;
+
+	static Char* _empty_c_str(void)
+	{
+		static Char c = Char('\0');
+		return &c;
+	}
+
+	template <typename Char_, typename CharTraits_>
+	Char* _init_by_string(const std::basic_string<Char_, CharTraits_>& s)
+	{
+		if(s.empty()) return _empty_c_str();
+		else return const_cast<Char*>(s.data());
+	}
 public:
 	typedef Char value_type;
 	typedef typename ::std::add_const<value_type>::type const_value_type;
@@ -46,7 +59,7 @@ public:
 	typedef ::std::basic_string<nonconst_value_type> string_type;
 
 	basic_string_ref(void)
-	 : _ptr("")
+	 : _ptr(_empty_c_str())
 	 , _len(0)
 	{ }
 
@@ -67,9 +80,37 @@ public:
 
 	template <typename Char_>
 	basic_string_ref(
-		const ::std::basic_string<Char_>& s,
-		typename std::enable_if<std::is_const<Char>::value>::type* = nullptr
-	): _ptr(s.data())
+		basic_string_ref<Char_>& that,
+		typename std::enable_if<
+			std::is_convertible<Char_, Char>::value &&
+			!std::is_same<Char_, Char>::value
+		>::type* = nullptr
+	): _ptr(that.data())
+	 , _len(that.size())
+	{ }
+
+	template <typename Char_, typename CharTraits_>
+	basic_string_ref(
+		const ::std::basic_string<Char_, CharTraits_>& s,
+		typename std::enable_if<
+			std::is_same<
+				typename std::add_const<Char_>::type,
+				Char
+			>::value &&
+			std::is_const<Char>::value
+		>::type* = nullptr
+	): _ptr(_init_by_string(s))
+	 , _len(s.size())
+	{ }
+
+	template <typename Char_, typename CharTraits_>
+	basic_string_ref(
+		::std::basic_string<Char_, CharTraits_>& s,
+		typename std::enable_if<
+			std::is_same<Char, Char_>::value &&
+			!std::is_const<Char>::value
+		>::type* = nullptr
+	): _ptr(_init_by_string(s))
 	 , _len(s.size())
 	{ }
 
@@ -114,6 +155,11 @@ public:
 		return ::std::strcmp(a._ptr, b._ptr) >= 0;
 	}
 
+	bool empty(void) const
+	{
+		return _len == 0;
+	}
+
 	size_type size(void) const
 	{
 		return _len;
@@ -124,11 +170,6 @@ public:
 		return _len;
 	}
 
-	const_value_type* c_str(void) const
-	{
-		return _ptr;
-	}
-
 	value_type* data(void)
 	{
 		return _ptr;
@@ -137,6 +178,26 @@ public:
 	string_type str(void) const
 	{
 		return string_type(_ptr, _len);
+	}
+
+	iterator begin(void)
+	{
+		return _ptr;
+	}
+
+	const_iterator begin(void) const
+	{
+		return _ptr;
+	}
+
+	iterator end(void)
+	{
+		return _ptr+_len;
+	}
+
+	const_iterator end(void) const
+	{
+		return _ptr+_len;
 	}
 };
 
