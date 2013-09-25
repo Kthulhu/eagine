@@ -1,3 +1,9 @@
+# The default build directory
+/_build
+
+# Editor temporary files
+.*.swp
+
 # Compiled Object files
 *.slo
 *.lo

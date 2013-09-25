@@ -286,6 +286,60 @@ public:
 		) == 0;
 	}
 
+	friend bool operator == (
+		const path_entry_ref_tpl& p,
+		const char* c_str
+	)
+	{
+		if(p._entry()._is_par_ent())
+			return false;
+
+		std::size_t p_len = p._entry()._len;
+
+		return std::strncmp(
+			p._store().data()+
+			p._entry()._pos,
+			c_str,
+			p_len
+		) == 0;
+	}
+
+	friend bool operator == (
+		const char* c_str,
+		const path_entry_ref_tpl& p
+	)
+	{
+		if(p._entry()._is_par_ent())
+			return false;
+
+		std::size_t p_len = p._entry()._len;
+
+		return std::strncmp(
+			p._store().data()+
+			p._entry()._pos,
+			c_str,
+			p_len
+		) == 0;
+	}
+
+	friend bool operator == (
+		const path_entry_ref_tpl& p,
+		par ent
+	)
+	{
+		(void)ent;
+		return p._entry()._is_par_ent();
+	}
+
+	friend bool operator == (
+		par ent,
+		const path_entry_ref_tpl& p
+	)
+	{
+		(void)ent;
+		return p._entry()._is_par_ent();
+	}
+
 	friend bool operator != (
 		const path_entry_ref_tpl& a,
 		const path_entry_ref_tpl& b
@@ -304,6 +358,60 @@ public:
 			b._entry()._pos,
 			a._entry()._len
 		) != 0;
+	}
+
+	friend bool operator != (
+		const path_entry_ref_tpl& p,
+		const char* c_str
+	)
+	{
+		if(p._entry()._is_par_ent())
+			return true;
+
+		std::size_t p_len = p._entry()._len;
+
+		return std::strncmp(
+			p._store().data()+
+			p._entry()._pos,
+			c_str,
+			p_len
+		) != 0;
+	}
+
+	friend bool operator != (
+		const char* c_str,
+		const path_entry_ref_tpl& p
+	)
+	{
+		if(p._entry()._is_par_ent())
+			return true;
+
+		std::size_t p_len = p._entry()._len;
+
+		return std::strncmp(
+			p._store().data()+
+			p._entry()._pos,
+			c_str,
+			p_len
+		) != 0;
+	}
+
+	friend bool operator != (
+		const path_entry_ref_tpl& p,
+		par ent
+	)
+	{
+		(void)ent;
+		return !p._entry()._is_par_ent();
+	}
+
+	friend bool operator != (
+		par ent,
+		const path_entry_ref_tpl& p
+	)
+	{
+		(void)ent;
+		return !p._entry()._is_par_ent();
 	}
 
 	friend bool operator <  (
