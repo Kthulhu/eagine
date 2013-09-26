@@ -13,6 +13,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/string.hpp>
+#include <eagine/base/vector.hpp>
+#include <eagine/base/array.hpp>
 #include <cstring>
 #include <algorithm>
 
@@ -123,7 +125,7 @@ BOOST_AUTO_TEST_CASE(base_string_ref_construction_c_str)
 	EAGine::base::const_string_ref csr(c_str);
 }
 
-BOOST_AUTO_TEST_CASE(base_string_ref_construction_array)
+BOOST_AUTO_TEST_CASE(base_string_ref_construction_c_array)
 {
 	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr(c_str);
@@ -144,6 +146,31 @@ BOOST_AUTO_TEST_CASE(base_string_ref_construction_string)
 {
 	EAGine::base::string s = "a string";
 	EAGine::base::string_ref sr(s);
+}
+
+BOOST_AUTO_TEST_CASE(base_string_ref_construction_const_vector)
+{
+	const EAGine::base::vector<char> cv(10, 'a');
+	EAGine::base::const_string_ref csr(cv);
+}
+
+BOOST_AUTO_TEST_CASE(base_string_ref_construction_vector)
+{
+	EAGine::base::vector<char> v(10, 'a');
+	EAGine::base::string_ref sr(v);
+}
+
+BOOST_AUTO_TEST_CASE(base_string_ref_construction_const_array)
+{
+	EAGine::base::array<char, 5> a;
+	const EAGine::base::array<char, 5>& ca = a;
+	EAGine::base::const_string_ref csr(ca);
+}
+
+BOOST_AUTO_TEST_CASE(base_string_ref_construction_array)
+{
+	EAGine::base::array<char, 5> a;
+	EAGine::base::string_ref sr(a);
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_copy_construction)

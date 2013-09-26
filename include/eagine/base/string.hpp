@@ -10,6 +10,9 @@
 #ifndef EAGINE_BASE_STRING_1308281038_HPP
 #define EAGINE_BASE_STRING_1308281038_HPP
 
+#include <eagine/meta/type_traits.hpp>
+#include <vector>
+#include <array>
 #include <string>
 #include <cstring>
 #include <type_traits>
@@ -34,16 +37,27 @@ private:
 		return &c;
 	}
 
-	template <typename Char_, typename CharTraits_>
-	Char* _init_by_string(const std::basic_string<Char_, CharTraits_>& s)
+	Char* _init_by_string(const string& s)
 	{
 		if(s.empty()) return _empty_c_str();
 		else return const_cast<Char*>(s.data());
 	}
+
+	template <typename Char_>
+	struct _compatible
+	 : meta::integral_constant<
+		bool,
+		meta::is_same<Char, Char_>::value ||
+		meta::is_same<
+			typename meta::add_const<Char_>::type,
+			Char
+		>::value
+	>
+	{ };
 public:
 	typedef Char value_type;
-	typedef typename ::std::add_const<value_type>::type const_value_type;
-	typedef typename ::std::remove_const<value_type>::type nonconst_value_type;
+	typedef typename meta::add_const<value_type>::type const_value_type;
+	typedef typename meta::remove_const<value_type>::type nonconst_value_type;
 
 	typedef std::size_t size_type;
 	typedef std::ptrdiff_t difference_type;
@@ -81,9 +95,9 @@ public:
 	template <typename Char_>
 	basic_string_ref(
 		basic_string_ref<Char_>& that,
-		typename std::enable_if<
-			std::is_convertible<Char_, Char>::value &&
-			!std::is_same<Char_, Char>::value
+		typename meta::enable_if<
+			meta::is_convertible<Char_, Char>::value &&
+			!meta::is_same<Char_, Char>::value
 		>::type* = nullptr
 	): _ptr(that.data())
 	 , _len(that.size())
@@ -92,13 +106,7 @@ public:
 	template <typename Char_, typename CharTraits_>
 	basic_string_ref(
 		const ::std::basic_string<Char_, CharTraits_>& s,
-		typename std::enable_if<
-			std::is_same<
-				typename std::add_const<Char_>::type,
-				Char
-			>::value &&
-			std::is_const<Char>::value
-		>::type* = nullptr
+		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
 	): _ptr(_init_by_string(s))
 	 , _len(s.size())
 	{ }
@@ -106,12 +114,41 @@ public:
 	template <typename Char_, typename CharTraits_>
 	basic_string_ref(
 		::std::basic_string<Char_, CharTraits_>& s,
-		typename std::enable_if<
-			std::is_same<Char, Char_>::value &&
-			!std::is_const<Char>::value
-		>::type* = nullptr
+		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
 	): _ptr(_init_by_string(s))
 	 , _len(s.size())
+	{ }
+
+	template <typename Char_, typename Allocator_>
+	basic_string_ref(
+		const ::std::vector<Char_, Allocator_>& v,
+		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
+	): _ptr(v.data())
+	 , _len(v.size())
+	{ }
+
+	template <typename Char_, typename Allocator_>
+	basic_string_ref(
+		::std::vector<Char_, Allocator_>& v,
+		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
+	): _ptr(v.data())
+	 , _len(v.size())
+	{ }
+
+	template <typename Char_, std::size_t N>
+	basic_string_ref(
+		const ::std::array<Char_, N>& a,
+		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
+	): _ptr(a.data())
+	 , _len(a.size())
+	{ }
+
+	template <typename Char_, std::size_t N>
+	basic_string_ref(
+		::std::array<Char_, N>& a,
+		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
+	): _ptr(a.data())
+	 , _len(a.size())
 	{ }
 
 	basic_string_ref& operator = (const basic_string_ref& that)
