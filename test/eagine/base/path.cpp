@@ -40,11 +40,61 @@ BOOST_AUTO_TEST_CASE(base_path_copy_construction)
 	path p2 = p1;
 }
 
+BOOST_AUTO_TEST_CASE(base_path_empty)
+{
+	using namespace EAGine::base;
+	const path p0;
+	const path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
+	const path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
+	const path p3 = pa::th/"test";
+	const path p4 = pa::th/par::ent;
+
+	BOOST_ASSERT( p0.empty());
+	BOOST_ASSERT(!p1.empty());
+	BOOST_ASSERT(!p2.empty());
+	BOOST_ASSERT(!p3.empty());
+	BOOST_ASSERT(!p4.empty());
+}
+
+BOOST_AUTO_TEST_CASE(base_path_size)
+{
+	using namespace EAGine::base;
+	const path p0;
+	const path p1 = pa::th/"test";
+	const path p2 = pa::th/par::ent;
+	const path p3 = pa::th/"test"/"eagine"/"base";
+	const path p4 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
+	const path p5 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
+
+	BOOST_ASSERT(p0.size() == 0);
+	BOOST_ASSERT(p1.size() == 1);
+	BOOST_ASSERT(p2.size() == 1);
+	BOOST_ASSERT(p3.size() == 3);
+	BOOST_ASSERT(p4.size() == 5);
+	BOOST_ASSERT(p5.size() == 5);
+}
+
+BOOST_AUTO_TEST_CASE(base_path_clear)
+{
+	using namespace EAGine::base;
+	EAGine::base::path p0;
+	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
+
+	BOOST_ASSERT( p0.empty());
+	BOOST_ASSERT(!p1.empty());
+
+	p0.clear();
+	p1.clear();
+
+	BOOST_ASSERT( p0.empty());
+	BOOST_ASSERT( p1.empty());
+}
+
 BOOST_AUTO_TEST_CASE(base_path_front_back)
 {
 	using namespace EAGine::base;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
-	path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
+	const path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
 
 	p1.front();
 	p2.front();

@@ -160,10 +160,23 @@ public:
 		return _entries.size();
 	}
 
+	/// Clears the path
+	/**
+	 *  @post this->empty()
+	 */
+	void clear(void)
+	{
+		_storage.clear();
+		_entries.clear();
+	}
+
 	/// Normalize this path
 	path& normalize(void);
 
 	/// Returns a const reference to the entry at the front of the path
+	/**
+	 *  @pre !this->empty()
+	 */
 	const_path_entry_ref front(void) const
 	{
 		assert(!_entries.empty());
@@ -175,6 +188,9 @@ public:
 	}
 
 	/// Returns a const reference to the entry at the back of the path
+	/**
+	 *  @pre !this->empty()
+	 */
 	const_path_entry_ref back(void) const
 	{
 		assert(!_entries.empty());
@@ -186,6 +202,9 @@ public:
 	}
 
 	/// Returns a reference to the entry at the front of the path
+	/**
+	 *  @pre !this->empty()
+	 */
 	path_entry_ref front(void)
 	{
 		assert(!_entries.empty());
@@ -197,6 +216,9 @@ public:
 	}
 
 	/// Returns a reference to the entry at the back of the path
+	/**
+	 *  @pre !this->empty()
+	 */
 	path_entry_ref back(void)
 	{
 		assert(!_entries.empty());
