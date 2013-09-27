@@ -10,6 +10,7 @@ function(add_eagine_test TEST_NAME TEST_LIBRARIES BUILD_ONLY)
 	add_executable(${TEST_NAME} EXCLUDE_FROM_ALL ${TEST_NAME}.cpp)
 	target_link_libraries(${TEST_NAME} ${TEST_LIBRARIES})
 	target_link_libraries(${TEST_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+	target_link_libraries(${TEST_NAME} ${EAGINE_THIRD_PARTY_LIBRARIES})
 
 	add_test(
 		build-test-${TEST_NAME}
