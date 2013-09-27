@@ -207,6 +207,11 @@ public:
 		return _len;
 	}
 
+	bool null_terminated(void) const
+	{
+		return _ptr[_len] == '\0';
+	}
+
 	value_type* data(void)
 	{
 		return _ptr;

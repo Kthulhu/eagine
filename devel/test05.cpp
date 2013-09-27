@@ -25,7 +25,7 @@ int main(void)
 		string s = "Blable";
 		const_string_ref sr = s;
 
-		std::cout.write(sr.c_str(), sr.size()) << std::endl;
+		std::cout.write(sr.data(), sr.size()) << std::endl;
 
 		return 0;
 	}

@@ -1,5 +1,7 @@
 # The default build directory
 /_build
+# The devel directory binaries
+/devel/test[0-9][0-9]
 
 # Editor temporary files
 .*.swp

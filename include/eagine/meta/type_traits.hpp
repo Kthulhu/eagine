@@ -21,8 +21,10 @@ using ::std::false_type;
 using ::std::enable_if;
 using ::std::add_const;
 using ::std::remove_const;
+using ::std::add_pointer;
 using ::std::is_same;
 using ::std::is_convertible;
+using ::std::is_function;
 
 } // namespace meta
 } // namespace EAGine

@@ -8,7 +8,7 @@ CXX = g++
 all: $(TESTS)
 
 test%: test%.o
-	$(CXX) -std=c++0x $(LDFLAGS) $< -o $@ -lpthread -lboost_locale-mt
+	$(CXX) -std=c++0x $(LDFLAGS) $< -rdynamic -o $@ -lpthread -ldl -lboost_locale-mt
 
 test%.o: test%.cpp
 	$(CXX) -std=c++0x -I../_build/include -I../include -I../implement $(CXXFLAGS) $< -c -o $@
