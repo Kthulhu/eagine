@@ -135,6 +135,7 @@ def action_finish_release():
 			"Re-run with --begin-release to start a new release."
 		)
 	git_command(["checkout", "master"], root_dir)
+	git_command(["pull", "origin", "master"], root_dir)
 	git_command(["merge", "--no-ff", release_branch], root_dir)
 	git_command(["tag", "-a", release_version, "-m", "Tagged release "+release_version], root_dir)
 	git_command(["push", "origin", "master"], root_dir)
@@ -172,6 +173,7 @@ def action_finish_hotfix():
 			"Re-run with --begin-hotfix to start a new hotfix."
 		)
 	git_command(["checkout", "master"], root_dir)
+	git_command(["pull", "origin", "master"], root_dir)
 	git_command(["merge", "--no-ff", hotfix_branch], root_dir)
 	git_command(["tag", "-a", hotfix_version, "-m", "Tagged hotfix "+hotfix_version], root_dir)
 	git_command(["push", "origin", "master"], root_dir)
