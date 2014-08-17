@@ -23,7 +23,7 @@ require_lib(const std::weak_ptr<base::dynamic_library>& wlib)
 
 	if(!bool(lib))
 	{
-		throw base::runtime_error(base::string(base::translate(
+		throw dyli::not_loaded(base::string(base::translate(
 			"Required dynamic library is not loaded"
 		)));
 	}

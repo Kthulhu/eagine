@@ -23,6 +23,15 @@ require_lib(const std::weak_ptr<base::dynamic_library>&);
 
 } // namespace detail
 
+class not_loaded
+ : public base::runtime_error
+{
+public:
+	not_loaded(const base::string& msg)
+	 : base::runtime_error(msg)
+	{ }
+};
+
 template <typename FuncType>
 class function;
 template <typename FuncType>

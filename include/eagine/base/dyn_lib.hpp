@@ -11,6 +11,7 @@
 #define EAGINE_BASE_DYN_LIB_1308281038_HPP
 
 #include <eagine/base/string.hpp>
+#include <eagine/base/error.hpp>
 #include <eagine/meta/type_traits.hpp>
 
 namespace EAGine {
@@ -27,6 +28,22 @@ private:
 protected:
 	dynamic_library(void);
 public:
+	class open_error : public runtime_error
+	{
+	public:
+		open_error(const string& msg)
+		 : runtime_error(msg)
+		{ }
+	};
+
+	class symbol_error : public runtime_error
+	{
+	public:
+		symbol_error(const string& msg)
+		 : runtime_error(msg)
+		{ }
+	};
+
 	/// Construction from module name or path
 	dynamic_library(cstrref module_name);
 

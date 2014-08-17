@@ -2,7 +2,7 @@
  *  @file eagine/base/io.inl
  *  @brief Implementation of input/output operations.
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -21,9 +21,9 @@ vector<byte> load_stream_data(istream& input)
 {
 	if(!input.good())
 	{
-		throw runtime_error(string(
-			translate("Input stream is not open for reading")
-		));
+		throw runtime_error(string(translate(
+			"Input stream is not open for reading"
+		)));
 	}
 
 	streampos begin = input.tellg();
@@ -34,9 +34,9 @@ vector<byte> load_stream_data(istream& input)
 	vector<byte> buffer(end - begin, 0x00);
 	if(!input.read((char*)buffer.data(), buffer.size()).good())
 	{
-		throw runtime_error(string(
-			translate("Failed to read data from input stream")
-		));
+		throw runtime_error(string(translate(
+			"Failed to read data from input stream"
+		)));
 	}
 
 	return std::move(buffer);

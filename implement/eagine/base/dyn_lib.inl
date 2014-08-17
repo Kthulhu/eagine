@@ -8,8 +8,6 @@
  */
 #include <eagine/eagine_config.hpp>
 
-#include <eagine/base/error.hpp>
-
 #include <cassert>
 #include <dlfcn.h>
 // TODO winapi
@@ -27,7 +25,7 @@ void* dynamic_library::_check_and_open(const char* module_name)
 	if(error_message)
 	{
 		handle = nullptr;
-		throw runtime_error(error_message);
+		throw open_error(error_message);
 	}
 	return handle;
 }
@@ -66,7 +64,7 @@ void* dynamic_library::symbol(cstrref symbol_name)
 	const char* error_message = ::dlerror();
 	if(error_message)
 	{
-		throw runtime_error(error_message);
+		throw symbol_error(error_message);
 	}
 	return result;
 }

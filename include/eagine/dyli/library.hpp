@@ -36,7 +36,6 @@ private:
 public:
 	library(void) { }
 
-
 	void release(void)
 	{
 		_lib.reset();	
@@ -53,20 +52,26 @@ public:
 			meta::is_function<FuncType>::value
 		>::type*
 	>
-	function<FuncType> function(base::cstrref name) const
+	dyli::function<FuncType> function(base::cstrref name) const
 	{
 		return dyli::function<FuncType>(
 			_lib,
 			_lib->template function<FuncType>(name)
 		);
 	}
-/*
-	func_ptr try_get_function(const char* name) const
+
+	template <
+		typename FuncType,
+		typename = typename meta::enable_if<
+			meta::is_function<FuncType>::value
+		>::type*
+	>
+	dyli::function<FuncType> get_function(base::cstrref name) const noexcept
 	{
-		try { return get_function(name); }
-		catch(std::runtime_error&) { func_ptr(); }
+		try { return function<FuncType>(name); }
+		catch(base::dynamic_library::symbol_error&) { }
+		return dyli::function<FuncType>();
 	}
-*/
 };
 
 class weak_lib
