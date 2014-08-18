@@ -93,15 +93,14 @@ public:
 		return library(_wlib.lock());
 	}
 
-	library require(void) const;
+	library require(void) const
+	{
+		return library(detail::require_lib(_wlib));
+	}
 };
 
 } // namespace dyli
 } // namespace EAGine
-
-#if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
-#include <eagine/dyli/library.inl>
-#endif
 
 #endif //include guard
 

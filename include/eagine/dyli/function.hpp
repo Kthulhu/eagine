@@ -10,27 +10,10 @@
 #ifndef EAGINE_DYLI_FUNCTION_1408161720_HPP
 #define EAGINE_DYLI_FUNCTION_1408161720_HPP
 
-#include <eagine/base/memory.hpp>
-#include <eagine/base/utility.hpp>
-#include <eagine/base/dyn_lib.hpp>
+#include <eagine/dyli/content.hpp>
 
 namespace EAGine {
 namespace dyli {
-namespace detail {
-
-std::shared_ptr<base::dynamic_library>
-require_lib(const std::weak_ptr<base::dynamic_library>&);
-
-} // namespace detail
-
-class not_loaded
- : public base::runtime_error
-{
-public:
-	not_loaded(const base::string& msg)
-	 : base::runtime_error(msg)
-	{ }
-};
 
 template <typename FuncType>
 class function;
@@ -73,7 +56,7 @@ public:
 	template <typename ... PP>
 	RV operator ()(PP&& ... p) const
 	{
-		assert(_ptr != nullptr);
+		assert(bool(*this));
 		return _ptr(std::forward<PP>(p)...);
 	}
 };
@@ -120,10 +103,6 @@ public:
 
 } // namespace dyli
 } // namespace EAGine
-
-#if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
-#include <eagine/dyli/function.inl>
-#endif
 
 #endif //include guard
 

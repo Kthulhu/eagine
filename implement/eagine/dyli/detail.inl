@@ -1,6 +1,6 @@
 /**
- *  @file eagine/dyli/function.inl
- *  @brief Dynamic library function utilities
+ *  @file eagine/dyli/detail.inl
+ *  @brief Dynamic library implementation details
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
@@ -8,8 +8,8 @@
  */
 #include <eagine/eagine_config.hpp>
 
-#include <eagine/base/error.hpp>
 #include <eagine/base/locale.hpp>
+#include <eagine/dyli/error.hpp>
 
 namespace EAGine {
 namespace dyli {
