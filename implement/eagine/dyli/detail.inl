@@ -16,19 +16,19 @@ namespace dyli {
 namespace detail {
 
 EAGINE_LIB_FUNC
-std::shared_ptr<base::dynamic_library>
-require_lib(const std::weak_ptr<base::dynamic_library>& wlib)
+void required_lib_n_a(void)
 {
-	base::shared_ptr<base::dynamic_library> lib = wlib.lock();
+	throw dyli::not_loaded(base::string(base::translate(
+		"Required dynamic library is not loaded"
+	)));
+}
 
-	if(!bool(lib))
-	{
-		throw dyli::not_loaded(base::string(base::translate(
-			"Required dynamic library is not loaded"
-		)));
-	}
-
-	return base::move(lib);
+EAGINE_LIB_FUNC
+void required_res_n_a(void)
+{
+	throw dyli::not_loaded(base::string(base::translate(
+		"Required dynamically loaded resource is not available "
+	)));
 }
 
 } // namespace detail

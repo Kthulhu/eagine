@@ -1,14 +1,14 @@
 /**
- *  @file eagine/dyli/content.hpp
- *  @brief Dynamically linked content wrapper
+ *  @file eagine/dyli/product.hpp
+ *  @brief Dynamically linked product wrapper
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef EAGINE_DYLI_CONTENT_1408161720_HPP
-#define EAGINE_DYLI_CONTENT_1408161720_HPP
+#ifndef EAGINE_DYLI_PRODUCT_1408161720_HPP
+#define EAGINE_DYLI_PRODUCT_1408161720_HPP
 
 #include <eagine/base/memory.hpp>
 #include <eagine/base/utility.hpp>
@@ -19,29 +19,29 @@ namespace EAGine {
 namespace dyli {
 
 template <typename T>
-class weak_cont;
+class weak_prod;
 
 template <typename T>
-class content
+class product
 {
 private:
 	base::shared_ptr<base::dynamic_library> _lib;
-	T* _ptr;
-	friend class weak_cont<T>;
+	base::shared_ptr<T> _ptr;
+	friend class weak_prod<T>;
 public:
-	content(
+	product(
 		const base::shared_ptr<base::dynamic_library>& lib,
-		T* ptr
+		base::shared_ptr<T>&& ptr
 	): _lib(lib)
 	 , _ptr(ptr)
 	{ }
 public:
-	content(void) noexcept = default;
+	product(void) noexcept = default;
 
 	void release(void)
 	{
-		_lib.reset();	
-		_ptr = nullptr;
+		_lib.reset();
+		_ptr.reset();
 	}
 
 	explicit operator bool (void) const noexcept
@@ -52,36 +52,36 @@ public:
 	T* operator -> (void) noexcept
 	{
 		assert(bool(*this));
-		return _ptr;
+		return _ptr.operator -> ();
 	}
 
 	T& operator * (void) noexcept
 	{
 		assert(bool(*this));
-		return *_ptr;
+		return _ptr.operator * ();
 	}
 
 	T const * operator -> (void) const noexcept
 	{
 		assert(bool(*this));
-		return _ptr;
+		return _ptr.operator -> ();
 	}
 
 	T const & operator * (void) const noexcept
 	{
 		assert(bool(*this));
-		return *_ptr;
+		return _ptr.operator * ();
 	}
 };
 
 template <typename T>
-class weak_cont
+class weak_prod
 {
 private:
 	base::weak_ptr<base::dynamic_library> _wlib;
-	T* _ptr;
+	base::weak_ptr<T> _ptr;
 public:
-	weak_cont(const content<T>& data)
+	weak_prod(const product<T>& data)
 	 : _wlib(data._lib)
 	 , _ptr(data._ptr)
 	{ }
@@ -91,16 +91,16 @@ public:
 		return (!_wlib.expired()) && bool(_ptr);
 	}
 
-	operator content<T> (void) const noexcept
+	operator product<T> (void) const noexcept
 	{
-		return content<T>(_wlib.lock(), _ptr);
+		return product<T>(_wlib.lock(), _ptr.lock());
 	}
 
-	content<T> require(void) const
+	product<T> require(void) const
 	{
-		return content<T>(
+		return product<T>(
 			detail::require_lib(_wlib),
-			_ptr
+			detail::require_ptr(_ptr)
 		);
 	}
 };

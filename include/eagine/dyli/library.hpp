@@ -54,9 +54,12 @@ public:
 	>
 	dyli::function<FuncType> function(base::cstrref name) const
 	{
+		typedef typename detail::func_util<FuncType>::adjusted_t
+			func_type;
+
 		return dyli::function<FuncType>(
 			_lib,
-			_lib->template function<FuncType>(name)
+			_lib->template function<func_type>(name)
 		);
 	}
 

@@ -18,6 +18,7 @@ namespace dyli {
 class loader
 {
 public:
+	library main_exe(void);
 	library load(base::cstrref path);
 	library try_load(base::cstrref path);
 };

@@ -16,7 +16,7 @@
 #include <eagine/base/dl_export.hpp>
 #include <eagine/base/function.hpp>
 
-EAGINE_DLL_PUBLIC(int) add(int a, int b)
+EAGINE_DL_PUBLIC(int) add(int a, int b)
 {
 	return a+b;
 }

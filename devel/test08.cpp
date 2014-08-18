@@ -10,8 +10,30 @@
 #include <cstdlib>
 #include <ctime>
 //------------------
+#include <eagine/base/dl_export.hpp>
 #include <eagine/dyli/loader.hpp>
+#include <eagine/dyli/content.hpp>
+#include <eagine/dyli/product.hpp>
 //------------------
+
+struct data
+{
+	int i;
+	double d;
+	bool b;
+} const g_data { 123, 456.789, false };
+
+EAGINE_DL_PUBLIC(const data*) get_data(void)
+{
+	return &g_data;
+}
+
+EAGINE_DL_PUBLIC(EAGine::base::shared_ptr<data>) make_data(void)
+{
+	data d = {23, 45.67, true};
+	return EAGine::base::make_shared<data>(d);
+}
+
 
 int main(void)
 {
@@ -46,6 +68,22 @@ int main(void)
 		std::cout << wsin(4) << std::endl;
 
 		sin.release();
+
+		dyli::library exe = ldr.main_exe();
+
+		dyli::function<dyli::content<data>(void)> gd =
+			exe.function<dyli::content<data>(void)>("get_data");
+		dyli::content<data> cd = gd();
+		dyli::weak_cont<data> wcd = cd;
+		dyli::content<data> cd2 = wcd;
+		std::cout << cd2->i << std::endl;
+
+		dyli::function<dyli::product<data>(void)> md =
+			exe.function<dyli::product<data>(void)>("make_data");
+		dyli::product<data> pd = md();
+		dyli::weak_prod<data> wpd = pd;
+		dyli::product<data> pd2 = wpd;
+		std::cout << pd2->i << std::endl;
 
 		std::cout << wsin(5) << std::endl;
 

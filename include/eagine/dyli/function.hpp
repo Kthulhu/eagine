@@ -10,7 +10,10 @@
 #ifndef EAGINE_DYLI_FUNCTION_1408161720_HPP
 #define EAGINE_DYLI_FUNCTION_1408161720_HPP
 
-#include <eagine/dyli/content.hpp>
+#include <eagine/base/memory.hpp>
+#include <eagine/base/utility.hpp>
+#include <eagine/base/dyn_lib.hpp>
+#include <eagine/dyli/detail.hpp>
 
 namespace EAGine {
 namespace dyli {
@@ -24,23 +27,21 @@ template <typename RV, typename ... P>
 class function<RV(P...)>
 {
 private:
+	typedef typename detail::func_util<RV(P...)>::adjusted_t _func_t;
 	base::shared_ptr<base::dynamic_library> _lib;
-	RV(*_ptr)(P...);
+	_func_t* _ptr;
 
 	friend class weak_func<RV(P...)>;
 	friend class library;
 
 	function(
 		const base::shared_ptr<base::dynamic_library>& lib,
-		RV(*ptr)(P...)
+		_func_t* ptr
 	): _lib(lib)
 	 , _ptr(ptr)
 	{ }
 public:
-	function(void) noexcept
-	 : _lib()
-	 , _ptr(nullptr)
-	{ }
+	function(void) noexcept = default;
 
 	void release(void)
 	{
@@ -57,7 +58,10 @@ public:
 	RV operator ()(PP&& ... p) const
 	{
 		assert(bool(*this));
-		return _ptr(std::forward<PP>(p)...);
+		return detail::func_util<RV(P...)>::adapt_rv(
+			_lib,
+			_ptr(std::forward<PP>(p)...)
+		);
 	}
 };
 
