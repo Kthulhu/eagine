@@ -2,7 +2,7 @@
  *  @file eagine/base/string.hpp
  *  @brief UTF-8 encoded string and string references.
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -21,6 +21,99 @@ namespace EAGine {
 namespace base {
 
 using ::std::string;
+
+template <typename Char>
+class basic_string_ref;
+
+template <typename Char, std::size_t N>
+class basic_lim_string
+{
+private:
+	std::array<Char, N+1> _str;
+	std::size_t _len;
+
+	static std::size_t _min(std::size_t n1, std::size_t n2)
+	{
+		return n1<n2?n1:n2;
+	}
+
+	template <typename Char_>
+	std::size_t _copy_from(Char_* str, std::size_t len)
+	{
+		len = _min(N, len);
+		std::copy(str, str+len, _str.begin());
+		_str[len] = Char(0);
+		return len;
+	}
+public:
+	typedef Char value_type;
+	typedef typename meta::add_const<value_type>::type const_value_type;
+	typedef typename meta::remove_const<value_type>::type nonconst_value_type;
+
+	basic_lim_string(void)
+	 : _len(0)
+	{ }
+
+	basic_lim_string(const basic_lim_string& that)
+	 : _str(that._str)
+	 , _len(that._len)
+	{ }
+
+	basic_lim_string(basic_lim_string&& tmp)
+	 : _str(std::move(tmp._str))
+	 , _len(tmp._len)
+	{ }
+
+	basic_lim_string(const basic_string_ref<Char>& str);
+	basic_lim_string(const basic_string_ref<const Char>& str);
+
+	basic_lim_string& operator = (const basic_string_ref<Char>& str);
+	basic_lim_string& operator = (const basic_string_ref<const Char>& str);
+
+	bool empty(void) const
+	{
+		return _len == 0u;
+	}
+
+	std::size_t size(void) const
+	{
+		return _len;
+	}
+
+	const_value_type*
+	c_str(void) const
+	{
+		return _str.data();
+	}
+
+	value_type*
+	data(void)
+	{
+		return _str.data();
+	}
+
+	const_value_type*
+	data(void) const
+	{
+		return _str.data();
+	}
+
+	typedef typename std::array<Char, N>::iterator iterator;
+	typedef typename std::array<Char, N>::const_iterator const_iterator;
+
+	iterator begin(void)
+	{
+		return _str.begin();
+	}
+
+	iterator end(void)
+	{
+		return _str.begin()+_len;
+	}
+};
+
+template <std::size_t N>
+using lim_string = basic_lim_string<char, N>;
 
 template <typename Char>
 class basic_string_ref
@@ -87,6 +180,12 @@ public:
 	 , _len(len)
 	{ }
 
+	template <std::size_t Len>
+	basic_string_ref(const_value_type (&lit)[Len])
+	 : _ptr(lit)
+	 , _len(Len-1)
+	{ }
+
 	basic_string_ref(const basic_string_ref& that)
 	 : _ptr(that._ptr)
 	 , _len(that._len)
@@ -117,6 +216,22 @@ public:
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
 	): _ptr(_init_by_string(s))
 	 , _len(s.size())
+	{ }
+
+	template <typename Char_, std::size_t N>
+	basic_string_ref(
+		const basic_lim_string<Char_, N>& ls,
+		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
+	): _ptr(ls.data())
+	 , _len(ls.size())
+	{ }
+
+	template <typename Char_, std::size_t N>
+	basic_string_ref(
+		basic_lim_string<Char_, N>& ls,
+		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
+	): _ptr(ls.data())
+	 , _len(ls.size())
 	{ }
 
 	template <typename Char_, typename Allocator_>
@@ -217,6 +332,12 @@ public:
 		return _ptr;
 	}
 
+	const_value_type*
+	data(void) const
+	{
+		return _ptr;
+	}
+
 	string_type str(void) const
 	{
 		return string_type(_ptr, _len);
@@ -249,15 +370,39 @@ typedef basic_string_ref<const char> const_string_ref;
 typedef string_ref strref;
 typedef const_string_ref cstrref;
 
-class string_lit
- : public const_string_ref
+template <typename Char, std::size_t N>
+inline
+basic_lim_string<Char, N>::
+basic_lim_string(const basic_string_ref<Char>& str)
+ : _len(_copy_from(str.data(), str.size()))
+{ }
+
+template <typename Char, std::size_t N>
+inline
+basic_lim_string<Char, N>::
+basic_lim_string(const basic_string_ref<const Char>& str)
+ : _len(_copy_from(str.data(), str.size()))
+{ }
+
+template <typename Char, std::size_t N>
+inline
+basic_lim_string<Char, N>&
+basic_lim_string<Char, N>::
+operator = (const basic_string_ref<Char>& str)
 {
-public:
-	template <std::size_t Size>
-	string_lit(const_value_type (&lit)[Size])
-	 : const_string_ref(lit, Size)
-	{ }
-};
+	_len = _copy_from(str.data(), str.size());
+	return *this;
+}
+
+template <typename Char, std::size_t N>
+inline
+basic_lim_string<Char, N>&
+basic_lim_string<Char, N>::
+operator = (const basic_string_ref<const Char>& str)
+{
+	_len = _copy_from(str.data(), str.size());
+	return *this;
+}
 
 } // namespace base
 } // namespace EAGine
