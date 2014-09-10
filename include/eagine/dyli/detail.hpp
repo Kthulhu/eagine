@@ -11,6 +11,7 @@
 #define EAGINE_DYLI_DETAIL_1408161720_HPP
 
 #include <eagine/base/memory.hpp>
+#include <eagine/base/utility.hpp>
 #include <eagine/base/dyn_lib.hpp>
 #include <eagine/base/error.hpp>
 

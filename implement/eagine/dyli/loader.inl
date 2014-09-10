@@ -1,6 +1,6 @@
 /**
  *  @file eagine/dyli/loader.inl
- *  @brief Implementation dynamic library loader functionality
+ *  @brief Implementation of dynamic library loader functionality
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
