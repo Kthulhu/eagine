@@ -38,7 +38,7 @@ library loader::try_load(base::cstrref path)
 	}
 }
 
-} // namespace base
+} // namespace dyli
 } // namespace EAGine
 
 

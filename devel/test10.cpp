@@ -7,6 +7,7 @@
  */
 #include <iostream>
 #include <cstdlib>
+#include <eagine/base/flat_map.hpp>
 //------------------
 #include <eagine/base/error.hpp>
 //------------------
@@ -15,7 +16,6 @@
 //------------------
 #include <eagine/base/vector.hpp>
 #include <eagine/base/alloc.hpp>
-#include <eagine/base/flat_map.hpp>
 #include <cstddef>
 #include <memory>
 #include <cassert>

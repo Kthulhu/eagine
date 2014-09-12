@@ -2,7 +2,7 @@
  *  @file eagine/base/flat_map.hpp
  *  @brief Flat map.
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -12,6 +12,7 @@
 
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/vector.hpp>
+#include <eagine/base/optional.hpp>
 
 #include <cassert>
 #include <algorithm>
@@ -118,6 +119,25 @@ public:
 		}
 	}
 
+	Val store(const Key& key, Val val, Val old)
+	{
+		auto pos = _klb(key);
+
+		if((pos == _keys.end()) || (key < *pos))
+		{
+			_vals.insert(_vit(pos), val);
+			_keys.insert(pos, key);
+		}
+		else
+		{
+			assert(*pos == key);
+			auto o = _koffs(pos);
+			old = _vals[o];
+			_vals[o] = val;
+		}
+		return old;
+	}
+
 	bool erase(const Key& key)
 	{
 		auto pos = _klb(key);
@@ -131,6 +151,27 @@ public:
 		else return false;
 	}
 
+	Val remove(const Key& key, Val old)
+	{
+		auto pos = _klb(key);
+
+		if(!(pos == _keys.end()) && !(key < *pos))
+		{
+			auto vp = _vit(pos);
+			old = *vp;
+			_vals.erase(vp);
+			_keys.erase(pos);
+		}
+		return old;
+	}
+
+	bool contains(const Key& key) const
+	{
+		auto pos = _klb(key);
+
+		return ((pos != _keys.end()) && (*pos == key));
+	}
+
 	Val get(const Key& key, Val not_found) const
 	{
 		auto pos = _klb(key);
@@ -140,6 +181,17 @@ public:
 			return _vals.at(_koffs(pos));
 		}
 		else return not_found;
+	}
+
+	optional<Val> get(const Key& key) const
+	{
+		auto pos = _klb(key);
+
+		if((pos != _keys.end()) && (*pos == key))
+		{
+			return optional<Val>(_vals.at(_koffs(pos)));
+		}
+		else return optional<Val>();
 	}
 };
 

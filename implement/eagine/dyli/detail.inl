@@ -32,7 +32,7 @@ void required_res_n_a(void)
 }
 
 } // namespace detail
-} // namespace base
+} // namespace dyli
 } // namespace EAGine
 
 

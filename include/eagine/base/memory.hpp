@@ -21,6 +21,13 @@ using ::std::unique_ptr;
 
 using ::std::make_shared;
 
+// TODO use C++14 make_unique if available
+template <typename T, typename ... P>
+inline unique_ptr<T> make_unique(P&& ... p)
+{
+	return unique_ptr<T>(new T(std::forward<P>(p)...));
+}
+
 } // namespace base
 } // namespace EAGine
 
