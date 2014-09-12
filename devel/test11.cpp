@@ -5,7 +5,8 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <eagine/ecs/eck_map_basic.hpp>
+#include <eagine/ecs/eck_map_normal.hpp>
+#include <eagine/ecs/storage_normal.hpp>
 #include <eagine/ecs/manager.hpp>
 //------------------
 #include <eagine/base/guid.hpp>
@@ -15,6 +16,7 @@
 
 namespace EAGine {
 namespace ecs {
+
 
 } // namespace ecs
 } // namespace EAGine
@@ -34,16 +36,12 @@ int main(void)
 
 		manager<base::guid> m;
 
-/*
 		m.register_component_type<cmp_1>(
-			base::make_shared<basic_entity_component_map<base::guid>>(),
-			base::make_shared<>()
+			base::make_shared<normal_entity_component_map<base::guid>>(),
+			base::make_shared<normal_component_storage<cmp_1>>()
 		);
-*/
 
 		auto e1 = m.make_entity();
-
-		base::make_shared<basic_entity_component_map<base::guid>>()->get(e1, 0);
 
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;

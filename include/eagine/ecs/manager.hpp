@@ -13,6 +13,7 @@
 #include <eagine/base/string.hpp>
 #include <eagine/base/type_name.hpp>
 #include <eagine/ecs/component.hpp>
+#include <eagine/ecs/component_storage.hpp>
 #include <map>
 #include <cassert>
 
@@ -23,13 +24,11 @@ template <typename Entity>
 class manager
 {
 private:
-	::std::map<
-		component_uid,
+	component_uid_map<
 		base::shared_ptr<entity_component_map<Entity>>
 	> eck_maps;
 
-	::std::map<
-		component_uid,
+	component_uid_map<
 		base::shared_ptr<base_component_storage>
 	> storages;
 
