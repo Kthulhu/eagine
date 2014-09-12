@@ -12,6 +12,7 @@
 #include <eagine/base/memory.hpp>
 #include <eagine/base/string.hpp>
 #include <eagine/base/type_name.hpp>
+#include <eagine/meta/type_traits.hpp>
 #include <eagine/ecs/component.hpp>
 #include <eagine/ecs/component_storage.hpp>
 #include <map>
@@ -26,11 +27,14 @@ class manager
 private:
 	component_uid_map<
 		base::shared_ptr<entity_component_map<Entity>>
-	> eck_maps;
+	> _eck_maps;
 
 	component_uid_map<
 		base::shared_ptr<base_component_storage>
-	> storages;
+	> _storages;
+
+	template <typename ... P>
+	static void _eat(P ...) { }
 
 	void _do_reg_cmp_type(
 		component_uid cid,
@@ -49,13 +53,29 @@ private:
 	component_key_t _get_cmp_key(const Entity& e, component_uid) const;
 
 	template <typename Component>
-	component_key_t _req_ck(const Entity& e) const
-	{
-		component_key_t ck =
-			_get_cmp_key(e, get_component_uid<Component>());
+	bool _do_add(const Entity& e, Component&& component);
 
- 		assert(ck != nil_component_key);
-		return ck;
+	template <typename Component>
+	bool _do_rem(const Entity& e);
+
+	template <typename Component, typename Access>
+	typename Access::template result<Component>::type*
+	_do_acc(const Entity& e, Access acc);
+
+	template <typename Func, typename ... C>
+	void _do_call(const Entity&, Func& func, C* ... cps)
+	{
+		func(*cps...);
+	}
+
+	template <typename C0, typename ... Cn, typename Func, typename ... C>
+	void _do_call(const Entity& e, Func& func, C* ... cps)
+	{
+		typedef typename meta::remove_const<
+			typename meta::remove_reference<C0>::type
+		>::type adjC0;
+		auto* cp = _do_acc<adjC0>(e, typename access<C0>::type());
+		if(cp) _do_call<Cn...>(e, func, cps..., cp);
 	}
 public:
 	typedef Entity entity_type;
@@ -95,6 +115,18 @@ public:
 		return entity_type(std::forward<P>(p)...);
 	}
 
+	template <typename ... C>
+	void add(const Entity& e, C&& ... components)
+	{
+		_eat(_do_add(e, std::move(components))...);
+	}
+
+	template <typename ... C>
+	void remove(const Entity& e)
+	{
+		_eat(_do_rem<C>(e)...);
+	}
+
 	template <typename Component>
 	bool has(const Entity& e) const
 	{
@@ -103,9 +135,27 @@ public:
 	}
 
 	template <typename Component>
-	const Component& read(const Entity& e) const
+	const Component* ro(const Entity& e)
 	{
-		component_key_t ck = _req_ck<Component>(e);
+		return _do_acc<Component>(e, access_read_only());
+	}
+
+	template <typename Component>
+	Component* rw(const Entity& e)
+	{
+		return _do_acc<Component>(e, access_read_write());
+	}
+
+	template <typename ... C, typename Func>
+	void for_one(const Entity& e, Func func)
+	{
+		_do_call<C...>(e, func);
+	}
+
+	template <typename ... C>
+	void for_one(const Entity& e, base::function<void(C...)> func)
+	{
+		_do_call<C...>(e, func);
 	}
 };
 

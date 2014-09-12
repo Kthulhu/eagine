@@ -34,6 +34,11 @@ public:
 		return _map.get(entity, nil);
 	}
 
+	std::size_t size(void)
+	{
+		return _map.size();
+	}
+
 	void reserve(std::size_t count)
 	{
 		_map.reserve(count);

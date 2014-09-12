@@ -23,6 +23,12 @@ typedef std::size_t component_key_t;
 // nil component key value
 constexpr component_key_t nil_component_key = ~(component_key_t(0));
 
+template <typename Derived>
+class component
+{
+// TODO
+};
+
 // component unique identifier
 typedef ::std::type_index component_uid;
 
@@ -49,11 +55,48 @@ struct entity_component_map
 
 	virtual key_t get(const Entity& entity, key_t nil = nil_key) = 0;
 
+	virtual std::size_t size(void) = 0;
+
 	virtual void reserve(std::size_t count) = 0;
 
 	virtual key_t store(const Entity& entity, key_t key) = 0;
 
 	virtual key_t remove(const Entity& entity) = 0;
+};
+
+struct access_read_only
+{
+	template <typename Component>
+	struct result
+	{
+		typedef const Component type;
+	};
+};
+
+struct access_read_write
+{
+	template <typename Component>
+	struct result
+	{
+		typedef Component type;
+	};
+};
+
+template <typename C>
+struct access
+{
+	typedef access_read_only type;
+};
+
+template <typename C>
+struct access<const C&>
+ : access<C>
+{ };
+
+template <typename C>
+struct access<C&>
+{
+	typedef access_read_write type;
 };
 
 } // namespace ecs

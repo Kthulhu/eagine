@@ -37,8 +37,8 @@ struct base_component_storage
 template <typename Component>
 struct component_storage : base_component_storage
 {
-	virtual Component& access_rw(key_t key) = 0;
-	virtual const Component& access_ro(key_t key) const = 0;
+	virtual Component* access(key_t key, access_read_write) = 0;
+	virtual const Component* access(key_t key, access_read_only) = 0;
 
 	virtual key_t insert(Component&& component) = 0;
 	virtual key_t replace(key_t key, Component&& component) = 0;
@@ -75,14 +75,22 @@ public:
 	 , _vector_refs(0)
 	{ }
 
-	Component& at(key_t key)
+	const Component& at(key_t key) const
 	{
+		assert(key < _ents.size());
 		return _ents.at(key)._component;
 	}
 
-	const Component& at(key_t key) const
+	Component* access(key_t key)
 	{
-		return _ents.at(key)._component;
+		if(key >= _ents.size()) return nullptr;
+		return &_ents.at(key)._component;
+	}
+
+	const Component* access(key_t key) const
+	{
+		if(key >= _ents.size()) return nullptr;
+		return &_ents.at(key)._component;
 	}
 
 	void reserve(std::size_t size)

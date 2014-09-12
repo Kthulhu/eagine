@@ -54,18 +54,18 @@ _do_reg_cmp_type(
 	assert(bool(eck_map));
 	assert(bool(storage));
 
-	auto p_eck_map = eck_maps.find(cid);
+	auto p_eck_map = _eck_maps.find(cid);
 
-	if(p_eck_map == eck_maps.end())
+	if(p_eck_map == _eck_maps.end())
 	{
-		assert(storages.find(cid) == storages.end());
+		assert(_storages.find(cid) == _storages.end());
 
-		eck_maps[cid] = eck_map;
-		storages[cid] = storage;
+		_eck_maps[cid] = eck_map;
+		_storages[cid] = storage;
 	}
 	else
 	{
-		assert(storages.find(cid) != storages.end());
+		assert(_storages.find(cid) != _storages.end());
 		detail::mgr_handle_cmp_is_reg(get_name());
 	}
 }
@@ -78,19 +78,19 @@ _do_unr_cmp_type(
 	base::string(*get_name)(void)
 )
 {
-	auto p_eck_map = eck_maps.find(cid);
+	auto p_eck_map = _eck_maps.find(cid);
 
-	if(p_eck_map != eck_maps.end())
+	if(p_eck_map != _eck_maps.end())
 	{
-		auto p_storage = storages.find(cid);
-		assert(p_storage != storages.end());
+		auto p_storage = _storages.find(cid);
+		assert(p_storage != _storages.end());
 
-		eck_maps.erase(p_eck_map);
-		storages.erase(p_storage);
+		_eck_maps.erase(p_eck_map);
+		_storages.erase(p_storage);
 	}
 	else
 	{
-		assert(storages.find(cid) == storages.end());
+		assert(_storages.find(cid) == _storages.end());
 		detail::mgr_handle_cmp_not_reg(get_name());
 	}
 }
@@ -100,16 +100,16 @@ inline bool
 manager<Entity>::
 _does_know_cmp_type(component_uid cid) const
 {
-	auto p_eck_map = eck_maps.find(cid);
+	auto p_eck_map = _eck_maps.find(cid);
 
-	if(p_eck_map != eck_maps.end())
+	if(p_eck_map != _eck_maps.end())
 	{
-		assert(storages.find(cid) != storages.end());
+		assert(_storages.find(cid) != _storages.end());
 		return true;
 	}
 	else
 	{
-		assert(storages.find(cid) == storages.end());
+		assert(_storages.find(cid) == _storages.end());
 		return false;
 	}
 }
@@ -119,16 +119,124 @@ inline component_key_t
 manager<Entity>::
 _get_cmp_key(const Entity& e, component_uid cid) const
 {
-	auto p_eck_map = eck_maps.find(cid);
+	auto p_eck_map = _eck_maps.find(cid);
 
-	if(p_eck_map != eck_maps.end())
+	if(p_eck_map != _eck_maps.end())
 	{
 		auto& eck_map = p_eck_map->second;
-		assert(bool(eck_map));
-
-		return eck_map->get(e);
+		if(eck_map)
+		{
+			return eck_map->get(e);
+		}
 	}
 	return nil_component_key;
+}
+
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_do_add(const Entity& e, Component&& component)
+{
+	component_uid cid = get_component_uid<Component>();
+	auto p_eck_map = _eck_maps.find(cid);
+
+	if(p_eck_map != _eck_maps.end())
+	{
+		auto& eck_map = p_eck_map->second;
+		if(eck_map)
+		{
+			component_key_t key = eck_map->get(e);
+
+			auto p_storage = _storages.find(cid);
+			assert(p_storage != _storages.end());
+
+			auto& base_storage = p_storage->second;
+			assert(base_storage);
+
+			typedef component_storage<Component> cs_t;
+			base::shared_ptr<cs_t> storage =
+				std::dynamic_pointer_cast<cs_t>(base_storage);
+
+			if(key == nil_component_key)
+			{
+				key = storage->insert(std::move(component));
+			}
+			else
+			{
+				storage->replace(key, std::move(component));
+			}
+
+			eck_map->store(e, key);
+			return true;
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(base::type_name<Component>());
+	return false;
+}
+
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_do_rem(const Entity& e)
+{
+	component_uid cid = get_component_uid<Component>();
+	auto p_eck_map = _eck_maps.find(cid);
+
+	if(p_eck_map != _eck_maps.end())
+	{
+		auto& eck_map = p_eck_map->second;
+		if(eck_map)
+		{
+			component_key_t key = eck_map->remove(e);
+
+			if(key != nil_component_key)
+			{
+				auto p_storage = _storages.find(cid);
+				assert(p_storage != _storages.end());
+
+				auto& bs = p_storage->second;
+				assert(bs);
+
+				typedef component_storage<Component> cs_t;
+				base::shared_ptr<cs_t> storage =
+					std::dynamic_pointer_cast<cs_t>(bs);
+
+				storage->release(key);
+			}
+
+			return true;
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(base::type_name<Component>());
+	return false;
+}
+
+template <typename Entity>
+template <typename Component, typename Access>
+inline typename Access::template result<Component>::type*
+manager<Entity>::
+_do_acc(const Entity& e, Access acc)
+{
+	component_uid cid = get_component_uid<Component>();
+	component_key_t key = _get_cmp_key(e, cid);
+
+	if(key != nil_component_key)
+	{
+		auto p_storage = _storages.find(cid);
+		assert(p_storage != _storages.end());
+
+		auto& bs = p_storage->second;
+		assert(bs);
+
+		typedef component_storage<Component> cs_t;
+		base::shared_ptr<cs_t> storage =
+			std::dynamic_pointer_cast<cs_t>(bs);
+
+		return storage->access(key, acc);
+	}
+	return nullptr;
 }
 
 } // namespace ecs

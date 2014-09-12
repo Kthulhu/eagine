@@ -54,14 +54,14 @@ public:
 		return _ents.copy(key);
 	}
 
-	Component& access_rw(key_t key)
+	Component* access(key_t key, access_read_write)
 	{
-		return _ents.at(key);
+		return _ents.access(key);
 	}
 
-	const Component& access_ro(key_t key) const
+	const Component* access(key_t key, access_read_only)
 	{
-		return _ents.at(key);
+		return _ents.access(key);
 	}
 
 	key_t insert(Component&& component)

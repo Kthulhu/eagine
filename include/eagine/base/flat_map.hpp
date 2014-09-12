@@ -101,6 +101,15 @@ public:
 		_keys.push_back(std::forward<Val>(val));
 	}
 
+	template <typename Func>
+	void for_each(Func func) const
+	{
+		for(std::size_t i = 0, n = size(); i!=n; ++i)
+		{
+			func(_keys[i], _vals[i]);
+		}
+	}
+
 	bool insert(const Key& key, Val val)
 	{
 		auto pos = _klb(key);
