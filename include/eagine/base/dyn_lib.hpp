@@ -72,7 +72,10 @@ public:
 	>
 	FuncType* function(cstrref function_name)
 	{
-		return reinterpret_cast<FuncType*>(symbol(function_name));
+		// EVIL hack to keep the compiler from complaining
+		static_assert(sizeof(void*) == sizeof(FuncType*), "");
+		void* sptr = symbol(function_name);
+		return *(FuncType**)(&sptr);
 	}
 };
 

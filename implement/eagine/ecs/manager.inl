@@ -155,8 +155,11 @@ _do_add(const Entity& e, Component&& component)
 			assert(base_storage);
 
 			typedef component_storage<Component> cs_t;
+
+			assert(base::dynamic_pointer_cast<cs_t>(base_storage));
+
 			base::shared_ptr<cs_t> storage =
-				std::dynamic_pointer_cast<cs_t>(base_storage);
+				base::static_pointer_cast<cs_t>(base_storage);
 
 			if(key == nil_component_key)
 			{
@@ -200,8 +203,11 @@ _do_rem(const Entity& e)
 				assert(bs);
 
 				typedef component_storage<Component> cs_t;
+
+				assert(base::dynamic_pointer_cast<cs_t>(bs));
+
 				base::shared_ptr<cs_t> storage =
-					std::dynamic_pointer_cast<cs_t>(bs);
+					base::static_pointer_cast<cs_t>(bs);
 
 				storage->release(key);
 			}
@@ -231,8 +237,11 @@ _do_acc(const Entity& e, Access acc)
 		assert(bs);
 
 		typedef component_storage<Component> cs_t;
+
+		assert(base::dynamic_pointer_cast<cs_t>(bs));
+
 		base::shared_ptr<cs_t> storage =
-			std::dynamic_pointer_cast<cs_t>(bs);
+			base::static_pointer_cast<cs_t>(bs);
 
 		return storage->access(key, acc);
 	}

@@ -116,6 +116,31 @@ template <std::size_t N>
 using lim_string = basic_lim_string<char, N>;
 
 template <typename Char>
+struct basic_const_var_string
+{
+private:
+	std::uint32_t _size = 0;
+	const Char _data[1] = { '\0' };
+public:
+	bool empty(void) const
+	{
+		return _size == 0;
+	}
+
+	std::size_t size(void) const
+	{
+		return _size;
+	}
+
+	const Char* data(void) const
+	{
+		return _data;
+	}
+};
+
+typedef basic_const_var_string<char> cvarstr;
+
+template <typename Char>
 class basic_string_ref
 {
 private:
@@ -232,6 +257,14 @@ public:
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
 	): _ptr(ls.data())
 	 , _len(ls.size())
+	{ }
+
+	template <typename Char_>
+	basic_string_ref(
+		const basic_const_var_string<Char_>& vs,
+		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
+	): _ptr(vs.data())
+	 , _len(vs.size())
 	{ }
 
 	template <typename Char_, typename Allocator_>

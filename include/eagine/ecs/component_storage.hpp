@@ -53,7 +53,7 @@ struct component_storage_entry
 	// negative reference count (if < 0)
 	// or the next free component entry
 	// in the vector
-	long _neg_rc_or_nf;
+	int _neg_rc_or_nf;
 	Component _component;
 
 	component_storage_entry(Component&& component)
@@ -68,8 +68,8 @@ class component_entry_vector
 private:
 	base::vector<component_storage_entry<Component>> _ents;
 	base::vector<component_key_t> _gc_keys;
-	long _next_free;
-	long _vector_refs;
+	int _next_free;
+	int _vector_refs;
 public:
 	typedef component_key_t key_t;
 
@@ -140,7 +140,7 @@ public:
 	void do_release(key_t key)
 	{
 		_ents.at(key)._neg_rc_or_nf = _next_free;
-		_next_free = long(key);
+		_next_free = int(key);
 	}
 
 	bool release(key_t key)

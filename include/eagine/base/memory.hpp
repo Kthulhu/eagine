@@ -28,6 +28,9 @@ inline unique_ptr<T> make_unique(P&& ... p)
 	return unique_ptr<T>(new T(std::forward<P>(p)...));
 }
 
+using std::static_pointer_cast;
+using std::dynamic_pointer_cast;
+
 } // namespace base
 } // namespace EAGine
 

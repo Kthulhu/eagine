@@ -27,6 +27,14 @@ using ::std::is_same;
 using ::std::is_convertible;
 using ::std::is_function;
 
+template <typename Src, typename Dst>
+struct add_same_constness
+ : ::std::conditional<
+	::std::is_const<Src>::value,
+	typename ::std::add_const<Dst>::type,
+	typename ::std::remove_const<Dst>::type
+> { };
+
 } // namespace meta
 } // namespace EAGine
 
