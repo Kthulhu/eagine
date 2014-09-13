@@ -38,10 +38,13 @@ template <typename Component>
 struct component_storage : base_component_storage
 {
 	virtual Component* access(key_t key, base::access_read_write_t) = 0;
-	virtual const Component* access(key_t key, base::access_read_only_t) = 0;
+	virtual const Component* access(key_t key, base::access_read_only_t)= 0;
 
 	virtual key_t insert(Component&& component) = 0;
 	virtual key_t replace(key_t key, Component&& component) = 0;
+
+	virtual void for_each(const base::function<void(Component&)>&) = 0;
+	virtual void for_each(const base::function<void(const Component&)>&)= 0;
 };
 
 template <typename Component>
@@ -155,11 +158,15 @@ public:
 		return false;
 	}
 
-	void for_each(const base::function<void (Component&)>& function)
+	template <typename Function>
+	void for_each(Function& function)
 	{
 		for(auto& ent : _ents)
 		{
-			function(ent._component);
+			if(ent._neg_rc_or_nf < 0)
+			{
+				function(ent._component);
+			}
 		}
 	}
 

@@ -74,6 +74,16 @@ public:
 	{
 		return _ents.replace(key, std::move(component));
 	}
+
+	void for_each(const base::function<void(Component&)>& function)
+	{
+		_ents.for_each(function);
+	}
+
+	void for_each(const base::function<void(const Component&)>& function)
+	{
+		_ents.for_each(function);
+	}
 };
 
 } // namespace ecs
