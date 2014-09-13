@@ -10,8 +10,6 @@
 #define EAGINE_ECS_COMPONENT_1408161720_HPP
 
 #include <cstddef>
-#include <typeinfo>
-#include <typeindex>
 #include <map>
 
 namespace EAGine {
@@ -23,23 +21,82 @@ typedef std::size_t component_key_t;
 // nil component key value
 constexpr component_key_t nil_component_key = ~(component_key_t(0));
 
+// component unique identifier
+typedef std::size_t component_uid;
+
+class component_uid_getter
+{
+private:
+	static component_uid& _curr_uid(void)
+	{
+		static component_uid uid = 0;
+		return uid;
+	}
+public:
+	static component_uid new_uid(void)
+	{
+		return _curr_uid()++;
+	}
+};
+
 template <typename Derived>
 class component
 {
-// TODO
+public:
+	static component_uid uid(void)
+	{
+		static component_uid cid = component_uid_getter::new_uid();
+		return cid;
+	}
 };
-
-// component unique identifier
-typedef ::std::type_index component_uid;
 
 template <typename Component>
 inline component_uid get_component_uid(void)
 {
-	return component_uid(typeid(Component));
+	return Component::uid();
 }
 
 template <typename T>
-using component_uid_map = ::std::map<component_uid, T>;
+class component_uid_map
+ : public std::vector<T>
+{
+public:
+	component_uid_map(void) = default;
+
+	typename std::vector<T>::const_iterator
+	find(component_uid cid) const
+	{
+		if(cid < this->size())
+		{
+			return this->begin()+cid;
+		}
+		else return this->end();
+	}
+
+	typename std::vector<T>::iterator
+	find(component_uid cid)
+	{
+		if(cid < this->size())
+		{
+			return this->begin()+cid;
+		}
+		else return this->end();
+	}
+
+	void erase(typename std::vector<T>::iterator pos)
+	{
+		*pos = T();
+	}
+
+	T& operator [] (component_uid cid)
+	{
+		if(cid >= this->size())
+		{
+			this->resize(cid+1);
+		}
+		return this->at(cid);
+	}
+};
 
 // interface for maps of entities to component access keys
 template <typename Entity>
@@ -47,13 +104,11 @@ struct entity_component_map
 {
 	typedef component_key_t key_t;
 
-	constexpr static key_t nil_key = nil_component_key;
-
 	virtual ~entity_component_map(void) noexcept { }
 
 	virtual bool read_only(void) const = 0;
 
-	virtual key_t get(const Entity& entity, key_t nil = nil_key) = 0;
+	virtual key_t get(const Entity& entity) = 0;
 
 	virtual std::size_t size(void) = 0;
 
@@ -62,41 +117,6 @@ struct entity_component_map
 	virtual key_t store(const Entity& entity, key_t key) = 0;
 
 	virtual key_t remove(const Entity& entity) = 0;
-};
-
-struct access_read_only
-{
-	template <typename Component>
-	struct result
-	{
-		typedef const Component type;
-	};
-};
-
-struct access_read_write
-{
-	template <typename Component>
-	struct result
-	{
-		typedef Component type;
-	};
-};
-
-template <typename C>
-struct access
-{
-	typedef access_read_only type;
-};
-
-template <typename C>
-struct access<const C&>
- : access<C>
-{ };
-
-template <typename C>
-struct access<C&>
-{
-	typedef access_read_write type;
 };
 
 } // namespace ecs

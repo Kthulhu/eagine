@@ -74,11 +74,17 @@ private:
 		typedef typename meta::remove_const<
 			typename meta::remove_reference<C0>::type
 		>::type adjC0;
-		auto* cp = _do_acc<adjC0>(e, typename access<C0>::type());
+		auto* cp = _do_acc<adjC0>(e, typename base::access<C0>::type());
 		if(cp) _do_call<Cn...>(e, func, cps..., cp);
 	}
 public:
 	typedef Entity entity_type;
+
+	template <typename ... P>
+	static entity_type make_entity(P&& ... p)
+	{
+		return entity_type(std::forward<P>(p)...);
+	}
 
 	template <typename Component>
 	void register_component_type(
@@ -109,12 +115,6 @@ public:
 		return _does_know_cmp_type(get_component_uid<Component>());
 	}
 
-	template <typename ... P>
-	static entity_type make_entity(P&& ... p)
-	{
-		return entity_type(std::forward<P>(p)...);
-	}
-
 	template <typename ... C>
 	void add(const Entity& e, C&& ... components)
 	{
@@ -137,13 +137,13 @@ public:
 	template <typename Component>
 	const Component* ro(const Entity& e)
 	{
-		return _do_acc<Component>(e, access_read_only());
+		return _do_acc<Component>(e, base::access_read_only);
 	}
 
 	template <typename Component>
 	Component* rw(const Entity& e)
 	{
-		return _do_acc<Component>(e, access_read_write());
+		return _do_acc<Component>(e, base::access_read_write);
 	}
 
 	template <typename ... C, typename Func>

@@ -9,6 +9,7 @@
 #ifndef EAGINE_ECS_STORAGE_BASIC_1408161720_HPP
 #define EAGINE_ECS_STORAGE_BASIC_1408161720_HPP
 
+#include <eagine/base/access_type.hpp>
 #include <eagine/ecs/component.hpp>
 #include <eagine/ecs/component_storage.hpp>
 
@@ -54,12 +55,12 @@ public:
 		return _ents.copy(key);
 	}
 
-	Component* access(key_t key, access_read_write)
+	Component* access(key_t key, base::access_read_write_t)
 	{
 		return _ents.access(key);
 	}
 
-	const Component* access(key_t key, access_read_only)
+	const Component* access(key_t key, base::access_read_only_t)
 	{
 		return _ents.access(key);
 	}

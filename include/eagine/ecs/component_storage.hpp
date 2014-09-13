@@ -37,8 +37,8 @@ struct base_component_storage
 template <typename Component>
 struct component_storage : base_component_storage
 {
-	virtual Component* access(key_t key, access_read_write) = 0;
-	virtual const Component* access(key_t key, access_read_only) = 0;
+	virtual Component* access(key_t key, base::access_read_write_t) = 0;
+	virtual const Component* access(key_t key, base::access_read_only_t) = 0;
 
 	virtual key_t insert(Component&& component) = 0;
 	virtual key_t replace(key_t key, Component&& component) = 0;

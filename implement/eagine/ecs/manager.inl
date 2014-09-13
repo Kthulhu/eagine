@@ -123,7 +123,7 @@ _get_cmp_key(const Entity& e, component_uid cid) const
 
 	if(p_eck_map != _eck_maps.end())
 	{
-		auto& eck_map = p_eck_map->second;
+		auto& eck_map = *p_eck_map;
 		if(eck_map)
 		{
 			return eck_map->get(e);
@@ -143,7 +143,7 @@ _do_add(const Entity& e, Component&& component)
 
 	if(p_eck_map != _eck_maps.end())
 	{
-		auto& eck_map = p_eck_map->second;
+		auto& eck_map = *p_eck_map;
 		if(eck_map)
 		{
 			component_key_t key = eck_map->get(e);
@@ -151,7 +151,7 @@ _do_add(const Entity& e, Component&& component)
 			auto p_storage = _storages.find(cid);
 			assert(p_storage != _storages.end());
 
-			auto& base_storage = p_storage->second;
+			auto& base_storage = *p_storage;
 			assert(base_storage);
 
 			typedef component_storage<Component> cs_t;
@@ -186,7 +186,7 @@ _do_rem(const Entity& e)
 
 	if(p_eck_map != _eck_maps.end())
 	{
-		auto& eck_map = p_eck_map->second;
+		auto& eck_map = *p_eck_map;
 		if(eck_map)
 		{
 			component_key_t key = eck_map->remove(e);
@@ -196,7 +196,7 @@ _do_rem(const Entity& e)
 				auto p_storage = _storages.find(cid);
 				assert(p_storage != _storages.end());
 
-				auto& bs = p_storage->second;
+				auto& bs = *p_storage;
 				assert(bs);
 
 				typedef component_storage<Component> cs_t;
@@ -227,7 +227,7 @@ _do_acc(const Entity& e, Access acc)
 		auto p_storage = _storages.find(cid);
 		assert(p_storage != _storages.end());
 
-		auto& bs = p_storage->second;
+		auto& bs = *p_storage;
 		assert(bs);
 
 		typedef component_storage<Component> cs_t;

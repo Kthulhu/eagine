@@ -29,9 +29,9 @@ public:
 		return false;
 	}
 
-	key_t get(const Entity& entity, key_t nil)
+	key_t get(const Entity& entity)
 	{
-		return _map.get(entity, nil);
+		return _map.get(entity, nil_component_key);
 	}
 
 	std::size_t size(void)
