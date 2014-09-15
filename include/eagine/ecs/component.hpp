@@ -26,17 +26,8 @@ typedef std::size_t component_uid;
 
 class component_uid_getter
 {
-private:
-	static component_uid& _curr_uid(void)
-	{
-		static component_uid uid = 0;
-		return uid;
-	}
-public:
-	static component_uid new_uid(void)
-	{
-		return _curr_uid()++;
-	}
+private:static component_uid& _curr_uid(void);
+public: static component_uid new_uid(void);
 };
 
 template <typename Derived>
@@ -108,9 +99,13 @@ struct entity_component_map
 
 	virtual bool read_only(void) const = 0;
 
-	virtual key_t get(const Entity& entity) = 0;
-
 	virtual std::size_t size(void) = 0;
+
+	virtual const Entity& entity(std::size_t pos) = 0;
+
+	virtual key_t key(std::size_t pos) = 0;
+
+	virtual key_t find(const Entity& entity) = 0;
 
 	virtual void reserve(std::size_t count) = 0;
 
@@ -121,6 +116,10 @@ struct entity_component_map
 
 } // namespace ecs
 } // namespace EAGine
+
+#if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
+#include <eagine/ecs/component.inl>
+#endif
 
 #endif //include guard
 

@@ -12,7 +12,6 @@
 #include <eagine/base/guid.hpp>
 #include <eagine/base/error.hpp>
 //------------------
-#include <eagine/base/flat_map.hpp>
 
 namespace EAGine {
 namespace ecs {
@@ -61,6 +60,8 @@ int main(void)
 			base::make_shared<normal_component_storage<cmp_2>>()
 		);
 
+		std::cout << sizeof(base::guid) << std::endl;
+
 		base::guid e1, e2, e3;
 
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
@@ -69,6 +70,13 @@ int main(void)
 		m.add(e1, cmp_1(123));
 		m.add(e2, cmp_1(234), cmp_2(45.67));
 		m.add(e3, cmp_2(78.9));
+
+		m.for_each<cmp_1, cmp_2>(
+			[](const base::guid& e, const cmp_1* c1, const cmp_2* c2) -> void
+			{
+				std::cout << e << "|" << c1 << "|" << c2 << std::endl;
+			}
+		);
 
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;

@@ -22,8 +22,8 @@ template <typename T, typename I = std::uint32_t>
 class indexed_array
 {
 private:
-	typed_memory_block<const byte> _data;
-	typed_memory_block<const I> _index;
+	typed_memory_range<const byte> _data;
+	typed_memory_range<const I> _index;
 public:
 	indexed_array(
 		const const_memory_block& data,
@@ -48,7 +48,7 @@ public:
 
 		I offs = _index.at(pos);
 
-		const void* addr = _data.address()+offs;
+		const void* addr = _data.begin()+offs;
 		const T* ptr = static_cast<const T*>(addr);
 
 		return *ptr;

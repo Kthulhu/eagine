@@ -115,6 +115,24 @@ _does_know_cmp_type(component_uid cid) const
 }
 
 template <typename Entity>
+inline std::size_t
+manager<Entity>::
+_get_cmp_cnt(component_uid cid) const
+{
+	auto p_eck_map = _eck_maps.find(cid);
+
+	if(p_eck_map != _eck_maps.end())
+	{
+		auto& eck_map = *p_eck_map;
+		if(eck_map)
+		{
+			return eck_map->size();
+		}
+	}
+	return 0;
+}
+
+template <typename Entity>
 inline component_key_t
 manager<Entity>::
 _get_cmp_key(const Entity& e, component_uid cid) const
@@ -126,7 +144,7 @@ _get_cmp_key(const Entity& e, component_uid cid) const
 		auto& eck_map = *p_eck_map;
 		if(eck_map)
 		{
-			return eck_map->get(e);
+			return eck_map->find(e);
 		}
 	}
 	return nil_component_key;
@@ -146,7 +164,7 @@ _do_add(const Entity& e, Component&& component)
 		auto& eck_map = *p_eck_map;
 		if(eck_map)
 		{
-			component_key_t key = eck_map->get(e);
+			component_key_t key = eck_map->find(e);
 
 			auto p_storage = _storages.find(cid);
 			assert(p_storage != _storages.end());
@@ -246,6 +264,99 @@ _do_acc(const Entity& e, Access acc)
 		return storage->access(key, acc);
 	}
 	return nullptr;
+}
+
+template <typename Entity>
+template <typename ... C, typename Func>
+inline void
+manager<Entity>::
+_for_each_e_ptr(Func func)
+{
+	const std::size_t N = sizeof...(C);
+
+	base::array<std::size_t, N> poss = {
+		meta::instead_of<C, std::size_t>::value(0)...
+	};
+	const base::array<std::size_t, N> sizs = {
+		_get_cmp_cnt(get_component_uid<C>())...
+	};
+	base::array<entity_component_map<Entity>*, N> ecks = {
+		_eck_maps.find(get_component_uid<C>())->get()...
+	};
+
+	Entity e = nil_entity<Entity>();
+
+	std::size_t c;
+	for(c=0; c<N; ++c)
+	{
+		if(poss[c] < sizs[c])
+		{
+			e = ecks[c]->entity(0);
+			break;
+		}
+	}
+
+	assert(!(c > N));
+	if(c == N) return;
+
+	for(; c<N; ++c)
+	{
+		if(poss[c] < sizs[c])
+		{
+			if(e >= ecks[c]->entity(0))
+			{
+				e = ecks[c]->entity(0);
+			}
+		}
+	}
+
+	_do_call_e_ptr<C...>(e, func);
+
+	while(true)
+	{
+		Entity m = e;
+
+		for(c=0; c<N; ++c)
+		{
+			if(poss[c] < sizs[c])
+			{
+				if(ecks[c]->entity(poss[c]) <= m)
+				{
+					++poss[c];
+				}
+				if(poss[c] < sizs[c])
+				{
+					m = ecks[c]->entity(poss[c]);
+					break;
+				}
+			}
+		}
+
+		assert(!(c > N));
+		if(c == N) break;
+
+		for(; c<N; ++c)
+		{
+			if(poss[c] < sizs[c])
+			{
+				if(ecks[c]->entity(poss[c]) <= e)
+				{
+					++poss[c];
+				}
+				if(poss[c] < sizs[c])
+				{
+					if(ecks[c]->entity(poss[c]) < m)
+					{
+						m = ecks[c]->entity(poss[c]);
+					}
+				}
+			}
+		}
+
+		e = m;
+
+		_do_call_e_ptr<C...>(e, func);
+	}
 }
 
 } // namespace ecs

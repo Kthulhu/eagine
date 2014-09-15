@@ -31,6 +31,8 @@ struct base_component_storage
 	virtual void add_ref(key_t key) = 0;
 	virtual bool release(key_t key) = 0;
 
+	// TODO: is referenced / can be unloaded ?
+
 	virtual key_t copy(key_t key) = 0;
 };
 

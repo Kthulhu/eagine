@@ -36,14 +36,14 @@ int main(int argc, const char* argv[])
 
 		file_content fc(argv[0]);
 
-		const_byte_block cbb = fc.block();
+		const_byte_range cbr = fc.block();
 
-		std::cout << cbb.size() << std::endl;
+		std::cout << cbr.size() << std::endl;
 
 		file_content vsd("varstr.dat");
 		file_content vsi("varstr.idx");
 
-		indexed_array<cvarstr> va(vsd, vsi);
+		indexed_array<cvarstr> va(vsd.block(), vsi.block());
 
 		std::cout << va.size() << std::endl;
 

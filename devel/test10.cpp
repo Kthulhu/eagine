@@ -7,15 +7,13 @@
  */
 #include <iostream>
 #include <cstdlib>
-#include <eagine/base/flat_map.hpp>
+#include <eagine/base/flat_dict.hpp>
 //------------------
 #include <eagine/base/error.hpp>
 //------------------
 #include <eagine/base/guid.hpp>
 #include <eagine/base/string.hpp>
 //------------------
-#include <eagine/base/vector.hpp>
-#include <eagine/base/alloc.hpp>
 #include <cstddef>
 #include <memory>
 #include <cassert>
@@ -36,7 +34,7 @@ int main(void)
 	{
 		using namespace EAGine::base;
 
-		typedef flat_map<guid, std::size_t> vm_t;
+		typedef flat_dict<guid, std::size_t> vm_t;
 		vm_t vm;
 
 		guid g1, g2, g3, g4;

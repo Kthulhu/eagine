@@ -92,12 +92,6 @@ public:
 	{
 		return memory_block(address(), size());
 	}
-
-	template <typename Ptr>
-	operator basic_memory_block<Ptr> (void) const
-	{
-		return basic_memory_block<Ptr>(address(), size());
-	}
 };
 
 } // namespace base

@@ -11,8 +11,10 @@
 
 #include <eagine/base/memory.hpp>
 #include <eagine/base/string.hpp>
+#include <eagine/base/array.hpp>
 #include <eagine/base/type_name.hpp>
 #include <eagine/meta/type_traits.hpp>
+#include <eagine/meta/instead_of.hpp>
 #include <eagine/ecs/component.hpp>
 #include <eagine/ecs/component_storage.hpp>
 #include <map>
@@ -20,6 +22,12 @@
 
 namespace EAGine {
 namespace ecs {
+
+template <typename Entity>
+inline Entity nil_entity(void)
+{
+	return Entity::nil();
+}
 
 template <typename Entity>
 class manager
@@ -50,6 +58,8 @@ private:
 
 	bool _does_know_cmp_type(component_uid cid) const;
 
+	std::size_t _get_cmp_cnt(component_uid cid) const;
+
 	component_key_t _get_cmp_key(const Entity& e, component_uid) const;
 
 	template <typename Component>
@@ -63,20 +73,35 @@ private:
 	_do_acc(const Entity& e, Access acc);
 
 	template <typename Func, typename ... C>
-	void _do_call(const Entity&, Func& func, C* ... cps)
+	void _do_call_ref(const Entity&, Func& func, C* ... cps)
 	{
 		func(*cps...);
 	}
 
 	template <typename C0, typename ... Cn, typename Func, typename ... C>
-	void _do_call(const Entity& e, Func& func, C* ... cps)
+	void _do_call_ref(const Entity& e, Func& func, C* ... cps)
 	{
 		typedef typename meta::remove_const<
 			typename meta::remove_reference<C0>::type
 		>::type adjC0;
 		auto* cp = _do_acc<adjC0>(e, typename base::access<C0>::type());
-		if(cp) _do_call<Cn...>(e, func, cps..., cp);
+		if(cp) _do_call_ref<Cn...>(e, func, cps..., cp);
 	}
+
+	template <typename ... C, typename Func>
+	void _do_call_e_ptr(const Entity& e, Func& func)
+	{
+		func(e,
+			_do_acc<
+				typename meta::remove_const<
+					typename meta::remove_reference<C>::type
+				>::type
+			>(e, typename base::access<C>::type())...
+		);
+	}
+
+	template <typename ... C, typename Func>
+	void _for_each_e_ptr(Func func);
 public:
 	typedef Entity entity_type;
 
@@ -149,13 +174,19 @@ public:
 	template <typename ... C, typename Func>
 	void for_one(const Entity& e, Func func)
 	{
-		_do_call<C...>(e, func);
+		_do_call_ref<C...>(e, func);
 	}
 
 	template <typename ... C>
 	void for_one(const Entity& e, base::function<void(C...)> func)
 	{
-		_do_call<C...>(e, func);
+		_do_call_ref<C...>(e, func);
+	}
+
+	template <typename ... C, typename Func>
+	void for_each(Func func)
+	{
+		_for_each_e_ptr<C...>(func); // TODO
 	}
 };
 

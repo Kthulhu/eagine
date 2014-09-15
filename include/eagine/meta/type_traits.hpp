@@ -18,7 +18,9 @@ namespace meta {
 using ::std::integral_constant;
 using ::std::true_type;
 using ::std::false_type;
+using ::std::conditional;
 using ::std::enable_if;
+using ::std::is_const;
 using ::std::add_const;
 using ::std::remove_const;
 using ::std::remove_reference;

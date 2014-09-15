@@ -1,14 +1,14 @@
 /**
- *  @file eagine/base/flat_map.hpp
- *  @brief Flat map.
+ *  @file eagine/base/flat_dict.hpp
+ *  @brief Flat dict.
  *
  *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef EAGINE_BASE_FLAT_MAP_1308281038_HPP
-#define EAGINE_BASE_FLAT_MAP_1308281038_HPP
+#ifndef EAGINE_BASE_FLAT_DICT_1308281038_HPP
+#define EAGINE_BASE_FLAT_DICT_1308281038_HPP
 
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/vector.hpp>
@@ -20,13 +20,109 @@
 namespace EAGine {
 namespace base {
 
+template <typename Key, typename Val, typename KeyIter, typename ValIter>
+class const_flat_range_dict
+{
+private:
+	KeyIter _bkeys, _ekeys;
+	ValIter _bvals, _evals;
+
+	KeyIter _klb(const Key& key) const
+	{
+		using ::std::lower_bound;
+		return lower_bound(_bkeys, _ekeys, key);
+	}
+
+	std::size_t _koffs(KeyIter pos) const
+	{
+		using ::std::distance;
+		return distance(_bkeys, pos);
+	}
+public:
+	const_flat_range_dict(
+		KeyIter bkeys, KeyIter ekeys,
+		ValIter bvals, ValIter evals
+	): _bkeys(bkeys)
+	 , _ekeys(ekeys)
+	 , _bvals(bvals)
+	 , _evals(evals)
+	{ }
+
+	std::size_t size(void) const
+	{
+		using ::std::distance;
+		assert(distance(_bkeys, _ekeys) == distance(_bvals, _evals));
+		return distance(_bkeys, _ekeys);
+	}
+
+	bool empty(void) const
+	{
+		return size() == 0;
+	}
+
+	template <typename Func>
+	void for_each(Func func) const
+	{
+		KeyIter ikeys = _bkeys;
+		ValIter ivals = _bvals;
+
+		while(ikeys != _ekeys)
+		{
+			assert(ivals != _evals);
+			func(*ikeys, *ivals);
+			++ikeys;
+			++ivals;
+		}
+	}
+
+	const Key& key(std::size_t pos) const
+	{
+		assert(pos < size());
+		return *(_bkeys+pos);
+	}
+
+	const Val& val(std::size_t pos) const
+	{
+		assert(pos < size());
+		return *(_bvals+pos);
+	}
+
+	bool contains(const Key& key) const
+	{
+		auto pos = _klb(key);
+		return ((pos != _ekeys) && (*pos == key));
+	}
+
+	Val get(const Key& key, Val not_found) const
+	{
+		auto pos = _klb(key);
+
+		if((pos != _ekeys) && (*pos == key))
+		{
+			return *(_bvals+_koffs(pos));
+		}
+		else return not_found;
+	}
+
+	optional<Val> get(const Key& key) const
+	{
+		auto pos = _klb(key);
+
+		if((pos != _ekeys) && (*pos == key))
+		{
+			return optional<Val>(*(_bvals+_koffs(pos)));
+		}
+		else return optional<Val>();
+	}
+};
+
 template <
 	typename Key,
 	typename Val,
 	typename KAlloc = base::allocator<Key>,
 	typename VAlloc = base::allocator<Val>
 >
-class flat_map
+class flat_dict
 {
 private:
 	base::vector<Key, KAlloc> _keys;
@@ -66,9 +162,9 @@ private:
 		}
 	}
 public:
-	flat_map(void) = default;
+	flat_dict(void) = default;
 
-	flat_map(const KAlloc& k_alloc, const VAlloc& v_alloc)
+	flat_dict(const KAlloc& k_alloc, const VAlloc& v_alloc)
 	 : _keys(k_alloc)
 	 , _vals(v_alloc)
 	{ }
@@ -179,6 +275,18 @@ public:
 		auto pos = _klb(key);
 
 		return ((pos != _keys.end()) && (*pos == key));
+	}
+
+	const Key& key(std::size_t pos) const
+	{
+		assert(pos < _keys.size());
+		return _keys.at(pos);
+	}
+
+	const Val& val(std::size_t pos) const
+	{
+		assert(pos < _vals.size());
+		return _vals.at(pos);
 	}
 
 	Val get(const Key& key, Val not_found) const

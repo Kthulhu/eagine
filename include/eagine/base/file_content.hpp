@@ -40,12 +40,6 @@ public:
 	{
 		return const_memory_block(data(), size());
 	}
-
-	template <typename Ptr>
-	operator basic_memory_block<Ptr> (void) const
-	{
-		return basic_memory_block<Ptr>(data(), size());
-	}
 };
 
 } // namespace base
