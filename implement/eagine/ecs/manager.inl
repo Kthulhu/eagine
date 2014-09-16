@@ -11,6 +11,7 @@
 #include <eagine/base/format.hpp>
 #include <eagine/base/locale.hpp>
 #include <eagine/base/error.hpp>
+#include <eagine/base/type_to_value.hpp>
 
 namespace EAGine {
 namespace ecs {
@@ -267,6 +268,53 @@ _do_acc(const Entity& e, Access acc)
 }
 
 template <typename Entity>
+template <typename Component, typename Access>
+inline typename Access::template result<Component>::type*
+manager<Entity>::
+_do_acc(
+	const Entity& e,
+	Access acc,
+	base_component_storage* bs,
+	component_key_t key
+)
+{
+	if(key != nil_component_key)
+	{
+		assert(bs);
+
+		typedef component_storage<Component> cs_t;
+
+		assert(dynamic_cast<cs_t*>(bs));
+
+		cs_t* storage = static_cast<cs_t*>(bs);
+
+		return storage->access(key, acc);
+	}
+	return nullptr;
+}
+
+template <typename Entity>
+template <typename ... C, typename Func, typename CS, typename CK>
+inline void 
+manager<Entity>::
+_do_call_e_ptr(const Entity& entity, Func& func, const CS& stgs, const CK& keys)
+{
+	func(
+		entity,
+		_do_acc<
+			typename meta::remove_const<
+				typename meta::remove_reference<C>::type
+			>::type
+		>(
+			entity,
+			typename base::access<C>::type(),
+			stgs.template ref<C>(),
+			keys.template ref<C>()
+		)...
+	);
+}
+
+template <typename Entity>
 template <typename ... C, typename Func>
 inline void
 manager<Entity>::
@@ -283,6 +331,10 @@ _for_each_e_ptr(Func func)
 	base::array<entity_component_map<Entity>*, N> ecks = {
 		_eck_maps.find(get_component_uid<C>())->get()...
 	};
+	base::type_to_value<base_component_storage*, C...> stgs(
+		_storages.find(get_component_uid<C>())->get()...
+	);
+	base::type_to_value<component_key_t, C...> keys;
 
 	Entity e = nil_entity<Entity>();
 
@@ -291,8 +343,13 @@ _for_each_e_ptr(Func func)
 	{
 		if(poss[c] < sizs[c])
 		{
-			e = ecks[c]->entity(0);
+			e = ecks[c]->entity(poss[c]);
+			keys[c] = ecks[c]->key(poss[c]);
 			break;
+		}
+		else
+		{
+			keys[c] = nil_component_key;
 		}
 	}
 
@@ -303,14 +360,32 @@ _for_each_e_ptr(Func func)
 	{
 		if(poss[c] < sizs[c])
 		{
-			if(e >= ecks[c]->entity(0))
+			const Entity& te = ecks[c]->entity(poss[c]);
+			if(e > te)
 			{
-				e = ecks[c]->entity(0);
+				e = te;
+				keys[c] = ecks[c]->key(poss[c]);
+				for(std::size_t pc=0; pc<c; ++pc)
+				{
+					keys[pc] = nil_component_key;
+				}
 			}
+			else if(e == te)
+			{
+				keys[c] = ecks[c]->key(poss[c]);
+			}
+			else
+			{
+				keys[c] = nil_component_key;
+			}
+		}
+		else
+		{
+			keys[c] = nil_component_key;
 		}
 	}
 
-	_do_call_e_ptr<C...>(e, func);
+	_do_call_e_ptr<C...>(e, func, stgs, keys);
 
 	while(true)
 	{
@@ -320,15 +395,24 @@ _for_each_e_ptr(Func func)
 		{
 			if(poss[c] < sizs[c])
 			{
-				if(ecks[c]->entity(poss[c]) <= m)
+				if(e >= ecks[c]->entity(poss[c]))
 				{
 					++poss[c];
 				}
 				if(poss[c] < sizs[c])
 				{
 					m = ecks[c]->entity(poss[c]);
+					keys[c] = ecks[c]->key(poss[c]);
 					break;
 				}
+				else
+				{
+					keys[c] = nil_component_key;
+				}
+			}
+			else
+			{
+				keys[c] = nil_component_key;
 			}
 		}
 
@@ -339,23 +423,47 @@ _for_each_e_ptr(Func func)
 		{
 			if(poss[c] < sizs[c])
 			{
-				if(ecks[c]->entity(poss[c]) <= e)
+				if(e >= ecks[c]->entity(poss[c]))
 				{
 					++poss[c];
 				}
 				if(poss[c] < sizs[c])
 				{
-					if(ecks[c]->entity(poss[c]) < m)
+					const Entity& te = ecks[c]->entity(poss[c]);
+					if(m > te)
 					{
 						m = ecks[c]->entity(poss[c]);
+						keys[c] = ecks[c]->key(poss[c]);
+
+						for(std::size_t pc=0; pc<c; ++pc)
+						{
+							keys[pc] =
+								nil_component_key;
+						}
+					}
+					else if(m == te)
+					{
+						keys[c] = ecks[c]->key(poss[c]);
+					}
+					else
+					{
+						keys[c] = nil_component_key;
 					}
 				}
+				else
+				{
+					keys[c] = nil_component_key;
+				}
+			}
+			else
+			{
+				keys[c] = nil_component_key;
 			}
 		}
 
 		e = m;
 
-		_do_call_e_ptr<C...>(e, func);
+		_do_call_e_ptr<C...>(e, func, stgs, keys);
 	}
 }
 

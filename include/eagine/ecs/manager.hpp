@@ -72,6 +72,15 @@ private:
 	typename Access::template result<Component>::type*
 	_do_acc(const Entity& e, Access acc);
 
+	template <typename Component, typename Access>
+	typename Access::template result<Component>::type*
+	_do_acc(
+		const Entity& e,
+		Access acc,
+		base_component_storage* bs,
+		component_key_t key
+	);
+
 	template <typename Func, typename ... C>
 	void _do_call_ref(const Entity&, Func& func, C* ... cps)
 	{
@@ -88,17 +97,8 @@ private:
 		if(cp) _do_call_ref<Cn...>(e, func, cps..., cp);
 	}
 
-	template <typename ... C, typename Func>
-	void _do_call_e_ptr(const Entity& e, Func& func)
-	{
-		func(e,
-			_do_acc<
-				typename meta::remove_const<
-					typename meta::remove_reference<C>::type
-				>::type
-			>(e, typename base::access<C>::type())...
-		);
-	}
+	template <typename ... C, typename Func, typename CS, typename CK>
+	void _do_call_e_ptr(const Entity&, Func&, const CS&, const CK&);
 
 	template <typename ... C, typename Func>
 	void _for_each_e_ptr(Func func);

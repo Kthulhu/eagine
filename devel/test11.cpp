@@ -67,6 +67,10 @@ int main(void)
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;
 
+		std::cout << e1 << std::endl;
+		std::cout << e2 << std::endl;
+		std::cout << e3 << std::endl;
+
 		m.add(e1, cmp_1(123));
 		m.add(e2, cmp_1(234), cmp_2(45.67));
 		m.add(e3, cmp_2(78.9));
