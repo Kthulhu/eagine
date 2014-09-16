@@ -40,8 +40,94 @@ void mgr_handle_cmp_not_reg(const base::string& c_name)
 void mgr_handle_cmp_is_reg(const base::string&);
 void mgr_handle_cmp_not_reg(const base::string&);
 #endif
+
+template <typename E, typename C>
+struct mgr_adder
+{
+	E _e;
+	C _c;
+
+	mgr_adder(const E& e, C&& c)
+	 : _e(e)
+	 , _c(std::move(c))
+	{ }
+
+	void operator () (manager<E>& m)
+	{
+		m.add(_e, std::move(_c));
+	}
+};
+
 } // namespace detail
 
+//
+// modifications
+//
+template <typename Entity>
+template <typename Component>
+inline void
+modifications<Entity>::
+add_later(const Entity& e, Component&& c)
+{
+	_ops.emplace_back(
+		detail::mgr_adder<Entity, Component>(e, std::move(c))
+	);
+}
+
+template <typename Entity>
+template <typename Component>
+inline void
+modifications<Entity>::
+swap_later(const Entity& e1, const Entity& e2)
+{
+	_ops.emplace_back(
+		[=](manager<Entity>& m) -> void
+		{
+			m.template swap<Component>(e1, e2);
+		}
+	);
+}
+
+template <typename Entity>
+template <typename Component>
+inline void
+modifications<Entity>::
+remove_later(const Entity& e)
+{
+	_ops.emplace_back(
+		[=](manager<Entity>& m) -> void
+		{
+			m.template remove<Component>(e);
+		}
+	);
+}
+
+template <typename Entity>
+inline void
+modifications<Entity>::
+execute_later(base::function<void(manager<Entity>&)>&& op)
+{
+	_ops.push_back(std::move(op));
+}
+
+template <typename Entity>
+inline void
+modifications<Entity>::
+commit(manager<Entity>& m)
+{
+	if(!_ops.empty())
+	{
+		for(auto& op : _ops)
+		{
+			op(m);
+		}
+		_ops.clear();
+	}
+}
+
+//
+// manager
+//
 template <typename Entity>
 inline void
 manager<Entity>::
@@ -198,12 +284,49 @@ _do_add(const Entity& e, Component&& component)
 }
 
 template <typename Entity>
+inline bool
+manager<Entity>::
+_do_swp(
+	const Entity& e1,
+	const Entity& e2,
+	component_uid cid,
+	base::string(*get_name)(void)
+)
+{
+	auto p_eck_map = _eck_maps.find(cid);
+
+	if(p_eck_map != _eck_maps.end())
+	{
+		auto& eck_map = *p_eck_map;
+		if(eck_map)
+		{
+			eck_map->swap(e1, e2);
+			return true;
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(get_name?get_name():base::string());
+	return false;
+}
+
+template <typename Entity>
 template <typename Component>
 inline bool
 manager<Entity>::
-_do_rem(const Entity& e)
+_do_swp(const Entity& e1, const Entity& e2)
 {
 	component_uid cid = get_component_uid<Component>();
+	return _do_swp(e1, e2, cid, &base::type_name<Component>);
+}
+
+template <typename Entity>
+inline bool
+manager<Entity>::
+_do_rem(
+	const Entity& e,
+	component_uid cid,
+	base::string(*get_name)(void)
+)
+{
 	auto p_eck_map = _eck_maps.find(cid);
 
 	if(p_eck_map != _eck_maps.end())
@@ -218,24 +341,27 @@ _do_rem(const Entity& e)
 				auto p_storage = _storages.find(cid);
 				assert(p_storage != _storages.end());
 
-				auto& bs = *p_storage;
-				assert(bs);
+				auto& base_storage = *p_storage;
+				assert(base_storage);
 
-				typedef component_storage<Component> cs_t;
-
-				assert(base::dynamic_pointer_cast<cs_t>(bs));
-
-				base::shared_ptr<cs_t> storage =
-					base::static_pointer_cast<cs_t>(bs);
-
-				storage->release(key);
+				base_storage->release(key);
 			}
 
 			return true;
 		}
 	}
-	detail::mgr_handle_cmp_not_reg(base::type_name<Component>());
+	detail::mgr_handle_cmp_not_reg(get_name?get_name():base::string());
 	return false;
+}
+
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_do_rem(const Entity& e)
+{
+	component_uid cid = get_component_uid<Component>();
+	return _do_rem(e, cid, &base::type_name<Component>);
 }
 
 template <typename Entity>
@@ -297,9 +423,16 @@ template <typename Entity>
 template <typename ... C, typename Func, typename CS, typename CK>
 inline void 
 manager<Entity>::
-_do_call_e_ptr(const Entity& entity, Func& func, const CS& stgs, const CK& keys)
+_do_call_m_e_cp(
+	Func& func,
+	modifications<Entity>& mods,
+	const Entity& entity,
+	const CS& stgs,
+	const CK& keys
+)
 {
 	func(
+		mods,
 		entity,
 		_do_acc<
 			typename meta::remove_const<
@@ -316,25 +449,27 @@ _do_call_e_ptr(const Entity& entity, Func& func, const CS& stgs, const CK& keys)
 
 template <typename Entity>
 template <typename ... C, typename Func>
-inline void
+inline manager<Entity>&
 manager<Entity>::
-_for_each_e_ptr(Func func)
+for_each_m_e_cp(Func func)
 {
 	const std::size_t N = sizeof...(C);
 
-	base::array<std::size_t, N> poss = {
+	base::array<std::size_t, N> poss = {{
 		meta::instead_of<C, std::size_t>::value(0)...
-	};
-	const base::array<std::size_t, N> sizs = {
+	}};
+	const base::array<std::size_t, N> sizs = {{
 		_get_cmp_cnt(get_component_uid<C>())...
-	};
-	base::array<entity_component_map<Entity>*, N> ecks = {
+	}};
+	base::array<entity_component_map<Entity>*, N> ecks = {{
 		_eck_maps.find(get_component_uid<C>())->get()...
+	}};
+	base::type_to_value<base_component_storage*, C...> stgs = {
+		{_storages.find(get_component_uid<C>())->get()}...
 	};
-	base::type_to_value<base_component_storage*, C...> stgs(
-		_storages.find(get_component_uid<C>())->get()...
-	);
 	base::type_to_value<component_key_t, C...> keys;
+
+	modifications<Entity> mods;
 
 	Entity e = nil_entity<Entity>();
 
@@ -354,7 +489,7 @@ _for_each_e_ptr(Func func)
 	}
 
 	assert(!(c > N));
-	if(c == N) return;
+	if(c == N) return *this;
 
 	for(; c<N; ++c)
 	{
@@ -385,7 +520,7 @@ _for_each_e_ptr(Func func)
 		}
 	}
 
-	_do_call_e_ptr<C...>(e, func, stgs, keys);
+	_do_call_m_e_cp<C...>(func, mods, e, stgs, keys);
 
 	while(true)
 	{
@@ -463,8 +598,100 @@ _for_each_e_ptr(Func func)
 
 		e = m;
 
-		_do_call_e_ptr<C...>(e, func, stgs, keys);
+		_do_call_m_e_cp<C...>(func, mods, e, stgs, keys);
 	}
+	mods.commit(*this);
+	return *this;
+}
+
+template <typename Entity>
+template <typename ... C>
+inline manager<Entity>&
+manager<Entity>::
+for_each(
+	const base::function<void(
+		modifications<Entity>&,
+		const Entity&,
+		C*...
+	)>& func
+)
+{
+	for_each_m_e_cp<
+		typename meta::conditional<
+			meta::is_const<C>::value,
+			const C&, C&
+		>::type...
+	>(func);
+	return *this;
+}
+
+template <typename Entity>
+template <typename ... C>
+inline manager<Entity>&
+manager<Entity>::
+for_each(
+	const base::function<void(
+		modifications<Entity>&,
+		const Entity&,
+		C...
+	)>& func
+)
+{
+	auto adapted = [&func](
+		modifications<Entity>& m,
+		const Entity& e, 
+		typename meta::remove_reference<C>::type* ... cp
+	) -> void
+	{
+		if(_count_true(cp...) == sizeof...(C))
+		{
+			func(m, e, *cp...);
+		}
+	};
+	for_each_m_e_cp<C...>(adapted);
+	return *this;
+}
+
+template <typename Entity>
+template <typename ... C>
+inline manager<Entity>&
+manager<Entity>::
+for_each(const base::function<void(const Entity&, C...)>& func)
+{
+	auto adapted = [&func](
+		modifications<Entity>&,
+		const Entity& e, 
+		typename meta::remove_reference<C>::type* ... cp
+	) -> void
+	{
+		if(_count_true(cp...) == sizeof...(C))
+		{
+			func(e, *cp...);
+		}
+	};
+	for_each_m_e_cp<C...>(adapted);
+	return *this;
+}
+
+template <typename Entity>
+template <typename ... C>
+inline manager<Entity>&
+manager<Entity>::
+for_each(const base::function<void(C...)>& func)
+{
+	auto adapted = [&func](
+		modifications<Entity>&,
+		const Entity&, 
+		typename meta::remove_reference<C>::type* ... cp
+	) -> void
+	{
+		if(_count_true(cp...) == sizeof...(C))
+		{
+			func(*cp...);
+		}
+	};
+	for_each_m_e_cp<C...>(adapted);
+	return *this;
 }
 
 } // namespace ecs

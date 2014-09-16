@@ -15,6 +15,7 @@
 #include <eagine/base/type_name.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/instead_of.hpp>
+#include <eagine/ecs/entity.hpp>
 #include <eagine/ecs/component.hpp>
 #include <eagine/ecs/component_storage.hpp>
 #include <map>
@@ -24,10 +25,27 @@ namespace EAGine {
 namespace ecs {
 
 template <typename Entity>
-inline Entity nil_entity(void)
+class manager;
+
+template <typename Entity>
+class modifications 
 {
-	return Entity::nil();
-}
+private:
+	base::vector<base::function<void(manager<Entity>&)>> _ops;
+public:
+	template <typename Component>
+	void add_later(const Entity& e, Component&& c);
+
+	template <typename Component>
+	void swap_later(const Entity& e1, const Entity& e2);
+
+	template <typename Component>
+	void remove_later(const Entity& e);
+
+	void execute_later(base::function<void(manager<Entity>&)>&& op);
+
+	void commit(manager<Entity>& m);
+};
 
 template <typename Entity>
 class manager
@@ -41,8 +59,24 @@ private:
 		base::shared_ptr<base_component_storage>
 	> _storages;
 
+	template <typename C>
+	struct _bare_c : meta::remove_const<
+		typename meta::remove_reference<C>::type
+	>{ };
+
 	template <typename ... P>
 	static void _eat(P ...) { }
+
+	static unsigned _count_true(void)
+	{
+		return 0;
+	}
+
+	template <typename T, typename ... P>
+	static unsigned _count_true(T v, P ... p)
+	{
+		return (bool(v)?1:0)+_count_true(p...);
+	}
 
 	void _do_reg_cmp_type(
 		component_uid cid,
@@ -65,6 +99,18 @@ private:
 	template <typename Component>
 	bool _do_add(const Entity& e, Component&& component);
 
+	bool _do_swp(
+		const Entity& e1,
+		const Entity& e2,
+		component_uid,
+		base::string(*)(void)
+	);
+
+	template <typename Component>
+	bool _do_swp(const Entity& e1, const Entity& e2);
+
+	bool _do_rem(const Entity& e, component_uid, base::string(*)(void));
+
 	template <typename Component>
 	bool _do_rem(const Entity& e);
 
@@ -82,26 +128,27 @@ private:
 	);
 
 	template <typename Func, typename ... C>
-	void _do_call_ref(const Entity&, Func& func, C* ... cps)
+	void _do_call_cr(Func& func, const Entity&, C* ... cps)
 	{
 		func(*cps...);
 	}
 
 	template <typename C0, typename ... Cn, typename Func, typename ... C>
-	void _do_call_ref(const Entity& e, Func& func, C* ... cps)
+	void _do_call_cr(Func& func, const Entity& e, C* ... cps)
 	{
-		typedef typename meta::remove_const<
-			typename meta::remove_reference<C0>::type
-		>::type adjC0;
+		typedef typename _bare_c<C0>::type adjC0;
 		auto* cp = _do_acc<adjC0>(e, typename base::access<C0>::type());
-		if(cp) _do_call_ref<Cn...>(e, func, cps..., cp);
+		if(cp) _do_call_cr<Cn...>(func, e, cps..., cp);
 	}
 
 	template <typename ... C, typename Func, typename CS, typename CK>
-	void _do_call_e_ptr(const Entity&, Func&, const CS&, const CK&);
-
-	template <typename ... C, typename Func>
-	void _for_each_e_ptr(Func func);
+	void _do_call_m_e_cp(
+		Func&,
+		modifications<Entity>&,
+		const Entity&,
+		const CS&,
+		const CK&
+	);
 public:
 	typedef Entity entity_type;
 
@@ -141,15 +188,30 @@ public:
 	}
 
 	template <typename ... C>
-	void add(const Entity& e, C&& ... components)
+	manager& add(const Entity& e, C&& ... components)
 	{
 		_eat(_do_add(e, std::move(components))...);
+		return *this;
 	}
 
 	template <typename ... C>
-	void remove(const Entity& e)
+	manager& swap(const Entity& e1, const Entity& e2)
+	{
+		_eat(_do_swp<C>(e1, e2)...);
+		return *this;
+	}
+
+	template <typename ... C>
+	manager& remove(const Entity& e)
 	{
 		_eat(_do_rem<C>(e)...);
+		return *this;
+	}
+
+	manager& remove(const Entity& e, component_uid cid)
+	{
+		_do_rem(e, cid, nullptr);
+		return *this;
 	}
 
 	template <typename Component>
@@ -172,22 +234,45 @@ public:
 	}
 
 	template <typename ... C, typename Func>
-	void for_one(const Entity& e, Func func)
+	manager& for_one_cr(const Entity& e, Func func)
 	{
-		_do_call_ref<C...>(e, func);
+		_do_call_cr<C...>(func, e);
+		return *this;
 	}
 
 	template <typename ... C>
-	void for_one(const Entity& e, base::function<void(C...)> func)
+	manager& for_one(const Entity& e, base::function<void(C...)>& func)
 	{
-		_do_call_ref<C...>(e, func);
+		_do_call_cr<C...>(func, e);
+		return *this;
 	}
 
 	template <typename ... C, typename Func>
-	void for_each(Func func)
-	{
-		_for_each_e_ptr<C...>(func); // TODO
-	}
+	manager& for_each_m_e_cp(Func func);
+
+	template <typename ... C>
+	manager& for_each(
+		const base::function<void(
+			modifications<Entity>&,
+			const Entity&,
+			C*...
+		)>& func
+	);
+
+	template <typename ... C>
+	manager& for_each(
+		const base::function<void(
+			modifications<Entity>&,
+			const Entity&,
+			C...
+		)>& func
+	);
+
+	template <typename ... C>
+	manager& for_each(const base::function<void(const Entity&, C...)>& func);
+
+	template <typename ... C>
+	manager& for_each(const base::function<void(C...)>& func);
 };
 
 } // namespace ecs

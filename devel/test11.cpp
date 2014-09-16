@@ -40,6 +40,9 @@ struct cmp_2
 	{ }
 };
 
+#define EAGINE_MAKE_FUNC(CAPTURE,RV,ARGS, DEF) \
+	EAGine::base::function<RV ARGS>(CAPTURE ARGS -> RV DEF)
+
 int main(void)
 {
 	using namespace EAGine;
@@ -70,17 +73,31 @@ int main(void)
 		std::cout << e1 << std::endl;
 		std::cout << e2 << std::endl;
 		std::cout << e3 << std::endl;
+		std::cout << std::endl;
 
 		m.add(e1, cmp_1(123));
 		m.add(e2, cmp_1(234), cmp_2(45.67));
 		m.add(e3, cmp_2(78.9));
+		m.swap<cmp_2>(e1, e2);
 
-		m.for_each<cmp_1, cmp_2>(
-			[](const base::guid& e, const cmp_1* c1, const cmp_2* c2) -> void
+		base::function<void(modifications<base::guid>&, const base::guid&, const cmp_1*, const cmp_2*)> f1 =
+			[](modifications<base::guid>& m, const base::guid& e, const cmp_1* c1, const cmp_2* c2) -> void
 			{
 				std::cout << e << "|" << c1 << "|" << c2 << std::endl;
-			}
+				if(!c2) m.add_later(e, cmp_2(0.123456789));
+			};
+
+		m.for_each(f1);
+		std::cout << std::endl;
+
+
+		m.for_each(
+			EAGINE_MAKE_FUNC([],void,(const base::guid& e, const cmp_1& c1, cmp_2& c2),
+			{
+				std::cout << e << "|" << c1.i << "|" << c2.d << std::endl;
+			})
 		);
+		std::cout << std::endl;
 
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;
@@ -92,16 +109,16 @@ int main(void)
 		std::cout << m.ro<cmp_1>(e2)->i << std::endl;
 		std::cout << m.ro<cmp_2>(e2)->d << std::endl;
 
-		std::function<void(const cmp_1&, cmp_2&)> func =
+		base::function<void(const cmp_1&, cmp_2&)> f2 =
 			[](const cmp_1& c1, cmp_2& c2) -> void
 			{
 				c2.d = c1.i * 0.1;
 			};
 
-		m.for_one(e2, func);
+		m.for_one(e2, f2);
 		std::cout << m.ro<cmp_1>(e2)->i << std::endl;
 
-		m.for_one<cmp_1, cmp_2>(
+		m.for_one_cr<cmp_1, cmp_2>(
 			e3,
 			[](const cmp_1& c1, const cmp_2& c2) -> void
 			{

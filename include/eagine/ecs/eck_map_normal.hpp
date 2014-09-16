@@ -63,6 +63,11 @@ public:
 	{
 		return _map.remove(entity, nil_component_key);
 	}
+
+	void swap(const Entity& e1, const Entity& e2)
+	{
+		_map.swap(e1, e2);
+	}
 };
 
 } // namespace ecs

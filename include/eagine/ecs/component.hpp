@@ -9,6 +9,7 @@
 #ifndef EAGINE_ECS_COMPONENT_1408161720_HPP
 #define EAGINE_ECS_COMPONENT_1408161720_HPP
 
+#include <eagine/meta/type_traits.hpp>
 #include <cstddef>
 #include <map>
 
@@ -41,9 +42,12 @@ public:
 	}
 };
 
-template <typename Component>
+template <typename X>
 inline component_uid get_component_uid(void)
 {
+	typedef typename meta::remove_const<
+		typename meta::remove_reference<X>::type
+	>::type Component;
 	return Component::uid();
 }
 
@@ -112,6 +116,8 @@ struct entity_component_map
 	virtual key_t store(const Entity& entity, key_t key) = 0;
 
 	virtual key_t remove(const Entity& entity) = 0;
+
+	virtual void swap(const Entity& e1, const Entity& e2) = 0;
 };
 
 } // namespace ecs

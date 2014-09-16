@@ -270,6 +270,50 @@ public:
 		return old;
 	}
 
+	void swap(const Key& k1, const Key& k2)
+	{
+		auto p1 = _klb(k1);
+		auto p2 = _klb(k2);
+
+		bool f1 = (!(p1 == _keys.end()) && !(k1 < *p1));
+		bool f2 = (!(p2 == _keys.end()) && !(k2 < *p2));
+
+		if(f1 && f2)
+		{
+			auto vp1 = _vit(p1);
+			auto vp2 = _vit(p2);
+
+			using std::swap;
+			swap(*vp1, *vp2);
+		}
+		else if(f1)
+		{
+			auto vp1 = _vit(p1);
+			Val val = std::move(*vp1);
+
+			_vals.erase(vp1);
+			_keys.erase(p1);
+
+			p2 = _klb(k2);
+
+			_vals.insert(_vit(p2), std::move(val));
+			_keys.insert(p2, k2);
+		}
+		else if(f2)
+		{
+			auto vp2 = _vit(p2);
+			Val val = std::move(*vp2);
+
+			_vals.erase(vp2);
+			_keys.erase(p2);
+
+			p1 = _klb(k1);
+
+			_vals.insert(_vit(p1), std::move(val));
+			_keys.insert(p1, k1);
+		}
+	}
+
 	bool contains(const Key& key) const
 	{
 		auto pos = _klb(key);
