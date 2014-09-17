@@ -11,6 +11,7 @@
 #define EAGINE_BASE_STRING_1308281038_HPP
 
 #include <eagine/meta/type_traits.hpp>
+#include <iosfwd>
 #include <vector>
 #include <array>
 #include <string>
@@ -435,6 +436,28 @@ operator = (const basic_string_ref<const Char>& str)
 {
 	_len = _copy_from(str.data(), str.size());
 	return *this;
+}
+
+template <typename Char>
+inline
+std::basic_ostream<Char>&
+operator << (
+	std::basic_ostream<Char>& out,
+	const basic_string_ref<Char>& sref
+)
+{
+	return out.write(sref.data(), sref.size());
+}
+
+template <typename Char>
+inline
+std::basic_ostream<Char>&
+operator << (
+	std::basic_ostream<Char>& out,
+	const basic_string_ref<const Char>& sref
+)
+{
+	return out.write(sref.data(), sref.size());
 }
 
 } // namespace base
