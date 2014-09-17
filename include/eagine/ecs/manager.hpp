@@ -99,6 +99,16 @@ private:
 	template <typename Component>
 	bool _do_add(const Entity& e, Component&& component);
 
+	bool _do_cpy(
+		const Entity& e1,
+		const Entity& e2,
+		component_uid,
+		base::string(*)(void)
+	);
+
+	template <typename Component>
+	bool _do_cpy(const Entity& e1, const Entity& e2);
+
 	bool _do_swp(
 		const Entity& e1,
 		const Entity& e2,
@@ -195,9 +205,28 @@ public:
 	}
 
 	template <typename ... C>
+	manager& copy(const Entity& e1, const Entity& e2)
+	{
+		_eat(_do_cpy<C>(e1, e2)...);
+		return *this;
+	}
+
+	manager& copy(const Entity& e1, const Entity& e2, component_uid cid)
+	{
+		_do_cpy(e1, e2, cid, nullptr);
+		return *this;
+	}
+
+	template <typename ... C>
 	manager& swap(const Entity& e1, const Entity& e2)
 	{
 		_eat(_do_swp<C>(e1, e2)...);
+		return *this;
+	}
+
+	manager& swap(const Entity& e1, const Entity& e2, component_uid cid)
+	{
+		_do_swp(e1, e2, cid, nullptr);
 		return *this;
 	}
 

@@ -70,14 +70,15 @@ int main(void)
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;
 
-		std::cout << e1 << std::endl;
-		std::cout << e2 << std::endl;
-		std::cout << e3 << std::endl;
+		std::cout << "e1: " << e1 << std::endl;
+		std::cout << "e2: " << e2 << std::endl;
+		std::cout << "e3: " << e3 << std::endl;
 		std::cout << std::endl;
 
 		m.add(e1, cmp_1(123));
 		m.add(e2, cmp_1(234), cmp_2(45.67));
 		m.add(e3, cmp_2(78.9));
+
 		m.swap<cmp_2>(e1, e2);
 
 		base::function<void(modifications<base::guid>&, const base::guid&, const cmp_1*, const cmp_2*)> f1 =
@@ -90,6 +91,7 @@ int main(void)
 		m.for_each(f1);
 		std::cout << std::endl;
 
+		m.copy<cmp_1>(e2, e3);
 
 		m.for_each(
 			EAGINE_MAKE_FUNC([],void,(const base::guid& e, const cmp_1& c1, cmp_2& c2),

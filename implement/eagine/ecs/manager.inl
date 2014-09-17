@@ -251,8 +251,6 @@ _do_add(const Entity& e, Component&& component)
 		auto& eck_map = *p_eck_map;
 		if(eck_map)
 		{
-			component_key_t key = eck_map->find(e);
-
 			auto p_storage = _storages.find(cid);
 			assert(p_storage != _storages.end());
 
@@ -265,6 +263,8 @@ _do_add(const Entity& e, Component&& component)
 
 			base::shared_ptr<cs_t> storage =
 				base::static_pointer_cast<cs_t>(base_storage);
+
+			component_key_t key = eck_map->find(e);
 
 			if(key == nil_component_key)
 			{
@@ -281,6 +281,61 @@ _do_add(const Entity& e, Component&& component)
 	}
 	detail::mgr_handle_cmp_not_reg(base::type_name<Component>());
 	return false;
+}
+
+template <typename Entity>
+inline bool
+manager<Entity>::
+_do_cpy(
+	const Entity& e1,
+	const Entity& e2,
+	component_uid cid,
+	base::string(*get_name)(void)
+)
+{
+	auto p_eck_map = _eck_maps.find(cid);
+
+	if(p_eck_map != _eck_maps.end())
+	{
+		auto& eck_map = *p_eck_map;
+		if(eck_map)
+		{
+			auto p_storage = _storages.find(cid);
+			assert(p_storage != _storages.end());
+
+			auto& base_storage = *p_storage;
+			assert(base_storage);
+
+			component_key_t k1 = eck_map->find(e1);
+			component_key_t k2 = eck_map->remove(e2);
+
+			if(k2 != nil_component_key)
+			{
+				base_storage->release(k2);
+			}
+
+			if(k1 != nil_component_key)
+			{
+				k2 = base_storage->copy(k1);
+
+				eck_map->store(e2, k2);
+
+			}
+			return true;
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(get_name?get_name():base::string());
+	return false;
+}
+
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_do_cpy(const Entity& e1, const Entity& e2)
+{
+	component_uid cid = get_component_uid<Component>();
+	return _do_cpy(e1, e2, cid, &base::type_name<Component>);
 }
 
 template <typename Entity>
