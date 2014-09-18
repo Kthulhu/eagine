@@ -12,19 +12,25 @@
 
 namespace EAGine {
 namespace dyli {
-
+//------------------------------------------------------------------------------
+// loader::main_exe
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 library loader::main_exe(void)
 {
 	return library(base::make_shared<base::executable_module>());
 }
-
+//------------------------------------------------------------------------------
+// loader::load
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 library loader::load(base::cstrref path)
 {
 	return library(base::make_shared<base::dynamic_library>(path));
 }
-
+//------------------------------------------------------------------------------
+// loader::try_load
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 library loader::try_load(base::cstrref path)
 {
@@ -37,7 +43,7 @@ library loader::try_load(base::cstrref path)
 		return library();
 	}
 }
-
+//------------------------------------------------------------------------------
 } // namespace dyli
 } // namespace EAGine
 

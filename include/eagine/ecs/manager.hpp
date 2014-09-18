@@ -12,6 +12,7 @@
 #include <eagine/base/memory.hpp>
 #include <eagine/base/string.hpp>
 #include <eagine/base/array.hpp>
+#include <eagine/base/type_to_value.hpp>
 #include <eagine/base/type_name.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/instead_of.hpp>
@@ -37,6 +38,9 @@ public:
 	void add_later(const Entity& e, Component&& c);
 
 	template <typename Component>
+	void copy_later(const Entity& from, const Entity& to);
+
+	template <typename Component>
 	void swap_later(const Entity& e1, const Entity& e2);
 
 	template <typename Component>
@@ -45,6 +49,30 @@ public:
 	void execute_later(base::function<void(manager<Entity>&)>&& op);
 
 	void commit(manager<Entity>& m);
+};
+
+template <typename Entity, typename ... C>
+struct iter_status_data
+{
+	static constexpr std::size_t N = sizeof...(C);
+
+	Entity _ent;
+
+	base::array<std::size_t, N> _poss;
+	base::array<std::size_t, N> _sizs;
+	base::array<entity_component_map<Entity>*, N> _ecks;
+	base::type_to_value<base_component_storage*, C...> _stgs;
+	base::type_to_value<component_key_t, C...> _keys;
+
+	bool _first(void);
+	bool _next(void);
+};
+
+template <typename Entity, typename ... C>
+struct iteration_status
+{
+	iter_status_data<Entity, C...> _data;
+	modifications<Entity> _mods;
 };
 
 template <typename Entity>
@@ -138,27 +166,24 @@ private:
 	);
 
 	template <typename Func, typename ... C>
-	void _do_call_cr(Func& func, const Entity&, C* ... cps)
+	void _do_call_c(Func& func, const Entity&, C* ... cps)
 	{
 		func(*cps...);
 	}
 
 	template <typename C0, typename ... Cn, typename Func, typename ... C>
-	void _do_call_cr(Func& func, const Entity& e, C* ... cps)
+	void _do_call_c(Func& func, const Entity& e, C* ... cps)
 	{
 		typedef typename _bare_c<C0>::type adjC0;
 		auto* cp = _do_acc<adjC0>(e, typename base::access<C0>::type());
-		if(cp) _do_call_cr<Cn...>(func, e, cps..., cp);
+		if(cp) _do_call_c<Cn...>(func, e, cps..., cp);
 	}
 
-	template <typename ... C, typename Func, typename CS, typename CK>
-	void _do_call_m_e_cp(
-		Func&,
-		modifications<Entity>&,
-		const Entity&,
-		const CS&,
-		const CK&
-	);
+	template <typename ... C, typename Func, typename ISD>
+	void _do_call_m_e_cp(Func&, ISD&, modifications<Entity>&);
+
+	template <typename ... C>
+	iter_status_data<Entity, C...> _make_isd(void);
 public:
 	typedef Entity entity_type;
 
@@ -205,15 +230,15 @@ public:
 	}
 
 	template <typename ... C>
-	manager& copy(const Entity& e1, const Entity& e2)
+	manager& copy(const Entity& from, const Entity& to)
 	{
-		_eat(_do_cpy<C>(e1, e2)...);
+		_eat(_do_cpy<C>(from, to)...);
 		return *this;
 	}
 
-	manager& copy(const Entity& e1, const Entity& e2, component_uid cid)
+	manager& copy(const Entity& from, const Entity& to, component_uid cid)
 	{
-		_do_cpy(e1, e2, cid, nullptr);
+		_do_cpy(from, to, cid, nullptr);
 		return *this;
 	}
 
@@ -262,17 +287,75 @@ public:
 		return _do_acc<Component>(e, base::access_read_write);
 	}
 
+	template <typename ... C>
+	static auto adapt_func(
+		const base::function<void(
+			modifications<Entity>&,
+			const Entity&,
+			C*...
+		)>& func
+	) { return func; }
+
 	template <typename ... C, typename Func>
-	manager& for_one_cr(const Entity& e, Func func)
+	static auto adapt_func_e_cp(const Func& func);
+
+	template <typename ... C, typename Func>
+	static auto wrap_func_e_cp(const Func& func);
+
+	template <typename ... C>
+	static auto adapt_func(
+		const base::function<void(
+			const Entity&,
+			C*...
+		)>& func
+	);
+
+	template <typename ... C, typename Func>
+	static auto adapt_func_m_e_c(const Func& func);
+
+	template <typename ... C, typename Func>
+	static auto wrap_func_m_e_c(const Func& func);
+
+	template <typename ... C>
+	static auto adapt_func(
+		const base::function<void(
+			modifications<Entity>&,
+			const Entity&,
+			C...
+		)>&
+	);
+
+	template <typename ... C, typename Func>
+	static auto adapt_func_e_c(const Func& func);
+
+	template <typename ... C, typename Func>
+	static auto wrap_func_e_c(const Func& func);
+
+	template <typename ... C>
+	static auto adapt_func(
+		const base::function<void(const Entity&, C...)>&
+	);
+
+	template <typename ... C, typename Func>
+	static auto adapt_func_c(const Func& func);
+
+	template <typename ... C, typename Func>
+	static auto wrap_func_c(const Func& func);
+
+	template <typename ... C>
+	static auto adapt_func(const base::function<void(C...)>&);
+
+	template <typename ... C, typename Func>
+	manager& for_one_c(const Entity& e, Func func)
 	{
-		_do_call_cr<C...>(func, e);
+		_do_call_c<C...>(func, e);
 		return *this;
 	}
 
 	template <typename ... C>
 	manager& for_one(const Entity& e, base::function<void(C...)>& func)
 	{
-		_do_call_cr<C...>(func, e);
+		_do_call_c<C...>(func, e);
 		return *this;
 	}
 
@@ -289,19 +372,48 @@ public:
 	);
 
 	template <typename ... C>
-	manager& for_each(
+	static auto make_iteration_status(void)
+	{
+		return iteration_status<Entity, C...>();
+	}
+
+	template <typename ... C>
+	static auto make_iteration_status(
 		const base::function<void(
 			modifications<Entity>&,
 			const Entity&,
-			C...
+			C*...
+		)>&
+	);
+
+	template <typename ... C, typename Func>
+	bool start_traversal_m_e_cp(iteration_status<Entity, C...>&, Func&);
+
+	template <typename ... CS, typename ... CF>
+	bool start_traversal(
+		iteration_status<Entity, CS...>&,
+		const base::function<void(
+			modifications<Entity>&,
+			const Entity&,
+			CF*...
+		)>& func
+	);
+
+	template <typename ... C, typename Func>
+	bool continue_traversal_m_e_cp(iteration_status<Entity, C...>&, Func&);
+
+	template <typename ... CS, typename ... CF>
+	bool continue_traversal(
+		iteration_status<Entity, CS...>&,
+		const base::function<void(
+			modifications<Entity>&,
+			const Entity&,
+			CF*...
 		)>& func
 	);
 
 	template <typename ... C>
-	manager& for_each(const base::function<void(const Entity&, C...)>& func);
-
-	template <typename ... C>
-	manager& for_each(const base::function<void(C...)>& func);
+	void finish_traversal(iteration_status<Entity, C...>&);
 };
 
 } // namespace ecs

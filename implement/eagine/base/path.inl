@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -15,14 +15,18 @@
 
 namespace EAGine {
 namespace base {
-
+//------------------------------------------------------------------------------
+// path::path
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 path::path(const char* init)
  : _storage(init, init+std::strlen(init))
  , _entries(1, _entry(_storage.size()))
 {
 }
-
+//------------------------------------------------------------------------------
+// path::path
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 path::path(const path& p, const char* entry_name)
 {
@@ -48,7 +52,9 @@ path::path(const path& p, const char* entry_name)
 	);
 	_entries.push_back(new_ent);
 }
-
+//------------------------------------------------------------------------------
+// path::normalize
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 path& path::normalize(void)
 {
@@ -84,7 +90,9 @@ path& path::normalize(void)
 
 	return *this;
 }
-
+//------------------------------------------------------------------------------
+// path::push_back
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 path& path::push_back(const char* entry_name)
 {
@@ -100,7 +108,9 @@ path& path::push_back(const char* entry_name)
 
 	return *this;
 }
-
+//------------------------------------------------------------------------------
+// path::push_back
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 path& path::push_back(const string& entry_name)
 {
@@ -116,14 +126,18 @@ path& path::push_back(const string& entry_name)
 
 	return *this;
 }
-
+//------------------------------------------------------------------------------
+// path::push_back
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 path& path::push_back(par ent)
 {
 	_entries.push_back(_entry(ent, _storage.size()));
 	return *this;
 }
-
+//------------------------------------------------------------------------------
+// path::str
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 string path::str(const string& sep, const string& par) const
 {
@@ -168,13 +182,15 @@ string path::str(const string& sep, const string& par) const
 	}
 	return result;
 }
-
+//------------------------------------------------------------------------------
+// path::operator << 
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 std::ostream& operator << (std::ostream& out, const path& p)
 {
 	// TODO
 	return out << p.str() << " (" << p._str() << ")";
 }
-
+//------------------------------------------------------------------------------
 } // namespace base
 } // namespace EAGine

@@ -14,7 +14,9 @@
 namespace EAGine {
 namespace dyli {
 namespace detail {
-
+//------------------------------------------------------------------------------
+// required_lib_n_a
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void required_lib_n_a(void)
 {
@@ -22,7 +24,9 @@ void required_lib_n_a(void)
 		"Required dynamic library is not loaded"
 	)));
 }
-
+//------------------------------------------------------------------------------
+// required_res_n_a
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void required_res_n_a(void)
 {
@@ -30,7 +34,7 @@ void required_res_n_a(void)
 		"Required dynamically loaded resource is not available "
 	)));
 }
-
+//------------------------------------------------------------------------------
 } // namespace detail
 } // namespace dyli
 } // namespace EAGine

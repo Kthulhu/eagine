@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -15,7 +15,9 @@
 namespace EAGine {
 namespace base {
 namespace bits {
-
+//------------------------------------------------------------------------------
+// is_valid_path_entry
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 bool is_valid_path_entry(const char* entry, std::size_t len)
 {
@@ -27,7 +29,9 @@ bool is_valid_path_entry(const char* entry, std::size_t len)
 	if(std::strstr(entry, "..")) return false;
 	return true;
 }
-
+//------------------------------------------------------------------------------
+// validate_path_entry
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void validate_path_entry(const char* entry, std::size_t len)
 {
@@ -40,7 +44,9 @@ void validate_path_entry(const char* entry, std::size_t len)
 		);
 	}
 }
-
+//------------------------------------------------------------------------------
+// path_entry_ref_base::_get_str
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 string path_entry_ref_base::_get_str(
 	const vector<char>& storage,
@@ -60,7 +66,9 @@ string path_entry_ref_base::_get_str(
 		);
 	}
 }
-
+//------------------------------------------------------------------------------
+// path_entry_ref_base::_set_str
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void path_entry_ref_base::_set_str(
 	vector<char>& storage,
@@ -121,7 +129,9 @@ void path_entry_ref_base::_set_str(
 	entry._len = name_len;
 	entry._flags &= ~path_entry::_par_ent;
 }
-
+//------------------------------------------------------------------------------
+// path_entry_ref_base::_set_par
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void path_entry_ref_base::_set_par(
 	vector<char>& storage,
@@ -140,7 +150,9 @@ void path_entry_ref_base::_set_par(
 		entry._flags |= path_entry::_par_ent;
 	}
 }
-
+//------------------------------------------------------------------------------
+// path_entry_ref_base::_swap
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void path_entry_ref_base::_swap(
 	vector<char>& storage,
@@ -200,14 +212,18 @@ void path_entry_ref_base::_swap(
 		tmp_lo.size()
 	);
 }
-
+//------------------------------------------------------------------------------
+// path_cat_base::_fill
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void path_cat_base::_fill(vector<char>& v, const char* elem) const
  {
 	validate_path_entry(elem);
 	if(elem) v.insert(v.end(), elem, elem+_elen);
 }
-
+//------------------------------------------------------------------------------
+// path_cat_base::_fill
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void path_cat_base::_fill(vector<path_entry>& v, const char* elem) const
 {
@@ -218,7 +234,7 @@ void path_cat_base::_fill(vector<path_entry>& v, const char* elem) const
 	}
 	else v.push_back(path_entry(par::ent, _hlen));
 }
-
+//------------------------------------------------------------------------------
 } // namespace bits
 } // namespace base
 } // namespace EAGine

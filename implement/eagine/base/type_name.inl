@@ -18,7 +18,9 @@
 
 namespace EAGine {
 namespace base {
-
+//------------------------------------------------------------------------------
+// demangle_type_name
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 string demangle_type_name(const char* name)
 {
@@ -35,7 +37,7 @@ string demangle_type_name(const char* name)
 	return name;
 #endif
 }
-
+//------------------------------------------------------------------------------
 } // namespace base
 } // namespace EAGine
 

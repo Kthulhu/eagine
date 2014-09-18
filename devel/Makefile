@@ -9,7 +9,7 @@ all: $(TESTS)
 
 test%: test%.o
 	$(CXX) $(LDFLAGS) \
-		-std=c++11 \
+		-std=c++1y \
 		-Wall \
 		-pedantic \
 		-rdynamic \
@@ -20,7 +20,7 @@ test%: test%.o
 
 test%.o: test%.cpp
 	$(CXX) $(CXXFLAGS) \
-		-std=c++11 \
+		-std=c++1y \
 		-Wall \
 		-Wshadow \
 		-pedantic \
@@ -28,7 +28,8 @@ test%.o: test%.cpp
 		-I../include \
 		-I../implement \
 		-I ../third_party/include \
-		$< -c -o $@
+		$< -c -o $@ \
+		-pthread
 
 clean:
 	rm -f $(TESTS)

@@ -40,9 +40,6 @@ struct cmp_2
 	{ }
 };
 
-#define EAGINE_MAKE_FUNC(CAPTURE,RV,ARGS, DEF) \
-	EAGine::base::function<RV ARGS>(CAPTURE ARGS -> RV DEF)
-
 int main(void)
 {
 	using namespace EAGine;
@@ -93,13 +90,23 @@ int main(void)
 
 		m.copy<cmp_1>(e2, e3);
 
-		m.for_each(
-			EAGINE_MAKE_FUNC([],void,(const base::guid& e, const cmp_1& c1, cmp_2& c2),
-			{
-				std::cout << e << "|" << c1.i << "|" << c2.d << std::endl;
-			})
-		);
+		auto f11 = [](const base::guid& e, const cmp_1& c1, cmp_2& c2) -> void
+		{
+			std::cout << e << "|" << c1.i << "|" << c2.d << std::endl;
+		};
+
+		auto f11a = m.wrap_func_e_c<const cmp_1&, cmp_2&>(f11);
+
+		m.for_each(f11a);
 		std::cout << std::endl;
+
+		auto is = m.make_iteration_status(f11a);
+
+		if(m.start_traversal(is, f11a))
+		{
+			while(m.continue_traversal(is, f11a));
+			m.finish_traversal(is);
+		}
 
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;
@@ -120,7 +127,7 @@ int main(void)
 		m.for_one(e2, f2);
 		std::cout << m.ro<cmp_1>(e2)->i << std::endl;
 
-		m.for_one_cr<cmp_1, cmp_2>(
+		m.for_one_c<cmp_1, cmp_2>(
 			e3,
 			[](const cmp_1& c1, const cmp_2& c2) -> void
 			{

@@ -15,7 +15,9 @@
 
 namespace EAGine {
 namespace base {
-
+//------------------------------------------------------------------------------
+// load_stream_data
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 vector<byte> load_stream_data(istream& input)
 {
@@ -41,7 +43,9 @@ vector<byte> load_stream_data(istream& input)
 
 	return std::move(buffer);
 }
-
+//------------------------------------------------------------------------------
+// load_file_data
+//------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 vector<byte> load_file_data(const char* fs_path)
 {
@@ -55,7 +59,7 @@ vector<byte> load_file_data(const char* fs_path)
 		).str()));
 	}
 }
-
+//------------------------------------------------------------------------------
 } // namespace base
 } // namespace EAGine
 

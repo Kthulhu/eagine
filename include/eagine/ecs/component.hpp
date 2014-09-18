@@ -53,12 +53,12 @@ inline component_uid get_component_uid(void)
 
 template <typename T>
 class component_uid_map
- : public std::vector<T>
+ : public base::vector<T>
 {
 public:
 	component_uid_map(void) = default;
 
-	typename std::vector<T>::const_iterator
+	typename base::vector<T>::const_iterator
 	find(component_uid cid) const
 	{
 		if(cid < this->size())
@@ -68,7 +68,7 @@ public:
 		else return this->end();
 	}
 
-	typename std::vector<T>::iterator
+	typename base::vector<T>::iterator
 	find(component_uid cid)
 	{
 		if(cid < this->size())
@@ -78,7 +78,7 @@ public:
 		else return this->end();
 	}
 
-	void erase(typename std::vector<T>::iterator pos)
+	void erase(typename base::vector<T>::iterator pos)
 	{
 		*pos = T();
 	}
