@@ -14,6 +14,13 @@ std::ostream& print_usage(std::ostream& out)
 {
 	return out
 		<< "Usage: make_guid [--help] | [-n|--nil]"
+		<< std::endl
+		<< std::endl
+		<< "Options:"
+		<< std::endl
+		<< "--help | -h: Print this help screen and exit."
+		<< std::endl
+		<< "--nil  | -n: Generate a nil GUID."
 		<< std::endl;
 }
 
@@ -26,7 +33,7 @@ int main(int argc, const char* argv[])
 
 	for(auto arg : program_args(argc, argv))
 	{
-		if((arg == "-h") || (arg == "--help"))
+		if(arg.in("-h", "--help"))
 		{
 			std::cout
 				<< "make_guid: globally unique identifier generator"
@@ -34,7 +41,7 @@ int main(int argc, const char* argv[])
 				<< print_usage;
 			return 0;
 		}
-		else if((arg == "-n") || (arg == "--nil"))
+		else if(arg.in("-n", "--nil"))
 		{
 			gen_nil = true;
 		}

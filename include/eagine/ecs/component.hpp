@@ -109,13 +109,13 @@ struct entity_component_map
 
 	virtual key_t key(std::size_t pos) = 0;
 
-	virtual key_t find(const Entity& entity) = 0;
+	virtual key_t find(const Entity& ent) = 0;
 
 	virtual void reserve(std::size_t count) = 0;
 
-	virtual key_t store(const Entity& entity, key_t key) = 0;
+	virtual key_t store(const Entity& ent, key_t key) = 0;
 
-	virtual key_t remove(const Entity& entity) = 0;
+	virtual key_t remove(const Entity& ent) = 0;
 
 	virtual void swap(const Entity& e1, const Entity& e2) = 0;
 };

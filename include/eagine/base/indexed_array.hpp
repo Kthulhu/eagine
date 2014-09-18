@@ -10,7 +10,7 @@
 #ifndef EAGINE_BASE_INDEXED_ARRAY_1308281038_HPP
 #define EAGINE_BASE_INDEXED_ARRAY_1308281038_HPP
 
-#include <eagine/base/memory_block.hpp>
+#include <eagine/base/memory_range.hpp>
 #include <eagine/base/type.hpp>
 #include <cstddef>
 #include <cassert>

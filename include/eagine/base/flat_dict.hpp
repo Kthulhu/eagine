@@ -75,13 +75,13 @@ public:
 		}
 	}
 
-	const Key& key(std::size_t pos) const
+	const Key& key_at(std::size_t pos) const
 	{
 		assert(pos < size());
 		return *(_bkeys+pos);
 	}
 
-	const Val& val(std::size_t pos) const
+	const Val& val_at(std::size_t pos) const
 	{
 		assert(pos < size());
 		return *(_bvals+pos);
@@ -181,10 +181,10 @@ public:
 		return _keys.size();
 	}
 
-	void reserve(std::size_t size)
+	void reserve(std::size_t sz)
 	{
-		_keys.reserve(size);
-		_vals.reserve(size);
+		_keys.reserve(sz);
+		_vals.reserve(sz);
 	}
 
 	template <typename Key_, typename Val_>
@@ -321,13 +321,13 @@ public:
 		return ((pos != _keys.end()) && (*pos == key));
 	}
 
-	const Key& key(std::size_t pos) const
+	const Key& key_at(std::size_t pos) const
 	{
 		assert(pos < _keys.size());
 		return _keys.at(pos);
 	}
 
-	const Val& val(std::size_t pos) const
+	const Val& val_at(std::size_t pos) const
 	{
 		assert(pos < _vals.size());
 		return _vals.at(pos);

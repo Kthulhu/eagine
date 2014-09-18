@@ -12,10 +12,32 @@
 #include <eagine/ecs/component.hpp>
 #include <eagine/base/vector.hpp>
 #include <eagine/base/function.hpp>
+#include <eagine/base/bitfield.hpp>
 #include <cassert>
 
 namespace EAGine {
 namespace ecs {
+
+enum class component_storage_bits : unsigned char
+{
+	can_read = 0x1,
+	can_write = 0x2,
+	can_fetch = 0x4,
+	can_replace = 0x8,
+	can_copy = 0x10,
+	can_insert = 0x20,
+	can_remove = 0x40,
+	can_reserve = 0x80
+};
+
+typedef base::bitfield<component_storage_bits> component_storage_traits;
+inline component_storage_traits operator | (
+	component_storage_bits b1,
+	component_storage_bits b2
+)
+{
+	return {b1, b2};
+}
 
 struct base_component_storage
 {
@@ -23,7 +45,7 @@ struct base_component_storage
 
 	virtual ~base_component_storage(void) noexcept { }
 
-	virtual bool read_only(void) const = 0;
+	virtual component_storage_traits traits(void) const = 0;
 
 	virtual void add_ref(void) = 0;
 	virtual void release(void) = 0;
@@ -39,8 +61,26 @@ struct base_component_storage
 template <typename Component>
 struct component_storage : base_component_storage
 {
-	virtual Component* access(key_t key, base::access_read_write_t) = 0;
-	virtual const Component* access(key_t key, base::access_read_only_t)= 0;
+	virtual const Component* read(key_t key)= 0;
+	virtual Component* write(key_t key) = 0;
+
+	const Component* access(key_t key, base::access_read_only_t)
+	{
+		return this->read(key);
+	}
+
+	Component* access(key_t key, base::access_read_write_t)
+	{
+		return this->write(key);
+	}
+
+	virtual bool fetch(key_t key, Component& component)
+	{
+		const Component* ptr = read(key);
+		if(!ptr) return false;
+		component = *ptr;
+		return true;
+	}
 
 	virtual key_t insert(Component&& component) = 0;
 	virtual key_t replace(key_t key, Component&& component) = 0;

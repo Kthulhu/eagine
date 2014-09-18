@@ -25,9 +25,18 @@ private:
 public:
 	typedef component_key_t key_t;
 
-	bool read_only(void) const
+	component_storage_traits traits(void) const
 	{
-		return false;
+		typedef component_storage_bits b;
+		return (b::can_read |
+			b::can_write |
+			b::can_fetch |
+			b::can_replace |
+			b::can_copy |
+			b::can_insert |
+			b::can_remove |
+			b::can_reserve
+		);
 	}
 
 	void add_ref(void)
@@ -55,12 +64,12 @@ public:
 		return _ents.copy(key);
 	}
 
-	Component* access(key_t key, base::access_read_write_t)
+	const Component* read(key_t key)
 	{
 		return _ents.access(key);
 	}
 
-	const Component* access(key_t key, base::access_read_only_t)
+	Component* write(key_t key)
 	{
 		return _ents.access(key);
 	}

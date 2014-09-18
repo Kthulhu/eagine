@@ -36,17 +36,17 @@ public:
 
 	const Entity& entity(std::size_t pos)
 	{
-		return _map.key(pos);
+		return _map.key_at(pos);
 	}
 
 	key_t key(std::size_t pos)
 	{
-		return _map.val(pos);
+		return _map.val_at(pos);
 	}
 
-	key_t find(const Entity& entity)
+	key_t find(const Entity& ent)
 	{
-		return _map.get(entity, nil_component_key);
+		return _map.get(ent, nil_component_key);
 	}
 
 	void reserve(std::size_t count)
@@ -54,14 +54,14 @@ public:
 		_map.reserve(count);
 	}
 
-	key_t store(const Entity& entity, key_t key)
+	key_t store(const Entity& e, key_t k)
 	{
-		return _map.store(entity, key, nil_component_key);
+		return _map.store(e, k, nil_component_key);
 	}
 
-	key_t remove(const Entity& entity)
+	key_t remove(const Entity& e)
 	{
-		return _map.remove(entity, nil_component_key);
+		return _map.remove(e, nil_component_key);
 	}
 
 	void swap(const Entity& e1, const Entity& e2)

@@ -82,10 +82,10 @@ int main(void)
 		m.swap<cmp_2>(e1, e2);
 
 		base::function<void(modifications<base::guid>&, const base::guid&, const cmp_1*, const cmp_2*)> f1 =
-			[](modifications<base::guid>& m, const base::guid& e, const cmp_1* c1, const cmp_2* c2) -> void
+			[](modifications<base::guid>& mod, const base::guid& e, const cmp_1* c1, const cmp_2* c2) -> void
 			{
 				std::cout << e << "|" << c1 << "|" << c2 << std::endl;
-				if(!c2) m.add_later(e, cmp_2(0.123456789));
+				if(!c2) mod.add_later(e, cmp_2(0.123456789));
 			};
 
 		m.for_each(f1);

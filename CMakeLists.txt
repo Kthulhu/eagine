@@ -12,7 +12,7 @@ set(EAGINE_THIRD_PARTY_LIBRARIES "")
 # compiler options
 include(config/Compiler.cmake)
 # c++11-related compiler options
-include(config/CPP11.cmake)
+include(config/CPP.cmake)
 # Boost
 include(config/FindBoost.cmake)
 

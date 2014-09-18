@@ -8,10 +8,27 @@ CXX ?= g++
 all: $(TESTS)
 
 test%: test%.o
-	$(CXX) -std=c++11 -Wall -Wshadow -pedantic $(LDFLAGS) $< -rdynamic -o $@ -lpthread -ldl -lboost_locale
+	$(CXX) $(LDFLAGS) \
+		-std=c++11 \
+		-Wall \
+		-pedantic \
+		-rdynamic \
+		$< -o $@ \
+		-ldl \
+		-lpthread \
+		-lboost_locale
 
 test%.o: test%.cpp
-	$(CXX) -std=c++11 -Wall -pedantic -I../_build/include -I../include -I../implement $(CXXFLAGS) $< -c -o $@
+	$(CXX) $(CXXFLAGS) \
+		-std=c++11 \
+		-Wall \
+		-Wshadow \
+		-pedantic \
+		-I../_build/include \
+		-I../include \
+		-I../implement \
+		-I ../third_party/include \
+		$< -c -o $@
 
 clean:
 	rm -f $(TESTS)

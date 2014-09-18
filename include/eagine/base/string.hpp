@@ -341,6 +341,22 @@ public:
 		return ::std::strcmp(a._ptr, b._ptr) >= 0;
 	}
 
+	bool equal_to(pcself sr) const
+	{
+		return *this == sr;
+	}
+
+	bool in(void) const
+	{
+		return false;
+	}
+
+	template <typename ... P>
+	bool in(pcself sr0, P&& ... sri) const
+	{
+		return equal_to(sr0) || in(std::forward<P>(sri)...);
+	}
+
 	bool empty(void) const
 	{
 		return _len == 0;

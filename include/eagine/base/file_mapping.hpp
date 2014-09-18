@@ -71,8 +71,8 @@ public:
 	mapped_file_region(
 		file_mapping& fm,
 		std::size_t offset,
-		std::size_t size
-	): _bmap_reg(fm._bfile_map, fm._bmode, offset, size)
+		std::size_t size_
+	): _bmap_reg(fm._bfile_map, fm._bmode, offset, size_)
 	{ }
 
 	mapped_file_region(mapped_file_region&&) = default;

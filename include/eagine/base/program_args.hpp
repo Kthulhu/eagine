@@ -51,6 +51,11 @@ public:
 		return at(pos);
 	}
 
+	cstrref command(void) const
+	{
+		return at(0);
+	}
+
 	typedef ras_iterator<const program_args> iterator;
 	typedef iterator const_iterator;
 
