@@ -81,13 +81,13 @@ public:
 
 	typed_memory_range slice(std::size_t begin_, std::size_t size_) const
 	{
-		assert(begin+size <= _size);
+		assert(begin_+size_ <= _size);
 		return typed_memory_range(_addr+begin_, size_);
 	}
 
 	typed_memory_range slice(std::size_t begin_) const
 	{
-		return slice(begin, _size-begin_);
+		return slice(begin_, _size-begin_);
 	}
 };
 
