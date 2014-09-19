@@ -7,6 +7,7 @@
  */
 #include <iostream>
 #include <cstdlib>
+#include <eagine/base/flat_bag.hpp>
 #include <eagine/base/flat_dict.hpp>
 //------------------
 #include <eagine/base/error.hpp>
@@ -81,6 +82,35 @@ int main(void)
 		assert(vm.get(g3, 0) == 0);
 		assert(vm.get(g4, 0) == 0);
 		assert(vm.size() == 0);
+
+		flat_bag<guid> bg;
+		bool b;
+
+		assert(bg.empty());
+
+		b = bg.insert(g1);
+		assert(b && bg.size() == 1);
+		b = bg.insert(g1);
+		assert(!b && bg.size() == 1);
+		b = bg.insert(g2);
+		assert(b && bg.size() == 2);
+		b = bg.insert(g3);
+		assert(b && bg.size() == 3);
+		b = bg.insert(g3);
+		assert(!b && bg.size() == 3);
+		b = bg.insert(g4);
+		assert(b && bg.size() == 4);
+		b = bg.insert(g2);
+		assert(!b && bg.size() == 4);
+
+		b = bg.remove(g2);
+		assert(b && bg.size() == 3);
+		b = bg.remove(g2);
+		assert(!b && bg.size() == 3);
+		b = bg.insert(g3);
+		assert(!b && bg.size() == 3);
+		b = bg.insert(g2);
+		assert(b && bg.size() == 4);
 
 		std::cout << "Done" << std::endl;
 

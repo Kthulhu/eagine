@@ -194,7 +194,7 @@ public:
 		assert(_keys.empty() || (_keys.back() < key));
 
 		_keys.push_back(std::forward<Key>(key));
-		_keys.push_back(std::forward<Val>(val));
+		_vals.push_back(std::forward<Val>(val));
 	}
 
 	template <typename Func>
