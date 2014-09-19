@@ -9,6 +9,7 @@
 
 #include <eagine/eagine_config.hpp>
 #include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
@@ -27,6 +28,24 @@ guid::guid(const ::boost::uuids::uuid& that)
 EAGINE_LIB_FUNC
 guid::guid(void)
  : ::boost::uuids::uuid( ::boost::uuids::random_generator()())
+{ }
+//------------------------------------------------------------------------------
+// guid::guid
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+guid::guid(cstrref str)
+ : ::boost::uuids::uuid( ::boost::uuids::string_generator()(
+	str.null_terminated()?
+	str.data():
+	str.str().c_str()
+))
+{ }
+//------------------------------------------------------------------------------
+// guid::guid
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+guid::guid(std::nullptr_t)
+ : ::boost::uuids::uuid( ::boost::uuids::nil_generator()())
 { }
 //------------------------------------------------------------------------------
 // guid::nil

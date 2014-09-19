@@ -62,11 +62,12 @@ int main(void)
 
 		std::cout << sizeof(base::guid) << std::endl;
 
-		base::guid e1, e2, e3;
+		base::guid e0(nullptr), e1, e2, e3;
 
 		if(m.has<cmp_1>(e1)) std::cout << "has" << std::endl;
 		else std::cout << "has not" << std::endl;
 
+		std::cout << "e0: " << e0 << std::endl;
 		std::cout << "e1: " << e1 << std::endl;
 		std::cout << "e2: " << e2 << std::endl;
 		std::cout << "e3: " << e3 << std::endl;

@@ -11,7 +11,9 @@
 #define EAGINE_BASE_GUID_1308281038_HPP
 
 
+#include <eagine/base/string.hpp>
 #include <boost/uuid/uuid.hpp>
+#include <cstddef>
 #include <iosfwd>
 
 namespace EAGine {
@@ -26,6 +28,13 @@ struct guid
 	/// guid is DefaultConstructible
 	guid(void);
 
+	/// Constructs a GUID from a string
+	guid(cstrref str);
+
+	/// Constructs a nil GUID value
+	guid(std::nullptr_t);
+
+	/// Constructs a nil GUID value
 	static guid nil(void);
 };
 
