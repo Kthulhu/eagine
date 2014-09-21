@@ -74,13 +74,7 @@ struct component_storage : base_component_storage
 		return this->write(key);
 	}
 
-	virtual bool fetch(key_t key, Component& component)
-	{
-		const Component* ptr = read(key);
-		if(!ptr) return false;
-		component = *ptr;
-		return true;
-	}
+	virtual bool fetch(key_t key, Component& component) = 0;
 
 	virtual key_t insert(Component&& component) = 0;
 	virtual key_t replace(key_t key, Component&& component) = 0;

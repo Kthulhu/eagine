@@ -20,6 +20,7 @@
 #include <eagine/ecs/entity.hpp>
 #include <eagine/ecs/component.hpp>
 #include <eagine/ecs/component_storage.hpp>
+#include <eagine/ecs/package.hpp>
 #include <map>
 #include <cassert>
 
@@ -241,6 +242,18 @@ public:
 	void knows_component_type(void) const
 	{
 		return _does_know_cmp_type(get_component_uid<Component>());
+	}
+
+	manager& register_package(component_package<Entity>& pkg)
+	{
+		pkg.register_with(*this);
+		return *this;
+	}
+
+	manager& unregister_package(component_package<Entity>& pkg)
+	{
+		pkg.unregister_from(*this);
+		return *this;
 	}
 
 	template <typename ... C>

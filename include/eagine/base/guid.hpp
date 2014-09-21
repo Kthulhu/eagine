@@ -29,7 +29,7 @@ struct guid
 	guid(void);
 
 	/// Constructs a GUID from a string
-	guid(cstrref str);
+	guid(const cstrref& str);
 
 	/// Constructs a nil GUID value
 	guid(std::nullptr_t);

@@ -47,15 +47,19 @@ vector<byte> load_stream_data(istream& input)
 // load_file_data
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-vector<byte> load_file_data(const char* fs_path)
+vector<byte> load_file_data(const cstrref& fs_path)
 {
-	ifstream input(fs_path);
+	ifstream input(
+		fs_path.null_terminated()?
+		fs_path.data():
+		fs_path.str().c_str()
+	);
 	try { return load_stream_data(input); }
 	catch(...)
 	{
 		throw_with_nested(runtime_error((
 			format(translate("Failed to load data from file '{1}'"))
-			% fs_path
+			% fs_path.str()
 		).str()));
 	}
 }

@@ -2,7 +2,7 @@
  *  @file eagine/base/io.hpp
  *  @brief Basic input/output.
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -12,6 +12,7 @@
 
 #include <eagine/base/type.hpp>
 #include <eagine/base/vector.hpp>
+#include <eagine/base/string.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -28,7 +29,7 @@ using ::std::streampos;
 using ::std::ios;
 
 vector<byte> load_stream_data(istream& input);
-vector<byte> load_file_data(const char* fs_path);
+vector<byte> load_file_data(const cstrref& fs_path);
 
 } // namespace base
 } // namespace EAGine

@@ -16,6 +16,7 @@
 #include <array>
 #include <string>
 #include <cstring>
+#include <cassert>
 #include <type_traits>
 
 namespace EAGine {
@@ -116,11 +117,11 @@ public:
 template <std::size_t N>
 using lim_string = basic_lim_string<char, N>;
 
-template <typename Char>
+template <typename Char, typename Size>
 struct basic_const_var_string
 {
 private:
-	std::uint32_t _size = 0;
+	const Size _size = 0;
 	const Char _data[1] = { '\0' };
 public:
 	bool empty(void) const
@@ -139,7 +140,7 @@ public:
 	}
 };
 
-typedef basic_const_var_string<char> cvarstr;
+typedef basic_const_var_string<char, std::uint32_t> cvarstr;
 
 template <typename Char>
 class basic_string_ref
@@ -260,9 +261,9 @@ public:
 	 , _len(ls.size())
 	{ }
 
-	template <typename Char_>
+	template <typename Char_, typename Size_>
 	basic_string_ref(
-		const basic_const_var_string<Char_>& vs,
+		const basic_const_var_string<Char_, Size_>& vs,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
 	): _ptr(vs.data())
 	 , _len(vs.size())
@@ -411,6 +412,38 @@ public:
 	const_iterator end(void) const
 	{
 		return _ptr+_len;
+	}
+
+	reference at(std::size_t pos) const
+	{
+		assert(pos < _len);
+		return _ptr[pos];
+	}
+
+	reference operator [](std::size_t pos) const
+	{
+		return at(pos);
+	}
+
+	reference front(void) const
+	{
+		return at(0);
+	}
+
+	reference back(void) const
+	{
+		return at(_len-1);
+	}
+
+	basic_string_ref slice(std::size_t pos, std::size_t len) const
+	{
+		assert(pos+len <= _len);
+		return basic_string_ref(_ptr+pos, len);
+	}
+
+	basic_string_ref slice(std::size_t pos) const
+	{
+		return slice(pos, _len-pos);
 	}
 };
 

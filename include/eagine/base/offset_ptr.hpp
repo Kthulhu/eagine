@@ -32,6 +32,11 @@ public:
 		return (T*)(_offs?(((byte*)this)+_offs):(byte*)nullptr);
 	}
 
+	const T* get(void) const
+	{
+		return addr();
+	}
+
 	operator const T* (void) const
 	{
 		return addr();
@@ -56,10 +61,7 @@ public:
 };
 
 template <typename T>
-using offset_ptr = basic_offset_ptr<T, std::int32_t>;
-
-template <typename T>
-using large_offset_ptr = basic_offset_ptr<T, std::int64_t>;
+using offset_ptr = basic_offset_ptr<T, std::ptrdiff_t>;
 
 } // namespace base
 } // namespace EAGine

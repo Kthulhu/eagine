@@ -9,9 +9,9 @@
 #ifndef EAGINE_ECS_COMPONENT_1408161720_HPP
 #define EAGINE_ECS_COMPONENT_1408161720_HPP
 
+#include <eagine/base/vector.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <cstddef>
-#include <map>
 
 namespace EAGine {
 namespace ecs {

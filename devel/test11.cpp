@@ -5,8 +5,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <eagine/ecs/eck_map_normal.hpp>
-#include <eagine/ecs/storage_normal.hpp>
+#include <eagine/ecs/package_normal.hpp>
 #include <eagine/ecs/manager.hpp>
 //------------------
 #include <eagine/base/guid.hpp>
@@ -50,15 +49,11 @@ int main(void)
 
 		manager<base::guid> m;
 
-		m.register_component_type<cmp_1>(
-			base::make_shared<normal_entity_component_map<base::guid>>(),
-			base::make_shared<normal_component_storage<cmp_1>>()
-		);
+		normal_component_package<base::guid, cmp_1> pkg_cmp_1;
+		normal_component_package<base::guid, cmp_2> pkg_cmp_2;
 
-		m.register_component_type<cmp_2>(
-			base::make_shared<normal_entity_component_map<base::guid>>(),
-			base::make_shared<normal_component_storage<cmp_2>>()
-		);
+		m.register_package(pkg_cmp_1);
+		m.register_package(pkg_cmp_2);
 
 		std::cout << sizeof(base::guid) << std::endl;
 

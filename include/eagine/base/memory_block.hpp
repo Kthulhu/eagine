@@ -71,19 +71,25 @@ public:
 		return _size;
 	}
 
-	basic_memory_block slice(std::size_t begin, std::size_t size_) const
+	T* offs(std::size_t byte_offs) const
 	{
-		assert(begin+size_ <= _size);
-		return basic_memory_block(
-			(T*)(((B*)_addr)+begin),
-			size
-		);
+		assert(byte_offs <= _size);
+		return (T*)(((B*)_addr)+byte_offs);
 	}
 
-	basic_memory_block slice(std::size_t begin) const
+	basic_memory_block slice(
+		std::size_t byte_offs,
+		std::size_t byte_size
+	) const
 	{
-		assert(begin <= _size);
-		return slice(begin, _size-begin);
+		assert(byte_offs+byte_size<= _size);
+		return basic_memory_block(offs(byte_offs), byte_size);
+	}
+
+	basic_memory_block slice(std::size_t byte_offs) const
+	{
+		assert(byte_offs <= _size);
+		return slice(byte_offs, _size-byte_offs);
 	}
 };
 

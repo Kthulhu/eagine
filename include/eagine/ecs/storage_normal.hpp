@@ -6,8 +6,8 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#ifndef EAGINE_ECS_STORAGE_BASIC_1408161720_HPP
-#define EAGINE_ECS_STORAGE_BASIC_1408161720_HPP
+#ifndef EAGINE_ECS_STORAGE_NORMAL_1408161720_HPP
+#define EAGINE_ECS_STORAGE_NORMAL_1408161720_HPP
 
 #include <eagine/base/access_type.hpp>
 #include <eagine/ecs/component.hpp>
@@ -72,6 +72,14 @@ public:
 	Component* write(key_t key)
 	{
 		return _ents.access(key);
+	}
+
+	bool fetch(key_t key, Component& component)
+	{
+		const Component* ptr = read(key);
+		if(!ptr) return false;
+		component = *ptr;
+		return true;
 	}
 
 	key_t insert(Component&& component)

@@ -5,3 +5,4 @@
 cmake_minimum_required(VERSION 2.8)
 
 add_executable(make_guid make_guid.cpp)
+add_executable(ecs_guid2str ecs_guid2str.cpp)
