@@ -101,7 +101,18 @@ int main(void)
 		m.for_each(f11a);
 		std::cout << std::endl;
 
+		m.hide<cmp_1, cmp_2>(e3);
+
 		auto is = m.make_iteration_status(f11a);
+
+		if(m.start_traversal(is, f11a))
+		{
+			while(m.continue_traversal(is, f11a));
+			m.finish_traversal(is);
+		}
+
+		m.show<cmp_1, cmp_2>(e3);
+		std::cout << std::endl;
 
 		if(m.start_traversal(is, f11a))
 		{

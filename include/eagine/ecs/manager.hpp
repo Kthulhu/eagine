@@ -12,6 +12,7 @@
 #include <eagine/base/memory.hpp>
 #include <eagine/base/string.hpp>
 #include <eagine/base/array.hpp>
+#include <eagine/base/flat_bag.hpp>
 #include <eagine/base/type_to_value.hpp>
 #include <eagine/base/type_name.hpp>
 #include <eagine/meta/type_traits.hpp>
@@ -79,6 +80,9 @@ template <typename Entity>
 class manager
 {
 private:
+	// entities that with hidden components
+	component_uid_map<base::flat_bag<Entity>> _hec_bags;
+
 	component_uid_map<
 		base::shared_ptr<entity_component_map<Entity>>
 	> _eck_maps;
@@ -151,6 +155,23 @@ private:
 
 	template <typename Component>
 	bool _do_rem(const Entity& e);
+
+	bool _do_show(const Entity& e, component_uid, base::string(*)(void));
+
+	template <typename Component>
+	bool _do_show(const Entity& e);
+
+	bool _do_hide(const Entity& e, component_uid, base::string(*)(void));
+
+	template <typename Component>
+	bool _do_hide(const Entity& e);
+
+	bool _ch_vis(const Entity&, component_uid, bool, base::string(*)(void));
+
+	bool _is_hidn(const Entity& e, component_uid, base::string(*)(void));
+
+	template <typename Component>
+	bool _is_hidn(const Entity& e);
 
 	template <typename Component, typename Access>
 	typename Access::template result<Component>::type*
@@ -273,6 +294,43 @@ public:
 	{
 		return _get_cmp_key(e, get_component_uid<Component>()) !=
 			nil_component_key;
+	}
+
+	template <typename ... C>
+	manager& show(const Entity& e)
+	{
+		_eat(_do_show<C>(e)...);
+		return *this;
+	}
+
+	manager& show(const Entity& e, component_uid cid)
+	{
+		_do_show(e, cid, nullptr);
+		return *this;
+	}
+
+	template <typename ... C>
+	manager& hide(const Entity& e)
+	{
+		_eat(_do_hide<C>(e)...);
+		return *this;
+	}
+
+	manager& hide(const Entity& e, component_uid cid)
+	{
+		_do_hide(e, cid, nullptr);
+		return *this;
+	}
+
+	template <typename Component>
+	bool hidden(const Entity& e)
+	{
+		return _is_hidn<Component>(e);
+	}
+
+	bool hidden(const Entity& e, component_uid cid)
+	{
+		return _is_hidn(e, cid, nullptr);
 	}
 
 	template <typename Component>

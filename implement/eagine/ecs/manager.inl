@@ -178,13 +178,16 @@ _do_reg_cmp_type(
 
 	if(p_eck_map == _eck_maps.end())
 	{
+		assert(_hec_bags.find(cid) == _hec_bags.end());
 		assert(_storages.find(cid) == _storages.end());
 
+		_hec_bags[cid] = base::flat_bag<Entity>();
 		_eck_maps[cid] = eck_map;
 		_storages[cid] = storage;
 	}
 	else
 	{
+		assert(_hec_bags.find(cid) != _hec_bags.end());
 		assert(_storages.find(cid) != _storages.end());
 		detail::mgr_handle_cmp_is_reg(get_name());
 	}
@@ -204,14 +207,18 @@ _do_unr_cmp_type(
 
 	if(p_eck_map != _eck_maps.end())
 	{
+		auto p_hec_bag = _hec_bags.find(cid);
+		assert(p_hec_bag != _hec_bags.end());
 		auto p_storage = _storages.find(cid);
 		assert(p_storage != _storages.end());
 
+		_hec_bags.erase(p_hec_bag);
 		_eck_maps.erase(p_eck_map);
 		_storages.erase(p_storage);
 	}
 	else
 	{
+		assert(_hec_bags.find(cid) == _hec_bags.end());
 		assert(_storages.find(cid) == _storages.end());
 		detail::mgr_handle_cmp_not_reg(get_name());
 	}
@@ -228,11 +235,13 @@ _does_know_cmp_type(component_uid cid) const
 
 	if(p_eck_map != _eck_maps.end())
 	{
+		assert(_hec_bags.find(cid) != _hec_bags.end());
 		assert(_storages.find(cid) != _storages.end());
 		return true;
 	}
 	else
 	{
+		assert(_hec_bags.find(cid) == _hec_bags.end());
 		assert(_storages.find(cid) == _storages.end());
 		return false;
 	}
@@ -318,6 +327,8 @@ _do_add(const Entity& e, Component&& component)
 			}
 
 			eck_map->store(e, key);
+
+			_do_show<Component>(e);
 			return true;
 		}
 	}
@@ -364,6 +375,14 @@ _do_cpy(
 
 				eck_map->store(e2, k2);
 
+				if(_is_hidn(e1, cid, get_name))
+				{
+					_do_hide(e2, cid, get_name);
+				}
+				else
+				{
+					_do_show(e2, cid, get_name);
+				}
 			}
 			return true;
 		}
@@ -404,6 +423,12 @@ _do_swp(
 		if(eck_map)
 		{
 			eck_map->swap(e1, e2);
+			bool h1 = _is_hidn(e1, cid, get_name);
+			bool h2 = _is_hidn(e2, cid, get_name);
+
+			_ch_vis(e1, cid, h2, get_name);
+			_ch_vis(e2, cid, h1, get_name);
+
 			return true;
 		}
 	}
@@ -454,6 +479,8 @@ _do_rem(
 				base_storage->release(key);
 			}
 
+			_do_show(e, cid, get_name);
+
 			return true;
 		}
 	}
@@ -473,6 +500,115 @@ _do_rem(const Entity& e)
 	return _do_rem(e, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
+// manager::_do_show
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline bool
+manager<Entity>::
+_do_show(const Entity& e, component_uid cid, base::string(*get_name)(void))
+{
+	auto p_hec_bag = _hec_bags.find(cid);
+
+	if(p_hec_bag != _hec_bags.end())
+	{
+		return p_hec_bag->remove(e);
+	}
+	detail::mgr_handle_cmp_not_reg(get_name?get_name():base::string());
+	return false;
+}
+//------------------------------------------------------------------------------
+// manager::_do_show
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_do_show(const Entity& e)
+{
+	component_uid cid = get_component_uid<Component>();
+	return _do_show(e, cid, &base::type_name<Component>);
+}
+//------------------------------------------------------------------------------
+// manager::_do_hide
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline bool
+manager<Entity>::
+_do_hide(const Entity& e, component_uid cid, base::string(*get_name)(void))
+{
+	auto p_hec_bag = _hec_bags.find(cid);
+
+	if(p_hec_bag != _hec_bags.end())
+	{
+		return p_hec_bag->insert(e);
+	}
+	detail::mgr_handle_cmp_not_reg(get_name?get_name():base::string());
+	return false;
+}
+//------------------------------------------------------------------------------
+// manager::_do_hide
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_do_hide(const Entity& e)
+{
+	component_uid cid = get_component_uid<Component>();
+	return _do_hide(e, cid, &base::type_name<Component>);
+}
+//------------------------------------------------------------------------------
+// manager::_ch_vis
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline bool
+manager<Entity>::
+_ch_vis(
+	const Entity& e,
+	component_uid uid,
+	bool visible,
+	base::string(*base_name)(void)
+)
+{
+	if(visible)
+	{
+		return _do_show(e, uid, base_name);
+	}
+	else
+	{
+		return _do_hide(e, uid, base_name);
+	}
+}
+//------------------------------------------------------------------------------
+// manager::_is_hidn
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline bool
+manager<Entity>::
+_is_hidn(const Entity& e, component_uid cid, base::string(*get_name)(void))
+{
+	auto p_hec_bag = _hec_bags.find(cid);
+
+	if(p_hec_bag != _hec_bags.end())
+	{
+		return p_hec_bag->contains(e);
+	}
+	detail::mgr_handle_cmp_not_reg(get_name?get_name():base::string());
+	return false;
+}
+//------------------------------------------------------------------------------
+// manager::_is_hidn
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component>
+inline bool
+manager<Entity>::
+_is_hidn(const Entity& e)
+{
+	component_uid cid = get_component_uid<Component>();
+	return _is_hidn(e, cid, &base::type_name<Component>);
+}
+//------------------------------------------------------------------------------
 // manager::_do_acc
 //------------------------------------------------------------------------------
 template <typename Entity>
@@ -486,19 +622,22 @@ _do_acc(const Entity& e, Access acc)
 
 	if(key != nil_component_key)
 	{
-		auto p_storage = _storages.find(cid);
-		assert(p_storage != _storages.end());
+		if(!_is_hidn(e, cid, &base::type_name<Component>))
+		{
+			auto p_storage = _storages.find(cid);
+			assert(p_storage != _storages.end());
 
-		auto& bs = *p_storage;
-		assert(bs);
+			auto& bs = *p_storage;
+			assert(bs);
 
-		typedef component_storage<Component> cs_t;
+			typedef component_storage<Component> cs_t;
 
-		assert(dynamic_cast<cs_t*>(bs.get()));
+			assert(dynamic_cast<cs_t*>(bs.get()));
 
-		cs_t* storage = static_cast<cs_t*>(bs.get());
+			cs_t* storage = static_cast<cs_t*>(bs.get());
 
-		return storage->access(key, acc);
+			return storage->access(key, acc);
+		}
 	}
 	return nullptr;
 }
@@ -518,15 +657,18 @@ _do_acc(
 {
 	if(key != nil_component_key)
 	{
-		assert(bs);
+		if(!_is_hidn<Component>(e))
+		{
+			assert(bs);
 
-		typedef component_storage<Component> cs_t;
+			typedef component_storage<Component> cs_t;
 
-		assert(dynamic_cast<cs_t*>(bs));
+			assert(dynamic_cast<cs_t*>(bs));
 
-		cs_t* storage = static_cast<cs_t*>(bs);
+			cs_t* storage = static_cast<cs_t*>(bs);
 
-		return storage->access(key, acc);
+			return storage->access(key, acc);
+		}
 	}
 	return nullptr;
 }
