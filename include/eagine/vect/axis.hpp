@@ -17,17 +17,19 @@ namespace vect {
 template <typename T, unsigned N, unsigned I>
 struct axis
 {
-	static constexpr
+	static
 	typename data<T, N>::type
 	apply(T v)
 	{
-		typename data<T, N>::type r = {{}};
-		r[I] = v;
+		typename data<T, N>::type r;
+		for(unsigned i=0; i<N; ++i)
+		{
+			if(i == I) r[I] = v;
+			else r[i] = T(0);
+		}
 		return r;
 	}
 };
-
-#if defined(__GNUC__)
 
 template <typename T>
 struct axis<T, 1, 0>
@@ -148,7 +150,6 @@ struct axis<T, 4, 3>
 			{T(0),T(0),T(0),v};
 	}
 };
-#endif
 
 } // namespace vect
 } // namespace EAGine

@@ -9,14 +9,24 @@
 #ifndef EAGINE_VECT_DATA_1308281038_HPP
 #define EAGINE_VECT_DATA_1308281038_HPP
 
-#include <array>
-
 namespace EAGine {
 namespace vect {
 
 template <typename T, unsigned N>
-struct _ary_data : std::array<T, N>
+struct _ary_data
 {
+	T _v[N];
+
+	inline T operator [] (unsigned i) const
+	{
+		return _v[i];
+	}
+
+	inline T& operator [] (unsigned i)
+	{
+		return _v[i];
+	}
+
 	friend inline _ary_data operator + (_ary_data a)
 	{
 		return a;
@@ -27,7 +37,7 @@ struct _ary_data : std::array<T, N>
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
 		{
-			c[i] = -a[i];
+			c._v[i] = -a._v[i];
 		}
 		return c;
 	}
@@ -37,7 +47,7 @@ struct _ary_data : std::array<T, N>
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
 		{
-			c[i] = a[i] - b[i];
+			c._v[i] = a._v[i] - b._v[i];
 		}
 		return c;
 	}
@@ -47,7 +57,7 @@ struct _ary_data : std::array<T, N>
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
 		{
-			c[i] = a[i] * b[i];
+			c._v[i] = a._v[i] * b._v[i];
 		}
 		return c;
 	}
@@ -57,7 +67,7 @@ struct _ary_data : std::array<T, N>
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
 		{
-			c[i] = a[i] / b[i];
+			c._v[i] = a._v[i] / b._v[i];
 		}
 		return c;
 	}
@@ -68,6 +78,7 @@ struct data
 {
 	typedef _ary_data<T, N> type;
 };
+
 
 #if defined(__clang__) && __SSE__
 
@@ -95,7 +106,7 @@ struct data<float, 4>
 	typedef float type __attribute__ ((vector_size (16)));
 };
 
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && __SSE__
 
 template <typename T, unsigned N>
 struct _data
@@ -112,14 +123,12 @@ struct data<T,2> : _data<T,2>
 { };
 
 template <typename T>
-struct data<T,3> : _data<T,3>
+struct data<T,3> : _data<T,4>
 { };
 
 template <typename T>
 struct data<T,4> : _data<T,4>
 { };
-
-#else
 
 #endif
 

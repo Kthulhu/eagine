@@ -30,8 +30,6 @@ struct fill
 	}
 };
 
-#if defined(__GNUC__)
-
 template <typename T>
 struct fill<T, 1>
 {
@@ -79,7 +77,6 @@ struct fill<T, 4>
 			{v,v,v,v};
 	}
 };
-#endif
 
 } // namespace vect
 } // namespace EAGine
