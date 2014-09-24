@@ -28,7 +28,7 @@ struct shuffle
 	static inline
 	_dT apply(
 		const _dT& v,
-		shuffle_mask<I...> = shuffle_mask<I...>()
+		shuffle_mask<I...> = {}
 	)
 	{
 #if defined(__clang__) && __SSE__
@@ -52,7 +52,7 @@ struct shuffle2
 	_dT apply(
 		const _dT& v1,
 		const _dT& v2,
-		shuffle_mask<I...> = shuffle_mask<I...>()
+		shuffle_mask<I...> = {}
 	)
 	{
 #if defined(__clang__) && __SSE__

@@ -106,7 +106,10 @@ using vect::shuffle_mask;
 
 template <unsigned ... I, typename T, unsigned N>
 static inline
-vector<T, N>
+typename meta::enable_if<
+	meta::max_constant<unsigned, I...>::value < N,
+	vector<T, N>
+>::type
 shuffle(
 	const vector<T, N>& v,
 	shuffle_mask<I...> m = shuffle_mask<I...>()
@@ -117,7 +120,10 @@ shuffle(
 
 template <unsigned ... I, typename T, unsigned N>
 static inline
-vector<T, N>
+typename meta::enable_if<
+	meta::max_constant<unsigned, I...>::value < 2*N,
+	vector<T, N>
+>::type
 shuffle(
 	const vector<T, N>& v1,
 	const vector<T, N>& v2,

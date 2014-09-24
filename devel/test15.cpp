@@ -5,13 +5,14 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <eagine/math/swizzle.hpp>
+#include <eagine/math/swizzle_xyzw.hpp>
 //------------------
 #include <iostream>
 
 int main(void)
 {
 	using namespace EAGine::math;
+	using namespace EAGine::math::swizzles;
 
 	typedef vector<float, 3> vec3;
 	typedef vector<float, 4> vec4;
@@ -24,11 +25,9 @@ int main(void)
 	shuffle_mask<0,1,4,5> m1;
 	shuffle_mask<2,3,6,7> m2;
 
-	swizzle_mask<int,1,2,3> xyz = {0};
-	swizzle_mask<int,3,2,1,0> zyx_ = {0};
 
 	vec3 cx = r0/xyz;
-	vec4 c = cx/zyx_(9);
+	vec4 c = cx/zyxO(9);
 
 	std::cout << c[0] << std::endl;
 	std::cout << c[1] << std::endl;
