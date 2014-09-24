@@ -42,6 +42,16 @@ struct _ary_data
 		return c;
 	}
 
+	friend _ary_data operator + (const _ary_data& a, const _ary_data& b)
+	{
+		_ary_data c;
+		for(unsigned i=0; i<N; ++i)
+		{
+			c._v[i] = a._v[i] + b._v[i];
+		}
+		return c;
+	}
+
 	friend _ary_data operator - (const _ary_data& a, const _ary_data& b)
 	{
 		_ary_data c;
