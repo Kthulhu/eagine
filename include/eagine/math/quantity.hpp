@@ -21,6 +21,12 @@ struct quantity
 	typedef T value_type;
 
 	T _v;
+
+	template <typename X>
+	operator quantity<Unit, X> (void) const
+	{
+		return {X(_v)};
+	}
 };
 
 template <typename U, typename T>

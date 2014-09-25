@@ -9,36 +9,54 @@
 #ifndef EAGINE_UNIT_BASE_DIM_1308281038_HPP
 #define EAGINE_UNIT_BASE_DIM_1308281038_HPP
 
+#include <eagine/meta/int_const.hpp>
+#include <eagine/unit/scales.hpp>
+
 namespace EAGine {
 namespace unit {
-
-template <typename Dimension>
-struct base_dimension
-{
-	typedef base_dimension type;
-};
-
-template <typename BaseDim, typename Unit>
-struct base_unit
-{
-	typedef BaseDim dimension;
-	typedef base_unit type;
-};
-
 namespace base {
 
-struct angle  : base_dimension<angle> { };
-struct length : base_dimension<length> { };
-struct mass   : base_dimension<mass> { };
-struct time   : base_dimension<time> { };
+template <typename Derived>
+struct dimension
+{
+	typedef dimension type;
+};
 
-struct radian : base_unit<angle, radian> { };
-struct meter  : base_unit<length, meter> { };
-struct gram   : base_unit<mass, gram> { };
-struct second : base_unit<time, second> { };
+template <typename Dimension>
+struct dim_order;
+
+struct angle  : dimension<angle> { };
+struct length : dimension<length> { };
+struct mass   : dimension<mass> { };
+struct time   : dimension<time> { };
+
+template <> struct dim_order<angle>  : meta::integral_constant<int, 0>{ };
+template <> struct dim_order<length> : meta::integral_constant<int, 1> { };
+template <> struct dim_order<mass>   : meta::integral_constant<int, 2> { };
+template <> struct dim_order<time>   : meta::integral_constant<int, 3> { };
+
+template <typename Dimension, typename Derived>
+struct unit
+{
+	typedef Dimension dimension;
+	typedef scales::one scale;
+	typedef unit type;
+};
+
+struct radian : unit<angle, radian> { };
+struct meter  : unit<length, meter> { };
+struct gram   : unit<mass, gram> { };
+struct second : unit<time, second> { };
+
+template <typename Scale, typename Unit>
+struct scaled_unit
+{
+	typedef typename Unit::dimension dimension;
+	typedef Scale scale;
+	typedef scaled_unit type;
+};
 
 } // namespace base
-
 } // namespace unit
 } // namespace EAGine
 
