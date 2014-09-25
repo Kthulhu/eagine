@@ -10,14 +10,11 @@
 #ifndef EAGINE_META_TYPE_TRAITS_1308281038_HPP
 #define EAGINE_META_TYPE_TRAITS_1308281038_HPP
 
-#include <type_traits>
+#include <eagine/meta/int_const.hpp>
 
 namespace EAGine {
 namespace meta {
 
-using ::std::integral_constant;
-using ::std::true_type;
-using ::std::false_type;
 using ::std::conditional;
 using ::std::enable_if;
 using ::std::is_const;

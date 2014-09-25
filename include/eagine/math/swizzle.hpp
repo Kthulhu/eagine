@@ -10,7 +10,7 @@
 #define EAGINE_MATH_SWIZZLE_1308281038_HPP
 
 #include <eagine/math/vector.hpp>
-#include <eagine/meta/type_traits.hpp>
+#include <eagine/meta/int_const.hpp>
 
 namespace EAGine {
 namespace math {

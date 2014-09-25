@@ -10,7 +10,7 @@
 #ifndef EAGINE_META_MIN_MAX_1308281038_HPP
 #define EAGINE_META_MIN_MAX_1308281038_HPP
 
-#include <eagine/meta/type_traits.hpp>
+#include <eagine/meta/int_const.hpp>
 
 namespace EAGine {
 namespace meta {
