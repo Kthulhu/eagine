@@ -10,6 +10,7 @@
 #define EAGINE_UNIT_BASE_DIM_1308281038_HPP
 
 #include <eagine/meta/int_const.hpp>
+#include <eagine/meta/string.hpp>
 #include <eagine/unit/scales.hpp>
 
 namespace EAGine {
@@ -19,41 +20,47 @@ namespace base {
 template <typename Derived>
 struct dimension
 {
-	typedef dimension type;
+	typedef Derived type;
 };
-
-template <typename Dimension>
-struct dim_order;
 
 struct angle  : dimension<angle> { };
 struct length : dimension<length> { };
 struct mass   : dimension<mass> { };
 struct time   : dimension<time> { };
 
-template <> struct dim_order<angle>  : meta::integral_constant<int, 0>{ };
-template <> struct dim_order<length> : meta::integral_constant<int, 1> { };
-template <> struct dim_order<mass>   : meta::integral_constant<int, 2> { };
-template <> struct dim_order<time>   : meta::integral_constant<int, 3> { };
+template <typename Dimension>
+struct dim_num;
 
-template <typename Dimension, typename Derived>
-struct unit
+template <> struct dim_num<angle>  : meta::integral_constant<int, 0>{ };
+template <> struct dim_num<mass>   : meta::integral_constant<int, 1> { };
+template <> struct dim_num<length> : meta::integral_constant<int, 2> { };
+template <> struct dim_num<time>   : meta::integral_constant<int, 3> { };
+
+template <typename Dimension>
+struct dim_info;
+
+template <>
+struct dim_info<angle>
 {
-	typedef Dimension dimension;
-	typedef scales::one scale;
-	typedef unit type;
+	typedef meta::string<'a','n','g','l','e'> name;
 };
 
-struct radian : unit<angle, radian> { };
-struct meter  : unit<length, meter> { };
-struct gram   : unit<mass, gram> { };
-struct second : unit<time, second> { };
-
-template <typename Scale, typename Unit>
-struct scaled_unit
+template <>
+struct dim_info<mass>
 {
-	typedef typename Unit::dimension dimension;
-	typedef Scale scale;
-	typedef scaled_unit type;
+	typedef meta::string<'m','a','s','s'> name;
+};
+
+template <>
+struct dim_info<length>
+{
+	typedef meta::string<'l','e','n','g','t','h'> name;
+};
+
+template <>
+struct dim_info<time>
+{
+	typedef meta::string<'t','i','m','e'> name;
 };
 
 } // namespace base

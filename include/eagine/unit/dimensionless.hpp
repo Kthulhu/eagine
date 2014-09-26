@@ -9,11 +9,12 @@
 #ifndef EAGINE_UNIT_DIMLESS_1308281038_HPP
 #define EAGINE_UNIT_DIMLESS_1308281038_HPP
 
+#include <eagine/unit/detail.hpp>
+
 namespace EAGine {
 namespace unit {
 
-struct dimensionless
-{ };
+typedef bits::dimless dimensionless;
 
 } // namespace unit
 } // namespace EAGine

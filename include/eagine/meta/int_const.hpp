@@ -19,6 +19,23 @@ using ::std::integral_constant;
 using ::std::true_type;
 using ::std::false_type;
 
+template <typename ... IC>
+struct plus;
+
+template <typename Int, Int I0, Int I1>
+struct plus<integral_constant<Int, I0>, integral_constant<Int, I1>>
+ : integral_constant<Int, I0+I1>
+{ };
+
+template <typename ... IC>
+struct minus;
+
+template <typename Int, Int I0, Int I1>
+struct minus<integral_constant<Int, I0>, integral_constant<Int, I1>>
+ : integral_constant<Int, I0-I1>
+{ };
+
+
 } // namespace meta
 } // namespace EAGine
 

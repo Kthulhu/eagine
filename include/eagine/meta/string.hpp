@@ -23,7 +23,10 @@ struct basic_string
 
 	static constexpr Char value[] = { C..., '\0' };
 
-	static constexpr std::size_t size = sizeof...(C);
+	static constexpr std::size_t size(void)
+	{
+		return sizeof...(C);
+	}
 
 	operator const char* (void) const
 	{

@@ -9,15 +9,15 @@
 #ifndef EAGINE_MATH_ANGLE_1308281038_HPP
 #define EAGINE_MATH_ANGLE_1308281038_HPP
 
-#include <eagine/math/quantity.hpp>
-#include <eagine/unit/base_dim.hpp>
+#include <eagine/unit/quantity.hpp>
+#include <eagine/unit/default.hpp>
 #include <cmath>
 
 namespace EAGine {
 namespace math {
 
 template <typename T>
-using angle = quantity<unit::base::radian, T>; // TODO
+using angle = unit::quantity<unit::radian, T>;
 
 template <typename T>
 inline auto asin(T v) -> angle<decltype(::std::asin(v))>
