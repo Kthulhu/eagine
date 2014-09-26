@@ -72,24 +72,10 @@ auto operator / (U1, U2)
 
 // value conv
 template <typename UnitFrom, typename UnitTo>
-struct value_conv
-{
-	static_assert(
-		!meta::is_same<UnitFrom, UnitTo>::value,
-		"Incompatible unit conversion"
-	);
+struct value_conv;
 
-	typedef value_conv type;
-
-	template <typename T>
-	static constexpr inline T apply(T v)
-	{
-		return v;
-	}
-};
-
-template <typename D, typename S>
-struct value_conv<unit<D, S>, unit<D, S>>
+template <typename D1, typename D2, typename S>
+struct value_conv<unit<D1, S>, unit<D2, S>>
 {
 	typedef value_conv type;
 

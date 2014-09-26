@@ -108,7 +108,7 @@ operator + (const quantity<U1, T>& a, const quantity<U2, T>& b)
 	typedef typename add_result<U1, U2>::type UR;
 	typedef typename value_conv<U1, UR>::type conv1;
 	typedef typename value_conv<U2, UR>::type conv2;
-	return {conv1::apply(a._v) + conv1::apply(b._v)};
+	return {conv1::apply(a._v) + conv2::apply(b._v)};
 }
 
 template <typename U1, typename U2, typename T>
@@ -119,7 +119,7 @@ operator - (const quantity<U1, T>& a, const quantity<U2, T>& b)
 	typedef typename sub_result<U1, U2>::type UR;
 	typedef typename value_conv<U1, UR>::type conv1;
 	typedef typename value_conv<U2, UR>::type conv2;
-	return {conv1::apply(a._v) - conv1::apply(b._v)};
+	return {conv1::apply(a._v) - conv2::apply(b._v)};
 }
 
 template <typename U1, typename U2, typename T>
@@ -130,7 +130,7 @@ operator * (const quantity<U1, T>& a, const quantity<U2, T>& b)
 	typedef typename mul_result<U1, U2>::type UR;
 	typedef typename value_conv<U1, UR>::type conv1;
 	typedef typename value_conv<U2, UR>::type conv2;
-	return {conv1::apply(a._v) * conv1::apply(b._v)};
+	return {conv1::apply(a._v) * conv2::apply(b._v)};
 }
 
 template <typename U, typename T>
@@ -157,7 +157,7 @@ operator / (const quantity<U1, T>& a, const quantity<U2, T>& b)
 	typedef typename div_result<U1, U2>::type UR;
 	typedef typename value_conv<U1, UR>::type conv1;
 	typedef typename value_conv<U2, UR>::type conv2;
-	return {conv1::apply(a._v) / conv1::apply(b._v)};
+	return {conv1::apply(a._v) / conv2::apply(b._v)};
 }
 
 template <typename U, typename T>
