@@ -59,34 +59,6 @@ struct apply<MF, dims<H, T>, P...>
  : apply<MF, T, P..., H>
 { };
 
-// get_pow
-template <typename Dims, typename Dim>
-struct get_pow
- : get_pow<typename Dims::type, Dim>
-{ };
-
-template <typename Dim>
-struct get_pow<nil_t, Dim> : zero
-{ };
-
-template <typename Dim>
-struct get_pow<dimless, Dim> : zero
-{ };
-
-template <typename HDim, typename HPow, typename Tail, typename Dim>
-struct get_pow<dims<dim_pow<HDim, HPow>, Tail>, Dim>
- : meta::conditional<
-	(base::dim_num<HDim>::value < base::dim_num<Dim>::value),
-	typename get_pow<Tail, Dim>::type,
-	zero
->::type
-{ };
-
-template <typename Dim, typename Pow, typename Tail>
-struct get_pow<dims<dim_pow<Dim, Pow>, Tail>, Dim>
- : Pow::type
-{ };
-
 // plus
 template <typename Dims1, typename Dims2>
 struct plus;
@@ -177,13 +149,13 @@ struct minus<nil_t, nil_t>
 { };
 
 template <typename H, typename T>
-struct minus<nil_t, dims<H, T>>
+struct minus<dims<H, T>, nil_t>
  : dims<H, T>
 { };
 
-template <typename H, typename T>
-struct minus<dims<H, T>, nil_t>
- : dims<H, T>
+template <typename D, typename P, typename T>
+struct minus<nil_t, dims<dim_pow<D, P>, T>>
+ : dims<dim_pow<D, typename meta::negate<P>::type>, T>
 { };
 
 template <>
@@ -196,9 +168,9 @@ struct minus<dims<H, T>, dimless>
  : dims<H, T>
 { };
 
-template <typename H, typename T>
-struct minus<dimless, dims<H, T>>
- : dims<H, T>
+template <typename D, typename P, typename T>
+struct minus<dimless, dims<dim_pow<D, P>, T>>
+ : dims<dim_pow<D, typename meta::negate<P>::type>, T>
 { };
 
 template <
@@ -238,7 +210,7 @@ struct minus<
 		>::type
 	>,
 	dims<
-		dim_pow<Dim2, Pow2>,
+		dim_pow<Dim2, typename meta::negate<Pow2>::type>,
 		typename minus<
 			dims<dim_pow<Dim1, Pow1>, Tail1>,
 			Tail2
@@ -301,6 +273,68 @@ template <typename H, typename T, typename U, typename F>
 struct get_scale<unit_scales<H, T>, U, F>
  : get_scale<T, U, F>
 { };
+
+template <typename UnitScales1, typename UnitScales2>
+struct merge;
+
+template <>
+struct merge<nil_t, nil_t>
+ : unit_scales<nil_t, nil_t>
+{ };
+
+template <>
+struct merge<unit_scales<nil_t, nil_t>, unit_scales<nil_t, nil_t>>
+ : unit_scales<nil_t, nil_t>
+{ };
+
+template <typename H, typename T>
+struct merge<unit_scales<H, T>, nil_t>
+ : unit_scales<H, T>
+{ };
+
+template <typename H, typename T>
+struct merge<nil_t, unit_scales<H, T>>
+ : unit_scales<H, T>
+{ };
+
+template <typename H, typename T>
+struct merge<unit_scales<H, T>, unit_scales<nil_t, nil_t>>
+ : unit_scales<H, T>
+{ };
+
+template <typename H, typename T>
+struct merge<unit_scales<nil_t, nil_t>, unit_scales<H, T>>
+ : unit_scales<H, T>
+{ };
+
+template <typename U, typename S1, typename S2, typename T1, typename T2>
+struct merge<
+	unit_scales<uni_sca<U, S1>, T1>,
+	unit_scales<uni_sca<U, S2>, T2>
+> : unit_scales<uni_sca<U, S1>, typename merge<T1, T2>::type>
+{ };
+
+template <
+	typename U1, typename U2,
+	typename S1, typename S2,
+	typename T1, typename T2
+> struct merge<
+	unit_scales<uni_sca<U1, S1>, T1>,
+	unit_scales<uni_sca<U2, S2>, T2>
+>: meta::conditional<
+	(
+		base::dim_num<typename U1::dimension>::value<
+		base::dim_num<typename U2::dimension>::value
+	),
+	unit_scales<
+		uni_sca<U1, S1>,
+		typename merge<T1, unit_scales<uni_sca<U2, S2>, T2>>::type
+	>,
+	unit_scales<
+		uni_sca<U2, S2>,
+		typename merge<unit_scales<uni_sca<U1, S1>, T1>, T2>::type
+	>
+>{ };
 
 
 } // namespace bits

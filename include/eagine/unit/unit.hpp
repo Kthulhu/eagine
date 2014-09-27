@@ -19,8 +19,9 @@ struct rmks;
 template <typename Dims, typename System = rmks>
 struct unit
 {
-	typedef Dims dimension_type;
+	typedef Dims dimension;
 	typedef System system;
+	typedef scales::one scale;
 	typedef unit type;
 };
 
@@ -55,20 +56,6 @@ template <typename D1, typename D2, typename S>
 struct div_result<unit<D1, S>, unit<D2, S>>
  : unit<typename bits::minus<D1, D2>::type, S>
 { };
-
-template <typename U1, typename U2>
-static constexpr inline
-auto operator * (U1, U2)
-{
-	return typename mul_result<U1, U2>::type();
-}
-
-template <typename U1, typename U2>
-static constexpr inline
-auto operator / (U1, U2)
-{
-	return typename div_result<U1, U2>::type();
-}
 
 // value conv
 template <typename UnitFrom, typename UnitTo>

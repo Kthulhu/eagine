@@ -19,7 +19,7 @@ using ::std::integral_constant;
 using ::std::true_type;
 using ::std::false_type;
 
-template <typename ... IC>
+template <typename IC1, typename IC2>
 struct plus;
 
 template <typename Int, Int I0, Int I1>
@@ -27,12 +27,20 @@ struct plus<integral_constant<Int, I0>, integral_constant<Int, I1>>
  : integral_constant<Int, I0+I1>
 { };
 
-template <typename ... IC>
+template <typename IC1, typename IC2>
 struct minus;
 
 template <typename Int, Int I0, Int I1>
 struct minus<integral_constant<Int, I0>, integral_constant<Int, I1>>
  : integral_constant<Int, I0-I1>
+{ };
+
+template <typename IC>
+struct negate;
+
+template <typename Int, Int I>
+struct negate<integral_constant<Int, I>>
+ : integral_constant<Int, -I>
 { };
 
 
