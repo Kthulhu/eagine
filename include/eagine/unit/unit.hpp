@@ -10,6 +10,7 @@
 #define EAGINE_UNIT_UNIT_1308281038_HPP
 
 #include <eagine/unit/detail.hpp>
+#include <eagine/unit/fwd.hpp>
 
 namespace EAGine {
 namespace unit {
@@ -25,32 +26,20 @@ struct unit
 	typedef unit type;
 };
 
-template <typename U1, typename U2>
-struct add_result;
-
 template <typename D, typename S>
 struct add_result<unit<D, S>, unit<D, S>>
  : unit<D, S>
 { };
-
-template <typename U1, typename U2>
-struct sub_result;
 
 template <typename D, typename S>
 struct sub_result<unit<D, S>, unit<D, S>>
  : unit<D, S>
 { };
 
-template <typename U1, typename U2>
-struct mul_result;
-
 template <typename D1, typename D2, typename S>
 struct mul_result<unit<D1, S>, unit<D2, S>>
  : unit<typename bits::plus<D1, D2>::type, S>
 { };
-
-template <typename U1, typename U2>
-struct div_result;
 
 template <typename D1, typename D2, typename S>
 struct div_result<unit<D1, S>, unit<D2, S>>

@@ -17,13 +17,16 @@ namespace EAGine {
 namespace unit {
 namespace bits {
 
-template <typename ScaledUnits, typename System>
+template <typename Scales, typename System>
 struct _sc_unit_sc_hlp
 {
 	template <typename T>
-	static constexpr inline T _adj(T v, bool inv)
+	static constexpr inline T _pow(T v, int exp)
 	{
-		return inv?1.0/v:v;
+		return	(exp == 0)?1:
+			(exp >  0)?
+				_pow(v, exp-1)*v:
+				_pow(v, exp+1)/v;
 	}
 
 	template <typename DimPow>
@@ -35,13 +38,13 @@ struct _sc_unit_sc_hlp
 
 		typedef typename base_unit::scale base_scale;
 
-		return _adj(
+		return _pow(
 			bits::get_scale<
-				ScaledUnits,
+				Scales,
 				base_unit,
 				base_scale
 			>::value,
-			DimPow::pow::value < 0
+			DimPow::pow::value
 		);
 	}
 
@@ -59,11 +62,11 @@ struct _sc_unit_sc_hlp
 
 } // namespace bits
 
-template <typename Dims, typename ScaledUnits, typename System>
+template <typename Dims, typename Scales, typename System>
 struct scaled_unit
 {
 	typedef Dims dimension;
-	typedef ScaledUnits scales;
+	typedef Scales scales;
 	typedef System system;
 	typedef scaled_unit type;
 
@@ -76,7 +79,7 @@ struct scaled_unit
 		{
 			typedef _hlp type;
 
-			typedef bits::_sc_unit_sc_hlp<ScaledUnits, System>_base;
+			typedef bits::_sc_unit_sc_hlp<Scales, System>_base;
 
 			static constexpr auto scale = _base::_prod(
 				_base::_one_dim_pow(DimPow())...
@@ -90,96 +93,98 @@ struct scaled_unit
 };
 
 
-template <typename D1, typename D2, typename SU, typename S>
-struct value_conv<scaled_unit<D1, SU, S>, unit<D2, S>>
+template <typename D1, typename D2, typename US, typename S>
+struct value_conv<scaled_unit<D1, US, S>, unit<D2, S>>
 {
 	typedef value_conv type;
 
 	template <typename T>
 	static constexpr inline T apply(T v)
 	{
-		return v*scaled_unit<D1, SU, S>::scale::value;
+		return v*scaled_unit<D1, US, S>::scale::value;
 	}
 };
 
-template <typename D1, typename D2, typename SU, typename S>
-struct value_conv<unit<D1, S>, scaled_unit<D2, SU, S>>
+template <typename D1, typename D2, typename US, typename S>
+struct value_conv<unit<D1, S>, scaled_unit<D2, US, S>>
 {
 	typedef value_conv type;
 
 	template <typename T>
 	static constexpr inline T apply(T v)
 	{
-		return v/scaled_unit<D2, SU, S>::scale::value;
+		return v/scaled_unit<D1, US, S>::scale::value;
 	}
 };
 
-template <typename D1, typename D2, typename SU1, typename SU2, typename S>
-struct value_conv<scaled_unit<D1, SU1, S>, scaled_unit<D2, SU2, S>>
+template <typename D1, typename D2, typename US1, typename US2, typename S>
+struct value_conv<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
 {
 	typedef value_conv type;
 
 	template <typename T>
 	static constexpr inline T apply(T v)
 	{
-		return v;
+		return v*
+			scaled_unit<D1, US1, S>::scale::value/
+			scaled_unit<D1, US2, S>::scale::value;
 	}
 };
 
-template <typename D, typename SU, typename S>
-struct add_result<scaled_unit<D, SU, S>, unit<D, S>>
+template <typename D, typename US, typename S>
+struct add_result<scaled_unit<D, US, S>, unit<D, S>>
  : unit<D, S>
 { };
 
-template <typename D, typename SU, typename S>
-struct add_result<unit<D, S>, scaled_unit<D, SU, S>>
+template <typename D, typename US, typename S>
+struct add_result<unit<D, S>, scaled_unit<D, US, S>>
  : unit<D, S>
 { };
 
-template <typename D, typename SU, typename S>
-struct sub_result<scaled_unit<D, SU, S>, unit<D, S>>
+template <typename D, typename US, typename S>
+struct sub_result<scaled_unit<D, US, S>, unit<D, S>>
  : unit<D, S>
 { };
 
-template <typename D, typename SU, typename S>
-struct sub_result<unit<D, S>, scaled_unit<D, SU, S>>
+template <typename D, typename US, typename S>
+struct sub_result<unit<D, S>, scaled_unit<D, US, S>>
  : unit<D, S>
 { };
 
-template <typename D1, typename D2, typename SU, typename S>
-struct mul_result<scaled_unit<D1, SU, S>, unit<D2, S>>
+template <typename D1, typename D2, typename US, typename S>
+struct mul_result<scaled_unit<D1, US, S>, unit<D2, S>>
  : unit<typename bits::plus<D1, D2>::type, S>
 { };
 
-template <typename D1, typename D2, typename SU, typename S>
-struct mul_result<unit<D1, S>, scaled_unit<D2, SU, S>>
+template <typename D1, typename D2, typename US, typename S>
+struct mul_result<unit<D1, S>, scaled_unit<D2, US, S>>
  : unit<typename bits::plus<D1, D2>::type, S>
 { };
 
-template <typename D1, typename D2, typename SU1, typename SU2, typename S>
-struct mul_result<scaled_unit<D1, SU1, S>, scaled_unit<D2, SU2, S>>
+template <typename D1, typename D2, typename US1, typename US2, typename S>
+struct mul_result<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
  : scaled_unit<
 	typename bits::plus<D1, D2>::type,
-	typename bits::merge<SU1, SU2>::type,
+	typename bits::merge<US1, US2>::type,
 	S
 >
 { };
 
-template <typename D1, typename D2, typename SU, typename S>
-struct div_result<scaled_unit<D1, SU, S>, unit<D2, S>>
+template <typename D1, typename D2, typename US, typename S>
+struct div_result<scaled_unit<D1, US, S>, unit<D2, S>>
  : unit<typename bits::minus<D1, D2>::type, S>
 { };
 
-template <typename D1, typename D2, typename SU, typename S>
-struct div_result<unit<D1, S>, scaled_unit<D2, SU, S>>
+template <typename D1, typename D2, typename US, typename S>
+struct div_result<unit<D1, S>, scaled_unit<D2, US, S>>
  : unit<typename bits::minus<D1, D2>::type, S>
 { };
 
-template <typename D1, typename D2, typename SU1, typename SU2, typename S>
-struct div_result<scaled_unit<D1, SU1, S>, scaled_unit<D2, SU2, S>>
+template <typename D1, typename D2, typename US1, typename US2, typename S>
+struct div_result<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
  : scaled_unit<
 	typename bits::minus<D1, D2>::type,
-	typename bits::merge<SU1, SU2>::type,
+	typename bits::merge<US1, US2>::type,
 	S
 >
 { };

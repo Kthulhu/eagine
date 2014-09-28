@@ -10,6 +10,8 @@
 #define EAGINE_UNIT_QUANTITY_1308281038_HPP
 
 #include <eagine/unit/unit.hpp>
+#include <eagine/unit/traits.hpp>
+#include <eagine/meta/type_traits.hpp>
 
 namespace EAGine {
 namespace unit {
@@ -22,12 +24,21 @@ struct quantity
 
 	T _v;
 
+	constexpr quantity(void) = default;
+	constexpr quantity(const quantity&) = default;
+
+	constexpr quantity(T v)
+	 : _v(v)
+	{ }
+
 	template <typename UX, typename X>
-	operator quantity<UX, X> (void) const
-	{
-		typedef typename value_conv<Unit, UX>::type conv;
-		return {X(conv::apply(_v))};
-	}
+	constexpr quantity(
+		const quantity<UX, X>& q,
+		typename meta::enable_if<
+			same_dimension<Unit, UX>::value
+		>::type* = 0
+	): _v(value_conv<UX, Unit>::type::apply(q._v))
+	{ }
 };
 
 template <typename U, typename T>
