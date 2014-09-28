@@ -38,9 +38,7 @@ template <typename Char, Char ... C>
 constexpr Char basic_string<Char, C...>::value[];
 
 template <char ... C>
-struct string
- : basic_string<char, C...>
-{ };
+using string = basic_string<char, C...>;
 
 typedef string<> empty_string;
 
@@ -61,6 +59,51 @@ template <typename Char, Char ... C1, Char ... C2>
 struct concat<basic_string<Char, C1...>, basic_string<Char, C2...> >
  : basic_string<Char, C1..., C2...>
 { };
+
+template <typename Sep, typename ... X>
+struct join;
+
+template <typename Sep, typename S1, typename S2, typename ... Sp>
+struct join<Sep, S1, S2, Sp...>
+ : concat<S1, Sep, typename join<Sep, S2, Sp...>::type>
+{ };
+
+template <typename Sep, typename Str>
+struct join<Sep, Str>
+ : Str
+{ };
+
+template <typename Char, Char ... C>
+struct join<basic_string<Char, C...>>
+ : basic_string<Char>
+{ };
+
+template <unsigned I>
+struct uint_to_str;
+
+template <> struct uint_to_str<0u> : string<'0'> { };
+template <> struct uint_to_str<1u> : string<'1'> { };
+template <> struct uint_to_str<2u> : string<'2'> { };
+template <> struct uint_to_str<3u> : string<'3'> { };
+template <> struct uint_to_str<4u> : string<'4'> { };
+template <> struct uint_to_str<5u> : string<'5'> { };
+template <> struct uint_to_str<6u> : string<'6'> { };
+template <> struct uint_to_str<7u> : string<'7'> { };
+template <> struct uint_to_str<8u> : string<'8'> { };
+template <> struct uint_to_str<9u> : string<'9'> { };
+
+template <unsigned I>
+struct uint_to_str
+ : concat<typename uint_to_str<I/10>::type, typename uint_to_str<I%10>::type>
+{ };
+
+template <int I>
+struct int_to_str
+ : std::conditional<
+	(I < 0),
+	concat<string<'-'>, typename uint_to_str<unsigned(-I)>::type>,
+	uint_to_str<unsigned( I)>
+>::type{ };
 
 } // namespace meta
 } // namespace EAGine

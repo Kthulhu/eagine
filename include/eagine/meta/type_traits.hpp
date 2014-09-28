@@ -23,6 +23,7 @@ using ::std::remove_const;
 using ::std::remove_reference;
 using ::std::add_pointer;
 using ::std::is_same;
+using ::std::is_base_of;
 using ::std::is_convertible;
 using ::std::is_function;
 

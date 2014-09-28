@@ -16,6 +16,16 @@ namespace EAGine {
 namespace unit {
 
 template <typename X>
+struct is_dimension
+ : meta::false_type
+{ };
+
+template <typename H, typename T>
+struct is_dimension<bits::dims<H, T>>
+ : meta::true_type
+{ };
+
+template <typename X>
 struct is_unit
  : meta::false_type
 { };

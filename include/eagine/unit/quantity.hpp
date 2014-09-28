@@ -9,7 +9,7 @@
 #ifndef EAGINE_UNIT_QUANTITY_1308281038_HPP
 #define EAGINE_UNIT_QUANTITY_1308281038_HPP
 
-#include <eagine/unit/unit.hpp>
+#include <eagine/unit/fwd.hpp>
 #include <eagine/unit/traits.hpp>
 #include <eagine/meta/type_traits.hpp>
 

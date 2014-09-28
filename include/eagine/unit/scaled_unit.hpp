@@ -15,52 +15,6 @@
 
 namespace EAGine {
 namespace unit {
-namespace bits {
-
-template <typename Scales, typename System>
-struct _sc_unit_sc_hlp
-{
-	template <typename T>
-	static constexpr inline T _pow(T v, int exp)
-	{
-		return	(exp == 0)?1:
-			(exp >  0)?
-				_pow(v, exp-1)*v:
-				_pow(v, exp+1)/v;
-	}
-
-	template <typename DimPow>
-	static constexpr inline auto _one_dim_pow(DimPow)
-	{
-		typedef typename System::template base_unit<
-			typename DimPow::dim
-		>::type base_unit;
-
-		typedef typename base_unit::scale base_scale;
-
-		return _pow(
-			bits::get_scale<
-				Scales,
-				base_unit,
-				base_scale
-			>::value,
-			DimPow::pow::value
-		);
-	}
-
-	static constexpr double _prod(void)
-	{
-		return 1.0;
-	}
-
-	template <typename X, typename ... P>
-	static constexpr auto _prod(X v, P ... p)
-	{
-		return v*_prod(p...);
-	}
-};
-
-} // namespace bits
 
 template <typename Dims, typename Scales, typename System>
 struct scaled_unit
@@ -92,6 +46,20 @@ struct scaled_unit
 	};
 };
 
+template <typename BaseScaledUnit, typename System>
+struct make_scaled_unit;
+
+template <typename Scale, typename BaseUnit, typename System>
+struct make_scaled_unit<base::scaled_unit<Scale, BaseUnit>, System>
+ : scaled_unit<
+	dimension<typename BaseUnit::dimension, 1>,
+	typename bits::unit_scales<
+		bits::uni_sca<BaseUnit, Scale>,
+		bits::nil_t
+	>::type,
+	System
+>
+{ };
 
 template <typename D1, typename D2, typename US, typename S>
 struct value_conv<scaled_unit<D1, US, S>, unit<D2, S>>
@@ -153,18 +121,18 @@ struct sub_result<unit<D, S>, scaled_unit<D, US, S>>
 
 template <typename D1, typename D2, typename US, typename S>
 struct mul_result<scaled_unit<D1, US, S>, unit<D2, S>>
- : unit<typename bits::plus<D1, D2>::type, S>
+ : unit<typename bits::dim_add<D1, D2>::type, S>
 { };
 
 template <typename D1, typename D2, typename US, typename S>
 struct mul_result<unit<D1, S>, scaled_unit<D2, US, S>>
- : unit<typename bits::plus<D1, D2>::type, S>
+ : unit<typename bits::dim_add<D1, D2>::type, S>
 { };
 
 template <typename D1, typename D2, typename US1, typename US2, typename S>
 struct mul_result<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
  : scaled_unit<
-	typename bits::plus<D1, D2>::type,
+	typename bits::dim_add<D1, D2>::type,
 	typename bits::merge<US1, US2>::type,
 	S
 >
@@ -172,18 +140,18 @@ struct mul_result<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
 
 template <typename D1, typename D2, typename US, typename S>
 struct div_result<scaled_unit<D1, US, S>, unit<D2, S>>
- : unit<typename bits::minus<D1, D2>::type, S>
+ : unit<typename bits::dim_sub<D1, D2>::type, S>
 { };
 
 template <typename D1, typename D2, typename US, typename S>
 struct div_result<unit<D1, S>, scaled_unit<D2, US, S>>
- : unit<typename bits::minus<D1, D2>::type, S>
+ : unit<typename bits::dim_sub<D1, D2>::type, S>
 { };
 
 template <typename D1, typename D2, typename US1, typename US2, typename S>
 struct div_result<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
  : scaled_unit<
-	typename bits::minus<D1, D2>::type,
+	typename bits::dim_sub<D1, D2>::type,
 	typename bits::merge<US1, US2>::type,
 	S
 >
