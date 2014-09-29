@@ -5,6 +5,8 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
+#pragma once
+
 #ifndef EAGINE_UNIT_DIMENSION_1308281038_HPP
 #define EAGINE_UNIT_DIMENSION_1308281038_HPP
 
@@ -40,21 +42,17 @@ typename meta::enable_if<
 >::type operator / (D1, D2);
 
 // basic dimensions
-typedef dimension<base::angle , 1> angle;
+typedef dimension<base::angle,  1> angle;
 typedef dimension<base::length, 1> length;
 typedef dimension<base::mass,   1> mass;
 typedef dimension<base::time,   1> time;
 
-// derived dimensions
-typedef decltype(length()*length()) area;
-typedef decltype(length()*length()*length()) volume;
-typedef decltype(length()/time()) velocity;
-typedef decltype(velocity()/time()) acceleration;
-
-typedef decltype(acceleration()*mass()) force;
-typedef decltype(force()*length()) energy;
-typedef decltype(force()/area()) pressure;
-typedef decltype(energy()/time()) power;
+typedef dimension<base::temperature,         1> temperature;
+typedef dimension<base::electric_current,    1> electric_current;
+typedef dimension<base::number_of_cycles,    1> number_of_cycles;
+typedef dimension<base::number_of_decays,    1> number_of_decays;
+typedef dimension<base::luminous_intensity,  1> luminous_intensity;
+typedef dimension<base::amount_of_substance, 1> amount_of_substance;
 
 } // namespace unit
 } // namespace EAGine

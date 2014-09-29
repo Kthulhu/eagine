@@ -5,6 +5,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
+#pragma once
 
 #ifndef EAGINE_UNIT_INFO_1308281038_HPP
 #define EAGINE_UNIT_INFO_1308281038_HPP
@@ -32,8 +33,29 @@ struct pow_str<1>
 { };
 
 // info
-template <typename X>
-struct info;
+template <>
+struct info<bits::nil_t>
+{
+	typedef meta::empty_string name;
+};
+
+// info dimensions
+template <typename H, typename T>
+struct info<bits::dims<H, T>>
+{
+	template <typename ... DimPow>
+	struct _name_hlp : meta::join<
+		meta::string<char(0xC3),char(0x97)>,
+		typename meta::concat<
+			typename base::dim_info<
+				typename DimPow::dim
+			>::name,
+			typename pow_str<DimPow::pow::value>::type
+		>::type...
+	>
+	{ };
+	typedef typename bits::apply<_name_hlp, bits::dims<H, T>>::type name;
+};
 
 // info<unit>
 template <typename Dims, typename System>
@@ -113,6 +135,27 @@ struct info<scaled_unit<Dims, UnitScales, System>>
 	typedef typename bits::apply<_sym_hlp, Dims>::type symbol;
 };
 
+// quantity_name(Unit)
+template <typename Unit>
+static inline typename meta::enable_if<
+	is_unit<Unit>::value,
+	EAGine::base::cstrref
+>::type quantity_name(const Unit& = Unit())
+{
+	return meta::c_str<
+		typename info<
+			typename Unit::dimension
+		>::name
+	>::value;
+}
+
+// quantity_name(quanity)
+template <typename U, typename T>
+static inline auto quantity_name(const quantity<U, T>&)
+{
+	return quantity_name<U>();
+}
+
 // unit_name(Unit)
 template <typename Unit>
 static inline typename meta::enable_if<
@@ -120,7 +163,7 @@ static inline typename meta::enable_if<
 	EAGine::base::cstrref
 >::type unit_name(const Unit& = Unit())
 {
-	return info<Unit>::name::value;
+	return meta::c_str<typename info<Unit>::name>::value;
 }
 
 // unit_symbol(Unit)
@@ -130,7 +173,7 @@ static inline typename meta::enable_if<
 	EAGine::base::cstrref
 >::type unit_symbol(const Unit& = Unit())
 {
-	return info<Unit>::symbol::value;
+	return meta::c_str<typename info<Unit>::symbol>::value;
 }
 
 // unit_name(quantity)

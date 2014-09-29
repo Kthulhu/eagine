@@ -5,6 +5,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
+#pragma once
 
 #ifndef EAGINE_UNIT_UNIT_1308281038_HPP
 #define EAGINE_UNIT_UNIT_1308281038_HPP
@@ -15,9 +16,7 @@
 namespace EAGine {
 namespace unit {
 
-struct rmks;
-
-template <typename Dims, typename System = rmks>
+template <typename Dims, typename System = si>
 struct unit
 {
 	typedef Dims dimension;

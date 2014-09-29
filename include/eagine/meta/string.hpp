@@ -6,6 +6,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
+#pragma once
 
 #ifndef EAGINE_META_STRING_1308281038_HPP
 #define EAGINE_META_STRING_1308281038_HPP
@@ -20,13 +21,32 @@ template <typename Char, Char ... C>
 struct basic_string
 {
 	typedef basic_string<Char, C...> type;
+};
 
+template <char ... C>
+using string = basic_string<char, C...>;
+
+typedef string<> empty_string;
+
+template <typename String>
+struct size
+ : size<typename String::type>
+{ };
+
+template <typename Char, Char ... C>
+struct size<basic_string<Char, C...>>
+ : integral_constant<std::size_t, sizeof...(C)>
+{ };
+
+template <typename String>
+struct c_str
+ : c_str<typename String::type>
+{ };
+
+template <typename Char, Char ... C>
+struct c_str<basic_string<Char, C...>>
+{
 	static constexpr Char value[] = { C..., '\0' };
-
-	static constexpr std::size_t size(void)
-	{
-		return sizeof...(C);
-	}
 
 	operator const char* (void) const
 	{
@@ -35,12 +55,7 @@ struct basic_string
 };
 
 template <typename Char, Char ... C>
-constexpr Char basic_string<Char, C...>::value[];
-
-template <char ... C>
-using string = basic_string<char, C...>;
-
-typedef string<> empty_string;
+constexpr Char c_str<basic_string<Char, C...>>::value[];
 
 template <typename ... X>
 struct concat;

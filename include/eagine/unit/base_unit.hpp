@@ -5,6 +5,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
+#pragma once
 
 #ifndef EAGINE_UNIT_BASE_UNIT_1308281038_HPP
 #define EAGINE_UNIT_BASE_UNIT_1308281038_HPP
@@ -23,41 +24,8 @@ struct unit
 	typedef Derived type;
 };
 
-struct radian : unit<angle,  radian> { };
-struct gram   : unit<mass,   gram> { };
-struct meter  : unit<length, meter> { };
-struct second : unit<time,   second> { };
-
 template <typename Unit>
 struct unit_info;
-
-template <>
-struct unit_info<radian>
-{
-	typedef meta::string<'r','a','d','i','a','n'> name;
-	typedef meta::string<'r','a','d'> symbol;
-};
-
-template <>
-struct unit_info<gram>
-{
-	typedef meta::string<'g','r','a','m'> name;
-	typedef meta::string<'g'> symbol;
-};
-
-template <>
-struct unit_info<meter>
-{
-	typedef meta::string<'m','e','t','e','r'> name;
-	typedef meta::string<'m'> symbol;
-};
-
-template <>
-struct unit_info<second>
-{
-	typedef meta::string<'s','e','c','o','n','d'> name;
-	typedef meta::string<'s'> symbol;
-};
 
 } // namespace base
 } // namespace unit
