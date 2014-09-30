@@ -40,7 +40,7 @@ struct si;
 template <typename Unit>
 struct info;
 
-template <typename Dims, typename System>
+template <typename Dims, typename System = si>
 struct unit;
 
 template <typename Dims, typename Scales, typename System>
@@ -61,7 +61,7 @@ struct mul_result;
 template <typename U1, typename U2>
 struct div_result;
 
-template <typename Unit, typename T>
+template <typename Unit, typename T = double>
 struct quantity;
 
 } // namespace unit

@@ -10,13 +10,13 @@
 #ifndef EAGINE_UNIT_UNIT_1308281038_HPP
 #define EAGINE_UNIT_UNIT_1308281038_HPP
 
-#include <eagine/unit/detail.hpp>
 #include <eagine/unit/fwd.hpp>
+#include <eagine/unit/detail.hpp>
 
 namespace EAGine {
 namespace unit {
 
-template <typename Dims, typename System = si>
+template <typename Dims, typename System>
 struct unit
 {
 	typedef Dims dimension;

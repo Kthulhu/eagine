@@ -11,6 +11,8 @@
 #define EAGINE_UNIT_INFO_1308281038_HPP
 
 #include <eagine/unit/fwd.hpp>
+#include <eagine/unit/base_unit.hpp>
+#include <eagine/unit/detail.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/string.hpp>
 #include <eagine/meta/utf8.hpp>

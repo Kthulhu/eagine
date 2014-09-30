@@ -10,10 +10,10 @@
 #ifndef EAGINE_UNIT_DETAIL_1308281038_HPP
 #define EAGINE_UNIT_DETAIL_1308281038_HPP
 
+#include <eagine/unit/fwd.hpp>
+#include <eagine/unit/base_dim.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/nil_t.hpp>
-#include <eagine/unit/base_dim.hpp>
-#include <eagine/unit/fwd.hpp>
 
 namespace EAGine {
 namespace unit {

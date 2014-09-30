@@ -17,7 +17,7 @@
 namespace EAGine {
 namespace unit {
 
-template <typename Unit, typename T = double>
+template <typename Unit, typename T>
 struct quantity
 {
 	typedef Unit unit_type;
