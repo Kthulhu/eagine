@@ -157,7 +157,10 @@ struct dim_sub<dims<H, T>, nil_t>
 
 template <typename D, typename P, typename T>
 struct dim_sub<nil_t, dims<dim_pow<D, P>, T>>
- : dims<dim_pow<D, typename meta::negate<P>::type>, T>
+ : dims<
+	dim_pow<D, typename meta::negate<P>::type>,
+	typename dim_sub<nil_t, T>::type
+>
 { };
 
 template <>

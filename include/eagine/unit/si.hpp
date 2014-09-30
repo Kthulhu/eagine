@@ -11,6 +11,7 @@
 #define EAGINE_UNIT_SI_1308281038_HPP
 
 #include <eagine/unit/si/angle.hpp>
+#include <eagine/unit/si/solid_angle.hpp>
 #include <eagine/unit/si/length.hpp>
 #include <eagine/unit/si/mass.hpp>
 #include <eagine/unit/si/time.hpp>

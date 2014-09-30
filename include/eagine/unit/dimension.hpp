@@ -42,7 +42,9 @@ typename meta::enable_if<
 >::type operator / (D1, D2);
 
 // basic dimensions
-typedef dimension<base::angle,  1> angle;
+typedef dimension<base::angle,       1> angle;
+typedef dimension<base::solid_angle, 1> solid_angle;
+
 typedef dimension<base::length, 1> length;
 typedef dimension<base::mass,   1> mass;
 typedef dimension<base::time,   1> time;

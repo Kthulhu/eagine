@@ -60,9 +60,14 @@ constexpr Char c_str<basic_string<Char, C...>>::value[];
 template <typename ... X>
 struct concat;
 
-template <typename S, typename ... Sp>
-struct concat<S, Sp...>
- : concat<typename S::type, typename concat<Sp...>::type>
+template <typename S>
+struct concat<S>
+ : concat<typename S::type>
+{ };
+
+template <typename S1, typename S2, typename ... Sp>
+struct concat<S1, S2, Sp...>
+ : concat<typename S1::type, typename concat<S2, Sp...>::type>
 { };
 
 template <typename Char, Char ... C>

@@ -13,6 +13,7 @@
 #include <eagine/unit/fwd.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/string.hpp>
+#include <eagine/meta/utf8.hpp>
 #include <eagine/base/string.hpp>
 
 namespace EAGine {
@@ -21,9 +22,9 @@ namespace unit {
 // pow_str
 template <int Pow>
 struct pow_str
- : meta::concat<
-	meta::string<'^'>,
-	typename meta::int_to_str<Pow>::type
+ : meta::translate<
+	typename meta::int_to_str<Pow>::type,
+	meta::superscript
 >
 { };
 

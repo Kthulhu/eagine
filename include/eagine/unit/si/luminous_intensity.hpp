@@ -22,7 +22,7 @@ struct candela : unit<luminous_intensity, candela> { };
 template <>
 struct unit_info<candela>
 {
-	typedef meta::string<'C','a','n','d','e','l','a'> name;
+	typedef meta::string<'c','a','n','d','e','l','a'> name;
 	typedef meta::string<'c','d'> symbol;
 };
 

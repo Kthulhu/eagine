@@ -24,7 +24,9 @@ struct dimension
 	typedef Derived type;
 };
 
-struct angle  : dimension<angle> { };
+struct angle       : dimension<angle> { };
+struct solid_angle : dimension<solid_angle> { };
+
 struct length : dimension<length> { };
 struct mass   : dimension<mass> { };
 struct time   : dimension<time> { };
@@ -68,6 +70,10 @@ template <> struct dim_num<amount_of_substance>
  : meta::integral_constant<int, 9>
 { };
 
+template <> struct dim_num<solid_angle>
+ : meta::integral_constant<int, 10>
+{ };
+  
 template <typename Dimension>
 struct dim_info;
 
@@ -75,6 +81,15 @@ template <>
 struct dim_info<angle>
 {
 	typedef meta::string<'a','n','g','l','e'> name;
+};
+
+template <>
+struct dim_info<solid_angle>
+{
+	typedef meta::string<
+		's','o','l','i','d',' ',
+		'a','n','g','l','e'
+	> name;
 };
 
 template <>
@@ -105,8 +120,7 @@ template <>
 struct dim_info<electric_current>
 {
 	typedef meta::string<
-		'e','l','e','c','t','r','i','c',
-		' ',
+		'e','l','e','c','t','r','i','c',' ',
 		'c','u','r','r','e','n','t'
 	> name;
 };
@@ -135,8 +149,7 @@ template <>
 struct dim_info<luminous_intensity>
 {
 	typedef meta::string<
-		'l','u','m','i','n','o','u','s',
-		' ',
+		'l','u','m','i','n','o','u','s',' ',
 		'i','n','t','e','n','s','i','t','y'
 	> name;
 };
