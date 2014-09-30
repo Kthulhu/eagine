@@ -1,5 +1,5 @@
 /**
- *  @file eagine/vect/esum.hpp
+ *  @file eagine/vect/hsum.hpp
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
@@ -7,8 +7,8 @@
  */
 #pragma once
 
-#ifndef EAGINE_VECT_ESUM_1308281038_HPP
-#define EAGINE_VECT_ESUM_1308281038_HPP
+#ifndef EAGINE_VECT_HSUM_1308281038_HPP
+#define EAGINE_VECT_HSUM_1308281038_HPP
 
 #include <eagine/vect/shuffle.hpp>
 
@@ -16,48 +16,57 @@ namespace EAGine {
 namespace vect {
 
 template <typename T, unsigned N>
-struct esum
+struct hsum
 {
-	static
-	T apply(const typename data<T,N>::type& v)
+	typedef typename data<T,  N>::type _dT;
+
+	static _dT apply(_dT v)
 	{
-		T r(0);
-		for(unsigned i=0; i<N; ++i)
+		for(unsigned i=1; i<N; ++i)
 		{
-			r += v[i];
+			v[i] += v[i-1];
 		}
-		return r;
+		for(unsigned i=N-1; i>0; --i)
+		{
+			v[i-1] = v[i];
+		}
+		return v;
 	}
 };
 
 
 template <typename T>
-struct esum<T, 1>
+struct hsum<T, 1>
 {
+	typedef typename data<T,  1>::type _dT;
+
 	static constexpr inline
-	T apply(typename data<T,1>::type v)
+	_dT apply(_dT v)
 	{
-		return v[0];
+		return v;
 	}
 };
 
 template <typename T>
-struct esum<T, 2>
+struct hsum<T, 2>
 {
+	typedef typename data<T,  2>::type _dT;
+	typedef shuffle<T, 2> _sh;
+
 	static constexpr inline
-	T apply(const typename data<T,2>::type& v)
+	_dT apply(_dT v)
 	{
-		return v[0]+v[1];
+		return v + _sh::template apply<1,0>(v);
 	}
 };
 
 #if (defined(__GNUC__) || defined(__clang__)) && __SSE__
 
 template <typename T>
-struct esum<T, 3>
+struct hsum<T, 3>
 {
 	typedef typename data<T,  3>::type _dT;
-	typedef shuffle<T,3> _sh;
+	typedef shuffle<T, 3> _sh;
 	
 	static inline
 	_dT _hlp(_dT v, _dT t)
@@ -66,28 +75,28 @@ struct esum<T, 3>
 	}
 
 	static constexpr inline
-	T apply(const typename data<T,3>::type& v)
+	_dT apply(_dT v)
 	{
-		return _hlp(v, v + _sh::template apply<2,0,1>(v))[0];
+		return _hlp(v, v + _sh::template apply<2,0,1>(v));
 	}
 };
 
 template <typename T>
-struct esum<T, 4>
+struct hsum<T, 4>
 {
 	typedef typename data<T,  4>::type _dT;
-	typedef shuffle<T,4> _sh;
+	typedef shuffle<T, 4> _sh;
 	
-	static inline
+	static constexpr inline
 	_dT _hlp(_dT v)
 	{
 		return v + _sh::template apply<2,3,0,1>(v);
 	}
 	
-	static inline
-	T apply(_dT v)
+	static constexpr inline
+	_dT apply(_dT v)
 	{
-		return _hlp(v + _sh::template apply<1,0,3,2>(v))[0];
+		return _hlp(v + _sh::template apply<1,0,3,2>(v));
 	}
 };
 #endif

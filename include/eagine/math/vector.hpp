@@ -12,7 +12,7 @@
 
 #include <eagine/vect/fill.hpp>
 #include <eagine/vect/axis.hpp>
-#include <eagine/vect/esum.hpp>
+#include <eagine/vect/hsum.hpp>
 #include <eagine/meta/min_max.hpp>
 #include <cmath>
 
@@ -81,9 +81,14 @@ struct vector
 		return {a._v/b._v};
 	}
 
+	friend inline vector hsum(_cpT a, _cpT b)
+	{
+		return {vect::hsum<T, N>::apply(a._v * b._v)};
+	}
+
 	friend inline T dot(_cpT a, _cpT b)
 	{
-		return vect::esum<T, N>::apply(a._v * b._v);
+		return vect::hsum<T, N>::apply(a._v * b._v)[0];
 	}
 
 	friend inline T magnitude(_cpT a)
