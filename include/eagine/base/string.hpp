@@ -198,7 +198,7 @@ public:
 	 , _len(0)
 	{ }
 
-	basic_string_ref(value_type* ptr)
+	explicit basic_string_ref(value_type* ptr)
 	 : _ptr(ptr)
 	 , _len(::std::strlen(ptr))
 	{ }
@@ -208,10 +208,12 @@ public:
 	 , _len(len)
 	{ }
 
-	template <std::size_t Len>
-	basic_string_ref(const_value_type (&lit)[Len])
-	 : _ptr(lit)
-	 , _len(Len-1)
+	template <typename Char_, std::size_t Len>
+	basic_string_ref(
+		Char_ (&lit)[Len],
+		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
+	): _ptr(lit)
+	 , _len(lit[Len-1]?Len:Len-1)
 	{ }
 
 	basic_string_ref(const basic_string_ref& that)

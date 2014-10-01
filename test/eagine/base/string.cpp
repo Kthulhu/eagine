@@ -4,7 +4,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -17,6 +17,8 @@
 #include <eagine/base/array.hpp>
 #include <cstring>
 #include <algorithm>
+
+#include <iostream> // TODO 
 
 BOOST_AUTO_TEST_SUITE(base_string)
 
@@ -131,11 +133,6 @@ BOOST_AUTO_TEST_CASE(base_string_ref_construction_c_array)
 	EAGine::base::string_ref sr(c_str);
 }
 
-BOOST_AUTO_TEST_CASE(string_lit_construction)
-{
-	EAGine::base::string_lit sl("a string literal");
-}
-
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_const_string)
 {
 	const EAGine::base::string cs = "a string";
@@ -146,6 +143,11 @@ BOOST_AUTO_TEST_CASE(base_string_ref_construction_string)
 {
 	EAGine::base::string s = "a string";
 	EAGine::base::string_ref sr(s);
+}
+
+BOOST_AUTO_TEST_CASE(base_string_ref_construction_literal)
+{
+	EAGine::base::const_string_ref sr ="a string"; 
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_const_vector)
@@ -175,7 +177,7 @@ BOOST_AUTO_TEST_CASE(base_string_ref_construction_array)
 
 BOOST_AUTO_TEST_CASE(base_string_ref_copy_construction)
 {
-	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr1 = c_str;
 	EAGine::base::string_ref sr2 = sr1;
 	EAGine::base::const_string_ref csr1 = sr2;
@@ -184,7 +186,7 @@ BOOST_AUTO_TEST_CASE(base_string_ref_copy_construction)
 
 BOOST_AUTO_TEST_CASE(base_string_ref_empty)
 {
-	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr1 = c_str;
 	EAGine::base::string_ref sr2;
 	BOOST_ASSERT(!sr1.empty());
@@ -193,17 +195,17 @@ BOOST_AUTO_TEST_CASE(base_string_ref_empty)
 
 BOOST_AUTO_TEST_CASE(base_string_ref_size)
 {
-	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr1 = c_str;
 	EAGine::base::string_ref sr2;
-	BOOST_ASSERT(sizeof(c_str)/sizeof(c_str[0]) == sr1.size());
+	BOOST_ASSERT(sizeof(c_str)/sizeof(c_str[0]) == 8);
 	BOOST_ASSERT(sr1.size() == 8);
 	BOOST_ASSERT(sr2.size() == 0);
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_data)
 {
-	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string str("a string");
 	EAGine::base::string_ref sr = c_str;
 	EAGine::base::const_string_ref csr = c_str;
@@ -215,12 +217,11 @@ BOOST_AUTO_TEST_CASE(base_string_ref_data)
 	BOOST_ASSERT(std::strncmp(c_str, sr.data(), sr.size()) == 0);
 	BOOST_ASSERT(std::strncmp(str.c_str(), sr.data(), sr.size()) == 0);
 	BOOST_ASSERT(std::strncmp(sr.data(), csr.data(), sr.size()) == 0);
-	BOOST_ASSERT(str == csr.data());
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_iterator_1)
 {
-	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr1 = c_str;
 	EAGine::base::string_ref sr2;
 
@@ -237,11 +238,28 @@ BOOST_AUTO_TEST_CASE(base_string_ref_iterator_1)
 
 BOOST_AUTO_TEST_CASE(base_string_ref_iterator_2)
 {
-	char c_str[] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
 	EAGine::base::string_ref sr1 = c_str;
 
 	BOOST_ASSERT(std::equal(sr1.begin(), sr1.end(), c_str));
 	BOOST_ASSERT(std::equal(c_str, c_str+8, sr1.begin()));
+}
+
+BOOST_AUTO_TEST_CASE(base_string_ref_slice)
+{
+	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
+	EAGine::base::const_string_ref sr1 = c_str;
+	EAGine::base::const_string_ref sr2 = sr1.slice(2);
+	EAGine::base::const_string_ref sr3 = sr1.slice(2, 6);
+	EAGine::base::const_string_ref sr4 = sr1.slice(4);
+	EAGine::base::const_string_ref sr5 = sr3.slice(2, 4);
+
+	BOOST_ASSERT(sr1 != sr2);
+	BOOST_ASSERT(sr2 == sr3);
+	BOOST_ASSERT(sr4 == sr5);
+	BOOST_ASSERT(sr4 == "ring");
+	BOOST_ASSERT(sr5 == "ring");
+
 }
 
 

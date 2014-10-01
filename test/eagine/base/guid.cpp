@@ -4,7 +4,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -14,6 +14,8 @@
 
 #include <eagine/base/guid.hpp>
 #include <vector>
+#include <sstream>
+#include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(base_guid)
 
@@ -38,6 +40,94 @@ BOOST_AUTO_TEST_CASE(base_guid_uniqueness)
 		{
 			BOOST_ASSERT(gv[i] != gv[j]);
 		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(base_guid_nil)
+{
+	EAGine::base::guid n1 = EAGine::base::guid(nullptr);
+	BOOST_ASSERT(n1.is_nil());
+
+	EAGine::base::guid n2 = EAGine::base::guid::nil();
+	BOOST_ASSERT(n2.is_nil());
+
+	BOOST_ASSERT(n1 == n2);
+}
+
+BOOST_AUTO_TEST_CASE(base_guid_not_nil)
+{
+	std::size_t n = 1000;
+	for(std::size_t i=0; i!=n; ++i)
+	{
+		EAGine::base::guid g;
+		BOOST_ASSERT(!g.is_nil());
+	}
+}
+
+BOOST_AUTO_TEST_CASE(base_guid_string_1)
+{
+	std::size_t n = 1000;
+	for(std::size_t i=0; i!=n; ++i)
+	{
+		std::stringstream ss;
+
+		EAGine::base::guid g1;
+
+		ss << g1;
+
+		EAGine::base::guid g2 = EAGine::base::guid(ss.str());
+
+		BOOST_ASSERT(g1 == g2);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(base_guid_from_string)
+{
+	static const char* hd = "01234567890abcdef";
+	std::size_t n = 1000;
+	for(std::size_t i=0; i!=n; ++i)
+	{
+		const char gs[36] = {
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			'-',
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			'-',
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			'-',
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			'-',
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16],
+			hd[std::rand()%16]
+
+		};
+
+		EAGine::base::guid g(gs);
 	}
 }
 
