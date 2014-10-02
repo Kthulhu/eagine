@@ -26,6 +26,11 @@ struct si
 	struct base_unit;
 };
 
+template <>
+struct system_id<si>
+ : meta::integral_constant<int, 0>
+{ };
+
 } // namespace unit
 } // namespace EAGine
 

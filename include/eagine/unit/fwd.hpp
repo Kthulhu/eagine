@@ -27,15 +27,24 @@ struct dim_sub;
 
 namespace base {
 
+template <typename Derived>
+struct dimension;
+
 template <typename Dimension, typename Derived>
 struct unit;
 
 template <typename Scale, typename Unit>
 struct scaled_unit;
 
+template <typename Dimension>
+struct dim_num;
+
 } // base
 
 struct si;
+
+template <typename System>
+struct system_id;
 
 template <typename Unit>
 struct info;
