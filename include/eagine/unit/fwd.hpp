@@ -58,6 +58,9 @@ struct scaled_unit;
 template <typename UnitFrom, typename UnitTo>
 struct value_conv;
 
+template <typename U1>
+struct lit_result;
+
 template <typename U1, typename U2>
 struct add_result;
 

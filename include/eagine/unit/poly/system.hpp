@@ -37,6 +37,11 @@ public:
 	{
 		return a._id != b._id;
 	}
+
+	friend bool operator <  (system a, system b)
+	{
+		return a._id <  b._id;
+	}
 };
 
 } // namespace poly

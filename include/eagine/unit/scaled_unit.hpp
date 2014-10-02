@@ -101,6 +101,16 @@ struct value_conv<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
 	}
 };
 
+template <typename D, typename S>
+struct lit_result<unit<D, S>>
+ : scaled_unit<D, bits::unit_scales<bits::nil_t, bits::nil_t>, S>
+{ };
+
+template <typename D, typename US, typename S>
+struct lit_result<scaled_unit<D, US, S>>
+ : scaled_unit<D, US, S>
+{ };
+
 template <typename D, typename US, typename S>
 struct add_result<scaled_unit<D, US, S>, unit<D, S>>
  : unit<D, S>

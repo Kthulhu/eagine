@@ -117,7 +117,7 @@ dimension::_infos(void)
 template <typename Dim>
 inline
 dimension::_info_t
-dimension::_make_info(Dim)
+dimension::_make_info(void)
 {
 	return {
 		meta::c_str<
@@ -129,6 +129,25 @@ dimension::_make_info(Dim)
 	};
 }
 //------------------------------------------------------------------------------
+// dimension::_ins_and_get_info
+//------------------------------------------------------------------------------
+#if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
+EAGINE_LIB_FUNC
+const dimension::_info_t*
+dimension::_ins_and_get_info(_info_t(*make_info)(void), const _dims_t& dims)
+{
+	auto p = _infos().find(dims);
+
+	if(p == _infos().end())
+	{
+		p = _infos().insert({dims, make_info()}).first;
+	}
+	assert(p != _infos().end());
+
+	return &p->second;
+}
+#endif
+//------------------------------------------------------------------------------
 // dimension::_get_info
 //------------------------------------------------------------------------------
 template <typename Dim>
@@ -136,15 +155,7 @@ inline
 const dimension::_info_t*
 dimension::_get_info(Dim, const _dims_t& dims)
 {
-	auto p = _infos().find(dims);
-
-	if(p == _infos().end())
-	{
-		p = _infos().insert({dims, _make_info(Dim())}).first;
-	}
-	assert(p != _infos().end());
-
-	return &p->second;
+	return _ins_and_get_info(&_make_info<Dim>, dims);
 }
 //------------------------------------------------------------------------------
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)

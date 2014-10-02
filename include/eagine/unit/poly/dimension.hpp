@@ -52,7 +52,10 @@ private:
 	static std::map<_dims_t, _info_t>& _infos(void);
 
 	template <typename Dim>
-	static _info_t _make_info(Dim);
+	static _info_t _make_info(void);
+
+	static const _info_t*
+	_ins_and_get_info(_info_t(*)(void), const _dims_t&);
 
 	template <typename Dim>
 	static const _info_t* _get_info(Dim, const _dims_t& dims);
@@ -91,6 +94,11 @@ public:
 		return a._dims != b._dims;
 	}
 
+	friend bool operator <  (const dimension& a, const dimension& b)
+	{
+		return a._dims < b._dims;
+	}
+
 	friend dimension operator * (const dimension& a, const dimension& b)
 	{
 		_dims_t dims;
@@ -119,15 +127,6 @@ public:
 	{
 		return int(_dims[base::dim_num<BaseDim>()]);
 	}
-
-	struct order
-	{
-		bool operator ()(const dimension& a, const dimension& b) const
-		{
-			return a._dims < b._dims;
-		}
-	};
-	friend struct order;
 };
 
 } // namespace poly

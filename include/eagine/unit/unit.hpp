@@ -62,37 +62,49 @@ struct div_result<unit<D1, S>, unit<D2, S>>
  : unit<typename bits::dim_sub<D1, D2>::type, S>
 { };
 
+// quotation
+template <typename U>
+static constexpr inline
+typename meta::enable_if<
+	is_unit<U>::value,
+	typename lit_result<U>::type
+>::type operator !(U) { return {}; }
+
 // addition
 template <typename U1, typename U2>
+static constexpr inline
 typename meta::enable_if<
 	is_unit<U1>::value &&
 	is_unit<U2>::value,
 	typename add_result<U1, U2>::type
->::type operator + (U1, U2);
+>::type operator + (U1, U2) { return {}; }
 
 // subtraction
 template <typename U1, typename U2>
+static constexpr inline
 typename meta::enable_if<
 	is_unit<U1>::value &&
 	is_unit<U2>::value,
 	typename sub_result<U1, U2>::type
->::type operator - (U1, U2);
+>::type operator - (U1, U2) { return {}; }
 
 // multiplication
 template <typename U1, typename U2>
+static constexpr inline
 typename meta::enable_if<
 	is_unit<U1>::value &&
 	is_unit<U2>::value,
 	typename mul_result<U1, U2>::type
->::type operator * (U1, U2);
+>::type operator * (U1, U2) { return {}; }
 
 // division
 template <typename U1, typename U2>
+static constexpr inline
 typename meta::enable_if<
 	is_unit<U1>::value &&
 	is_unit<U2>::value,
 	typename div_result<U1, U2>::type
->::type operator / (U1, U2);
+>::type operator / (U1, U2) { return {}; }
 
 } // namespace unit
 } // namespace EAGine
