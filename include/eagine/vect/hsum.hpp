@@ -68,16 +68,16 @@ struct hsum<T, 3>
 	typedef typename data<T,  3>::type _dT;
 	typedef shuffle<T, 3> _sh;
 	
-	static inline
-	_dT _hlp(_dT v, _dT t)
+	static constexpr inline
+	_dT _hlp(_dT t, _dT v)
 	{
-		return t + _sh::template apply<2,0,1>(v);
+		return t + _sh::template apply<2,2,1>(v);
 	}
 
 	static constexpr inline
 	_dT apply(_dT v)
 	{
-		return _hlp(v, v + _sh::template apply<2,0,1>(v));
+		return _hlp(v + _sh::template apply<1,0,0>(v), v);
 	}
 };
 

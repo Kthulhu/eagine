@@ -66,6 +66,8 @@ int main(void)
 	std::cout << v30 << std::endl;
 	std::cout << v31 << std::endl;
 	std::cout << v32 << std::endl;
+	std::cout << hsum(v30, v32) << std::endl;
+	std::cout << hsum(v31, v32) << std::endl;
 
 	std::cout << distance(v31, v30) << std::endl;
 
