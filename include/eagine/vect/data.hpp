@@ -117,6 +117,30 @@ struct data<float, 4>
 	typedef float type __attribute__ ((vector_size (16)));
 };
 
+template <>
+struct data<double, 1>
+{
+	typedef double type __attribute__ ((vector_size ( 8)));
+};
+
+template <>
+struct data<double, 2>
+{
+	typedef double type __attribute__ ((vector_size (16)));
+};
+
+template <>
+struct data<double, 3>
+{
+	typedef double type __attribute__ ((vector_size (24)));
+};
+
+template <>
+struct data<double, 4>
+{
+	typedef double type __attribute__ ((vector_size (32)));
+};
+
 #elif defined(__GNUC__) && __SSE__
 
 template <typename T, unsigned N>

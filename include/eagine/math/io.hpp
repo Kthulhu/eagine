@@ -12,6 +12,7 @@
 
 #include <eagine/math/vector.hpp>
 #include <eagine/math/angle.hpp>
+#include <eagine/math/quaternion.hpp>
 #include <iostream>
 
 namespace EAGine {
@@ -25,9 +26,22 @@ operator << (std::ostream& o, const vector<T,N>& v)
 	o << "[" << v._v[0];
 	for(unsigned i=1; i<N; ++i)
 	{
-		o << ", " << v[i];
+		o << ", " << v._v[i];
 	}
 	return o << "]";
+}
+
+template <typename T>
+inline
+std::ostream&
+operator << (std::ostream& o, const quaternion<T>& q)
+{
+	o << "{" << q._q[0];
+	for(unsigned i=1; i<4; ++i)
+	{
+		o << ", " << q._q[i];
+	}
+	return o << "}";
 }
 
 template <typename T>
