@@ -1,0 +1,73 @@
+/**
+ *  @file eagine/math/interpolation.hpp
+ *
+ *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Software License, Version 1.0. (See accompanying file
+ *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
+#pragma once
+
+#ifndef EAGINE_MATH_INTERPOLATION_1308281038_HPP
+#define EAGINE_MATH_INTERPOLATION_1308281038_HPP
+
+#include <eagine/math/quaternion.hpp>
+#include <eagine/vect/slerp.hpp>
+#include <eagine/vect/lerp.hpp>
+
+namespace EAGine {
+namespace math {
+
+template <typename X>
+class interpolation;
+
+template <typename T>
+class interpolation<quaternion<T>>
+{
+private:
+	quaternion<T> _a, _b;
+	vect::slerp<T, 4> _vs;
+	vect:: lerp<T, 4> _vl;
+
+	quaternion<T> _fvs(T t) const
+	{
+		return {_vs(_a._v, _b._v, t)};
+	}
+
+	quaternion<T> _fvl(T t) const
+	{
+		return {_vl(_a._v, _b._v, t)};
+	}
+
+	quaternion<T> _fa(T) const
+	{
+		return _a;
+	}
+
+	quaternion<T> (interpolation::*_f)(T) const;
+public:
+	interpolation(
+		const quaternion<T>& a,
+		const quaternion<T>& b,
+		T eps=0.01
+	): _a(a)
+	 , _b(b)
+	 , _vs(value(angle_between(_a, _b)))
+	 , _f(_vs.degenerate()?
+		&interpolation::_fa:
+		_vs.close(eps)?
+			&interpolation::_fvl:
+			&interpolation::_fvs
+	)
+	{ }
+
+	quaternion<T> operator ()(T t) const
+	{
+		return (this->*_f)(t);
+	}
+};
+
+} // namespace math
+} // namespace EAGine
+
+#endif //include guard
+

@@ -25,13 +25,23 @@ private:
 	static constexpr T _isp(T phi)
 	{
 		using std::sin;
-		return T(1)/sin(phi);
+		return (sin(phi)!=0)?T(1)/sin(phi):T(0);
 	}
 public:
 	constexpr slerp_coefs(T angle_rad)
 	 : _phi(angle_rad)
 	 , _isin_phi(_isp(_phi))
 	{ }
+
+	inline bool degenerate(void) const
+	{
+		return _isin_phi == 0;
+	}
+
+	inline bool close(T eps) const
+	{
+		return _phi < eps;
+	}
 
 	inline T p(T t) const
 	{
@@ -56,6 +66,16 @@ public:
 	constexpr slerp(T angle_rad)
 	 : _sc(angle_rad)
 	{ }
+
+	inline bool degenerate(void) const
+	{
+		return _sc.degenerate();
+	}
+
+	inline bool close(T eps) const
+	{
+		return _sc.close(eps);
+	}
 
 	_dT operator ()(const _dT& a, const _dT& b, T t) const
 	{
