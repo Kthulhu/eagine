@@ -14,6 +14,7 @@
 #include <eagine/vect/axis.hpp>
 #include <eagine/vect/hsum.hpp>
 #include <eagine/meta/min_max.hpp>
+#include <eagine/math/angle.hpp>
 #include <cmath>
 
 namespace EAGine {
@@ -61,50 +62,56 @@ struct vector
 		return _v[pos];
 	}
 
-	friend inline vector operator + (_cpT a, _cpT b)
+	friend constexpr vector operator + (_cpT a, _cpT b)
 	{
 		return {a._v+b._v};
 	}
 
-	friend inline vector operator - (_cpT a, _cpT b)
+	friend constexpr vector operator - (_cpT a, _cpT b)
 	{
 		return {a._v-b._v};
 	}
 
-	friend inline vector operator * (_cpT a, _cpT b)
+	friend constexpr vector operator * (_cpT a, _cpT b)
 	{
 		return {a._v*b._v};
 	}
 
-	friend inline vector operator / (_cpT a, _cpT b)
+	friend constexpr vector operator / (_cpT a, _cpT b)
 	{
 		return {a._v/b._v};
 	}
 
-	friend inline vector hsum(_cpT a, _cpT b)
+	friend constexpr vector hsum(_cpT a, _cpT b)
 	{
 		return {vect::hsum<T, N>::apply(a._v * b._v)};
 	}
 
-	friend inline T dot(_cpT a, _cpT b)
+	friend constexpr T dot(_cpT a, _cpT b)
 	{
 		return vect::hsum<T, N>::apply(a._v * b._v)[0];
 	}
 
-	friend inline T magnitude(_cpT a)
+	friend constexpr T magnitude(_cpT a)
 	{
 		using std::sqrt;
 		return sqrt(dot(a, a));
 	}
 
-	friend inline T length(_cpT a)
+	friend constexpr T length(_cpT a)
 	{
 		return magnitude(a);
 	}
 
-	friend inline T distance(_cpT a, _cpT b)
+	friend constexpr T distance(_cpT a, _cpT b)
 	{
 		return magnitude(a-b);
+	}
+
+	friend constexpr angle<T> angle_between(_cpT a, _cpT b)
+	{
+		using std::acos;
+		return {acos(vect::hsum<T, 4>::apply(a._v * b._v)[0])};
 	}
 };
 

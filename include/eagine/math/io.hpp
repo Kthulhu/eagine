@@ -36,10 +36,10 @@ inline
 std::ostream&
 operator << (std::ostream& o, const quaternion<T>& q)
 {
-	o << "{" << q._q[0];
+	o << "{" << q._v[0];
 	for(unsigned i=1; i<4; ++i)
 	{
-		o << ", " << q._q[i];
+		o << ", " << q._v[i];
 	}
 	return o << "}";
 }
