@@ -77,9 +77,19 @@ struct vector
 		return {a._v*b._v};
 	}
 
+	friend constexpr vector operator * (_cpT a, T c)
+	{
+		return {a._v*vect::fill<T, N>::apply(c)};
+	}
+
 	friend constexpr vector operator / (_cpT a, _cpT b)
 	{
 		return {a._v/b._v};
+	}
+
+	friend constexpr vector operator / (_cpT a, T c)
+	{
+		return {a._v/vect::fill<T, N>::apply(c)};
 	}
 
 	friend constexpr vector hsum(_cpT a, _cpT b)
@@ -108,10 +118,15 @@ struct vector
 		return magnitude(a-b);
 	}
 
+	friend constexpr vector normalized(_cpT a)
+	{
+		return a / magnitude(a);
+	}
+
 	friend constexpr angle<T> angle_between(_cpT a, _cpT b)
 	{
 		using std::acos;
-		return {acos(vect::hsum<T, 4>::apply(a._v * b._v)[0])};
+		return {T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
 	}
 };
 

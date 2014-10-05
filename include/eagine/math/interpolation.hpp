@@ -11,6 +11,7 @@
 #define EAGINE_MATH_INTERPOLATION_1308281038_HPP
 
 #include <eagine/math/quaternion.hpp>
+#include <eagine/math/vector.hpp>
 #include <eagine/vect/slerp.hpp>
 #include <eagine/vect/lerp.hpp>
 
@@ -19,6 +20,28 @@ namespace math {
 
 template <typename X>
 class interpolation;
+
+template <typename T, unsigned N>
+class interpolation<vector<T, N>>
+{
+private:
+	vector<T, N> _a, _b;
+	vect::lerp<T, N> _vl;
+public:
+	interpolation(
+		const vector<T, N>& a,
+		const vector<T, N>& b,
+		T eps=0.01
+	): _a(a)
+	 , _b(b)
+	 , _vl()
+	{ }
+
+	inline vector<T, N> operator ()(T t) const
+	{
+		return {_vl(_a._v, _b._v, t)};
+	}
+};
 
 template <typename T>
 class interpolation<quaternion<T>>
@@ -60,7 +83,7 @@ public:
 	)
 	{ }
 
-	quaternion<T> operator ()(T t) const
+	inline quaternion<T> operator ()(T t) const
 	{
 		return (this->*_f)(t);
 	}

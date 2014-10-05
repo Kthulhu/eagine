@@ -73,7 +73,7 @@ struct quaternion
 
 	friend constexpr vector<T, 3> vector_part(_cpT q)
 	{
-		return {_vT(q._v)};
+		return {q._v[0], q._v[1], q._v[2]};
 	}
 
 	friend constexpr T scalar_part(_cpT q)
@@ -110,24 +110,33 @@ struct quaternion
 		return sqrt(square_mag(q));
 	}
 
-	friend constexpr quaternion grassman_product(_cpT a, _cpT b)
+	static constexpr inline
+	_qT _gp_t1(const _qT& a, const _qT& b)
 	{
-		_qT t = a._v * b._v;
+		return	vect::shuffle<T,4>::template apply<3,3,3,3>(a)*b+
+			vect::shuffle<T,4>::template apply<3,3,3,3>(b)*a+
+			vect::shuffle<T,4>::template apply<1,2,0,3>(a)*
+			vect::shuffle<T,4>::template apply<2,0,1,3>(b)-
+			vect::shuffle<T,4>::template apply<2,0,1,3>(a)*
+			vect::shuffle<T,4>::template apply<1,2,0,3>(b);
+	}
 
-		_qT t1 =vect::shuffle<T,4>::template apply<3,3,3,3>(a._v)*b._v+
-			vect::shuffle<T,4>::template apply<3,3,3,3>(b._v)*a._v+
-			vect::shuffle<T,4>::template apply<1,2,0,3>(a._v)*
-			vect::shuffle<T,4>::template apply<2,0,1,3>(b._v)-
-			vect::shuffle<T,4>::template apply<2,0,1,3>(a._v)*
-			vect::shuffle<T,4>::template apply<1,2,0,3>(b._v);
-
-		_qT t2 =vect::shuffle<T,4>::template apply<3,3,3,3>(a._v)*
-			vect::shuffle<T,4>::template apply<3,3,3,3>(b._v)-
+	static constexpr inline
+	_qT _gp_t2(const _qT& a, const _qT& b, const _qT& t)
+	{
+		return	vect::shuffle<T,4>::template apply<3,3,3,3>(a)*
+			vect::shuffle<T,4>::template apply<3,3,3,3>(b)-
 			vect::shuffle<T,4>::template apply<1,0,0,3>(t)-
 			vect::shuffle<T,4>::template apply<2,2,1,3>(t)-
 			t;
+	}
 
-		return {vect::shuffle2<T,4>::template apply<0,1,2,4>(t1, t2)};
+	friend constexpr quaternion grassman_product(_cpT a, _cpT b)
+	{
+		return {vect::shuffle2<T,4>::template apply<0,1,2,4>(
+			quaternion::_gp_t1(a._v, b._v),
+			quaternion::_gp_t2(a._v, b._v, a._v * b._v)
+		)};
 	}
 
 	friend constexpr quaternion operator * (_cpT a, _cpT b)
@@ -143,7 +152,7 @@ struct quaternion
 };
 
 template <typename T>
-constexpr inline vector<T, 3>
+static constexpr inline vector<T, 3>
 rotate(const vector<T, 3>& v, const quaternion<T>& q)
 {
 	return vector_part(grassman_product(

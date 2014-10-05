@@ -13,15 +13,15 @@
 
 int main(void)
 {
-	using namespace EAGine::unit;
+	using namespace EAGine;
 	using namespace EAGine::math;
 
-	typedef angle<double> ang;
+	//typedef angle<double> ang;
 	typedef vector<double, 3> vec3;
 	typedef quaternion<double> quat;
 
 	quat q0 = {0, 0, 0, 1};
-	quat q1 = quat::from_axis_angle(vec3{1,0,0}, quantity<degree>(90));
+	quat q1 = quat::from_axis_angle(vec3{1,0,0}, unit::quantity<unit::degree>(90));
 	quat q2 = conjugate(q1);
 	quat q3 = inverse(q2);
 	quat q4 = *q3;
@@ -55,7 +55,9 @@ int main(void)
 			<< " "
 			<< magnitude(vt)
 			<< " "
-			<< value(quantity<degree>(angle_between(v, vt)))
+			<< distance(vt, normalized(vt))
+			<< " "
+			<< value(unit::quantity<unit::degree>(angle_between(v, vt)))
 			<< std::endl;
 	}
 
