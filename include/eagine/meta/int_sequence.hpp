@@ -23,34 +23,32 @@ struct integer_sequence
 };
 
 template <typename IS, typename I>
-struct push_back_t
- : push_back_t<typename IS::type, typename I::type>
-{ };
+struct push_back_t;
 
 template <typename Int, Int ... I, Int N>
 struct push_back_t<integer_sequence<Int, I...>, integral_constant<Int, N>>
  : integer_sequence<Int, I..., N>
 { };
 
-template <typename Int, typename N>
+template <typename N>
 struct make_integer_sequence_t;
 
 template <typename Int>
-struct make_integer_sequence_t<Int, integral_constant<Int, 0>>
+struct make_integer_sequence_t<integral_constant<Int, Int(0)>>
  : integer_sequence<Int>
 { };
 
 template <typename Int, Int N>
-struct make_integer_sequence_t<Int, integral_constant<Int, N>>
+struct make_integer_sequence_t<integral_constant<Int, N>>
  : push_back_t<
-	make_integer_sequence_t<Int, integral_constant<Int, N-1>>,
-	integral_constant<Int, N>
+	typename make_integer_sequence_t<integral_constant<Int, N-1>>::type,
+	integral_constant<Int, N-1>
 >
 { };
 
 template <typename Int, Int N>
 struct make_integer_sequence
- : make_integer_sequence_t<Int, integral_constant<Int, N>>
+ : make_integer_sequence_t<integral_constant<Int, N>>
 { };
 
 } // namespace meta

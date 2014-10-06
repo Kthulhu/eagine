@@ -26,7 +26,9 @@ int main(int argc, const char* argv[])
 	{
 		using namespace EAGine::base;
 
-		file_mapping fm(argv[0], access_read_only);
+		cstrref fn = cstrref(argv[0]);
+
+		file_mapping fm(fn, access_read_only);
 
 		mapped_file_region mr(fm, 1, 3);
 
@@ -34,7 +36,7 @@ int main(int argc, const char* argv[])
 
 		std::cout.write((const char*)mr.address(), mr.size()) << std::endl;
 
-		file_content fc(argv[0]);
+		file_content fc(fn);
 
 		const_byte_range cbr = fc.block();
 

@@ -44,6 +44,18 @@ struct axis<T, 1, 0>
 	}
 };
 
+template <typename T, unsigned I>
+struct axis<T, 1, I>
+{
+	static constexpr
+	typename data<T, 1>::type
+	apply(T)
+	{
+		return typename data<T, 1>::type
+			{0};
+	}
+};
+
 template <typename T>
 struct axis<T, 2, 0>
 {
@@ -65,6 +77,18 @@ struct axis<T, 2, 1>
 	{
 		return typename data<T, 2>::type
 			{T(0),v};
+	}
+};
+
+template <typename T, unsigned I>
+struct axis<T, 2, I>
+{
+	static constexpr
+	typename data<T, 2>::type
+	apply(T)
+	{
+		return typename data<T, 2>::type
+			{T(0),T(0)};
 	}
 };
 
@@ -101,6 +125,18 @@ struct axis<T, 3, 2>
 	{
 		return typename data<T, 3>::type
 			{T(0),T(0),v};
+	}
+};
+
+template <typename T, unsigned I>
+struct axis<T, 3, I>
+{
+	static constexpr
+	typename data<T, 3>::type
+	apply(T)
+	{
+		return typename data<T, 3>::type
+			{T(0),T(0),T(0)};
 	}
 };
 
@@ -149,6 +185,18 @@ struct axis<T, 4, 3>
 	{
 		return typename data<T, 4>::type
 			{T(0),T(0),T(0),v};
+	}
+};
+
+template <typename T, unsigned I>
+struct axis<T, 4, I>
+{
+	static constexpr
+	typename data<T, 4>::type
+	apply(T v)
+	{
+		return typename data<T, 4>::type
+			{T(0),T(0),T(0),T(0)};
 	}
 };
 

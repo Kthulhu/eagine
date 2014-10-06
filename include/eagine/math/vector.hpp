@@ -13,6 +13,7 @@
 #include <eagine/vect/fill.hpp>
 #include <eagine/vect/axis.hpp>
 #include <eagine/vect/hsum.hpp>
+#include <eagine/vect/compare.hpp>
 #include <eagine/meta/min_max.hpp>
 #include <eagine/math/angle.hpp>
 #include <cmath>
@@ -92,6 +93,16 @@ struct vector
 		return {a._v/vect::fill<T, N>::apply(c)};
 	}
 
+	friend bool operator == (_cpT a, _cpT b)
+	{
+		return vect::equal<T,N>::apply(a, b);
+	}
+
+	friend bool operator != (_cpT a, _cpT b)
+	{
+		return !vect::equal<T,N>::apply(a, b);
+	}
+
 	friend constexpr vector hsum(_cpT a, _cpT b)
 	{
 		return {vect::hsum<T, N>::apply(a._v * b._v)};
@@ -132,10 +143,10 @@ struct vector
 
 using vect::shuffle_mask;
 
-template <unsigned ... I, typename T, unsigned N>
+template <int ... I, typename T, unsigned N>
 static inline
 typename meta::enable_if<
-	meta::max_constant<unsigned, I...>::value < N,
+	meta::max_constant<int, I...>::value < N,
 	vector<T, N>
 >::type
 shuffle(
@@ -146,10 +157,10 @@ shuffle(
 	return {vect::shuffle<T, N>::apply(v._v, m)};
 }
 
-template <unsigned ... I, typename T, unsigned N>
+template <int ... I, typename T, unsigned N>
 static inline
 typename meta::enable_if<
-	meta::max_constant<unsigned, I...>::value < 2*N,
+	meta::max_constant<int, I...>::value < 2*N,
 	vector<T, N>
 >::type
 shuffle(

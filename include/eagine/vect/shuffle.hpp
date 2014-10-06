@@ -16,7 +16,7 @@
 namespace EAGine {
 namespace vect {
 
-template <unsigned ... I>
+template <int ... I>
 struct shuffle_mask
 { };
 
@@ -25,7 +25,7 @@ struct shuffle
 {
 	typedef typename data<T, N>::type _dT;
 
-	template <unsigned ... I>
+	template <int ... I>
 	static inline
 	_dT apply(
 		const _dT& v,
@@ -48,7 +48,7 @@ struct shuffle2
 {
 	typedef typename data<T, N>::type _dT;
 
-	template <unsigned ... I>
+	template <int ... I>
 	static inline
 	_dT apply(
 		const _dT& v1,

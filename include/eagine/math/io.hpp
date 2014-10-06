@@ -13,6 +13,7 @@
 #include <eagine/math/vector.hpp>
 #include <eagine/math/angle.hpp>
 #include <eagine/math/quaternion.hpp>
+#include <eagine/math/matrix.hpp>
 #include <iostream>
 
 namespace EAGine {
@@ -50,6 +51,56 @@ std::ostream&
 operator << (std::ostream& o, const angle<T>& v)
 {
 	return o << "<" << v._v << "> rad";
+}
+
+template <typename T, unsigned R, unsigned C>
+inline
+std::ostream&
+operator << (std::ostream& o, const matrix<T,R,C,true>& m)
+{
+	o << "|R0[" << m._v[0][0];
+
+	for(unsigned c=1; c<C; ++c)
+	{
+		o << ", " << m._v[0][c];
+	}
+	o << "]";
+
+	for(unsigned r=1; r<R; ++r)
+	{
+		o << ",R" << r << "[" << m._v[r][0];
+		for(unsigned c=1; c<C; ++c)
+		{
+			o << ", " << m._v[r][c];
+		}
+		o << "]";
+	}
+	return o << "|";
+}
+
+template <typename T, unsigned R, unsigned C>
+inline
+std::ostream&
+operator << (std::ostream& o, const matrix<T,R,C,false>& m)
+{
+	o << "|C0[" << m._v[0][0];
+
+	for(unsigned r=1; r<R; ++r)
+	{
+		o << ", " << m._v[0][r];
+	}
+	o << "]";
+
+	for(unsigned c=1; c<C; ++c)
+	{
+		o << ",C" << c << "[" << m._v[c][0];
+		for(unsigned r=1; r<R; ++r)
+		{
+			o << ", " << m._v[c][r];
+		}
+		o << "]";
+	}
+	return o << "|";
 }
 
 } // namespace math
