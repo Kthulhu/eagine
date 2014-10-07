@@ -135,6 +135,92 @@ matrix<T,R,C,!RM> reorder(const matrix<T,R,C,RM>& m)
 	return transpose_tpl<!RM, RM, T>(m);
 }
 
+// get (Row-major)
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+static constexpr inline
+typename meta::enable_if<(I<R && J<C), T>::type
+get(const matrix<T,R,C,true>& m)
+{
+	return m._v[I][J];
+}
+
+// get (Column-major)
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+static constexpr inline
+typename meta::enable_if<(I<R && J<C), T>::type
+get(const matrix<T,R,C,false>& m)
+{
+	return m._v[J][I];
+}
+
+// get_elem (Row-major)
+template <unsigned E, typename T, unsigned R, unsigned C>
+static constexpr inline
+typename meta::enable_if<(E<R*C), T>::type
+get_elem(const matrix<T,R,C, true>& m)
+{
+	return m._v[E/C][E%C];
+}
+
+// get_elem (Column-major)
+template <unsigned E, typename T, unsigned R, unsigned C>
+static constexpr inline
+typename meta::enable_if<(E<R*C), T>::type
+get_elem(const matrix<T,R,C,false>& m)
+{
+	return m._v[E/R][E%R];
+}
+
+// get (Row-major, run-time)
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+T get(const matrix<T,R,C,true>& m, unsigned i, unsigned j)
+{
+	return m._v[i][j];
+}
+
+// get (Column-major, run-time)
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+T get(const matrix<T,R,C,false>& m, unsigned i, unsigned j)
+{
+	return m._v[j][i];
+}
+
+// set (Row-major)
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+static inline
+typename meta::enable_if<(I<R && J<C), void>::type
+set(const matrix<T,R,C,true>& m, const T& v)
+{
+	m._v[I][J] = v;
+}
+
+// set (Column-major)
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+static inline
+typename meta::enable_if<(I<R && J<C), void>::type
+set(const matrix<T,R,C,false>& m, const T& v)
+{
+	m._v[J][I] = v;
+}
+
+// set (Row-major, run-time)
+template <typename T, unsigned R, unsigned C>
+static inline
+void set(const matrix<T,R,C,true>& m, unsigned i, unsigned j, const T& v)
+{
+	m._v[i][j] = v;
+}
+
+// set (Column-major, run-time)
+template <typename T, unsigned R, unsigned C>
+static inline
+void set(const matrix<T,R,C,false>& m, unsigned i, unsigned j, const T& v)
+{
+	m._v[j][i] = v;
+}
+
 // major_vector
 template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
@@ -307,7 +393,7 @@ _multiply_hlp(
 	return {{_multiply_hlp2<I>(is(), m1, m2)...}};
 }
 
-// multiply
+// multiply MxM
 template <typename T, unsigned M, unsigned N, unsigned K, bool RM>
 static constexpr inline
 matrix<T, M, N, RM> multiply(
@@ -321,7 +407,7 @@ matrix<T, M, N, RM> multiply(
 	return _multiply_hlp(is(), m1, m2);
 }
 
-// multiply
+// multiply MxM
 template <typename T, unsigned M, unsigned N, unsigned K, bool RM>
 static constexpr inline
 matrix<T, M, N, RM> multiply(
@@ -330,6 +416,38 @@ matrix<T, M, N, RM> multiply(
 )
 {
 	return multiply(m1, reorder(m2));
+}
+
+// multiply hlp
+template <
+	unsigned ... I,
+	typename T,
+	unsigned R,
+	unsigned C
+>
+static constexpr inline
+vector<T, R>
+_multiply_hlp(
+	meta::integer_sequence<unsigned, I...>,
+	const matrix<T, R, C, true>& m,
+	const vector<T, C>& v
+)
+{
+	return {dot(row<I>(m), v)...};
+}
+
+// multiply MxV
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+vector<T, R> multiply(
+	const matrix<T, R, C, true>& m,
+	const vector<T, C>& v
+)
+{
+	typedef typename meta::make_integer_sequence<
+		unsigned, R
+	>::type is;
+	return _multiply_hlp(is(), m, v);
 }
 
 // identity

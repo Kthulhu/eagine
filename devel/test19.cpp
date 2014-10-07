@@ -38,13 +38,13 @@ int main(int argc, const char**)
 	std::cout << std::endl;
 	for(unsigned i=0; i<rows(m1); ++i)
 	{
-		std::cout << row(m1, i) << std::endl;
+		std::cout << multiply(m0, row(m1, i)) << std::endl;
 	}
 
 	std::cout << std::endl;
 	for(unsigned i=0; i<columns(m1); ++i)
 	{
-		std::cout << column(m1, i) << std::endl;
+		std::cout << multiply(m0, column(m1, i)) << std::endl;
 	}
 
 	std::cout << multiply(m0,m1) << std::endl;
@@ -53,10 +53,12 @@ int main(int argc, const char**)
 
 	for(unsigned i=0; i<20000000; ++i)
 	{
-		m1._v[0][0] = argc+i;
+		set(m1, 0, 0, float(argc+i));
 		mat4 x = multiply(m1, m1);
-		if(x._v[0][0] < 0) return 1;
+		if(get(x, 0, 0) < 0) return 1;
 	}
+
+	std::cout << std::is_pod<decltype(m0._v)>::value << std::endl;
 
 	return 0;
 }
