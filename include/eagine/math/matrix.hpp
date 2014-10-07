@@ -13,6 +13,7 @@
 #include <eagine/math/vector.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/int_sequence.hpp>
+#include <cassert>
 
 namespace EAGine {
 namespace math {
@@ -38,6 +39,30 @@ struct matrix<T,R,C,false>
 
 	_vT _v[C];
 };
+
+// (number of) rows
+template <typename T, unsigned R, unsigned C, bool RM>
+static constexpr inline
+unsigned rows(const matrix<T,R,C,RM>&)
+{
+	return R;
+}
+
+// (number of) columns
+template <typename T, unsigned R, unsigned C, bool RM>
+static constexpr inline
+unsigned columns(const matrix<T,R,C,RM>&)
+{
+	return C;
+}
+
+// (is) row major
+template <typename T, unsigned R, unsigned C, bool RM>
+static constexpr inline
+bool row_major(const matrix<T,R,C,RM>&)
+{
+	return RM;
+}
 
 // equality
 template <typename T, unsigned R, unsigned C, bool RM>
@@ -149,6 +174,42 @@ row(const matrix<T,R,C,false>& m)
 	return minor_vector<I>(m);
 }
 
+// row_hlp
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline
+vector<T, RM?C:R> row_hlp(
+	const matrix<T,R,C,RM>& m,
+	meta::integral_constant<unsigned, 0u>,
+	unsigned i
+)
+{
+	assert(i == 0);
+	return row<0>(m);
+}
+
+// row_hlp
+template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+static inline
+vector<T, RM?C:R> row_hlp(
+	const matrix<T,R,C,RM>& m,
+	meta::integral_constant<unsigned, I>,
+	unsigned i
+)
+{
+	if(I == i) return row<I>(m);
+	return row_hlp(m, meta::integral_constant<unsigned, I-1>(), i);
+}
+
+// row - run-time
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline
+vector<T, RM?C:R>
+row(const matrix<T,R,C,RM>& m, unsigned i)
+{
+	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
+	return row_hlp(m, I(), i);
+}
+
 // column (Column-Major)
 template <unsigned I, typename T, unsigned R, unsigned C>
 static constexpr inline
@@ -165,6 +226,42 @@ vector<T, R>
 column(const matrix<T,R,C,true>& m)
 {
 	return minor_vector<I>(m);
+}
+
+// col_hlp
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline
+vector<T, RM?R:C> col_hlp(
+	const matrix<T,R,C,RM>& m,
+	meta::integral_constant<unsigned, 0u>,
+	unsigned i
+)
+{
+	assert(i == 0);
+	return column<0>(m);
+}
+
+// col_hlp
+template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+static inline
+vector<T, RM?R:C> col_hlp(
+	const matrix<T,R,C,RM>& m,
+	meta::integral_constant<unsigned, I>,
+	unsigned i
+)
+{
+	if(I == i) return column<I>(m);
+	return col_hlp(m, meta::integral_constant<unsigned, I-1>(), i);
+}
+
+// column - run-time
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline
+vector<T, RM?R:C>
+column(const matrix<T,R,C,RM>& m, unsigned i)
+{
+	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
+	return col_hlp(m, I(), i);
 }
 
 // _multiply_hlp2

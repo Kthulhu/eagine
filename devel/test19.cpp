@@ -35,6 +35,18 @@ int main(int argc, const char**)
 	std::cout << column<2>(m1) << std::endl;
 	std::cout << column<3>(m1) << std::endl;
 
+	std::cout << std::endl;
+	for(unsigned i=0; i<rows(m1); ++i)
+	{
+		std::cout << row(m1, i) << std::endl;
+	}
+
+	std::cout << std::endl;
+	for(unsigned i=0; i<columns(m1); ++i)
+	{
+		std::cout << column(m1, i) << std::endl;
+	}
+
 	std::cout << multiply(m0,m1) << std::endl;
 	std::cout << multiply(m1,m0) << std::endl;
 	std::cout << multiply(m1,m1) << std::endl;
