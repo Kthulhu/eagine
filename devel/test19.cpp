@@ -51,14 +51,22 @@ int main(int argc, const char**)
 	std::cout << multiply(m1,m0) << std::endl;
 	std::cout << multiply(m1,m1) << std::endl;
 
-	for(unsigned i=0; i<20000000; ++i)
+	for(unsigned i=0; i<200000; ++i)
 	{
 		set(m1, 0, 0, float(argc+i));
 		mat4 x = multiply(m1, m1);
 		if(get(x, 0, 0) < 0) return 1;
 	}
 
-	std::cout << std::is_pod<decltype(m0._v)>::value << std::endl;
+	std::cout << matrix_elements_reinterpretable<decltype(m1)>() << std::endl;
+
+	auto e = elements(m1);
+
+	for(unsigned i=0; i<size(e); ++i)
+	{
+		std::cout << data(e)[i] << " ";
+	}
+	std::cout << std::endl;
 
 	return 0;
 }

@@ -63,7 +63,7 @@ struct shuffle2
 		return __builtin_shuffle(v1, v2, _mT{I...});
 #else
 		return typename data<T, N>::type{
-			(I<N? v1[I]: v2[I%N])...
+			I<0?T(0):(unsigned(I)<N? v1[I]: v2[I%N])...
 		};
 #endif
 	}

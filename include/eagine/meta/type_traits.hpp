@@ -27,6 +27,7 @@ using ::std::is_same;
 using ::std::is_base_of;
 using ::std::is_convertible;
 using ::std::is_function;
+using ::std::is_pod;
 
 template <typename Src, typename Dst>
 struct add_same_constness
