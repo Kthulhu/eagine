@@ -5,6 +5,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
+#include <eagine/math/elements.hpp>
 #include <eagine/math/matrix.hpp>
 #include <eagine/math/io.hpp>
 //------------------
@@ -13,11 +14,13 @@
 int main(int argc, const char**)
 {
 	using namespace EAGine;
-	using namespace EAGine::math;
 
-	typedef matrix<float,4,4,true> mat4;
+	using math::row;
+	using math::column;
 
-	mat4 m0 = identity<mat4>();
+	typedef math::matrix<float,4,4,true> mat4;
+
+	mat4 m0 = math::identity<mat4>();
 	mat4 m1 = {{
 		{ 1, 2, 3, 4},
 		{ 5, 6, 7, 8},
@@ -58,13 +61,19 @@ int main(int argc, const char**)
 		if(get(x, 0, 0) < 0) return 1;
 	}
 
-	std::cout << matrix_elements_reinterpretable<decltype(m1)>() << std::endl;
+	auto m1e = elements(m1);
 
-	auto e = elements(m1);
-
-	for(unsigned i=0; i<size(e); ++i)
+	for(unsigned i=0; i<size(m1e); ++i)
 	{
-		std::cout << data(e)[i] << " ";
+		std::cout << data(m1e)[i] << " ";
+	}
+	std::cout << std::endl;
+
+	auto m1c1e = elements(column<1>(m1));
+
+	for(unsigned i=0; i<size(m1c1e); ++i)
+	{
+		std::cout << data(m1c1e)[i] << " ";
 	}
 	std::cout << std::endl;
 

@@ -153,24 +153,6 @@ get(const matrix<T,R,C,false>& m)
 	return m._v[J][I];
 }
 
-// get_elem (Row-major)
-template <unsigned E, typename T, unsigned R, unsigned C>
-static constexpr inline
-typename meta::enable_if<(E<R*C), T>::type
-get_elem(const matrix<T,R,C, true>& m)
-{
-	return m._v[E/C][E%C];
-}
-
-// get_elem (Column-major)
-template <unsigned E, typename T, unsigned R, unsigned C>
-static constexpr inline
-typename meta::enable_if<(E<R*C), T>::type
-get_elem(const matrix<T,R,C,false>& m)
-{
-	return m._v[E/R][E%R];
-}
-
 // get (Row-major, run-time)
 template <typename T, unsigned R, unsigned C>
 static constexpr inline
@@ -348,89 +330,6 @@ column(const matrix<T,R,C,RM>& m, unsigned i)
 {
 	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
 	return col_hlp(m, I(), i);
-}
-
-// matrix elements
-template <typename T, unsigned N, bool Fast>
-struct matrix_elements;
-
-// matrix elements (fast)
-template <typename T, unsigned N>
-struct matrix_elements<T, N, true>
-{
-	const T* _e;
-};
-
-// matrix elements (safe)
-template <typename T, unsigned N>
-struct matrix_elements<T, N,false>
-{
-	const T _e[N];
-};
-
-// data(matrix_elements)
-template <typename T, unsigned N, bool F>
-static constexpr inline 
-const T* data(const matrix_elements<T,N,F>& me)
-{
-	return me._e;
-}
-
-// size(matrix_elements)
-template <typename T, unsigned N, bool F>
-static constexpr inline
-unsigned size(const matrix_elements<T,N,F>&)
-{
-	return N;
-}
-
-// matrix_elements_reinterpretable trait
-template <typename M>
-struct matrix_elements_reinterpretable;
-
-// matrix_elements_reinterpretable
-template <typename T, unsigned R, unsigned C, bool RM>
-struct matrix_elements_reinterpretable<matrix<T,R,C,RM>>
- : meta::integral_constant<
-	bool,
-	meta::is_pod<decltype(matrix<T,R,C,RM>::_v)>::value &&
-	meta::is_pod<const T[R*C]>::value &&
-	(sizeof(decltype(matrix<T,R,C,RM>::_v)) == sizeof(const T[R*C])) &&
-	(alignof(decltype(matrix<T,R,C,RM>::_v)) == alignof(const T[R*C]))
->
-{ };
-
-// elements(matrix) (fast)
-template <typename T, unsigned R, unsigned C, bool RM>
-static constexpr inline
-typename meta::enable_if<
-	matrix_elements_reinterpretable<matrix<T,R,C,RM>>::value,
-	matrix_elements<T, R*C, true>
->::type elements(const matrix<T,R,C,RM>& m)
-{
-	return {reinterpret_cast<const T*>(m._v)};
-}
-
-template <typename T, unsigned R, unsigned C, bool RM, unsigned ... I>
-static constexpr inline
-matrix_elements<T, R*C,false>
-elements_copy(const matrix<T,R,C,RM>& m, meta::integer_sequence<unsigned, I...>)
-{
-	return {get_elem<I>(m)...};
-}
-
-// elements(matrix) (safe)
-template <typename T, unsigned R, unsigned C, bool RM>
-static constexpr inline
-typename meta::enable_if<
-	!matrix_elements_reinterpretable<matrix<T,R,C,RM>>::value,
-	matrix_elements<T, R*C,false>
->::type elements(const matrix<T,R,C,RM>& m)
-{
-	typedef typename meta::make_integer_sequence<
-		unsigned, R*C
-	>::type is;
-	return elements_copy(m, is());
 }
 
 // _multiply_hlp2

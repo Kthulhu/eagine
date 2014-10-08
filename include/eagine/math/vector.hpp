@@ -141,6 +141,23 @@ struct vector
 	}
 };
 
+// get(vector)
+template <unsigned I, typename T, unsigned N>
+static constexpr inline
+typename meta::enable_if<(I<N), T>::type
+get(const vector<T,N>& v)
+{
+	return v._v[I];
+}
+
+// get(vector) run-time
+template <typename T, unsigned N>
+static constexpr inline
+T get(const vector<T,N>& v, unsigned i)
+{
+	return v._v[i];
+}
+
 using vect::shuffle_mask;
 
 template <int ... I, typename T, unsigned N>
