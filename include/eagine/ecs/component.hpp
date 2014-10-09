@@ -25,27 +25,35 @@ typedef std::size_t component_key_t;
 constexpr component_key_t nil_component_key = ~(component_key_t(0));
 
 // component unique identifier
-typedef std::size_t component_uid;
+typedef std::size_t component_uid_t;
 
 class component_uid_getter
 {
-private:static component_uid& _curr_uid(void);
-public: static component_uid new_uid(void);
+private:static component_uid_t& _curr_uid(void);
+public: static component_uid_t new_uid(void);
 };
 
 template <typename Derived>
-class component
+struct component_uid
 {
-public:
-	static component_uid uid(void)
+	component_uid_t operator()(void) const
 	{
-		static component_uid cid = component_uid_getter::new_uid();
+		static component_uid_t cid = component_uid_getter::new_uid();
 		return cid;
 	}
 };
 
+template <typename Derived>
+struct component
+{
+	static component_uid<Derived> uid;
+};
+
+template <typename Derived>
+component_uid<Derived> component<Derived>::uid = {};
+
 template <typename X>
-inline component_uid get_component_uid(void)
+inline component_uid_t get_component_uid(void)
 {
 	typedef typename meta::remove_const<
 		typename meta::remove_reference<X>::type
@@ -61,7 +69,7 @@ public:
 	component_uid_map(void) = default;
 
 	typename base::vector<T>::const_iterator
-	find(component_uid cid) const
+	find(component_uid_t cid) const
 	{
 		if(cid < this->size())
 		{
@@ -71,7 +79,7 @@ public:
 	}
 
 	typename base::vector<T>::iterator
-	find(component_uid cid)
+	find(component_uid_t cid)
 	{
 		if(cid < this->size())
 		{
@@ -85,7 +93,7 @@ public:
 		*pos = T();
 	}
 
-	T& operator [] (component_uid cid)
+	T& operator [] (component_uid_t cid)
 	{
 		if(cid >= this->size())
 		{

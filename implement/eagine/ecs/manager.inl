@@ -165,7 +165,7 @@ template <typename Entity>
 inline void
 manager<Entity>::
 _do_reg_cmp_type(
-	component_uid cid,
+	component_uid_t cid,
 	const base::shared_ptr<entity_component_map<Entity>>& eck_map,
 	const base::shared_ptr<base_component_storage>& storage,
 	base::string(*get_name)(void)
@@ -199,7 +199,7 @@ template <typename Entity>
 inline void
 manager<Entity>::
 _do_unr_cmp_type(
-	component_uid cid,
+	component_uid_t cid,
 	base::string(*get_name)(void)
 )
 {
@@ -229,7 +229,7 @@ _do_unr_cmp_type(
 template <typename Entity>
 inline bool
 manager<Entity>::
-_does_know_cmp_type(component_uid cid) const
+_does_know_cmp_type(component_uid_t cid) const
 {
 	auto p_eck_map = _eck_maps.find(cid);
 
@@ -252,7 +252,7 @@ _does_know_cmp_type(component_uid cid) const
 template <typename Entity>
 inline std::size_t
 manager<Entity>::
-_get_cmp_cnt(component_uid cid) const
+_get_cmp_cnt(component_uid_t cid) const
 {
 	auto p_eck_map = _eck_maps.find(cid);
 
@@ -272,7 +272,7 @@ _get_cmp_cnt(component_uid cid) const
 template <typename Entity>
 inline component_key_t
 manager<Entity>::
-_get_cmp_key(const Entity& e, component_uid cid) const
+_get_cmp_key(const Entity& e, component_uid_t cid) const
 {
 	auto p_eck_map = _eck_maps.find(cid);
 
@@ -295,7 +295,7 @@ inline bool
 manager<Entity>::
 _do_add(const Entity& e, Component&& component)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	auto p_eck_map = _eck_maps.find(cid);
 
 	if(p_eck_map != _eck_maps.end())
@@ -344,7 +344,7 @@ manager<Entity>::
 _do_cpy(
 	const Entity& e1, // from
 	const Entity& e2, // to
-	component_uid cid,
+	component_uid_t cid,
 	base::string(*get_name)(void)
 )
 {
@@ -399,7 +399,7 @@ inline bool
 manager<Entity>::
 _do_cpy(const Entity& e1, const Entity& e2)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	return _do_cpy(e1, e2, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ manager<Entity>::
 _do_swp(
 	const Entity& e1,
 	const Entity& e2,
-	component_uid cid,
+	component_uid_t cid,
 	base::string(*get_name)(void)
 )
 {
@@ -444,7 +444,7 @@ inline bool
 manager<Entity>::
 _do_swp(const Entity& e1, const Entity& e2)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	return _do_swp(e1, e2, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
@@ -455,7 +455,7 @@ inline bool
 manager<Entity>::
 _do_rem(
 	const Entity& e,
-	component_uid cid,
+	component_uid_t cid,
 	base::string(*get_name)(void)
 )
 {
@@ -496,7 +496,7 @@ inline bool
 manager<Entity>::
 _do_rem(const Entity& e)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	return _do_rem(e, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
@@ -505,7 +505,7 @@ _do_rem(const Entity& e)
 template <typename Entity>
 inline bool
 manager<Entity>::
-_do_show(const Entity& e, component_uid cid, base::string(*get_name)(void))
+_do_show(const Entity& e, component_uid_t cid, base::string(*get_name)(void))
 {
 	auto p_hec_bag = _hec_bags.find(cid);
 
@@ -525,7 +525,7 @@ inline bool
 manager<Entity>::
 _do_show(const Entity& e)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	return _do_show(e, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
@@ -534,7 +534,7 @@ _do_show(const Entity& e)
 template <typename Entity>
 inline bool
 manager<Entity>::
-_do_hide(const Entity& e, component_uid cid, base::string(*get_name)(void))
+_do_hide(const Entity& e, component_uid_t cid, base::string(*get_name)(void))
 {
 	auto p_hec_bag = _hec_bags.find(cid);
 
@@ -554,7 +554,7 @@ inline bool
 manager<Entity>::
 _do_hide(const Entity& e)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	return _do_hide(e, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
@@ -565,7 +565,7 @@ inline bool
 manager<Entity>::
 _ch_vis(
 	const Entity& e,
-	component_uid uid,
+	component_uid_t uid,
 	bool visible,
 	base::string(*base_name)(void)
 )
@@ -585,7 +585,7 @@ _ch_vis(
 template <typename Entity>
 inline bool
 manager<Entity>::
-_is_hidn(const Entity& e, component_uid cid, base::string(*get_name)(void))
+_is_hidn(const Entity& e, component_uid_t cid, base::string(*get_name)(void))
 {
 	auto p_hec_bag = _hec_bags.find(cid);
 
@@ -605,7 +605,7 @@ inline bool
 manager<Entity>::
 _is_hidn(const Entity& e)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	return _is_hidn(e, cid, &base::type_name<Component>);
 }
 //------------------------------------------------------------------------------
@@ -617,7 +617,7 @@ inline typename Access::template result<Component>::type*
 manager<Entity>::
 _do_acc(const Entity& e, Access acc)
 {
-	component_uid cid = get_component_uid<Component>();
+	component_uid_t cid = get_component_uid<Component>();
 	component_key_t key = _get_cmp_key(e, cid);
 
 	if(key != nil_component_key)

@@ -12,6 +12,7 @@
 #define EAGINE_ECS_COMPONENT_STORAGE_1408161720_HPP
 
 #include <eagine/ecs/component.hpp>
+#include <eagine/base/access_type.hpp>
 #include <eagine/base/vector.hpp>
 #include <eagine/base/function.hpp>
 #include <eagine/base/bitfield.hpp>

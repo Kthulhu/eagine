@@ -114,22 +114,22 @@ private:
 	}
 
 	void _do_reg_cmp_type(
-		component_uid cid,
+		component_uid_t cid,
 		const base::shared_ptr<entity_component_map<Entity>>& eck_map,
 		const base::shared_ptr<base_component_storage>& storage,
 		base::string(*get_name)(void)
 	);
 
 	void _do_unr_cmp_type(
-		component_uid cid,
+		component_uid_t cid,
 		base::string(*get_name)(void)
 	);
 
-	bool _does_know_cmp_type(component_uid cid) const;
+	bool _does_know_cmp_type(component_uid_t cid) const;
 
-	std::size_t _get_cmp_cnt(component_uid cid) const;
+	std::size_t _get_cmp_cnt(component_uid_t cid) const;
 
-	component_key_t _get_cmp_key(const Entity& e, component_uid) const;
+	component_key_t _get_cmp_key(const Entity& e, component_uid_t) const;
 
 	template <typename Component>
 	bool _do_add(const Entity& e, Component&& component);
@@ -137,7 +137,7 @@ private:
 	bool _do_cpy(
 		const Entity& e1,
 		const Entity& e2,
-		component_uid,
+		component_uid_t,
 		base::string(*)(void)
 	);
 
@@ -147,31 +147,31 @@ private:
 	bool _do_swp(
 		const Entity& e1,
 		const Entity& e2,
-		component_uid,
+		component_uid_t,
 		base::string(*)(void)
 	);
 
 	template <typename Component>
 	bool _do_swp(const Entity& e1, const Entity& e2);
 
-	bool _do_rem(const Entity& e, component_uid, base::string(*)(void));
+	bool _do_rem(const Entity& e, component_uid_t, base::string(*)(void));
 
 	template <typename Component>
 	bool _do_rem(const Entity& e);
 
-	bool _do_show(const Entity& e, component_uid, base::string(*)(void));
+	bool _do_show(const Entity& e, component_uid_t, base::string(*)(void));
 
 	template <typename Component>
 	bool _do_show(const Entity& e);
 
-	bool _do_hide(const Entity& e, component_uid, base::string(*)(void));
+	bool _do_hide(const Entity& e, component_uid_t, base::string(*)(void));
 
 	template <typename Component>
 	bool _do_hide(const Entity& e);
 
-	bool _ch_vis(const Entity&, component_uid, bool, base::string(*)(void));
+	bool _ch_vis(const Entity&, component_uid_t, bool, base::string(*)(void));
 
-	bool _is_hidn(const Entity& e, component_uid, base::string(*)(void));
+	bool _is_hidn(const Entity& e, component_uid_t, base::string(*)(void));
 
 	template <typename Component>
 	bool _is_hidn(const Entity& e);
@@ -272,7 +272,7 @@ public:
 		return *this;
 	}
 
-	manager& copy(const Entity& from, const Entity& to, component_uid cid)
+	manager& copy(const Entity& from, const Entity& to, component_uid_t cid)
 	{
 		_do_cpy(from, to, cid, nullptr);
 		return *this;
@@ -285,7 +285,7 @@ public:
 		return *this;
 	}
 
-	manager& swap(const Entity& e1, const Entity& e2, component_uid cid)
+	manager& swap(const Entity& e1, const Entity& e2, component_uid_t cid)
 	{
 		_do_swp(e1, e2, cid, nullptr);
 		return *this;
@@ -298,7 +298,7 @@ public:
 		return *this;
 	}
 
-	manager& remove(const Entity& e, component_uid cid)
+	manager& remove(const Entity& e, component_uid_t cid)
 	{
 		_do_rem(e, cid, nullptr);
 		return *this;
@@ -318,7 +318,7 @@ public:
 		return *this;
 	}
 
-	manager& show(const Entity& e, component_uid cid)
+	manager& show(const Entity& e, component_uid_t cid)
 	{
 		_do_show(e, cid, nullptr);
 		return *this;
@@ -331,7 +331,7 @@ public:
 		return *this;
 	}
 
-	manager& hide(const Entity& e, component_uid cid)
+	manager& hide(const Entity& e, component_uid_t cid)
 	{
 		_do_hide(e, cid, nullptr);
 		return *this;
@@ -343,7 +343,7 @@ public:
 		return _is_hidn<Component>(e);
 	}
 
-	bool hidden(const Entity& e, component_uid cid)
+	bool hidden(const Entity& e, component_uid_t cid)
 	{
 		return _is_hidn(e, cid, nullptr);
 	}

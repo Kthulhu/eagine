@@ -15,17 +15,17 @@ namespace ecs {
 // component_uid_getter::_curr_uid
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-component_uid&
+component_uid_t&
 component_uid_getter::_curr_uid(void)
 {
-	static component_uid uid = 0;
+	static component_uid_t uid = 0;
 	return uid;
 }
 //------------------------------------------------------------------------------
 // component_uid_getter::_new_uid
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-component_uid
+component_uid_t
 component_uid_getter::new_uid(void)
 {
 	return _curr_uid()++;
