@@ -6,6 +6,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/base/varray.hpp>
+#include <eagine/base/stack_alloc.hpp>
 #include <eagine/dbg/hexdump.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/base/type.hpp>

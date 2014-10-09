@@ -12,6 +12,7 @@
 #define EAGINE_BASE_MEMORY_RANGE_1408161723_HPP
 
 #include <eagine/base/memory_block.hpp>
+#include <cstdint>
 
 namespace EAGine {
 namespace base {
@@ -25,7 +26,7 @@ private:
 
 	T* _cast(typename meta::add_same_constness<T, void>::type* ptr)
 	{
-		assert((std::size_t)ptr % alignof(T) == 0);
+		assert((std::uintptr_t)ptr % alignof(T) == 0);
 		return static_cast<T*>(ptr);
 	}
 public:
@@ -37,8 +38,8 @@ public:
 	{ }
 
 	typed_memory_range(const raw_block& raw)
-	 : _addr(_cast(raw.addr()))
-	 , _size(raw.size() / sizeof(T))
+	 : _addr(_cast(raw.aligned_begin(alignof(T))))
+	 , _size(_cast(raw.aligned_end(alignof(T)))-_addr)
 	{ }
 
 	raw_block block(void) const

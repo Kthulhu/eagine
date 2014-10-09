@@ -11,17 +11,18 @@
 #ifndef EAGINE_DBG_HEXDUMP_1308281038_HPP
 #define EAGINE_DBG_HEXDUMP_1308281038_HPP
 
+#include <eagine/base/memory_block.hpp>
 #include <iosfwd>
 #include <memory>
 
 namespace EAGine {
 namespace dbg {
 
+using base::byte;
+
 class hexdump
 {
 private:
-	typedef unsigned char byte;
-
 	const byte* _bgn;
 	const byte* _end;
 
@@ -30,6 +31,12 @@ public:
 	hexdump(const void* p, std::size_t s)
 	 : _bgn((const byte*)p)
 	 , _end(_bgn+s)
+	{ }
+
+	template <bool Const>
+	hexdump(const base::basic_memory_block<Const>& mb)
+	 : _bgn((const byte*)mb.addr())
+	 , _end(_bgn+mb.size())
 	{ }
 
 	template <typename T>

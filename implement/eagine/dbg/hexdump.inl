@@ -17,7 +17,7 @@ namespace dbg {
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void
-hexdump::_to_hex_b(std::ostream& out, hexdump::byte b)
+hexdump::_to_hex_b(std::ostream& out, byte b)
 {
 	static const char hd[16] = {
 		'0','1','2','3',

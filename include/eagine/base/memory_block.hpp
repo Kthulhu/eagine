@@ -13,14 +13,12 @@
 
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/base/type.hpp>
+#include <cstdint>
 #include <cstddef>
 #include <cassert>
 
 namespace EAGine {
 namespace base {
-
-template <typename T>
-class typed_memory_range;
 
 template <bool Const>
 class basic_memory_block
@@ -40,10 +38,25 @@ private:
 
 	T* _addr;
 	std::size_t _size;
+
+	static std::uintptr_t _misalign(B* p, std::uintptr_t alignment)
+	{
+		return (std::uintptr_t(p) % alignment);
+	}
+
+	static std::uintptr_t _misalign(T* p, std::uintptr_t alignment)
+	{
+		return _misalign((B*)p, alignment);
+	}
 public:
 	basic_memory_block(void)
 	 : _addr(nullptr)
 	 , _size(0)
+	{ }
+
+	basic_memory_block(T* bgn_, T* end_)
+	 : _addr(bgn_)
+	 , _size(((B*)end_)-((B*)bgn_))
 	{ }
 
 	basic_memory_block(T* addr_, std::size_t size_)
@@ -72,10 +85,45 @@ public:
 		return _size;
 	}
 
+	bool empty(void) const
+	{
+		return _size != 0;
+	}
+
 	T* offs(std::size_t byte_offs) const
 	{
 		assert(byte_offs <= _size);
 		return (T*)(((B*)_addr)+byte_offs);
+	}
+
+	typedef T* iterator;
+	typedef T* const_iterator;
+
+	iterator begin(void) const
+	{
+		return _addr;
+	}
+
+	iterator end(void) const
+	{
+		return offs(_size);
+	}
+
+	iterator aligned_begin(std::uintptr_t alignment) const
+	{
+		return (iterator)(
+			((B*)begin())+
+			alignment-
+			_misalign(begin(), alignment)
+		);
+	}
+
+	iterator aligned_end(std::uintptr_t alignment) const
+	{
+		return (iterator)(
+			((B*)end())-
+			_misalign(end(), alignment)
+		);
 	}
 
 	basic_memory_block slice(
@@ -91,6 +139,19 @@ public:
 	{
 		assert(byte_offs <= _size);
 		return slice(byte_offs, _size-byte_offs);
+	}
+
+	basic_memory_block slice_to_align(std::size_t alignment) const
+	{
+		B* b = aligned_begin(alignment);
+		B* e = aligned_end(alignment);
+
+		assert((std::uintptr_t(b) % alignment) == 0);
+		assert((std::uintptr_t(e) % alignment) == 0);
+
+		if(e < b) e = b;
+
+		return basic_memory_block(b, e);
 	}
 };
 
