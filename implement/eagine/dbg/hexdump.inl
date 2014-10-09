@@ -34,8 +34,6 @@ EAGINE_LIB_FUNC
 std::ostream&
 operator << (std::ostream& out, const hexdump& hd)
 {
-	typedef unsigned char byte;
-
 	out << std::endl;
 
 	const byte* row = hd._bgn - std::size_t(hd._bgn) % 16;
