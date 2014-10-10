@@ -111,10 +111,10 @@ public:
 
 	iterator aligned_begin(std::uintptr_t alignment) const
 	{
+		std::uintptr_t ma = _misalign(begin(), alignment);
 		return (iterator)(
 			((B*)begin())+
-			alignment-
-			_misalign(begin(), alignment)
+			(ma?alignment-ma:0)
 		);
 	}
 

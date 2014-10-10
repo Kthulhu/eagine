@@ -18,6 +18,37 @@ namespace EAGine {
 namespace base {
 
 template <typename T>
+class stack_allocator;
+
+template <>
+class stack_allocator<void>
+{
+private:
+	memory_block _blk;
+public:
+	stack_allocator(void) = default;
+
+	stack_allocator(const memory_block& blk)
+	 : _blk(blk)
+	{ }
+
+	operator memory_block(void) const
+	{
+		return _blk;
+	}
+
+	typedef void value_type;
+	typedef void* pointer;
+	typedef const void* const_pointer;
+
+	template <typename U>
+	struct rebind
+	{
+		typedef stack_allocator<U> other;
+	};
+};
+
+template <typename T>
 class stack_allocator
 {
 private:
@@ -35,25 +66,9 @@ public:
 	 , _dif(0)
 	{ }
 
-	stack_allocator(T* btm, std::size_t sze)
-	 : _btm(btm)
-	 , _top(btm+sze)
-	 , _pos(btm)
-	 , _min(btm)
-	 , _dif(0)
-	{ }
-
 	stack_allocator(const memory_block& blk)
 	 : _btm((T*)blk.aligned_begin(alignof(T)))
 	 , _top((T*)blk.aligned_end(alignof(T)))
-	 , _pos(_btm)
-	 , _min(_btm)
-	 , _dif(0)
-	{ }
-
-	stack_allocator(const typed_memory_range<T>& rng)
-	 : _btm(rng.begin())
-	 , _top(rng.end())
 	 , _pos(_btm)
 	 , _min(_btm)
 	 , _dif(0)
@@ -112,6 +127,55 @@ public:
 		return result;
 	}
 
+	pointer reallocate(pointer p, size_type pn, size_type nn)
+	{
+		if(p+pn == _pos)
+		{
+			difference_type d = nn - pn;
+			assert(_min <= _pos);
+			if(_min == _pos)
+			{
+				_min += d;
+			}
+			else
+			{
+				_dif += d;
+			}
+
+			_pos += d;
+			return p;
+		}
+		else
+		{
+			pointer r = allocate(nn);
+			std::memmove(r, p, nn<pn?nn:pn);
+			deallocate(p, pn);
+			return r;
+		}
+	}
+
+	pointer truncate(pointer p, size_type pn, size_type nn)
+	{
+		assert(pn >= nn);
+
+		if(p+pn == _pos)
+		{
+			difference_type d = pn - nn;
+			assert(_min <= _pos);
+			if(_min == _pos)
+			{
+				_min -= d;
+			}
+			else
+			{
+				_dif -= d;
+			}
+
+			_pos -= d;
+		}
+		return p;
+	}
+
 	void deallocate(const_pointer p, size_type n)
 	{
 		assert(p+n <= _pos);
@@ -166,6 +230,22 @@ public:
 	void destroy(U* p)
 	{
 		p->~U();
+	}
+
+	friend bool operator == (
+		const stack_allocator& a,
+		const stack_allocator& b
+	)
+	{
+		return	(a._btm == b._btm) && (a._top == b._top);
+	}
+
+	friend bool operator != (
+		const stack_allocator& a,
+		const stack_allocator& b
+	)
+	{
+		return	(a._btm != b._btm) || (a._top != b._top);
 	}
 };
 

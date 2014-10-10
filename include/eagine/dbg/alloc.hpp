@@ -18,8 +18,48 @@
 namespace EAGine {
 namespace dbg {
 
+template <typename A, typename VT>
+class verbose_alloc_dec_tpl;
+
 template <typename A>
-class verbose_allocator_decorator
+class verbose_alloc_dec_tpl<A, void>
+{
+private:
+	std::ostream& _out;
+	A _a;
+public:
+	template <typename U>
+	struct rebind
+	{
+		typedef verbose_alloc_dec_tpl<
+			typename std::allocator_traits<A>
+				::template rebind_alloc<U>,
+			U
+		> other;
+	};
+
+	verbose_alloc_dec_tpl(void)
+	 : _out(std::cerr)
+	 , _a()
+	{ }
+
+	verbose_alloc_dec_tpl(const verbose_alloc_dec_tpl&)
+		= default;
+
+	verbose_alloc_dec_tpl(const A& a)
+	 : _out(std::cerr)
+	 , _a(a)
+	{ }
+
+	template <typename ... Arg>
+	verbose_alloc_dec_tpl(Arg&&...arg)
+	 : _out(std::cerr)
+	 , _a(std::forward<Arg>(arg)...)
+	{ }
+};
+
+template <typename A, typename VT>
+class verbose_alloc_dec_tpl
 {
 private:
 	std::ostream& _out;
@@ -56,13 +96,14 @@ public:
 	template <typename U>
 	struct rebind
 	{
-		typedef verbose_allocator_decorator<
+		typedef verbose_alloc_dec_tpl<
 			typename std::allocator_traits<A>
-				::template rebind_alloc<U>
+				::template rebind_alloc<U>,
+			U
 		> other;
 	};
 
-	verbose_allocator_decorator(void)
+	verbose_alloc_dec_tpl(void)
 	 : _out(std::cerr)
 	 , _a()
 	{
@@ -72,16 +113,27 @@ public:
 			<< std::endl;
 	}
 
-	verbose_allocator_decorator(const verbose_allocator_decorator&)
+	verbose_alloc_dec_tpl(const verbose_alloc_dec_tpl&)
 		= default;
 
-	verbose_allocator_decorator(const A& a)
+	verbose_alloc_dec_tpl(const A& a)
 	 : _out(std::cerr)
 	 , _a(a)
 	{
 		_out	<< "|"
 			<< _alloc_type_name()
 			<< "::copy construction"
+			<< std::endl;
+	}
+
+	template <typename ... Arg>
+	verbose_alloc_dec_tpl(Arg&& ... arg)
+	 : _out(std::cerr)
+	 , _a(std::forward<Arg>(arg)...)
+	{
+		_out	<< "|"
+			<< _alloc_type_name()
+			<< "::init construction"
 			<< std::endl;
 	}
 
@@ -219,7 +271,42 @@ public:
 			<< std::endl;
 		return r;
 	}
+
+	friend bool operator == (
+		const verbose_alloc_dec_tpl& a,
+		const verbose_alloc_dec_tpl& b
+	)
+	{
+		a._out	<< "|"
+			<< _alloc_type_name()
+			<< "::operator==() = "
+			<< std::flush;
+		bool r = (a._a == b._b);
+		a._out	<< r
+			<< std::endl;
+		return r;
+	}
+
+	friend bool operator != (
+		const verbose_alloc_dec_tpl& a,
+		const verbose_alloc_dec_tpl& b
+	)
+	{
+		a._out	<< "|"
+			<< _alloc_type_name()
+			<< "::operator!=() = "
+			<< std::flush;
+		bool r = (a._a != b._b);
+		a._out	<< r
+			<< std::endl;
+		return r;
+	}
 };
+
+template <typename A>
+using verbose_allocator_decorator =
+	verbose_alloc_dec_tpl<A, typename A::value_type>;
+
 
 } // namespace dbg
 } // namespace EAGine
