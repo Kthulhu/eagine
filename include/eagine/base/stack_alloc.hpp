@@ -13,6 +13,7 @@
 
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/memory_range.hpp>
+#include <cstring>
 
 namespace EAGine {
 namespace base {

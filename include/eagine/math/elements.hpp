@@ -157,7 +157,7 @@ data_elements<
 >
 elements_copy(const X& x, meta::integer_sequence<unsigned, I...>)
 {
-	return {get_elem<I>(x)...};
+	return {{get_elem<I>(x)...}};
 }
 
 // elements(X) (safe)

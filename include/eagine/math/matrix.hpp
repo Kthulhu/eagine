@@ -400,6 +400,17 @@ matrix<T, M, N, RM> multiply(
 	return multiply(m1, reorder(m2));
 }
 
+// M * M
+template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+static constexpr inline
+matrix<T, M, N, RM1> operator * (
+	const matrix<T, M, K, RM1>& m1,
+	const matrix<T, K, N, RM2>& m2
+)
+{
+	return multiply(m1, m2);
+}
+
 // multiply hlp
 template <
 	unsigned ... I,
@@ -432,9 +443,89 @@ vector<T, R> multiply(
 	return _multiply_hlp(is(), m, v);
 }
 
+// M * V
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+vector<T, R> operator * (
+	const matrix<T, R, C, true>& m,
+	const vector<T, C>& v
+)
+{
+	return multiply(m, v);
+}
+
+// is_matrix_constructor trait
+template <typename X>
+struct is_matrix_constructor
+ : meta::false_type
+{ };
+
+// matrix_constructor * matrix_constructor
+template <
+	template <class> class C1,
+	template <class> class C2,
+	typename T, unsigned R, unsigned C, bool RM
+>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<C1<matrix<T,R,C,RM>>>::value &&
+	is_matrix_constructor<C2<matrix<T,R,C,RM>>>::value,
+	matrix<T,R,C,RM>
+>::type operator * (
+	const C1<matrix<T,R,C,RM>>& c1,
+	const C2<matrix<T,R,C,RM>>& c2
+)
+{
+	return multiply(
+		matrix<T,R,C, RM>(c1),
+		matrix<T,R,C,!RM>(reorder(c2))
+	);
+}
+
+// matrix * matrix_constructor
+template <
+	template <class> class C2,
+	typename T, unsigned R, unsigned C, bool RM
+>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<C2<matrix<T,R,C,RM>>>::value,
+	matrix<T,R,C,RM>
+>::type operator * (
+	const matrix<T,R,C,RM>& m,
+	const C2<matrix<T,R,C,RM>>& c2
+)
+{
+	return multiply(m, matrix<T,R,C,!RM>(reorder(c2)));
+}
+
+// matrix_constructor * vector
+template <
+	template <class> class C1,
+	typename T, unsigned R, unsigned C
+>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<C1<matrix<T,R,C,true>>>::value,
+	vector<T, R>
+>::type operator * (
+	const C1<matrix<T,R,C,true>>& c1,
+	const vector<T,C>& v
+)
+{
+	typedef matrix<T,R,C,true> M;
+	return multiply(M(c1), v);
+}
+
 // identity
 template <typename X>
 struct identity;
+
+// is_matrix_constructor<identity>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<identity<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
 
 // identity Matrix
 template <typename T, unsigned R, unsigned C, bool RM>
@@ -455,6 +546,12 @@ struct identity<matrix<T,R,C,RM>>
 		return _identity(_riS());
 	}
 };
+
+// reorder(identity)
+template <typename T, unsigned R, unsigned C, bool RM>
+static constexpr inline
+identity<matrix<T,R,C,!RM>>
+reorder(const identity<matrix<T,R,C,RM>>&) { return {}; }
 
 } // namespace math
 } // namespace EAGine

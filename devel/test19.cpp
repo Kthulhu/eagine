@@ -6,7 +6,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/math/elements.hpp>
-#include <eagine/math/matrix.hpp>
+#include <eagine/math/matrix_ctrs.hpp>
 #include <eagine/math/io.hpp>
 //------------------
 #include <iostream>
@@ -18,8 +18,11 @@ int main(int argc, const char**)
 	using math::row;
 	using math::column;
 
-	typedef math::matrix<float,4,4,true> mat4;
+	typedef math::vector<float,4> vec4;
+	typedef math::matrix<float,4,4, true> mat4;
+	typedef math::matrix<float,4,4,false> mat4c;
 
+	vec4 v = {0, 0, 0, 1};
 	mat4 m0 = math::identity<mat4>();
 	mat4 m1 = {{
 		{ 1, 2, 3, 4},
@@ -27,10 +30,12 @@ int main(int argc, const char**)
 		{ 9,10,11,12},
 		{13,14,15,16}
 	}};
+	mat4 m2 = math::translation<mat4>(1,2,3);
 
 	std::cout << m0 << std::endl;
 	std::cout << row<1>(m0) << std::endl;
 	std::cout << m1 << std::endl;
+	std::cout << m2 << std::endl;
 	std::cout << transpose(m1) << std::endl;
 	std::cout << reorder(m1) << std::endl;
 	std::cout << column<0>(m1) << std::endl;
@@ -76,6 +81,15 @@ int main(int argc, const char**)
 		std::cout << data(m1c1e)[i] << " ";
 	}
 	std::cout << std::endl;
+
+	typedef vect::data<float, 2>::type vd2_t;
+	typedef vect::data<float, 3>::type vd3_t;
+	typedef vect::data<float, 4>::type vd4_t;
+
+	std::cout <<
+		math::translation<mat4>( 1, 0, 0)*
+		math::translation<mat4>(-1, 0, 0)*
+		v << std::endl;
 
 	return 0;
 }

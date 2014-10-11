@@ -84,6 +84,12 @@ struct _ary_data
 	}
 };
 
+template <typename T>
+struct _ary_data<T, 0u>
+{
+	T operator [] (unsigned i) const;
+};
+
 template <typename T, unsigned N>
 struct data
 {

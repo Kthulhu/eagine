@@ -32,14 +32,24 @@ struct fill
 };
 
 template <typename T>
+struct fill<T, 0>
+{
+	static constexpr
+	typename data<T, 0>::type
+	apply(T)
+	{
+		return {};
+	}
+};
+
+template <typename T>
 struct fill<T, 1>
 {
 	static constexpr
 	typename data<T, 1>::type
 	apply(T v)
 	{
-		return typename data<T, 1>::type
-			{v};
+		return {v};
 	}
 };
 
@@ -50,8 +60,7 @@ struct fill<T, 2>
 	typename data<T, 2>::type
 	apply(T v)
 	{
-		return typename data<T, 2>::type
-			{v,v};
+		return {v,v};
 	}
 };
 
@@ -62,8 +71,7 @@ struct fill<T, 3>
 	typename data<T, 3>::type
 	apply(T v)
 	{
-		return typename data<T, 3>::type
-			{v,v,v};
+		return {v,v,v};
 	}
 };
 
@@ -74,8 +82,7 @@ struct fill<T, 4>
 	typename data<T, 4>::type
 	apply(T v)
 	{
-		return typename data<T, 4>::type
-			{v,v,v,v};
+		return {v,v,v,v};
 	}
 };
 

@@ -43,7 +43,7 @@ int main(int argc, const char**)
 	{
 		typedef basic_pod_varray<double, std::size_t> cpv;
 
-		stack_allocator<double> ssa(a.data(), a.size());
+		stack_allocator<double> ssa(typed_memory_range<double>(a.data(), a.size()));
 
 		cpv* v = make_basic_pod_varray<double, std::size_t>({0.,1.,2.,3.,4.,5.,6.,7.,8.,9.}, ssa);
 
