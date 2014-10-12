@@ -87,6 +87,7 @@ int main(int argc, const char**)
 	typedef vect::data<float, 4>::type vd4_t;
 
 	std::cout <<
+		math::reflection_x<mat4>()*
 		math::scale<mat4>(2,2,2)*
 		math::translation<mat4>( 1, 0, 0)*
 		math::uniform_scale<mat4>(4)*
