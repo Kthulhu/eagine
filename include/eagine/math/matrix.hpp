@@ -44,6 +44,14 @@ struct matrix<T,R,C,false>
 	_vT _v[C];
 };
 
+template <typename X>
+struct is_row_major;
+
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_row_major<matrix<T,R,C,RM>>
+ : meta::integral_constant<bool, RM>
+{ };
+
 // reordered matrix trait
 template <typename X>
 struct reordered_matrix;
@@ -80,7 +88,7 @@ bool row_major(const matrix<T,R,C,RM>&)
 
 // equality
 template <typename T, unsigned R, unsigned C, bool RM>
-static constexpr inline
+static inline
 bool
 operator == (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
 {
@@ -92,7 +100,7 @@ operator == (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
 
 // non-eqality
 template <typename T, unsigned R, unsigned C, bool RM>
-static constexpr inline
+static inline
 bool
 operator != (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
 {
@@ -535,31 +543,30 @@ template <
  : matrix<T,R,C,RM>
 { };
 
-// construct_ordered_as (noop)
-template <typename M, typename MC>
+// construct_matrix (noop)
+template <bool RM, typename MC>
 static constexpr inline
 typename meta::enable_if<
 	is_matrix_constructor<MC>::value &&
-	meta::is_same<typename constructed_matrix<MC>::type, M>::value,
-	M
->::type construct_ordered_as(const MC& c)
+	is_row_major<typename constructed_matrix<MC>::type>::value == RM,
+	typename constructed_matrix<MC>::type
+>::type construct_matrix(const MC& c)
 {
-	return M(c);
+	return c;
 }
 
-// construct_ordered_as (reorder)
-template <typename M, typename MC>
+// construct_matrix (reorder)
+template <bool RM, typename MC>
 static constexpr inline
 typename meta::enable_if<
 	is_matrix_constructor<MC>::value &&
-	meta::is_same<
-		typename constructed_matrix<MC>::type,
-		typename reordered_matrix<M>::type
-	>::value,
-	M
->::type construct_ordered_as(const MC& c)
+	is_row_major<typename constructed_matrix<MC>::type>::value != RM,
+	typename reordered_matrix<
+		typename constructed_matrix<MC>::type
+	>::type
+>::type construct_matrix(const MC& c)
 {
-	return M(reorder(c));
+	return reorder_mat_ctr(c);
 }
 
 // matrix_constructor * matrix_constructor
@@ -575,26 +582,25 @@ typename meta::enable_if<
 	typename constructed_matrix<MC1>::type
 >::type operator * (const MC1& c1, const MC2& c2)
 {
-	typedef typename constructed_matrix<MC1>::type M1;
 	return multiply(
-		construct_ordered_as<M1>(c1),
-		construct_ordered_as<M1>(c2)
+		construct_matrix< true>(c1),
+		construct_matrix<false>(c2)
 	);
 }
 
 // matrix * matrix_constructor
-template <typename M1, typename MC2>
+template <typename T, unsigned R, unsigned C, bool RM, typename MC2>
 static constexpr inline
 typename meta::enable_if<
 	is_matrix_constructor<MC2>::value &&
 	multipliable_matrices<
-		M1,
+		matrix<T,R,C,RM>,
 		typename constructed_matrix<MC2>::type
 	>::value,
-	M1
->::type operator * (const M1& m, const MC2& c2)
+	matrix<T,R,C,RM>
+>::type operator * (const matrix<T,R,C,RM>& m, const MC2& c2)
 {
-	return multiply(m, construct_ordered_as<M1>(c2));
+	return multiply(m, construct_matrix<!RM>(c2));
 }
 
 // matrix_constructor * matrix
@@ -645,11 +651,11 @@ struct identity<matrix<T,R,C,RM>>
 	}
 };
 
-// reorder(identity)
+// reorder_mat_ctr(identity)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 identity<matrix<T,R,C,!RM>>
-reorder(const identity<matrix<T,R,C,RM>>&) { return {}; }
+reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&) { return {}; }
 
 } // namespace math
 } // namespace EAGine

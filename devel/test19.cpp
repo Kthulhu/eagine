@@ -91,6 +91,8 @@ int main(int argc, const char**)
 		<< std::endl;
 
 	std::cout <<
+		math::identity<mat4>()*
+		math::ortho<mat4>(-2, 2,-2, 2,-1, 1)*
 		math::shear<mat4>(0,-1, 0)*
 		vec4{ 1, 0, 0, 1}
 		<< std::endl;

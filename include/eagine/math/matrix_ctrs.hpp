@@ -15,6 +15,45 @@
 namespace EAGine {
 namespace math {
 
+// reordered_matrix_constructor
+template <typename MC>
+struct reordered_matrix_constructor
+{
+	MC _mc;
+
+	constexpr inline
+	operator typename reordered_matrix<
+		typename constructed_matrix<MC>::type
+	>::type (void) const
+	{
+		typedef typename constructed_matrix<MC>::type M;
+		return reorder(M(_mc));
+	}
+};
+
+// is_matrix_constructor<reordered_constructor>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<reordered_matrix_constructor<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// constructed_matrix<reordered_constructor>
+template <typename M>
+struct constructed_matrix<reordered_matrix_constructor<M>>
+ : reordered_matrix<M>
+{ };
+
+// reorder_mat_ctr(matrix_constructor)
+template <typename MC>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<MC>::value,
+	reordered_matrix_constructor<MC>
+>::type reorder_mat_ctr(const MC& mc)
+{
+	return {mc};
+}
+
 // translation
 template <typename X>
 struct translation;
@@ -69,11 +108,11 @@ struct translation<matrix<T,4,4,false>>
 	}
 };
 
-// reorder(translation)
+// reorder_mat_ctr(translation)
 template <typename T, bool RM>
 static constexpr inline
 translation<matrix<T,4,4,!RM>>
-reorder(const translation<matrix<T,4,4,RM>>& t)
+reorder_mat_ctr(const translation<matrix<T,4,4,RM>>& t)
 {
 	return {t._dx, t._dy, t._dz};
 }
@@ -90,8 +129,7 @@ struct translation_I<matrix<T,4,4, true>, I>
 
 	constexpr inline T v(unsigned i) const
 	{
-		if(i == I) return _d;
-		else return T(0);
+		return (i == I)?_d:T(0);
 	}
 
 	constexpr translation_I(T d)
@@ -138,11 +176,11 @@ struct translation_I<matrix<T,4,4,false>, I>
 	}
 };
 
-// reorder(translation_I)
+// reorder_mat_ctr(translation_I)
 template <typename T, bool RM, unsigned I>
 static constexpr inline
 translation_I<matrix<T,4,4,!RM>, I>
-reorder(const translation_I<matrix<T,4,4,RM>, I>& t)
+reorder_mat_ctr(const translation_I<matrix<T,4,4,RM>, I>& t)
 {
 	return {t._d};
 }
@@ -210,11 +248,11 @@ struct rotation_x<matrix<T,4,4, RM>>
 	}
 };
 
-// reorder(rotation_x)
+// reorder_mat_ctr(rotation_x)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 rotation_x<matrix<T,R,C,!RM>>
-reorder(const rotation_x<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const rotation_x<matrix<T,R,C,RM>>& r)
 {
 	return {r._cx,-r._sx};
 }
@@ -252,11 +290,11 @@ struct rotation_y<matrix<T,4,4, RM>>
 	}
 };
 
-// reorder(rotation_y)
+// reorder_mat_ctr(rotation_y)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 rotation_y<matrix<T,R,C,!RM>>
-reorder(const rotation_y<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const rotation_y<matrix<T,R,C,RM>>& r)
 {
 	return {r._cx,-r._sx};
 }
@@ -294,11 +332,11 @@ struct rotation_z<matrix<T,4,4, RM>>
 	}
 };
 
-// reorder(rotation_z)
+// reorder_mat_ctr(rotation_z)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 rotation_z<matrix<T,R,C,!RM>>
-reorder(const rotation_z<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const rotation_z<matrix<T,R,C,RM>>& r)
 {
 	return {r._cx,-r._sx};
 }
@@ -335,11 +373,11 @@ struct scale<matrix<T,4,4,RM>>
 	}
 };
 
-// reorder(scale)
+// reorder_mat_ctr(scale)
 template <typename T, bool RM>
 static constexpr inline
 scale<matrix<T,4,4,!RM>>
-reorder(const scale<matrix<T,4,4,RM>>& s)
+reorder_mat_ctr(const scale<matrix<T,4,4,RM>>& s)
 {
 	return {s._sx, s._sy, s._sz};
 }
@@ -376,11 +414,11 @@ struct uniform_scale<matrix<T,4,4,RM>>
 	}
 };
 
-// reorder(uniform_scale)
+// reorder_mat_ctr(uniform_scale)
 template <typename T, bool RM>
 static constexpr inline
 uniform_scale<matrix<T,4,4,!RM>>
-reorder(const uniform_scale<matrix<T,4,4,RM>>& us)
+reorder_mat_ctr(const uniform_scale<matrix<T,4,4,RM>>& us)
 {
 	return {us._s};
 }
@@ -417,11 +455,11 @@ struct reflection_x<matrix<T,4,4,RM>>
 	}
 };
 
-// reorder(reflection_x)
+// reorder_mat_ctr(reflection_x)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 reflection_x<matrix<T,R,C,!RM>>
-reorder(const reflection_x<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const reflection_x<matrix<T,R,C,RM>>& r)
 {
 	return {r._r};
 }
@@ -458,11 +496,11 @@ struct reflection_y<matrix<T,4,4,RM>>
 	}
 };
 
-// reorder(reflection_y)
+// reorder_mat_ctr(reflection_y)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 reflection_y<matrix<T,R,C,!RM>>
-reorder(const reflection_y<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const reflection_y<matrix<T,R,C,RM>>& r)
 {
 	return {r._r};
 }
@@ -499,11 +537,11 @@ struct reflection_z<matrix<T,4,4,RM>>
 	}
 };
 
-// reorder(reflection_z)
+// reorder_mat_ctr(reflection_z)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 reflection_z<matrix<T,R,C,!RM>>
-reorder(const reflection_z<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const reflection_z<matrix<T,R,C,RM>>& r)
 {
 	return {r._r};
 }
@@ -562,14 +600,57 @@ struct shear<matrix<T,4,4,false>>
 	}
 };
 
-// reorder(shear)
+// reorder_mat_ctr(shear)
 template <typename T, bool RM>
 static constexpr inline
 shear<matrix<T,4,4,!RM>>
-reorder(const shear<matrix<T,4,4,RM>>& s)
+reorder_mat_ctr(const shear<matrix<T,4,4,RM>>& s)
 {
 	return {s._sx, s._sy, s._sz};
 }
+
+// ortho
+template <typename X>
+struct ortho;
+
+// is_matrix_constructor<ortho>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<ortho<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// ortho matrix 4x4 row-major
+template <typename T>
+struct ortho<matrix<T,4,4, true>>
+{
+	T _m00,_m11,_m22,_m30,_m31,_m32;
+
+	constexpr ortho(
+		T x_left,
+		T x_right,
+		T y_bottom,
+		T y_top,
+		T z_near,
+		T z_far
+	): _m00( T(2) / (x_right - x_left))
+	 , _m11( T(2) / (y_top - y_bottom))
+	 , _m22(-T(2) / (z_far - z_near))
+	 , _m30(-(x_right + x_left) / (x_right - x_left))
+	 , _m31(-(y_top + y_bottom) / (y_top - y_bottom))
+	 , _m32(-(z_far + z_near)   / (z_far - z_near))
+	{ }
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	{
+		return {{
+			{_m00, T(0), T(0), _m30},
+			{T(0), _m11, T(0), _m31},
+			{T(0), T(0), _m22, _m32},
+			{T(0), T(0), T(0), T(1)}
+		}};
+	}
+};
 
 } // namespace math
 } // namespace EAGine
