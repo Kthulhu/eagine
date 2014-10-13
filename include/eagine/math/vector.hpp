@@ -24,6 +24,8 @@ namespace math {
 template <typename T, unsigned N>
 struct vector
 {
+	typedef vector type;
+
 	typedef typename vect::data<T, N>::type _vT;
 
 	typedef const vector& _cpT;

@@ -78,6 +78,105 @@ reorder(const translation<matrix<T,4,4,RM>>& t)
 	return {t._dx, t._dy, t._dz};
 }
 
+// translation_I
+template <typename X, unsigned I>
+struct translation_I;
+
+// translation along the I-th axis matrix 4x4 row-major
+template <typename T, unsigned I>
+struct translation_I<matrix<T,4,4, true>, I>
+{
+	T _d;
+
+	constexpr inline T v(unsigned i) const
+	{
+		if(i == I) return _d;
+		else return T(0);
+	}
+
+	constexpr translation_I(T d)
+	 : _d(d)
+	{ }
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	{
+		return {{
+			{T(1),T(0),T(0),v(0)},
+			{T(0),T(1),T(0),v(1)},
+			{T(0),T(0),T(1),v(2)},
+			{T(0),T(0),T(0),T(1)}
+		}};
+	}
+};
+
+// translation along the I-th axis matrix 4x4 column-major
+template <typename T, unsigned I>
+struct translation_I<matrix<T,4,4,false>, I>
+{
+	T _d;
+
+	constexpr inline T v(unsigned i) const
+	{
+		if(i == I) return _d;
+		else return T(0);
+	}
+
+	constexpr translation_I(T d)
+	 : _d(d)
+	{ }
+
+	constexpr inline
+	operator matrix<T,4,4,false> (void) const
+	{
+		return {{
+			{T(1),T(0),T(0),T(0)},
+			{T(0),T(1),T(0),T(0)},
+			{T(0),T(0),T(1),T(0)},
+			{v(0),v(1),v(2),T(1)}
+		}};
+	}
+};
+
+// reorder(translation_I)
+template <typename T, bool RM, unsigned I>
+static constexpr inline
+translation_I<matrix<T,4,4,!RM>, I>
+reorder(const translation_I<matrix<T,4,4,RM>, I>& t)
+{
+	return {t._d};
+}
+
+// translation x
+template <typename M>
+using translation_x = translation_I<M, 0>;
+
+// is_matrix_constructor<translation_x>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<translation_x<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// translation y
+template <typename M>
+using translation_y = translation_I<M, 1>;
+
+// is_matrix_constructor<translation_y>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<translation_y<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// translation z
+template <typename M>
+using translation_z = translation_I<M, 2>;
+
+// is_matrix_constructor<translation_z>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<translation_z<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
 // rotation_x
 template <typename X>
 struct rotation_x;
@@ -407,6 +506,69 @@ reflection_z<matrix<T,R,C,!RM>>
 reorder(const reflection_z<matrix<T,R,C,RM>>& r)
 {
 	return {r._r};
+}
+
+// shear
+template <typename X>
+struct shear;
+
+// is_matrix_constructor<shear>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<shear<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// shear matrix 4x4 row-major
+template <typename T>
+struct shear<matrix<T,4,4, true>>
+{
+	T _sx, _sy, _sz;
+
+	constexpr shear(T sx, T sy, T sz)
+	 : _sx(sx), _sy(sy), _sz(sz)
+	{ }
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	{
+		return {{
+			{T(1), _sx, _sx,T(0)},
+			{ _sy,T(1), _sy,T(0)},
+			{ _sz, _sz,T(1),T(0)},
+			{T(0),T(0),T(0),T(1)}
+		}};
+	}
+};
+
+// shear matrix 4x4 column-major
+template <typename T>
+struct shear<matrix<T,4,4,false>>
+{
+	T _sx, _sy, _sz;
+
+	constexpr shear(T sx, T sy, T sz)
+	 : _sx(sx), _sy(sy), _sz(sz)
+	{ }
+
+	constexpr inline
+	operator matrix<T,4,4,false> (void) const
+	{
+		return {{
+			{T(1), _sy, _sz,T(0)},
+			{ _sx,T(1), _sz,T(0)},
+			{ _sx, _sy,T(1),T(0)},
+			{T(0),T(0),T(0),T(1)}
+		}};
+	}
+};
+
+// reorder(shear)
+template <typename T, bool RM>
+static constexpr inline
+shear<matrix<T,4,4,!RM>>
+reorder(const shear<matrix<T,4,4,RM>>& s)
+{
+	return {s._sx, s._sy, s._sz};
 }
 
 } // namespace math

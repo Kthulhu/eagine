@@ -26,6 +26,8 @@ struct matrix;
 template <typename T, unsigned R, unsigned C>
 struct matrix<T,R,C,true>
 {
+	typedef matrix type;
+
 	typedef typename vect::data<T, C>::type _vT;
 
 	_vT _v[R];
@@ -35,10 +37,22 @@ struct matrix<T,R,C,true>
 template <typename T, unsigned R, unsigned C>
 struct matrix<T,R,C,false>
 {
+	typedef matrix type;
+
 	typedef typename vect::data<T, R>::type _vT;
 
 	_vT _v[C];
 };
+
+// reordered matrix trait
+template <typename X>
+struct reordered_matrix;
+
+// reordered matrix
+template <typename T, unsigned R, unsigned C, bool RM>
+struct reordered_matrix<matrix<T,R,C,RM>>
+ : matrix<T,R,C,!RM>
+{ };
 
 // (number of) rows
 template <typename T, unsigned R, unsigned C, bool RM>
@@ -332,6 +346,16 @@ column(const matrix<T,R,C,RM>& m, unsigned i)
 	return col_hlp(m, I(), i);
 }
 
+// multipliable_matrices trait
+template <typename M1, typename M2>
+struct multipliable_matrices
+ : meta::false_type
+{ };
+
+// multiplication result trait
+template <typename M1, typename M2>
+struct multiplication_result;
+
 // _multiply_hlp2
 template <
 	unsigned I,
@@ -374,6 +398,17 @@ _multiply_hlp(
 	>::type is;
 	return {{_multiply_hlp2<I>(is(), m1, m2)...}};
 }
+
+// multipliable_matrices
+template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+struct multipliable_matrices<matrix<T,M,K,RM1>, matrix<T,K,N,RM2>>
+ : meta::true_type
+{ };
+
+template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+struct multiplication_result<matrix<T,M,K,RM1>, matrix<T,K,N,RM2>>
+ : matrix<T,M,N,RM1>
+{ };
 
 // multiply MxM
 template <typename T, unsigned M, unsigned N, unsigned K, bool RM>
@@ -429,6 +464,18 @@ _multiply_hlp(
 	return {dot(row<I>(m), v)...};
 }
 
+// multipliable_matrices MxV
+template <typename T, unsigned R, unsigned C>
+struct multipliable_matrices<matrix<T,R,C,true>, vector<T,C>>
+ : meta::true_type
+{ };
+
+// multiplication result MxV
+template <typename T, unsigned R, unsigned C>
+struct multiplication_result<matrix<T,R,C,true>, vector<T,C>>
+ : vector<T,R>
+{ };
+
 // multiply MxV
 template <typename T, unsigned R, unsigned C>
 static constexpr inline
@@ -454,67 +501,118 @@ vector<T, R> operator * (
 	return multiply(m, v);
 }
 
+
 // is_matrix_constructor trait
 template <typename X>
 struct is_matrix_constructor
  : meta::false_type
 { };
 
-// matrix_constructor * matrix_constructor
+// constructed_matrix trait
+template <typename X>
+struct constructed_matrix;
+
+// constructed_matrix trait
 template <
-	template <class> class C1,
-	template <class> class C2,
-	typename T, unsigned R, unsigned C, bool RM
->
+	template <class> class MC,
+	typename T,
+	unsigned R,
+	unsigned C,
+	bool RM
+> struct constructed_matrix<MC<matrix<T,R,C,RM>>>
+ : matrix<T,R,C,RM>
+{ };
+
+// constructed_matrix trait
+template <
+	template <class, unsigned> class MC,
+	typename T,
+	unsigned R,
+	unsigned C,
+	bool RM,
+	unsigned I
+> struct constructed_matrix<MC<matrix<T,R,C,RM>,I>>
+ : matrix<T,R,C,RM>
+{ };
+
+// construct_ordered_as (noop)
+template <typename M, typename MC>
 static constexpr inline
 typename meta::enable_if<
-	is_matrix_constructor<C1<matrix<T,R,C,RM>>>::value &&
-	is_matrix_constructor<C2<matrix<T,R,C,RM>>>::value,
-	matrix<T,R,C,RM>
->::type operator * (
-	const C1<matrix<T,R,C,RM>>& c1,
-	const C2<matrix<T,R,C,RM>>& c2
-)
+	is_matrix_constructor<MC>::value &&
+	meta::is_same<typename constructed_matrix<MC>::type, M>::value,
+	M
+>::type construct_ordered_as(const MC& c)
 {
+	return M(c);
+}
+
+// construct_ordered_as (reorder)
+template <typename M, typename MC>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<MC>::value &&
+	meta::is_same<
+		typename constructed_matrix<MC>::type,
+		typename reordered_matrix<M>::type
+	>::value,
+	M
+>::type construct_ordered_as(const MC& c)
+{
+	return M(reorder(c));
+}
+
+// matrix_constructor * matrix_constructor
+template <typename MC1, typename MC2>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<MC1>::value &&
+	is_matrix_constructor<MC2>::value &&
+	multipliable_matrices<
+		typename constructed_matrix<MC1>::type,
+		typename constructed_matrix<MC2>::type
+	>::value,
+	typename constructed_matrix<MC1>::type
+>::type operator * (const MC1& c1, const MC2& c2)
+{
+	typedef typename constructed_matrix<MC1>::type M1;
 	return multiply(
-		matrix<T,R,C, RM>(c1),
-		matrix<T,R,C,!RM>(reorder(c2))
+		construct_ordered_as<M1>(c1),
+		construct_ordered_as<M1>(c2)
 	);
 }
 
 // matrix * matrix_constructor
-template <
-	template <class> class C2,
-	typename T, unsigned R, unsigned C, bool RM
->
+template <typename M1, typename MC2>
 static constexpr inline
 typename meta::enable_if<
-	is_matrix_constructor<C2<matrix<T,R,C,RM>>>::value,
-	matrix<T,R,C,RM>
->::type operator * (
-	const matrix<T,R,C,RM>& m,
-	const C2<matrix<T,R,C,RM>>& c2
-)
+	is_matrix_constructor<MC2>::value &&
+	multipliable_matrices<
+		M1,
+		typename constructed_matrix<MC2>::type
+	>::value,
+	M1
+>::type operator * (const M1& m, const MC2& c2)
 {
-	return multiply(m, matrix<T,R,C,!RM>(reorder(c2)));
+	return multiply(m, construct_ordered_as<M1>(c2));
 }
 
-// matrix_constructor * vector
-template <
-	template <class> class C1,
-	typename T, unsigned R, unsigned C
->
+// matrix_constructor * matrix
+template <typename MC1, typename M2>
 static constexpr inline
 typename meta::enable_if<
-	is_matrix_constructor<C1<matrix<T,R,C,true>>>::value,
-	vector<T, R>
->::type operator * (
-	const C1<matrix<T,R,C,true>>& c1,
-	const vector<T,C>& v
-)
+	is_matrix_constructor<MC1>::value &&
+	multipliable_matrices<
+		typename constructed_matrix<MC1>::type,
+		M2
+	>::value,
+	typename multiplication_result<
+		typename constructed_matrix<MC1>::type,
+		M2
+	>::type
+>::type operator * (const MC1& c1, const M2& m2)
 {
-	typedef matrix<T,R,C,true> M;
-	return multiply(M(c1), v);
+	return multiply(typename constructed_matrix<MC1>::type(c1), m2);
 }
 
 // identity

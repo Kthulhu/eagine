@@ -20,7 +20,6 @@ int main(int argc, const char**)
 
 	typedef math::vector<float,4> vec4;
 	typedef math::matrix<float,4,4, true> mat4;
-	typedef math::matrix<float,4,4,false> mat4c;
 
 	vec4 v = {0, 0, 0, 1};
 	mat4 m0 = math::identity<mat4>();
@@ -82,17 +81,18 @@ int main(int argc, const char**)
 	}
 	std::cout << std::endl;
 
-	typedef vect::data<float, 2>::type vd2_t;
-	typedef vect::data<float, 3>::type vd3_t;
-	typedef vect::data<float, 4>::type vd4_t;
-
 	std::cout <<
 		math::reflection_x<mat4>()*
 		math::scale<mat4>(2,2,2)*
-		math::translation<mat4>( 1, 0, 0)*
+		math::translation_y<mat4>(1)*
 		math::uniform_scale<mat4>(4)*
-		math::translation<mat4>( 1, 0, 0)*
+		math::translation_x<mat4>(1)*
 		v
+		<< std::endl;
+
+	std::cout <<
+		math::shear<mat4>(0,-1, 0)*
+		vec4{ 1, 0, 0, 1}
 		<< std::endl;
 
 	return 0;
