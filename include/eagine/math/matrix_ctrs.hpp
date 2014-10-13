@@ -156,8 +156,7 @@ struct translation_I<matrix<T,4,4,false>, I>
 
 	constexpr inline T v(unsigned i) const
 	{
-		if(i == I) return _d;
-		else return T(0);
+		return (i == I)?_d:T(0);
 	}
 
 	constexpr translation_I(T d)
@@ -648,6 +647,104 @@ struct ortho<matrix<T,4,4, true>>
 			{T(0), _m11, T(0), _m31},
 			{T(0), T(0), _m22, _m32},
 			{T(0), T(0), T(0), T(1)}
+		}};
+	}
+};
+
+// perspective
+template <typename X>
+struct perspective;
+
+// is_matrix_constructor<perspective>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<perspective<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// perspective matrix 4x4 row-major
+template <typename T>
+struct perspective<matrix<T,4,4, true>>
+{
+	T _m00,_m11,_m22,_m20,_m21,_m23,_m32;
+
+	constexpr perspective(
+		T x_left,
+		T x_right,
+		T y_bottom,
+		T y_top,
+		T z_near,
+		T z_far
+	): _m00((T(2) * z_near) / (x_right - x_left))
+	 , _m11((T(2) * z_near) / (y_top - y_bottom))
+	 , _m22(-(z_far + z_near) / (z_far - z_near))
+	 , _m20((x_right + x_left) / (x_right - x_left))
+	 , _m21((y_top + y_bottom) / (y_top - y_bottom))
+	 , _m23(-T(1))
+	 , _m32(-(T(2) * z_far * z_near) / (z_far - z_near))
+	{ }
+
+	static inline
+	perspective x(
+		angle<T> xfov,
+		T aspect,
+		T z_near,
+		T z_far
+	)
+	{
+		assert(aspect > T(0));
+		assert(xfov > angle<T>(0));
+
+		T x_right = z_near * tan(xfov * T(0.5));
+		T x_left = -x_right;
+
+		T y_bottom = x_left / aspect;
+		T y_top = x_right / aspect;
+
+		return perspective(
+			x_left,
+			x_right,
+			y_bottom,
+			y_top,
+			z_near,
+			z_far
+		);
+	}
+
+	static inline
+	perspective y(
+		angle<T> yfov,
+		T aspect,
+		T z_near,
+		T z_far
+	)
+	{
+		assert(aspect > T(0));
+		assert(yfov > angle<T>(0));
+
+		T y_top = z_near * tan(yfov * T(0.5));
+		T y_bottom = -y_top;
+
+		T x_left = y_bottom * aspect;
+		T x_right = y_top * aspect;
+
+		return perspective(
+			x_left,
+			x_right,
+			y_bottom,
+			y_top,
+			z_near,
+			z_far
+		);
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	{
+		return {{
+			{_m00, T(0), _m20, T(0)},
+			{T(0), _m11, _m21, T(0)},
+			{T(0), T(0), _m22, _m32},
+			{T(0), T(0), _m23, T(0)}
 		}};
 	}
 };

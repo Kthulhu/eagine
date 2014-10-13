@@ -17,6 +17,7 @@ int main(int argc, const char**)
 
 	using math::row;
 	using math::column;
+	using unit::quantity;
 
 	typedef math::vector<float,4> vec4;
 	typedef math::matrix<float,4,4, true> mat4;
@@ -92,7 +93,7 @@ int main(int argc, const char**)
 
 	std::cout <<
 		math::identity<mat4>()*
-		math::ortho<mat4>(-2, 2,-2, 2,-1, 1)*
+		math::perspective<mat4>::x(quantity<unit::degree>(75), 4.0/3.0, 1, 100)*
 		math::shear<mat4>(0,-1, 0)*
 		vec4{ 1, 0, 0, 1}
 		<< std::endl;
