@@ -5,54 +5,75 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <eagine/exte/op_ampersand.hpp>
-#include <eagine/exte/op_pipe.hpp>
-#include <eagine/exte/op_slash.hpp>
-#include <eagine/exte/op_asterisk.hpp>
-#include <eagine/exte/op_minus.hpp>
-#include <eagine/exte/op_plus.hpp>
+#include <eagine/exte/ops.hpp>
 #include <eagine/exte/evaluate.hpp>
 //------------------
+#include <eagine/base/type_name.hpp>
 #include <iostream>
+#include <sstream>
 
 namespace EAGine {
+namespace exte {
+
+template <typename T>
+struct type_tag { };
+
+template <typename T, T C>
+struct constant_tag { };
+
+} // namespace exte
 
 struct myeval
 {
-	template <typename U>
-	auto eval(exte::terminal_tag, const U& v) const
+	template <typename T>
+	base::string eval(exte::terminal_tag, T&& v) const
 	{
-		return v;
+		std::stringstream ss;
+		ss << v;
+		return ss.str();
 	}
 
-	template <typename U>
-	auto eval(exte::plus_tag, const U& v) const
+	template <typename Symbol>
+	base::string eval(
+		exte::operator_tag<Symbol,-1>,
+		base::string&& v
+	) const
 	{
-		return v;
+		return base::string(
+			meta::c_str<Symbol>::value,
+			meta::size <Symbol>::value
+		)+v;
 	}
 
-	template <typename L, typename R>
-	auto eval(exte::plus_tag, const L& l, const R& r) const
+	template <typename Symbol>
+	base::string eval(
+		exte::operator_tag<Symbol, 1>,
+		base::string&& v
+	) const
 	{
-		return l+r;
+		return v+base::string(
+			meta::c_str<Symbol>::value,
+			meta::size <Symbol>::value
+		);
 	}
 
-	template <typename U>
-	auto eval(exte::minus_tag, const U& v) const
+	template <typename Symbol>
+	base::string eval(
+		exte::operator_tag<Symbol, 2>,
+		base::string&& l,
+		base::string&& r
+	) const
 	{
-		return -v;
+		return "("+l+base::string(
+			meta::c_str<Symbol>::value,
+			meta:: size<Symbol>::value
+		)+r+")";
 	}
 
-	template <typename L, typename R>
-	auto eval(exte::minus_tag, const L& l, const R& r) const
+	template <typename Tag, typename ... Arg>
+	decltype(auto) eval(Tag t, const Arg& ... arg) const
 	{
-		return l-r;
-	}
-
-	template <typename U>
-	auto eval(exte::ampersand_tag, const U& v) const
-	{
-		return 100*v;
+		return t(arg...);
 	}
 };
 
@@ -65,12 +86,15 @@ int main(int argc, const char**)
 	using exte::val;
 	using exte::ref;
 
-	int blah = 2;
+	int i = 2;
 
-	std::cout << exte::evaluate(
-		myeval(),
-		&(val(argc)+blah-(+val(3))+(-val(1)))
-	) << std::endl;
+	auto p = -((val(0) + 1 - ref(i)++) * 10);
+
+	std::cout << evaluate(myeval(), p) << std::endl;
+
+	i = 4;
+
+	std::cout << evaluate(myeval(), p) << std::endl;
 
 	return 0;
 }

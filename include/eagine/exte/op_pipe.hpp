@@ -16,16 +16,38 @@ namespace EAGine {
 namespace exte {
 
 // pipe_tag
-struct pipe_tag { };
+template <>
+struct operator_tag<meta::string<'|'>, 2>
+{
+	template <typename L, typename R>
+	constexpr inline
+	auto operator()(L&& l, R&& r) const
+	{
+		return l|r;
+	}
+};
+template <int A>
+using pipe_tag = operator_tag<meta::string<'|'>, A>;
 
 // dbl_pipe_tag
-struct dbl_pipe_tag { };
+template <>
+struct operator_tag<meta::string<'|','|'>, 2>
+{
+	template <typename L, typename R>
+	constexpr inline
+	auto operator()(L&& l, R&& r) const
+	{
+		return l||r;
+	}
+};
+template <int A>
+using dbl_pipe_tag = operator_tag<meta::string<'|','|'>, A>;
 
 // binary single pipe
 template <typename L, typename R>
 static constexpr inline
 binary_expression<
-	pipe_tag,
+	pipe_tag<2>,
 	typename wrap_or_fwd_result<L>::type,
 	typename wrap_or_fwd_result<R>::type
 >
@@ -41,7 +63,7 @@ operator | (L&& l, R&& r)
 template <typename L, typename R>
 static constexpr inline
 binary_expression<
-	dbl_pipe_tag,
+	dbl_pipe_tag<2>,
 	typename wrap_or_fwd_result<L>::type,
 	typename wrap_or_fwd_result<R>::type
 >

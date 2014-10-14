@@ -18,7 +18,7 @@ namespace exte {
 // evaluate terminal
 template <typename Evaluator, typename U>
 static constexpr inline
-auto evaluate(
+decltype(auto) evaluate(
 	const Evaluator& ev,
 	const unary_expression<terminal_tag, U>& ex
 )
@@ -26,10 +26,21 @@ auto evaluate(
 	return ev.eval(terminal_tag(), ex.value);
 }
 
+// evaluate nullary expression
+template <typename Evaluator, typename Tag>
+static constexpr inline
+decltype(auto) evaluate(
+	const Evaluator& ev,
+	const nullary_expression<Tag>& ex
+)
+{
+	return ev.eval(Tag());
+}
+
 // evaluate unary expression
 template <typename Evaluator, typename Tag, typename U>
 static constexpr inline
-auto evaluate(
+decltype(auto) evaluate(
 	const Evaluator& ev,
 	const unary_expression<Tag, U>& ex
 )
@@ -40,7 +51,7 @@ auto evaluate(
 // evaluate binary_expression
 template <typename Evaluator, typename Tag, typename L, typename R>
 static constexpr inline
-auto evaluate(
+decltype(auto) evaluate(
 	const Evaluator& ev,
 	const binary_expression<Tag, L, R>& ex
 )

@@ -16,13 +16,36 @@ namespace EAGine {
 namespace exte {
 
 // minus_tag
-struct minus_tag { };
+template <>
+struct operator_tag<meta::string<'-'>,-1>
+{
+	template <typename U>
+	constexpr inline
+	auto operator()(U&& v) const
+	{
+		return -v;
+	}
+};
+
+template <>
+struct operator_tag<meta::string<'-'>, 2>
+{
+	template <typename L, typename R>
+	constexpr inline
+	auto operator()(L&& l, R&& r) const
+	{
+		return l-r;
+	}
+};
+
+template <int A>
+using minus_tag =operator_tag<meta::string<'-'>, A>; 
 
 // binary minus
 template <typename L, typename R>
 static constexpr inline
 binary_expression<
-	minus_tag,
+	minus_tag<2>,
 	typename wrap_or_fwd_result<L>::type,
 	typename wrap_or_fwd_result<R>::type
 >
@@ -38,7 +61,7 @@ operator - (L&& l, R&& r)
 template <typename U>
 static constexpr inline
 unary_expression<
-	minus_tag,
+	minus_tag<-1>,
 	typename wrap_or_fwd_result<U>::type
 >
 operator - (U&& v)

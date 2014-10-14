@@ -17,7 +17,14 @@ namespace EAGine {
 namespace exte {
 
 // terminal tag
-struct terminal_tag { };
+struct terminal_tag
+{
+	template <typename T>
+	T&& operator()(T&& v) const
+	{
+		return std::forward<T>(v);
+	}
+};
 
 // terminal
 template <typename U>

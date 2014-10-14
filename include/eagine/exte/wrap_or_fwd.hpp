@@ -22,16 +22,16 @@ struct wrap_or_fwd_result
 	typedef terminal<X> type;
 };
 
-template <typename Tag, typename U>
-struct wrap_or_fwd_result<unary_expression<Tag, U>>
+template <typename X>
+struct wrap_or_fwd_result<X&>
 {
-	typedef unary_expression<Tag, U> type;
+	typedef terminal<X&> type;
 };
 
-template <typename Tag, typename L, typename R>
-struct wrap_or_fwd_result<binary_expression<Tag, L, R>>
+template <typename Tag, typename ... Arg>
+struct wrap_or_fwd_result<nary_expression<Tag, Arg...>>
 {
-	typedef binary_expression<Tag, L, R> type;
+	typedef nary_expression<Tag, Arg...> type;
 };
 
 template <typename T>
@@ -42,6 +42,16 @@ typename meta::enable_if<
 >::type wrap_or_fwd(T&& v)
 {
 	return {std::forward<T>(v)};
+}
+
+template <typename T>
+static constexpr inline
+typename meta::enable_if<
+	!is_expression<T>::value,
+	terminal<T&>
+>::type wrap_or_fwd(T& v)
+{
+	return {v};
 }
 
 template <typename E>

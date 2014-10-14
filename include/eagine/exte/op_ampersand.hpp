@@ -16,16 +16,49 @@ namespace EAGine {
 namespace exte {
 
 // ampersand_tag
-struct ampersand_tag { };
+template <>
+struct operator_tag<meta::string<'&'>,-1>
+{
+	template <typename U>
+	constexpr inline
+	auto operator()(U&& v) const
+	{
+		return &v;
+	}
+};
+
+template <>
+struct operator_tag<meta::string<'&'>, 2>
+{
+	template <typename L, typename R>
+	constexpr inline
+	auto operator()(L&& l, R&& r) const
+	{
+		return l&r;
+	}
+};
+template <int A>
+using ampersand_tag = operator_tag<meta::string<'&'>,A>;
 
 // dbl_ampersand_tag
-struct dbl_ampersand_tag { };
+template <int A>
+struct operator_tag<meta::string<'&','&'>,A>
+{
+	template <typename L, typename R>
+	constexpr inline
+	auto operator()(L&& l, R&& r) const
+	{
+		return l&&r;
+	}
+};
+template <int A>
+using dbl_ampersand_tag = operator_tag<meta::string<'&','&'>,A>;
 
 // binary single ampersand
 template <typename L, typename R>
 static constexpr inline
 binary_expression<
-	ampersand_tag,
+	ampersand_tag<2>,
 	typename wrap_or_fwd_result<L>::type,
 	typename wrap_or_fwd_result<R>::type
 >
@@ -41,7 +74,7 @@ operator & (L&& l, R&& r)
 template <typename U>
 static constexpr inline
 unary_expression<
-	ampersand_tag,
+	ampersand_tag<-1>,
 	typename wrap_or_fwd_result<U>::type
 >
 operator & (U&& v)
@@ -53,7 +86,7 @@ operator & (U&& v)
 template <typename L, typename R>
 static constexpr inline
 binary_expression<
-	dbl_ampersand_tag,
+	dbl_ampersand_tag<2>,
 	typename wrap_or_fwd_result<L>::type,
 	typename wrap_or_fwd_result<R>::type
 >

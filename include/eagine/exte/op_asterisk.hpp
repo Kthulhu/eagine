@@ -16,13 +16,35 @@ namespace EAGine {
 namespace exte {
 
 // asterisk_tag
-struct asterisk_tag { };
+template <>
+struct operator_tag<meta::string<'*'>,-1>
+{
+	template <typename U>
+	constexpr inline
+	auto operator()(U&& v) const
+	{
+		return *v;
+	}
+};
+
+template <>
+struct operator_tag<meta::string<'*'>, 2>
+{
+	template <typename L, typename R>
+	constexpr inline
+	auto operator()(L&& l, R&& r) const
+	{
+		return l*r;
+	}
+};
+template <int A>
+using asterisk_tag = operator_tag<meta::string<'*'>, A>;
 
 // binary asterisk
 template <typename L, typename R>
 static constexpr inline
 binary_expression<
-	asterisk_tag,
+	asterisk_tag<2>,
 	typename wrap_or_fwd_result<L>::type,
 	typename wrap_or_fwd_result<R>::type
 >
@@ -38,7 +60,7 @@ operator * (L&& l, R&& r)
 template <typename U>
 static constexpr inline
 unary_expression<
-	asterisk_tag,
+	asterisk_tag<-1>,
 	typename wrap_or_fwd_result<U>::type
 >
 operator * (U&& v)
