@@ -1,0 +1,61 @@
+/**
+ *  @file eagine/exte/wrap_or_fwd.hpp
+ *
+ *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Software License, Version 1.0. (See accompanying file
+ *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
+#pragma once
+
+#ifndef EAGINE_EXTE_WRAP_OR_FWD_1308281038_HPP
+#define EAGINE_EXTE_WRAP_OR_FWD_1308281038_HPP
+
+#include <eagine/exte/terminal.hpp>
+#include <utility>
+
+namespace EAGine {
+namespace exte {
+
+template <typename X>
+struct wrap_or_fwd_result
+{
+	typedef terminal<X> type;
+};
+
+template <typename Tag, typename U>
+struct wrap_or_fwd_result<unary_expression<Tag, U>>
+{
+	typedef unary_expression<Tag, U> type;
+};
+
+template <typename Tag, typename L, typename R>
+struct wrap_or_fwd_result<binary_expression<Tag, L, R>>
+{
+	typedef binary_expression<Tag, L, R> type;
+};
+
+template <typename T>
+static constexpr inline
+typename meta::enable_if<
+	!is_expression<T>::value,
+	terminal<T>
+>::type wrap_or_fwd(T&& v)
+{
+	return {std::forward<T>(v)};
+}
+
+template <typename E>
+static constexpr inline
+typename meta::enable_if<
+	is_expression<E>::value,
+	E&&
+>::type wrap_or_fwd(E&& e)
+{
+	return static_cast<E&&>(e);
+}
+
+} // namespace exte
+} // namespace EAGine
+
+#endif //include guard
+
