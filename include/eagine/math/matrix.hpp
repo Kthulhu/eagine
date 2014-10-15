@@ -651,6 +651,22 @@ struct identity<matrix<T,R,C,RM>>
 	}
 };
 
+// identity * T
+template <typename T, unsigned R, unsigned C, bool RM>
+static constexpr inline
+identity<matrix<T,R,C,RM>> operator * (identity<matrix<T,R,C,RM>> i, T)
+{
+	return i;
+}
+
+// identity + identity
+template <typename M>
+static constexpr inline
+identity<M> operator * (identity<M> i, identity<M>)
+{
+	return i;
+}
+
 // reorder_mat_ctr(identity)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline

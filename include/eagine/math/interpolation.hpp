@@ -14,12 +14,29 @@
 #include <eagine/math/vector.hpp>
 #include <eagine/vect/slerp.hpp>
 #include <eagine/vect/lerp.hpp>
+#include <utility>
 
 namespace EAGine {
 namespace math {
 
-template <typename X>
-class interpolation;
+template <typename T>
+class interpolation
+{
+private:
+	T _a, _b;
+public:
+	template <typename A, typename B>
+	interpolation(A&& a, B&& b)
+	 : _a(std::forward<A>(a))
+	 , _b(std::forward<B>(b))
+	{ }
+
+	template <typename P>
+	inline T operator ()(P t) const
+	{
+		return _a*(1-t)+_b*t;
+	}
+};
 
 template <typename T, unsigned N>
 class interpolation<vector<T, N>>

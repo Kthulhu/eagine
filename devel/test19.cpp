@@ -7,6 +7,7 @@
  */
 #include <eagine/math/elements.hpp>
 #include <eagine/math/matrix_ctrs.hpp>
+#include <eagine/math/interpolation.hpp>
 #include <eagine/math/io.hpp>
 //------------------
 #include <iostream>
@@ -87,7 +88,7 @@ int main(int argc, const char**)
 		math::scale<mat4>(2,2,2)*
 		math::translation_y<mat4>(1)*
 		math::uniform_scale<mat4>(4)*
-		math::translation_x<mat4>(1)*
+		math::interpolation<math::translation_x<mat4>>(1,2)(0.5f)*
 		v
 		<< std::endl;
 
