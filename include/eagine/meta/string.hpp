@@ -48,7 +48,8 @@ struct c_str<basic_string<Char, C...>>
 {
 	static constexpr Char value[] = { C..., '\0' };
 
-	operator const char* (void) const
+	constexpr operator const char* (void) const
+	noexcept
 	{
 		return value;
 	}

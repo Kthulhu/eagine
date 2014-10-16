@@ -19,7 +19,8 @@ struct instead_of
 {
 	typedef Dst type;
 
-	static Dst value(Dst val)
+	static constexpr inline
+	Dst value(Dst val)
 	{
 		return val;
 	}

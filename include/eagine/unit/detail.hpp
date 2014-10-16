@@ -401,6 +401,7 @@ struct _sc_unit_sc_hlp
 	}
 
 	static constexpr double _prod(void)
+	noexcept
 	{
 		return 1.0;
 	}

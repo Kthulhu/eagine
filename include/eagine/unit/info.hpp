@@ -144,6 +144,7 @@ static inline typename meta::enable_if<
 	is_unit<Unit>::value,
 	EAGine::base::cstrref
 >::type quantity_name(const Unit& = Unit())
+noexcept
 {
 	return meta::c_str<
 		typename info<
@@ -155,6 +156,7 @@ static inline typename meta::enable_if<
 // quantity_name(quanity)
 template <typename U, typename T>
 static inline auto quantity_name(const quantity<U, T>&)
+noexcept
 {
 	return quantity_name<U>();
 }
@@ -165,6 +167,7 @@ static inline typename meta::enable_if<
 	is_unit<Unit>::value,
 	EAGine::base::cstrref
 >::type unit_name(const Unit& = Unit())
+noexcept
 {
 	return meta::c_str<typename info<Unit>::name>::value;
 }
@@ -175,6 +178,7 @@ static inline typename meta::enable_if<
 	is_unit<Unit>::value,
 	EAGine::base::cstrref
 >::type unit_symbol(const Unit& = Unit())
+noexcept
 {
 	return meta::c_str<typename info<Unit>::symbol>::value;
 }
@@ -182,6 +186,7 @@ static inline typename meta::enable_if<
 // unit_name(quantity)
 template <typename U, typename T>
 static inline auto unit_name(const quantity<U, T>&)
+noexcept
 {
 	return unit_name<U>();
 }
@@ -189,6 +194,7 @@ static inline auto unit_name(const quantity<U, T>&)
 // unit_symbol(quantity)
 template <typename U, typename T>
 static inline auto unit_symbol(const quantity<U, T>&)
+noexcept
 {
 	return unit_symbol<U>();
 }
