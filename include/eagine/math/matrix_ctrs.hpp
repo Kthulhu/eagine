@@ -727,7 +727,12 @@ struct is_matrix_constructor<ortho<matrix<T,R,C,RM>>>
 template <typename T, bool RM>
 struct ortho<matrix<T,4,4,RM>>
 {
-	T _x_left, _x_right, _y_bottom, _y_top, _z_near, _z_far;
+	typedef typename vect::data<T, 6>::type _dT;
+	_dT _s;
+
+	constexpr ortho(const _dT& s)
+	 : _s(s)
+	{ }
 
 	constexpr ortho(
 		T x_left,
@@ -736,42 +741,44 @@ struct ortho<matrix<T,4,4,RM>>
 		T y_top,
 		T z_near,
 		T z_far
-	): _x_left(x_left)
-	 , _x_right(x_right)
-	 , _y_bottom(y_bottom)
-	 , _y_top(y_top)
-	 , _z_near(z_near)
-	 , _z_far(z_far)
+	): _s{x_left, x_right, y_bottom, y_top, z_near, z_far}
 	{ }
+
+	constexpr inline T _x_left(void) const { return _s[0]; }
+	constexpr inline T _x_right(void) const { return _s[1]; }
+	constexpr inline T _y_bottom(void) const { return _s[2]; }
+	constexpr inline T _y_top(void) const { return _s[3]; }
+	constexpr inline T _z_near(void) const { return _s[4]; }
+	constexpr inline T _z_far(void) const { return _s[5]; }
 
 	constexpr inline T _m00(void) const
 	{
-		return T(2) / (_x_right - _x_left);
+		return T(2) / (_x_right() - _x_left());
 	}
 
 	constexpr inline T _m11(void) const
 	{
-		return T(2) / (_y_top - _y_bottom);
+		return T(2) / (_y_top() - _y_bottom());
 	}
 
 	constexpr inline T _m22(void) const
 	{
-		return -T(2) / (_z_far - _z_near);
+		return -T(2) / (_z_far() - _z_near());
 	}
 
 	constexpr inline T _m30(void) const
 	{
-		return -(_x_right + _x_left) / (_x_right - _x_left);
+		return -(_x_right() + _x_left()) / (_x_right() - _x_left());
 	}
 
 	constexpr inline T _m31(void) const
 	{
-		return -(_y_top + _y_bottom) / (_y_top - _y_bottom);
+		return -(_y_top() + _y_bottom()) / (_y_top() - _y_bottom());
 	}
 
 	constexpr inline T _m32(void) const
 	{
-		return -(_z_far + _z_near) / (_z_far - _z_near);
+		return -(_z_far() + _z_near()) / (_z_far() - _z_near());
 	}
 
 	constexpr inline
@@ -797,7 +804,7 @@ struct ortho<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	operator matrix<T,4,4, RM> (void) const
 	{
 		return _make(meta::integral_constant<bool, RM>());
 	}
@@ -809,14 +816,7 @@ static constexpr inline
 ortho<matrix<T,4,4,RM>>
 operator * (const ortho<matrix<T,4,4,RM>>& c, T t)
 {
-	return {
-		c._x_left*t,
-		c._x_right*t,
-		c._y_bottom*t,
-		c._y_top*t,
-		c._z_near*t,
-		c._z_far*t
-	};
+	return {c._s * vect::fill<T,6>::apply(t)};
 }
 
 // ortho + ortho
@@ -828,30 +828,16 @@ operator + (
 	const ortho<matrix<T,4,4,RM>>& c2
 )
 {
-	return {
-		c1._x_left*c2._x_left,
-		c1._x_right*c2._x_right,
-		c1._y_bottom*c2._y_bottom,
-		c1._y_top*c2._y_top,
-		c1._z_near*c2._z_near,
-		c1._z_far*c2._z_far
-	};
+	return {c1._s + c2._s};
 }
 
 // reorder_mat_ctr(ortho)
 template <typename T, bool RM>
 static constexpr inline
 ortho<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const ortho<matrix<T,4,4,RM>>& s)
+reorder_mat_ctr(const ortho<matrix<T,4,4,RM>>& c)
 {
-	return {
-		s._x_left,
-		s._x_right,
-		s._y_bottom,
-		s._y_top,
-		s._z_near,
-		s._z_far
-	};
+	return {c._s};
 }
 
 // perspective
@@ -865,10 +851,15 @@ struct is_matrix_constructor<perspective<matrix<T,R,C,RM>>>
 { };
 
 // perspective matrix 4x4 row-major
-template <typename T>
-struct perspective<matrix<T,4,4, true>>
+template <typename T, bool RM>
+struct perspective<matrix<T,4,4,RM>>
 {
-	T _m00,_m11,_m22,_m20,_m21,_m23,_m32;
+	typedef typename vect::data<T, 6>::type _dT;
+	_dT _s;
+
+	constexpr perspective(const _dT& s)
+	 : _s(s)
+	{ }
 
 	constexpr perspective(
 		T x_left,
@@ -877,14 +868,15 @@ struct perspective<matrix<T,4,4, true>>
 		T y_top,
 		T z_near,
 		T z_far
-	): _m00((T(2) * z_near) / (x_right - x_left))
-	 , _m11((T(2) * z_near) / (y_top - y_bottom))
-	 , _m22(-(z_far + z_near) / (z_far - z_near))
-	 , _m20((x_right + x_left) / (x_right - x_left))
-	 , _m21((y_top + y_bottom) / (y_top - y_bottom))
-	 , _m23(-T(1))
-	 , _m32(-(T(2) * z_far * z_near) / (z_far - z_near))
+	): _s{x_left, x_right, y_bottom, y_top, z_near, z_far}
 	{ }
+
+	constexpr inline T _x_left(void) const { return _s[0]; }
+	constexpr inline T _x_right(void) const { return _s[1]; }
+	constexpr inline T _y_bottom(void) const { return _s[2]; }
+	constexpr inline T _y_top(void) const { return _s[3]; }
+	constexpr inline T _z_near(void) const { return _s[4]; }
+	constexpr inline T _z_far(void) const { return _s[5]; }
 
 	static inline
 	perspective x(
@@ -940,17 +932,212 @@ struct perspective<matrix<T,4,4, true>>
 		);
 	}
 
+	constexpr inline T _m00(void) const
+	{
+		return (T(2) * _z_near()) / (_x_right() - _x_left());
+	}
+
+	constexpr inline T _m11(void) const
+	{
+		return (T(2) * _z_near()) / (_y_top() - _y_bottom());
+	}
+
+	constexpr inline T _m22(void) const
+	{
+		return -(_z_far() + _z_near()) / (_z_far() - _z_near());
+	}
+
+	constexpr inline T _m20(void) const
+	{
+		return (_x_right() + _x_left()) / (_x_right() - _x_left());
+	}
+
+	constexpr inline T _m21(void) const
+	{
+		return (_y_top() + _y_bottom()) / (_y_top() - _y_bottom());
+	}
+
+	constexpr inline T _m23(void) const
+	{
+		return -T(1);
+	}
+
+	constexpr inline T _m32(void) const
+	{
+		return -(T(2) * _z_far() * _z_near()) / (_z_far() - _z_near());
+	}
+
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	matrix<T,4,4, true> _make(meta::true_type) const
 	{
 		return {{
-			{_m00, T(0), _m20, T(0)},
-			{T(0), _m11, _m21, T(0)},
-			{T(0), T(0), _m22, _m32},
-			{T(0), T(0), _m23, T(0)}
+			{_m00(),   T(0), _m20(),   T(0)},
+			{  T(0), _m11(), _m21(),   T(0)},
+			{  T(0),   T(0), _m22(), _m32()},
+			{  T(0),   T(0), _m23(),   T(0)}
 		}};
 	}
+
+	constexpr inline
+	matrix<T,4,4,false> _make(meta::false_type) const
+	{
+		return {{
+			{_m00(),   T(0),   T(0),   T(0)},
+			{  T(0), _m11(),   T(0),   T(0)},
+			{_m20(), _m21(), _m22(), _m23()},
+			{  T(0),   T(0), _m32(),   T(0)}
+		}};
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	{
+		return _make(meta::integral_constant<bool, RM>());
+	}
 };
+
+// perspective * T
+template <typename T, bool RM>
+static constexpr inline
+perspective<matrix<T,4,4,RM>>
+operator * (const perspective<matrix<T,4,4,RM>>& c, T t)
+{
+	return {c._s * vect::fill<T,6>::apply(t)};
+}
+
+// perspective + perspective
+template <typename T, bool RM>
+static constexpr inline
+perspective<matrix<T,4,4,RM>>
+operator + (
+	const perspective<matrix<T,4,4,RM>>& c1,
+	const perspective<matrix<T,4,4,RM>>& c2
+)
+{
+	return {c1._s + c2._s};
+}
+
+// reorder_mat_ctr(perspective)
+template <typename T, bool RM>
+static constexpr inline
+perspective<matrix<T,4,4,!RM>>
+reorder_mat_ctr(const perspective<matrix<T,4,4,RM>>& c)
+{
+	return {c._s};
+}
+
+// screen_stretch
+template <typename X>
+struct screen_stretch;
+
+// is_matrix_constructor<screen_stretch>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<screen_stretch<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// screen_stretch matrix 4x4
+template <typename T, bool RM>
+struct screen_stretch<matrix<T,4,4,RM>>
+{
+	typedef typename vect::data<T, 4>::type _dT;
+	_dT _s;
+
+	constexpr screen_stretch(const _dT& s)
+	 : _s(s)
+	{ }
+
+	constexpr screen_stretch(
+		T x_left,
+		T x_right,
+		T y_bottom,
+		T y_top
+	): _s{x_left, x_right, y_bottom, y_top}
+	{ }
+
+	constexpr inline T _x_left(void) const { return _s[0]; }
+	constexpr inline T _x_right(void) const { return _s[1]; }
+	constexpr inline T _y_bottom(void) const { return _s[2]; }
+	constexpr inline T _y_top(void) const { return _s[3]; }
+
+	constexpr inline T _m00(void) const
+	{
+		return T(2) / (_x_right() - _x_left());
+	}
+
+	constexpr inline T _m11(void) const
+	{
+		return T(2) / (_y_top() - _y_bottom());
+	}
+
+	constexpr inline T _m30(void) const
+	{
+		return -(_x_right() + _x_left()) / (_x_right() - _x_left());
+	}
+
+	constexpr inline T _m31(void) const
+	{
+		return -(_y_top() + _y_bottom()) / (_y_top() - _y_bottom());
+	}
+
+	constexpr inline
+	matrix<T,4,4, true> _make(meta::true_type) const
+	{
+		return {{
+			{_m00(),   T(0),   T(0), _m30()},
+			{  T(0), _m11(),   T(0), _m31()},
+			{  T(0),   T(0),   T(1),   T(0)},
+			{  T(0),   T(0),   T(0),   T(1)}
+		}};
+	}
+
+	constexpr inline
+	matrix<T,4,4,false> _make(meta::false_type) const
+	{
+		return {{
+			{_m00(),   T(0),   T(0),   T(0)},
+			{  T(0), _m11(),   T(0),   T(0)},
+			{  T(0),   T(0),   T(1),   T(0)},
+			{_m30(), _m31(),   T(0),   T(1)}
+		}};
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	{
+		return _make(meta::integral_constant<bool, RM>());
+	}
+};
+
+// screen_stretch * T
+template <typename T, bool RM>
+static constexpr inline
+screen_stretch<matrix<T,4,4,RM>>
+operator * (const screen_stretch<matrix<T,4,4,RM>>& c, T t)
+{
+	return {c._s * vect::fill<T,4>::apply(t)};
+}
+
+// screen_stretch + screen_stretch
+template <typename T, bool RM>
+static constexpr inline
+screen_stretch<matrix<T,4,4,RM>>
+operator + (
+	const screen_stretch<matrix<T,4,4,RM>>& c1,
+	const screen_stretch<matrix<T,4,4,RM>>& c2
+)
+{
+	return {c1._s * c2._s};
+}
+
+// reorder_mat_ctr(screen_stretch)
+template <typename T, bool RM>
+static constexpr inline
+screen_stretch<matrix<T,4,4,!RM>>
+reorder_mat_ctr(const screen_stretch<matrix<T,4,4,RM>>& c)
+{
+	return {c._s};
+}
 
 } // namespace math
 } // namespace EAGine

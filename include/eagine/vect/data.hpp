@@ -10,6 +10,8 @@
 #ifndef EAGINE_VECT_DATA_1308281038_HPP
 #define EAGINE_VECT_DATA_1308281038_HPP
 
+#include <eagine/meta/type_traits.hpp>
+
 namespace EAGine {
 namespace vect {
 
@@ -18,17 +20,25 @@ struct _ary_data
 {
 	T _v[N];
 
-	inline T operator [] (unsigned i) const
+	template <
+		typename ... P,
+		typename = std::enable_if<sizeof...(P) == N>
+	>
+	constexpr _ary_data(P&& ... p)
+	 : _v{T(p)...}
+	{ }
+
+	constexpr inline T operator [] (unsigned i) const
 	{
 		return _v[i];
 	}
 
-	inline T& operator [] (unsigned i)
+	constexpr inline T& operator [] (unsigned i)
 	{
 		return _v[i];
 	}
 
-	friend inline _ary_data operator + (_ary_data a)
+	friend constexpr inline _ary_data operator + (_ary_data a)
 	{
 		return a;
 	}
