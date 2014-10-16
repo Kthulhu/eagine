@@ -37,6 +37,7 @@ struct basic_pod_varray
 	>::type _alloc_unit_t;
 
 	static S _alloc_unit_c(S n)
+	noexcept
 	{
 		if(alignof(T)>=alignof(decltype(_size)))
 		{
@@ -51,6 +52,7 @@ struct basic_pod_varray
 	}
 
 	S _alloc_unit_c(void) const
+	noexcept
 	{
 		return _alloc_unit_c(_size);
 	}
@@ -64,58 +66,69 @@ struct basic_pod_varray
 	typedef typename meta::add_const<T>::type* const_iterator;
 
 	std::size_t instance_size(void) const
+	noexcept
 	{
 		return sizeof(_alloc_unit_t)*_alloc_unit_c();
 	}
 
 	S size(void) const
+	noexcept
 	{
 		return _size;
 	}
 
 	bool empty(void) const
+	noexcept
 	{
 		return size() == S(0);
 	}
 
 	iterator begin(void)
+	noexcept
 	{
 		return _data;
 	}
 
 	const_iterator begin(void) const
+	noexcept
 	{
 		return _data;
 	}
 
 	iterator end(void)
+	noexcept
 	{
 		return _data+_size;
 	}
 
 	const_iterator end(void) const
+	noexcept
 	{
 		return _data+_size;
 	}
 
 	reference at(S pos)
+	noexcept
 	{
 		assert(pos < _size);
 		return _data[pos];
 	}
 
-	const_reference  at(S pos) const
+	const_reference at(S pos) const
+	noexcept
 	{
 		assert(pos < _size);
 		return _data[pos];
 	}
 
 	reference operator [](S pos)
+	noexcept
 	{
 		return at(pos);
 	}
 
 	const_reference operator [](S pos) const
+	noexcept
 	{
 		return at(pos);
 	}

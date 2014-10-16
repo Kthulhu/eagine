@@ -36,12 +36,14 @@ private:
 	std::size_t _len;
 
 	static std::size_t _min(std::size_t n1, std::size_t n2)
+	noexcept
 	{
 		return n1<n2?n1:n2;
 	}
 
 	template <typename Char_>
 	std::size_t _copy_from(Char_* str, std::size_t len)
+	noexcept
 	{
 		len = _min(N, len);
 		std::copy(str, str+len, _str.begin());
@@ -54,49 +56,63 @@ public:
 	typedef typename meta::remove_const<value_type>::type nonconst_value_type;
 
 	basic_lim_string(void)
+	noexcept
 	 : _len(0)
 	{ }
 
 	basic_lim_string(const basic_lim_string& that)
+	noexcept
 	 : _str(that._str)
 	 , _len(that._len)
 	{ }
 
 	basic_lim_string(basic_lim_string&& tmp)
+	noexcept
 	 : _str(std::move(tmp._str))
 	 , _len(tmp._len)
 	{ }
 
-	basic_lim_string(const basic_string_ref<Char>& str);
-	basic_lim_string(const basic_string_ref<const Char>& str);
+	basic_lim_string(const basic_string_ref<Char>& str)
+	noexcept;
 
-	basic_lim_string& operator = (const basic_string_ref<Char>& str);
-	basic_lim_string& operator = (const basic_string_ref<const Char>& str);
+	basic_lim_string(const basic_string_ref<const Char>& str)
+	noexcept;
+
+	basic_lim_string& operator = (const basic_string_ref<Char>& str)
+	noexcept;
+
+	basic_lim_string& operator = (const basic_string_ref<const Char>& str)
+	noexcept;
 
 	bool empty(void) const
+	noexcept
 	{
 		return _len == 0u;
 	}
 
 	std::size_t size(void) const
+	noexcept
 	{
 		return _len;
 	}
 
 	const_value_type*
 	c_str(void) const
+	noexcept
 	{
 		return _str.data();
 	}
 
 	value_type*
 	data(void)
+	noexcept
 	{
 		return _str.data();
 	}
 
 	const_value_type*
 	data(void) const
+	noexcept
 	{
 		return _str.data();
 	}
@@ -104,12 +120,14 @@ public:
 	typedef typename std::array<Char, N>::iterator iterator;
 	typedef typename std::array<Char, N>::const_iterator const_iterator;
 
-	iterator begin(void)
+	iterator begin(void) const
+	noexcept
 	{
 		return _str.begin();
 	}
 
-	iterator end(void)
+	iterator end(void) const
+	noexcept
 	{
 		return _str.begin()+_len;
 	}
@@ -126,16 +144,19 @@ private:
 	const Char _data[1] = { '\0' };
 public:
 	bool empty(void) const
+	noexcept
 	{
 		return _size == 0;
 	}
 
 	std::size_t size(void) const
+	noexcept
 	{
 		return _size;
 	}
 
 	const Char* data(void) const
+	noexcept
 	{
 		return _data;
 	}
@@ -153,12 +174,14 @@ private:
 	typedef const basic_string_ref& pcself;
 
 	static Char* _empty_c_str(void)
+	noexcept
 	{
 		static Char c = Char('\0');
 		return &c;
 	}
 
 	Char* _init_by_string(const string& s)
+	noexcept
 	{
 		if(s.empty()) return _empty_c_str();
 		else return const_cast<Char*>(s.data());
@@ -194,16 +217,19 @@ public:
 	typedef ::std::basic_string<nonconst_value_type> string_type;
 
 	basic_string_ref(void)
+	noexcept
 	 : _ptr(_empty_c_str())
 	 , _len(0)
 	{ }
 
 	explicit basic_string_ref(value_type* ptr)
+	noexcept
 	 : _ptr(ptr)
 	 , _len(::std::strlen(ptr))
 	{ }
 
 	basic_string_ref(value_type* ptr, size_type len)
+	noexcept
 	 : _ptr(ptr)
 	 , _len(len)
 	{ }
@@ -212,11 +238,13 @@ public:
 	basic_string_ref(
 		Char_ (&lit)[Len],
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
-	): _ptr(lit)
+	) noexcept
+	 : _ptr(lit)
 	 , _len(lit[Len-1]?Len:Len-1)
 	{ }
 
 	basic_string_ref(const basic_string_ref& that)
+	noexcept
 	 : _ptr(that._ptr)
 	 , _len(that._len)
 	{ }
@@ -228,7 +256,8 @@ public:
 			meta::is_convertible<Char_, Char>::value &&
 			!meta::is_same<Char_, Char>::value
 		>::type* = nullptr
-	): _ptr(that.data())
+	) noexcept
+	 : _ptr(that.data())
 	 , _len(that.size())
 	{ }
 
@@ -236,7 +265,8 @@ public:
 	basic_string_ref(
 		const ::std::basic_string<Char_, CharTraits_>& s,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
-	): _ptr(_init_by_string(s))
+	) noexcept
+	 : _ptr(_init_by_string(s))
 	 , _len(s.size())
 	{ }
 
@@ -244,7 +274,8 @@ public:
 	basic_string_ref(
 		::std::basic_string<Char_, CharTraits_>& s,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
-	): _ptr(_init_by_string(s))
+	) noexcept
+	 : _ptr(_init_by_string(s))
 	 , _len(s.size())
 	{ }
 
@@ -252,7 +283,8 @@ public:
 	basic_string_ref(
 		const basic_lim_string<Char_, N>& ls,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
-	): _ptr(ls.data())
+	) noexcept
+	 : _ptr(ls.data())
 	 , _len(ls.size())
 	{ }
 
@@ -260,7 +292,8 @@ public:
 	basic_string_ref(
 		basic_lim_string<Char_, N>& ls,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
-	): _ptr(ls.data())
+	) noexcept
+	 : _ptr(ls.data())
 	 , _len(ls.size())
 	{ }
 
@@ -268,7 +301,8 @@ public:
 	basic_string_ref(
 		const basic_const_var_string<Char_, Size_>& vs,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
-	): _ptr(vs.data())
+	) noexcept
+	 : _ptr(vs.data())
 	 , _len(vs.size())
 	{ }
 
@@ -276,7 +310,8 @@ public:
 	basic_string_ref(
 		const ::std::vector<Char_, Allocator_>& v,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
-	): _ptr(v.data())
+	) noexcept
+	 : _ptr(v.data())
 	 , _len(v.size())
 	{ }
 
@@ -284,7 +319,8 @@ public:
 	basic_string_ref(
 		::std::vector<Char_, Allocator_>& v,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
-	): _ptr(v.data())
+	) noexcept
+	 : _ptr(v.data())
 	 , _len(v.size())
 	{ }
 
@@ -292,7 +328,8 @@ public:
 	basic_string_ref(
 		const ::std::array<Char_, N>& a,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
-	): _ptr(a.data())
+	) noexcept
+	 : _ptr(a.data())
 	 , _len(a.size())
 	{ }
 
@@ -300,11 +337,13 @@ public:
 	basic_string_ref(
 		::std::array<Char_, N>& a,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
-	): _ptr(a.data())
+	) noexcept
+	 : _ptr(a.data())
 	 , _len(a.size())
 	{ }
 
 	basic_string_ref& operator = (const basic_string_ref& that)
+	noexcept
 	{
 		this->_ptr = that._ptr;
 		this->_len = that._len;
@@ -312,6 +351,7 @@ public:
 	}
 
 	friend bool operator == (pcself a, pcself b)
+	noexcept
 	{
 		if(a._len != b._len) return false;
 		int cmp = ::std::strncmp(a._ptr, b._ptr, a._len);
@@ -319,6 +359,7 @@ public:
 	}
 
 	friend bool operator != (pcself a, pcself b)
+	noexcept
 	{
 		if(a._len != b._len) return true;
 		int cmp = ::std::strncmp(a._ptr, b._ptr, a._len);
@@ -326,68 +367,81 @@ public:
 	}
 
 	friend bool operator <  (pcself a, pcself b)
+	noexcept
 	{
 		return ::std::strcmp(a._ptr, b._ptr) <  0;
 	}
 
 	friend bool operator >  (pcself a, pcself b)
+	noexcept
 	{
 		return ::std::strcmp(a._ptr, b._ptr) >  0;
 	}
 
 	friend bool operator <= (pcself a, pcself b)
+	noexcept
 	{
 		return ::std::strcmp(a._ptr, b._ptr) <= 0;
 	}
 
 	friend bool operator >= (pcself a, pcself b)
+	noexcept
 	{
 		return ::std::strcmp(a._ptr, b._ptr) >= 0;
 	}
 
 	bool equal_to(pcself sr) const
+	noexcept
 	{
 		return *this == sr;
 	}
 
 	bool in(void) const
+	noexcept
 	{
 		return false;
 	}
 
 	template <typename ... P>
 	bool in(pcself sr0, P&& ... sri) const
+	noexcept
 	{
 		return equal_to(sr0) || in(std::forward<P>(sri)...);
 	}
 
 	bool empty(void) const
+	noexcept
 	{
 		return _len == 0;
 	}
 
 	size_type size(void) const
+	noexcept
 	{
 		return _len;
 	}
 
 	size_type length(void) const
+	noexcept
 	{
 		return _len;
 	}
 
 	bool null_terminated(void) const
+	noexcept
 	{
 		return _ptr[_len] == '\0';
 	}
 
 	value_type* data(void)
+	noexcept
 	{
 		return _ptr;
 	}
 
 	const_value_type*
 	data(void) const
+	noexcept
 	{
 		return _ptr;
 	}
@@ -398,53 +452,63 @@ public:
 	}
 
 	iterator begin(void)
+	noexcept
 	{
 		return _ptr;
 	}
 
 	const_iterator begin(void) const
+	noexcept
 	{
 		return _ptr;
 	}
 
 	iterator end(void)
+	noexcept
 	{
 		return _ptr+_len;
 	}
 
 	const_iterator end(void) const
+	noexcept
 	{
 		return _ptr+_len;
 	}
 
 	reference at(std::size_t pos) const
+	noexcept
 	{
 		assert(pos < _len);
 		return _ptr[pos];
 	}
 
 	reference operator [](std::size_t pos) const
+	noexcept
 	{
 		return at(pos);
 	}
 
 	reference front(void) const
+	noexcept
 	{
 		return at(0);
 	}
 
 	reference back(void) const
+	noexcept
 	{
 		return at(_len-1);
 	}
 
 	basic_string_ref slice(std::size_t pos, std::size_t len) const
+	noexcept
 	{
 		assert(pos+len <= _len);
 		return basic_string_ref(_ptr+pos, len);
 	}
 
 	basic_string_ref slice(std::size_t pos) const
+	noexcept
 	{
 		return slice(pos, _len-pos);
 	}
@@ -460,6 +524,7 @@ template <typename Char, std::size_t N>
 inline
 basic_lim_string<Char, N>::
 basic_lim_string(const basic_string_ref<Char>& str)
+noexcept
  : _len(_copy_from(str.data(), str.size()))
 { }
 
@@ -467,6 +532,7 @@ template <typename Char, std::size_t N>
 inline
 basic_lim_string<Char, N>::
 basic_lim_string(const basic_string_ref<const Char>& str)
+noexcept
  : _len(_copy_from(str.data(), str.size()))
 { }
 
@@ -475,6 +541,7 @@ inline
 basic_lim_string<Char, N>&
 basic_lim_string<Char, N>::
 operator = (const basic_string_ref<Char>& str)
+noexcept
 {
 	_len = _copy_from(str.data(), str.size());
 	return *this;
@@ -485,6 +552,7 @@ inline
 basic_lim_string<Char, N>&
 basic_lim_string<Char, N>::
 operator = (const basic_string_ref<const Char>& str)
+noexcept
 {
 	_len = _copy_from(str.data(), str.size());
 	return *this;

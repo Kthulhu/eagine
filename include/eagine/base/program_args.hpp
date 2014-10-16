@@ -24,6 +24,7 @@ private:
 	const char** _argv;
 public:
 	program_args(int argc, const char* argv[])
+	noexcept
 	 : _argc(argc<0?0:argc)
 	 , _argv(argv)
 	{ }
@@ -32,27 +33,32 @@ public:
 	typedef cstrref reference;
 
 	bool empty(void) const
+	noexcept
 	{
 		return _argc <= 1;
 	}
 
 	std::size_t size(void) const
+	noexcept
 	{
 		return _argc;
 	}
 
 	cstrref at(std::size_t pos) const
+	noexcept
 	{
 		assert(pos < _argc);
 		return cstrref(_argv[pos]);
 	}
 
 	cstrref operator [] (std::size_t pos) const
+	noexcept
 	{
 		return at(pos);
 	}
 
 	cstrref command(void) const
+	noexcept
 	{
 		return at(0);
 	}
@@ -61,11 +67,13 @@ public:
 	typedef iterator const_iterator;
 
 	iterator begin(void) const
+	noexcept
 	{
 		return iterator(*this, 1);
 	}
 
 	iterator end(void) const
+	noexcept
 	{
 		return iterator(*this, _argc);
 	}

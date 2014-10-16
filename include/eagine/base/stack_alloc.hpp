@@ -30,10 +30,12 @@ public:
 	stack_allocator(void) = default;
 
 	stack_allocator(const memory_block& blk)
+	noexcept
 	 : _blk(blk)
 	{ }
 
 	operator memory_block(void) const
+	noexcept
 	{
 		return _blk;
 	}
@@ -60,6 +62,7 @@ private:
 	std::size_t _dif;
 public:
 	stack_allocator(void)
+	noexcept
 	 : _btm(nullptr)
 	 , _top(nullptr)
 	 , _pos(nullptr)
@@ -68,6 +71,7 @@ public:
 	{ }
 
 	stack_allocator(const memory_block& blk)
+	noexcept
 	 : _btm((T*)blk.aligned_begin(alignof(T)))
 	 , _top((T*)blk.aligned_end(alignof(T)))
 	 , _pos(_btm)
@@ -89,17 +93,20 @@ public:
 		typedef stack_allocator<U> other;
 	};
 
-	pointer address(reference r) noexcept
+	pointer address(reference r)
+	noexcept
 	{
 		return allocator<T>().address(r);
 	}
 
-	const_pointer address(const_reference r) noexcept
+	const_pointer address(const_reference r)
+	noexcept
 	{
 		return allocator<T>().address(r);
 	}
 
-	size_type max_size(void) const noexcept
+	size_type max_size(void) const
+	noexcept
 	{
 		assert(_pos <= _top);
 		return _top - _pos;
@@ -156,6 +163,7 @@ public:
 	}
 
 	pointer truncate(pointer p, size_type pn, size_type nn)
+	noexcept
 	{
 		assert(pn >= nn);
 
@@ -178,6 +186,7 @@ public:
 	}
 
 	void deallocate(const_pointer p, size_type n)
+	noexcept
 	{
 		assert(p+n <= _pos);
 		if(p+n == _pos)
@@ -218,17 +227,20 @@ public:
 
 	template <typename U, typename ... A>
 	void construct(U* p, A&&...a)
+	noexcept(U(std::forward<A>(a)...))
 	{
 		::new((void*)p) U(std::forward<A>(a)...);
 	}
 
 	void destroy(pointer p)
+	noexcept(((T*)p)->~T())
 	{
 		((T*)p)->~T();
 	}
 
 	template <typename U>
 	void destroy(U* p)
+	noexcept(p->~U())
 	{
 		p->~U();
 	}
@@ -236,17 +248,19 @@ public:
 	friend bool operator == (
 		const stack_allocator& a,
 		const stack_allocator& b
-	)
+	) noexcept
 	{
-		return	(a._btm == b._btm) && (a._top == b._top);
+		return	(a._btm == b._btm) &&
+			(a._top == b._top);
 	}
 
 	friend bool operator != (
 		const stack_allocator& a,
 		const stack_allocator& b
-	)
+	) noexcept
 	{
-		return	(a._btm != b._btm) || (a._top != b._top);
+		return	(a._btm != b._btm) ||
+			(a._top != b._top);
 	}
 };
 

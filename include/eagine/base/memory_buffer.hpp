@@ -24,11 +24,13 @@ private:
 	std::size_t _size;
 public:
 	memory_buffer(void)
+	noexcept
 	 : _addr(nullptr)
 	 , _size(0)
 	{ }
 
 	memory_buffer(std::size_t init_size)
+	noexcept
 	 : _addr(::std::malloc(init_size))
 	 , _size(_addr?init_size:0)
 	{ }
@@ -36,6 +38,7 @@ public:
 	memory_buffer(const memory_buffer&) = delete;
 
 	memory_buffer(memory_buffer&& tmp)
+	noexcept
 	 : _addr(tmp._addr)
 	 , _size(tmp._size)
 	{
@@ -44,6 +47,7 @@ public:
 	}
 
 	~memory_buffer(void)
+	noexcept
 	{
 		if(_addr)
 		{
@@ -52,6 +56,7 @@ public:
 	}
 
 	memory_buffer& resize(std::size_t new_size)
+	noexcept
 	{
 		if(new_size != 0)
 		{
@@ -68,32 +73,44 @@ public:
 	}
 
 	std::size_t size(void) const
+	noexcept
 	{
 		assert((_addr == nullptr) == (_size == 0));
 		return _size;
 	}
 
 	bool empty(void) const
+	noexcept
 	{
 		return size() == 0;
 	}
 
+	explicit operator bool (void) const
+	noexcept
+	{
+		return !empty();
+	}
+
 	memory_block block(void)
+	noexcept
 	{
 		return {_addr, _size};
 	}
 
 	const_memory_block block(void) const
+	noexcept
 	{
 		return {_addr, _size};
 	}
 
 	operator memory_block(void)
+	noexcept
 	{
 		return block();
 	}
 
 	operator const_memory_block(void) const
+	noexcept
 	{
 		return block();
 	}

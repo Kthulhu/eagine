@@ -54,6 +54,7 @@ dynamic_library::dynamic_library(cstrref module_name)
 // dynamic_library::~dynamic_library
 //------------------------------------------------------------------------------
 dynamic_library::~dynamic_library(void)
+noexcept
 {
 	if(_handle)
 	{

@@ -53,12 +53,13 @@ public:
 
 	/// dynamic libraries are movable
 	dynamic_library(dynamic_library&& tmp)
+	noexcept
 	 : _handle(tmp._handle)
 	{
 		tmp._handle = nullptr;
 	}
 
-	~dynamic_library(void);
+	~dynamic_library(void) noexcept;
 
 	/// Returns a pointer to an exported symbol with the specified name
 	void* symbol(cstrref symbol_name);

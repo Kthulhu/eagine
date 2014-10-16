@@ -25,22 +25,27 @@ private:
 	type _bits;
 public:
 	bitfield(void)
+	noexcept
 	 : _bits(type(0))
 	{ }
 
 	explicit bitfield(type initial)
+	noexcept
 	 : _bits(initial)
 	{ }
 
 	bitfield(Bits b)
+	noexcept
 	 : _bits(type(b))
 	{ }
 
 	bitfield(Bits b1, Bits b2)
+	noexcept
 	 : _bits(type(b1)|type(b2))
 	{ }
 
 	bitfield(std::initializer_list<Bits> initial)
+	noexcept
 	 : _bits(type(0))
 	{
 		for(Bits bit : initial)
@@ -50,11 +55,13 @@ public:
 	}
 
 	friend bitfield operator | (bitfield bf, Bits bit)
+	noexcept
 	{
 		return bitfield(bf._bits | type(bit));
 	}
 
 	bool is_set(Bits bit) const
+	noexcept
 	{
 		return (_bits & type(bit)) == type(bit);
 	}
@@ -65,44 +72,52 @@ public:
 		bool _b;
 
 		_f_and_b(const bitfield& f, bool b)
+		noexcept
 		 : _f(f)
 		 , _b(b)
 		{ }
 
 		explicit operator bool (void) const
+		noexcept
 		{
 			return _b;
 		}
 
 		_f_and_b operator & (Bits bit) const
+		noexcept
 		{
 			return _f_and_b(_f, _b && _f.is_set(bit));
 		}
 	};
 
 	_f_and_b operator & (Bits bit) const
+	noexcept
 	{
 		return _f_and_b(*this, is_set(bit));
 	}
 
 	bitfield& set(Bits bit)
+	noexcept
 	{
 		_bits |= type(bit);
 		return *this;
 	}
 
 	bitfield& operator << (Bits bit)
+	noexcept
 	{
 		return set(bit);
 	}
 
 	bitfield& clear(Bits bit)
+	noexcept
 	{
 		_bits &= ~type(bit);
 		return *this;
 	}
 
 	bitfield& operator >> (Bits bit)
+	noexcept
 	{
 		return clear(bit);
 	}

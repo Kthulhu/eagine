@@ -17,16 +17,19 @@
 namespace EAGine {
 namespace base {
 
-string demangle_type_name(const char*);
+string demangle_type_name(const char*)
+noexcept;
 
 template <typename T>
 inline string type_name(const T& x)
+noexcept
 {
 	return demangle_type_name(typeid(x).name());
 }
 
 template <typename T>
 inline string type_name(void)
+noexcept
 {
 	return demangle_type_name(typeid(T).name());
 }

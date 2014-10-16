@@ -25,6 +25,7 @@ private:
 	RASequence* _psq;
 
 	RASequence& _seq(void) const
+	noexcept
 	{
 		assert(_psq);
 		return *_psq;
@@ -35,23 +36,26 @@ private:
 		std::size_t pos,
 		const S* ps,
 		std::size_t (S::*)(void) const = &S::size
-	)
+	) noexcept
 	{
 		assert(ps);
 		return pos < ps->size();
 	}
 
 	static bool _valid_pos(std::size_t, ...)
+	noexcept
 	{
 		return true;
 	}
 
 	bool _valid_pos(void) const
+	noexcept
 	{
 		return _valid_pos(_pos, _psq);
 	}
 public:
 	ras_iterator(RASequence& seq, std::size_t pos)
+	noexcept
 	 : _pos(pos)
 	 , _psq(&seq)
 	{ }
@@ -60,54 +64,63 @@ public:
 	typedef typename RASequence::reference reference;
 
 	friend bool operator == (const ras_iterator& a, const ras_iterator& b)
+	noexcept
 	{
 		assert(a._psq == b._psq);
 		return a._pos == b._pos;
 	}
 
 	friend bool operator != (const ras_iterator& a, const ras_iterator& b)
+	noexcept
 	{
 		assert(a._psq == b._psq);
 		return a._pos != b._pos;
 	}
 
 	friend bool operator <  (const ras_iterator& a, const ras_iterator& b)
+	noexcept
 	{
 		assert(a._psq == b._psq);
 		return a._pos <  b._pos;
 	}
 
 	friend bool operator <= (const ras_iterator& a, const ras_iterator& b)
+	noexcept
 	{
 		assert(a._psq == b._psq);
 		return a._pos <= b._pos;
 	}
 
 	friend bool operator >  (const ras_iterator& a, const ras_iterator& b)
+	noexcept
 	{
 		assert(a._psq == b._psq);
 		return a._pos >  b._pos;
 	}
 
 	friend bool operator >= (const ras_iterator& a, const ras_iterator& b)
+	noexcept
 	{
 		assert(a._psq == b._psq);
 		return a._pos >= b._pos;
 	}
 
 	reference operator * (void)
+	noexcept
 	{
 		assert(_valid_pos());
 		return _seq()[_pos];
 	}
 
 	reference operator * (void) const
+	noexcept
 	{
 		assert(_valid_pos());
 		return _seq()[_pos];
 	}
 
 	ras_iterator& operator ++ (void)
+	noexcept
 	{
 		assert(_valid_pos());
 		++_pos;

@@ -25,36 +25,43 @@ private:
 	OffsT _offs;
 public:
 	basic_offset_ptr(OffsT offs)
+	noexcept
 	 : _offs(offs)
 	{ }
 
 	const T* addr(void) const
+	noexcept
 	{
 		return (T*)(_offs?(((byte*)this)+_offs):(byte*)nullptr);
 	}
 
 	const T* get(void) const
+	noexcept
 	{
 		return addr();
 	}
 
 	operator const T* (void) const
+	noexcept
 	{
 		return addr();
 	}
 
 	explicit operator bool (void) const
+	noexcept
 	{
 		return addr() != nullptr;
 	}
 
 	const T& operator * (void) const
+	noexcept
 	{
 		assert(bool(*this));
 		return *addr();
 	}
 
 	const T* operator -> (void) const
+	noexcept
 	{
 		assert(bool(*this));
 		return addr();

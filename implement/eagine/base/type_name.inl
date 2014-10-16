@@ -23,19 +23,28 @@ namespace base {
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 string demangle_type_name(const char* name)
+noexcept
 {
 #ifdef __GNUG__
-	int status = -1;
+	try
+	{
+		int status = -1;
 
-	unique_ptr<char, void(*)(void*)> demangled {
-		::abi::__cxa_demangle(name, nullptr, nullptr, &status),
-		::std::free
-	};
+		unique_ptr<char, void(*)(void*)> demangled {
+			::abi::__cxa_demangle(
+				name,
+				nullptr,
+				nullptr,
+				&status
+			),
+			::std::free
+		};
 
-	return (status == 0) ? demangled.get() : name;
-#else
-	return name;
+		return (status == 0) ? demangled.get() : name;
+	}
+	catch(...) { }
 #endif
+	return name;
 }
 //------------------------------------------------------------------------------
 } // namespace base

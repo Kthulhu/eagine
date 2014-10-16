@@ -22,77 +22,92 @@ class sim_time_period
 private:
 	double _time;
 public:
-	sim_time_period(double time)
+	constexpr sim_time_period(double time)
+	noexcept
 	 : _time(time)
 	{ }
 
 	/// The length of the periods in milliseconds
-	double milliseconds(void) const
+	constexpr double milliseconds(void) const
+	noexcept
 	{
 		return _time*1000.0;
 	}
 
 	/// The current millisecond of the period <0-1000)
-	int millisecond(void) const
+	constexpr int millisecond(void) const
+	noexcept
 	{
 		return int(milliseconds()) % 1000;
 	}
 
 	/// The length of the periods in seconds
-	double seconds(void) const
+	constexpr double seconds(void) const
+	noexcept
 	{
 		return _time;
 	}
 
 	/// The current second of the period <0-60)
-	int second(void) const
+	constexpr int second(void) const
+	noexcept
 	{
 		return int(seconds()) % 60;
 	}
 
 	/// The length of the periods in minutes
-	double minutes(void) const
+	constexpr double minutes(void) const
+	noexcept
 	{
 		return _time / 60.0;
 	}
 
 	/// The current minute of the period <0-60)
-	int minute(void) const
+	constexpr int minute(void) const
+	noexcept
 	{
 		return int(minutes()) % 60;
 	}
 
 	/// The length of the periods in hours
-	double hours(void) const
+	constexpr double hours(void) const
+	noexcept
 	{
 		return _time / 3600.0;
 	}
 
 	/// The current minute of the period <0-24)
-	int hour(void) const
+	constexpr int hour(void) const
+	noexcept
 	{
 		return int(hours()) % 24;
 	}
 
 	/// The length of the period in days
-	double days(void) const
+	constexpr double days(void) const
+	noexcept
 	{
 		return _time / (24*3600.0);
 	}
 
 	/// The current day of the period
-	int day(void) const
+	constexpr int day(void) const
+	noexcept
 	{
 		return int(days());
 	}
 };
 
+static constexpr inline
 sim_time_period operator + (sim_time_period a, sim_time_period b)
+noexcept
 {
 	return sim_time_period(a.seconds() + b.seconds());
 }
 
+static constexpr inline
 sim_time_period operator - (sim_time_period a, sim_time_period b)
+noexcept
 {
 	return sim_time_period(a.seconds() - b.seconds());
 }
@@ -105,6 +120,7 @@ private:
 	double _pace;
 public:
 	sim_clock(double start = 0.0)
+	noexcept
 	 : _start(start)
 	 , _past(start)
 	 , _real_time(start)
@@ -115,6 +131,7 @@ public:
 
 	/// Update the clock by providing real time
 	void update(double real_time_seconds)
+	noexcept
 	{
 		_prev_time = _curr_time;
 		_real_time = real_time_seconds;
@@ -123,6 +140,7 @@ public:
 
 	/// Advances the clock
 	void advance(double seconds)
+	noexcept
 	{
 		_prev_time = _curr_time;
 		_real_time += seconds;
@@ -131,6 +149,7 @@ public:
 
 	/// Set the pace by which the sim. time advances compared to real-time
 	void pace(double pace_coef)
+	noexcept
 	{
 		if(_pace != pace_coef)
 		{
@@ -142,24 +161,28 @@ public:
 
 	/// Equivalent to now().seconds()
 	double time(void) const
+	noexcept
 	{
 		return this->now().seconds();
 	}
 
 	/// Returns the real time elapsed since the start of the simulation
 	sim_time_period real_time(void) const
+	noexcept
 	{
 		return sim_time_period(_real_time);
 	}
 
 	/// Returns the simulation time elapsed since the start of the simulation
 	sim_time_period now(void) const
+	noexcept
 	{
 		return sim_time_period(_curr_time);
 	}
 
 	/// Returns the time elapsed between the last and the previous update
 	sim_time_period interval(void) const
+	noexcept
 	{
 		return sim_time_period(_curr_time-_prev_time);
 	}
