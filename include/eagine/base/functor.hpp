@@ -11,6 +11,8 @@
 #ifndef EAGINE_BASE_FUNCTOR_1308281038_HPP
 #define EAGINE_BASE_FUNCTOR_1308281038_HPP
 
+#include <eagine/meta/mem_fn_const.hpp>
+#include <eagine/meta/type_traits.hpp>
 #include <cstdint>
 #include <utility>
 #include <cassert>
@@ -72,6 +74,30 @@ public:
 	 : _data((void*)&data)
 	 , _func((_func_t)func)
 	{
+		assert(_data != _invptr());
+	}
+
+	template <
+		typename C,
+		typename MF,
+		MF Ptr,
+		typename = typename meta::enable_if<
+			meta::is_same<
+				typename meta::member_function_constant<
+					MF,
+					Ptr
+				>::scope, C
+			>::value
+		>::type
+	>
+	functor_ref(
+		C* obj,
+		meta::member_function_constant<MF, Ptr> mfc
+	) noexcept
+	 : _data((void*)obj)
+	 , _func((_func_t)mfc.make_free())
+	{
+		assert(_data != nullptr);
 		assert(_data != _invptr());
 	}
 
