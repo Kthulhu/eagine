@@ -227,20 +227,20 @@ public:
 
 	template <typename U, typename ... A>
 	void construct(U* p, A&&...a)
-	noexcept(U(std::forward<A>(a)...))
+	noexcept(noexcept(U(std::forward<A>(a)...)))
 	{
 		::new((void*)p) U(std::forward<A>(a)...);
 	}
 
 	void destroy(pointer p)
-	noexcept(((T*)p)->~T())
+	noexcept(noexcept(((T*)p)->~T()))
 	{
 		((T*)p)->~T();
 	}
 
 	template <typename U>
 	void destroy(U* p)
-	noexcept(p->~U())
+	noexcept(noexcept(p->~U()))
 	{
 		p->~U();
 	}
