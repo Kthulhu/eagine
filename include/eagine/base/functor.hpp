@@ -13,6 +13,7 @@
 
 #include <eagine/meta/mem_fn_const.hpp>
 #include <eagine/meta/type_traits.hpp>
+#include <eagine/base/memory.hpp>
 #include <cstdint>
 #include <utility>
 #include <cassert>
@@ -130,6 +131,104 @@ public:
 				std::forward<A>(a)...
 			);
 		}
+	}
+};
+
+template <typename F>
+class functor;
+
+template <typename RV, typename ... P>
+class functor<RV(P...)>
+{
+private:
+	typedef RV (*_func_t)(void*, P ...);
+
+	struct _intf
+	{
+		virtual ~_intf(void) { }
+
+		virtual void* impl_ptr(void) noexcept = 0;
+		virtual _func_t func_ptr(void) noexcept = 0;
+	};
+
+	template <typename Func>
+	struct _wrap : _intf
+	{
+		Func _func;
+
+		_wrap(Func&& func)
+		 : _func(std::move(func))
+		{ }
+
+		static RV _free_func(Func* func, P ... p)
+		{
+			assert(func != nullptr);
+			return (*func)(std::forward<P>(p)...);
+		}
+
+		void* impl_ptr(void) noexcept
+		{
+			return (void*)(&_func);
+		}
+
+		_func_t func_ptr(void)
+		noexcept
+		{
+			return (_func_t)&_free_func;
+		}
+		
+	};
+
+	shared_ptr<_intf> _store;
+	void* _impl;
+	_func_t _func;
+public:
+	functor(void) = default;
+
+	template <typename Func>
+	functor(Func&& func)
+	 : _store(make_shared<_wrap<Func>>(std::move(func)))
+	 , _impl(_store->impl_ptr())
+	 , _func(_store->func_ptr())
+	{ }
+
+	template <typename Func, typename Alloc>
+	functor(
+		std::allocator_arg_t,
+		Alloc& alloc,
+		Func&& func
+	): _store(std::allocate_shared<_wrap<Func>>(
+		typename Alloc::template rebind<_wrap<Func>>::other(alloc),
+		std::move(func)
+	)),_impl(_store->impl_ptr())
+	 , _func(_store->func_ptr())
+	{ }
+
+	bool callable(void) const
+	{
+		return (_store && _impl && _func);
+	}
+
+	explicit operator bool (void) const
+	{
+		return callable();
+	}
+
+	template <typename ... A>
+	RV operator ()(A&& ... a) const
+	{
+		assert(callable());
+		return _func(_impl, std::forward<A>(a)...);
+	}
+
+	functor_ref<RV(P...)> ref(void) const
+	{
+		return functor_ref<RV(P...)>(_impl, _func);
+	}
+
+	operator functor_ref<RV(P...)> (void) const
+	{
+		return ref();
 	}
 };
 
