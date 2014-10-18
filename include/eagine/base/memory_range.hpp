@@ -39,6 +39,12 @@ public:
 	 , _size(size_)
 	{ }
 
+	typed_memory_range(T* bgn_, T* end_)
+	noexcept
+	 : _addr(bgn_)
+	 , _size(end_-bgn_)
+	{ }
+
 	typed_memory_range(const raw_block& raw)
 	noexcept
 	 : _addr(_cast(raw.aligned_begin(alignof(T))))

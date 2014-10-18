@@ -21,6 +21,7 @@ using ::std::shared_ptr;
 using ::std::unique_ptr;
 
 using ::std::make_shared;
+using ::std::allocate_shared;
 
 // TODO use C++14 make_unique if available
 template <typename T, typename ... P>

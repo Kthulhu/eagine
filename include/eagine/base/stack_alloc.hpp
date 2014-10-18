@@ -12,6 +12,7 @@
 #define EAGINE_BASE_STACK_ALLOC_1308281038_HPP
 
 #include <eagine/base/alloc.hpp>
+#include <eagine/base/memory.hpp>
 #include <eagine/base/memory_range.hpp>
 #include <cstring>
 
@@ -19,66 +20,15 @@ namespace EAGine {
 namespace base {
 
 template <typename T>
-class stack_allocator;
-
-template <>
-class stack_allocator<void>
+class base_stack_allocator
 {
 private:
-	memory_block _blk;
-public:
-	stack_allocator(void) = default;
-
-	stack_allocator(const memory_block& blk)
-	noexcept
-	 : _blk(blk)
-	{ }
-
-	operator memory_block(void) const
-	noexcept
-	{
-		return _blk;
-	}
-
-	typedef void value_type;
-	typedef void* pointer;
-	typedef const void* const_pointer;
-
-	template <typename U>
-	struct rebind
-	{
-		typedef stack_allocator<U> other;
-	};
-};
-
-template <typename T>
-class stack_allocator
-{
-private:
-	const T* const _btm;
-	const T* const _top;
-	const T* _pos;
-	const T* _min;
+	T* _btm;
+	T* _top;
+	T* _pos;
+	T* _min;
 	std::size_t _dif;
 public:
-	stack_allocator(void)
-	noexcept
-	 : _btm(nullptr)
-	 , _top(nullptr)
-	 , _pos(nullptr)
-	 , _min(nullptr)
-	 , _dif(0)
-	{ }
-
-	stack_allocator(const memory_block& blk)
-	noexcept
-	 : _btm((T*)blk.aligned_begin(alignof(T)))
-	 , _top((T*)blk.aligned_end(alignof(T)))
-	 , _pos(_btm)
-	 , _min(_btm)
-	 , _dif(0)
-	{ }
-
 	typedef T value_type;
 	typedef T* pointer;
 	typedef const T* const_pointer;
@@ -87,11 +37,32 @@ public:
 	typedef std::size_t size_type;
 	typedef std::ptrdiff_t difference_type;
 
-	template <typename U>
-	struct rebind
+	base_stack_allocator(void)
+	noexcept
+	 : _btm(nullptr)
+	 , _top(nullptr)
+	 , _pos(nullptr)
+	 , _min(nullptr)
+	 , _dif(0)
+	{ }
+
+	base_stack_allocator(const memory_block& blk)
+	noexcept
+	 : _btm((T*)blk.aligned_begin(alignof(T)))
+	 , _top((T*)blk.aligned_end(alignof(T)))
+	 , _pos(_btm)
+	 , _min(_btm)
+	 , _dif(0)
+	{ }
+
+	base_stack_allocator(const base_stack_allocator&) = default;
+
+	size_type max_size(void) const
+	noexcept
 	{
-		typedef stack_allocator<U> other;
-	};
+		assert(_pos <= _top);
+		return _top - _pos;
+	}
 
 	pointer address(reference r)
 	noexcept
@@ -105,14 +76,7 @@ public:
 		return allocator<T>().address(r);
 	}
 
-	size_type max_size(void) const
-	noexcept
-	{
-		assert(_pos <= _top);
-		return _top - _pos;
-	}
-
-	pointer allocate(size_type n, const void* = nullptr)
+	pointer allocate(size_type n)
 	{
 		if(n > max_size())
 		{
@@ -135,34 +99,7 @@ public:
 		return result;
 	}
 
-	pointer reallocate(pointer p, size_type pn, size_type nn)
-	{
-		if(p+pn == _pos)
-		{
-			difference_type d = nn - pn;
-			assert(_min <= _pos);
-			if(_min == _pos)
-			{
-				_min += d;
-			}
-			else
-			{
-				_dif += d;
-			}
-
-			_pos += d;
-			return p;
-		}
-		else
-		{
-			pointer r = allocate(nn);
-			std::memmove(r, p, nn<pn?nn:pn);
-			deallocate(p, pn);
-			return r;
-		}
-	}
-
-	pointer truncate(pointer p, size_type pn, size_type nn)
+	pointer truncate(pointer p, pointer pn, pointer nn)
 	noexcept
 	{
 		assert(pn >= nn);
@@ -216,7 +153,7 @@ public:
 			else
 			{
 				_dif += (_min-p)-n;
-				_min = p;
+				_min = (pointer)p;
 			}
 		}
 		if(_dif == 0)
@@ -244,14 +181,153 @@ public:
 	{
 		p->~U();
 	}
+};
+
+template <typename T>
+class stack_allocator;
+
+template <>
+class stack_allocator<void>
+{
+private:
+	memory_block _blk;
+public:
+	stack_allocator(void) = default;
+
+	stack_allocator(const memory_block& blk)
+	noexcept
+	 : _blk(blk)
+	{ }
+
+	operator memory_block(void) const
+	noexcept
+	{
+		return _blk;
+	}
+
+	typedef void value_type;
+	typedef void* pointer;
+	typedef const void* const_pointer;
+
+	template <typename U>
+	struct rebind
+	{
+		typedef stack_allocator<U> other;
+	};
+};
+
+template <typename T>
+class stack_allocator
+{
+private:
+	typedef shared_ptr<base_stack_allocator<T>> _sbsa_t;
+	_sbsa_t _bsa;
+
+	static _sbsa_t _make_bsa(const memory_block& blk)
+	{
+		typedef base_stack_allocator<T> _bsa_t;
+		return make_shared<_bsa_t>(blk);
+	}
+public:
+	stack_allocator(void)
+	noexcept
+	{ }
+
+	stack_allocator(const memory_block& blk)
+	noexcept
+	 : _bsa(_make_bsa(blk))
+	{ }
+
+	stack_allocator(const stack_allocator&) = default;
+
+	typedef T value_type;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+	typedef T& reference;
+	typedef const T& const_reference;
+	typedef std::size_t size_type;
+	typedef std::ptrdiff_t difference_type;
+
+	template <typename U>
+	struct rebind
+	{
+		typedef stack_allocator<U> other;
+	};
+
+	pointer address(reference r)
+	noexcept
+	{
+		return allocator<T>().address(r);
+	}
+
+	const_pointer address(const_reference r)
+	noexcept
+	{
+		return allocator<T>().address(r);
+	}
+
+	size_type max_size(void) const
+	noexcept
+	{
+		if(_bsa)
+		{
+			return _bsa->max_size();
+		}
+		return 0;
+	}
+
+	pointer allocate(size_type n, const void* = nullptr)
+	{
+		assert(_bsa);
+		return _bsa->allocate(n);
+	}
+
+	pointer reallocate(pointer p, size_type pn, size_type nn)
+	{
+		assert(_bsa);
+		return _bsa->reallocate(p, pn, nn);
+	}
+
+	pointer truncate(pointer p, size_type pn, size_type nn)
+	noexcept
+	{
+		assert(_bsa);
+		return _bsa->truncate(p, pn, nn);
+	}
+
+	void deallocate(const_pointer p, size_type n)
+	noexcept
+	{
+		assert(_bsa);
+		_bsa->deallocate(p, n);
+	}
+
+	template <typename U, typename ... A>
+	void construct(U* p, A&&...a)
+	noexcept(noexcept(U(std::forward<A>(a)...)))
+	{
+		::new((void*)p) U(std::forward<A>(a)...);
+	}
+
+	void destroy(pointer p)
+	noexcept(noexcept(((T*)p)->~T()))
+	{
+		((T*)p)->~T();
+	}
+
+	template <typename U>
+	void destroy(U* p)
+	noexcept(noexcept(p->~U()))
+	{
+		p->~U();
+	}
 
 	friend bool operator == (
 		const stack_allocator& a,
 		const stack_allocator& b
 	) noexcept
 	{
-		return	(a._btm == b._btm) &&
-			(a._top == b._top);
+		return(a._bsa == b._bsa);
 	}
 
 	friend bool operator != (
@@ -259,8 +335,7 @@ public:
 		const stack_allocator& b
 	) noexcept
 	{
-		return	(a._btm != b._btm) ||
-			(a._top != b._top);
+		return(a._bsa != b._bsa);
 	}
 };
 

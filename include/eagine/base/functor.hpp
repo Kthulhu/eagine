@@ -197,7 +197,7 @@ public:
 		std::allocator_arg_t,
 		Alloc& alloc,
 		Func&& func
-	): _store(std::allocate_shared<_wrap<Func>>(
+	): _store(allocate_shared<_wrap<Func>>(
 		typename Alloc::template rebind<_wrap<Func>>::other(alloc),
 		std::move(func)
 	)),_impl(_store->impl_ptr())

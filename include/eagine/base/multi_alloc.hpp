@@ -13,6 +13,7 @@
 
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/type.hpp>
+#include <eagine/meta/nil_t.hpp>
 #include <cstddef>
 #include <cassert>
 
@@ -31,20 +32,21 @@ private:
 		return ((std::uintptr_t)p) % alignment;
 	}
 public:
-	typedef void value_type;
+	typedef meta::nil_t value_type;
 	typedef void* pointer;
 	typedef const void* const_pointer;
 	typedef std::size_t size_type;
 	typedef std::ptrdiff_t difference_type;
 
 	multi_allocator(void) = default;
+	multi_allocator(const multi_allocator&) = default;
 
 	multi_allocator(const Alloc& a)
 	 : _a(a)
 	{ }
 
 	template <typename ... Arg>
-	multi_allocator(Arg&&...arg)
+	explicit multi_allocator(Arg&&...arg)
 	 : _a(std::forward<Arg>(arg)...)
 	{ }
 
@@ -74,7 +76,7 @@ public:
 
 		byte* p = _a.allocate(at+n*st);
 		std::size_t m = _misalign(p, at);
-		std::size_t s = m?at-m:0;
+		std::size_t s = at-m;
 
 		assert(s < 128);
 		p += s;

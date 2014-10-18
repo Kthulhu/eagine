@@ -17,7 +17,7 @@ namespace EAGine {
 namespace meta {
 
 template <typename T, T Ptr>
-class member_function_constant;
+struct member_function_constant;
 
 template <typename RV, typename C, typename ... P, RV(C::*Ptr)(P...)>
 struct member_function_constant<RV(C::*)(P...), Ptr>
