@@ -19,6 +19,102 @@
 namespace EAGine {
 namespace base {
 
+// _sh_ptr_hlp_alloc
+// helper allocator used by stack_allocator
+// to allocate the shared_pointer data-block
+// in same memory block used by that stack_allocator
+// DO NOT use directly
+template <typename T>
+class _sh_ptr_hlp_alloc
+{
+public:
+	memory_block  _blk;
+	memory_block* _pfb;
+
+	typedef T value_type;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+	typedef T& reference;
+	typedef const T& const_reference;
+	typedef std::size_t size_type;
+	typedef std::ptrdiff_t difference_type;
+
+	template <typename U>
+	struct rebind
+	{
+		typedef _sh_ptr_hlp_alloc<U> other;
+	};
+
+	_sh_ptr_hlp_alloc(const memory_block& blk, memory_block* pfb)
+	noexcept
+	 : _blk(blk)
+	 , _pfb(pfb)
+	{ }
+
+	template <typename U>
+	_sh_ptr_hlp_alloc(const _sh_ptr_hlp_alloc<U>& that)
+	noexcept
+	 : _blk(that._blk)
+	 , _pfb(that._pfb)
+	{ }
+
+	pointer address(reference r)
+	noexcept
+	{
+		return allocator<T>().address(r);
+	}
+
+	const_pointer address(const_reference r)
+	noexcept
+	{
+		return allocator<T>().address(r);
+	}
+
+	size_type max_size(void) const
+	noexcept
+	{
+		return _blk.size() / sizeof(T);
+	}
+
+	pointer allocate(size_type n, const void* = nullptr)
+	{
+		assert(n < max_size());
+		assert(_pfb);
+		*_pfb = _blk.slice(n*sizeof(T));
+		return (pointer)_blk.addr();
+	}
+
+	void deallocate(const_pointer p, size_type n)
+	noexcept
+	{
+		assert(p == _blk.addr());
+	}
+
+	template <typename U, typename ... A>
+	void construct(U* p, A&&...a)
+	noexcept(noexcept(U(std::forward<A>(a)...)))
+	{
+		::new((void*)p) U(std::forward<A>(a)...);
+	}
+
+	void destroy(pointer p)
+	noexcept(noexcept(((T*)p)->~T()))
+	{
+		((T*)p)->~T();
+	}
+
+	template <typename U>
+	void destroy(U* p)
+	noexcept(noexcept(p->~U()))
+	{
+		p->~U();
+	}
+};
+
+// base_stack_allocator
+// non-rebindable non-copyable stack allocator
+// used as shared delegate by stack_allocator.
+// use with care!
 template <typename T>
 class base_stack_allocator
 {
@@ -55,7 +151,16 @@ public:
 	 , _dif(0)
 	{ }
 
-	base_stack_allocator(const base_stack_allocator&) = default;
+	base_stack_allocator(const base_stack_allocator&) = delete;
+
+	void reset(const memory_block& blk)
+	{
+		_btm = (T*)blk.aligned_begin(alignof(T));
+		_top = (T*)blk.aligned_end(alignof(T));
+		_pos = _btm;
+		_min = _btm;
+		_dif = 0;
+	}
 
 	size_type max_size(void) const
 	noexcept
@@ -183,9 +288,11 @@ public:
 	}
 };
 
+// stack_allocator - fwd
 template <typename T>
 class stack_allocator;
 
+// stack_allocator<void>
 template <>
 class stack_allocator<void>
 {
@@ -216,6 +323,7 @@ public:
 	};
 };
 
+// stack_allocator<T>
 template <typename T>
 class stack_allocator
 {
@@ -226,7 +334,16 @@ private:
 	static _sbsa_t _make_bsa(const memory_block& blk)
 	{
 		typedef base_stack_allocator<T> _bsa_t;
-		return make_shared<_bsa_t>(blk);
+
+		memory_block fb;
+		_sh_ptr_hlp_alloc<T> ta(blk, &fb);
+
+		_sbsa_t result = allocate_shared<_bsa_t>(ta);
+
+		assert(result);
+		result->reset(fb);
+
+		return result;
 	}
 public:
 	stack_allocator(void)
