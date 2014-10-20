@@ -20,6 +20,11 @@ void failure(void)
 	std::cout << "failure" << std::endl;
 }
 
+void finished(void)
+{
+	std::cout << "finished" << std::endl;
+}
+
 int main(int argc, const char**)
 {
 	using namespace EAGine::base;
@@ -30,6 +35,40 @@ int main(int argc, const char**)
 	try
 	{
 		on_scope_exit se(&success, &failure);
+		throw 1;
+	}
+	catch(...) { }
+
+	{
+		on_scope_exit se(&finished);
+	}
+	try
+	{
+		on_scope_exit se(&finished);
+		throw 1;
+	}
+	catch(...) { }
+
+	{
+		on_scope_exit se(&success, &failure);
+		se.dismiss_on_success();
+	}
+	try
+	{
+		on_scope_exit se(&success, &failure);
+		se.dismiss_on_failure();
+		throw 1;
+	}
+	catch(...) { }
+
+	{
+		on_scope_exit se(&finished);
+		se.dismiss();
+	}
+	try
+	{
+		on_scope_exit se(&finished);
+		se.dismiss();
 		throw 1;
 	}
 	catch(...) { }

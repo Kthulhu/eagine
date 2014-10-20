@@ -48,7 +48,6 @@ public:
 	 : _on_success(on_success)
 	{ }
 
-
 	on_scope_exit(const action_type& action)
 	noexcept
 	 : on_scope_exit(action, action)
@@ -74,6 +73,23 @@ public:
 			}
 		}
 	}
+
+	void dismiss_on_success(void)
+	{
+		_on_success = action_type();
+	}
+
+	void dismiss_on_failure(void)
+	{
+		_on_failure = action_type();
+	}
+
+	void dismiss(void)
+	{
+		dismiss_on_success();
+		dismiss_on_failure();
+	}
+
 };
 
 } // namespace base
