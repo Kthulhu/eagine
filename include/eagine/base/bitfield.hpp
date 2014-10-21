@@ -24,22 +24,22 @@ public:
 private:
 	type _bits;
 public:
-	bitfield(void)
+	constexpr bitfield(void)
 	noexcept
 	 : _bits(type(0))
 	{ }
 
-	explicit bitfield(type initial)
+	explicit constexpr bitfield(type initial)
 	noexcept
 	 : _bits(initial)
 	{ }
 
-	bitfield(Bits b)
+	constexpr bitfield(Bits b)
 	noexcept
 	 : _bits(type(b))
 	{ }
 
-	bitfield(Bits b1, Bits b2)
+	constexpr bitfield(Bits b1, Bits b2)
 	noexcept
 	 : _bits(type(b1)|type(b2))
 	{ }
@@ -54,7 +54,7 @@ public:
 		}
 	}
 
-	friend bitfield operator | (bitfield bf, Bits bit)
+	friend constexpr bitfield operator | (bitfield bf, Bits bit)
 	noexcept
 	{
 		return bitfield(bf._bits | type(bit));
