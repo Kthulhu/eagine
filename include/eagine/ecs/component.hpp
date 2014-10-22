@@ -18,31 +18,35 @@
 namespace EAGine {
 namespace ecs {
 
-// Component access key type
-typedef std::size_t component_key_t;
-
-// nil component key value
-constexpr component_key_t nil_component_key = ~(component_key_t(0));
-
 // component unique identifier
 typedef std::size_t component_uid_t;
 
+// component_uid_getter
 class component_uid_getter
 {
-private:static component_uid_t& _curr_uid(void);
-public: static component_uid_t new_uid(void);
+private:
+	static component_uid_t& _curr_uid(void);
+public:
+	static component_uid_t new_uid(void);
 };
 
+// component_uid
 template <typename Derived>
 struct component_uid
 {
-	component_uid_t operator()(void) const
+	static component_uid_t value(void)
 	{
 		static component_uid_t cid = component_uid_getter::new_uid();
 		return cid;
 	}
+
+	component_uid_t operator()(void) const
+	{
+		return value();
+	}
 };
 
+// component - base class
 template <typename Derived>
 struct component
 {
@@ -52,6 +56,7 @@ struct component
 template <typename Derived>
 component_uid<Derived> component<Derived>::uid = {};
 
+// get_component_uid
 template <typename X>
 inline component_uid_t get_component_uid(void)
 {
@@ -61,6 +66,7 @@ inline component_uid_t get_component_uid(void)
 	return Component::uid();
 }
 
+// component_uid_map
 template <typename T>
 class component_uid_map
  : public base::vector<T>
@@ -101,33 +107,6 @@ public:
 		}
 		return this->at(cid);
 	}
-};
-
-// interface for maps of entities to component access keys
-template <typename Entity>
-struct entity_component_map
-{
-	typedef component_key_t key_t;
-
-	virtual ~entity_component_map(void) noexcept { }
-
-	virtual bool read_only(void) const = 0;
-
-	virtual std::size_t size(void) = 0;
-
-	virtual const Entity& entity(std::size_t pos) = 0;
-
-	virtual key_t key(std::size_t pos) = 0;
-
-	virtual key_t find(const Entity& ent) = 0;
-
-	virtual void reserve(std::size_t count) = 0;
-
-	virtual key_t store(const Entity& ent, key_t key) = 0;
-
-	virtual key_t remove(const Entity& ent) = 0;
-
-	virtual void swap(const Entity& e1, const Entity& e2) = 0;
 };
 
 } // namespace ecs
