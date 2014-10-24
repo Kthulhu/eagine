@@ -331,6 +331,14 @@ public:
 		return size() != 0;
 	}
 
+	void reserve(std::size_t n)
+	{
+		if(n > _size)
+		{
+			_prepare_space(n-_size);
+		}
+	}
+
 	T& front(void)
 	noexcept
 	{
