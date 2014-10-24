@@ -74,42 +74,189 @@ private:
 
 		while(true)
 		{
-			if(_chunks.empty())
-			{
-				_chunks.emplace_back(_alloc);
-				_chunks.back().reserve(_unit);
+			std::size_t m = (l?_unit - _chunks[l-1].size():0);
 
+			if(n > m)
+			{
+				assert(l <= _chunks.size());
+				if(l == _chunks.size())
+				{
+					_chunks.emplace_back(_alloc);
+				}
+				_chunks[l++].reserve(_unit);
+
+				n -= m;
 				if(n > _unit)
 				{
 					n -= _unit;
 				}
 				else break;
 			}
-			else
-			{
-				std::size_t m = _unit - (l?_chunks[l-1].size():0);
-
-				if(n > m)
-				{
-					assert(l <= _chunks.size());
-					if(l == _chunks.size())
-					{
-						_chunks.emplace_back(_alloc);
-					}
-					_chunks[l++].reserve(_unit);
-
-					n -= m;
-					if(n > _unit)
-					{
-						n -= _unit;
-					}
-					else break;
-				}
-				else break;
-			}
+			else break;
 		}
 	}
+
+	template <typename V>
+	struct _iterator
+	{
+		V* _v;
+		std::size_t _i, _j;
+
+		typedef typename meta::add_same_constness<V, T>::type
+			value_type;
+		typedef value_type& reference;
+		typedef value_type* pointer;
+
+		typedef std::ptrdiff_t difference_type;
+
+		_iterator(void)
+		noexcept
+		 : _v(nullptr)
+		 , _i(0)
+		 , _j(0)
+		{ }
+
+		_iterator(V& vr)
+		noexcept
+		 : _v(&vr)
+		 , _i(0)
+		 , _j(0)
+		{ }
+
+		_iterator(V& vr, std::size_t p)
+		noexcept
+		 : _v(&vr)
+		 , _i(p / vr._unit)
+		 , _j(p % vr._unit)
+		{ }
+
+		_iterator(V& vr, std::size_t i, std::size_t j)
+		noexcept
+		 : _v(&vr)
+		 , _i(i)
+		 , _j(j)
+		{ }
+
+		friend bool operator == (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			return	(a._j == b._j) &&
+				(a._i == b._i);
+		}
+
+		friend bool operator != (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			return	(a._j != b._j) ||
+				(a._i != b._i);
+		}
+
+		friend bool operator <  (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			if(a._i <  b._i) return true;
+			if(a._i == b._i) return (a._j < b._j);
+			return false;
+		}
+
+		friend bool operator <= (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			if(a._i <  b._i) return true;
+			if(a._i == b._i) return (a._j <= b._j);
+			return false;
+		}
+
+		friend bool operator >  (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			if(a._i >  b._i) return true;
+			if(a._i == b._i) return (a._j > b._j);
+			return false;
+		}
+
+		friend bool operator >= (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			if(a._i >  b._i) return true;
+			if(a._i == b._i) return (a._j >= b._j);
+			return false;
+		}
+
+		friend difference_type operator - (
+			const _iterator& a,
+			const _iterator& b
+		) noexcept
+		{
+			assert(a._v == b._v);
+			assert(a._v != nullptr);
+			return	(a._i - b._i)*a._v->_unit+
+				(a._i - b._i);
+		}
+
+		friend _iterator operator + (
+			const _iterator& a,
+			difference_type d
+		) noexcept
+		{
+			assert(a._v != nullptr);
+			return _iterator(
+				a._v,
+				a._i+d/a._v->_unit,
+				a._j+d%a._v->_unit
+			);
+		}
+
+		_iterator& operator ++ (void)
+		noexcept
+		{
+			assert(_v != nullptr);
+			if(++_j == _v->_unit)
+			{
+				++_i;
+				_j=0;
+			}
+			return *this;
+		}
+
+		reference operator * (void) const
+		{
+			assert(_v != nullptr);
+			assert(_i < _v->_chunks.size());
+			assert(_j < _v->_chunks[_i].size());
+			return _v->_chunks[_i][_j];
+		}
+	};
+	friend class _iterator<vectre>;
+	friend class _iterator<const vectre>;
 public:
+	typedef T value_type;
+	typedef T& reference;
+	typedef const T& const_reference;
+	typedef T* pointer;
+	typedef const T* const_pointer;
+
+	typedef _iterator<vectre> iterator;
+	typedef _iterator<const vectre> const_iterator;
+
 	vectre(void)
 	noexcept
 	 : _unit(_default_unit)
@@ -142,6 +289,12 @@ public:
 	 , _size(0)
 	 , _last(0)
 	{ }
+
+	std::size_t unit_size(void) const
+	noexcept
+	{
+		return _unit;
+	}
 
 	std::size_t capacity(void) const
 	noexcept
@@ -179,27 +332,87 @@ public:
 	}
 
 	T& front(void)
+	noexcept
 	{
 		assert(!_chunks.empty());
 		return _chunks.front().front();
 	}
 
 	const T& front(void) const
+	noexcept
 	{
 		assert(!_chunks.empty());
 		return _chunks.front().front();
 	}
 
 	T& back(void)
+	noexcept
 	{
 		assert(!_chunks.empty());
 		return _chunks._lc().back();
 	}
 
 	const T& back(void) const
+	noexcept
 	{
 		assert(!_chunks.empty());
 		return _chunks._lc().back();
+	}
+
+	T& at(std::size_t pos)
+	noexcept
+	{
+		assert(pos < size());
+		std::size_t i = pos / _unit;
+		std::size_t j = pos % _unit;
+
+		return _chunks[i][j];
+	}
+
+	const T& at(std::size_t pos) const
+	noexcept
+	{
+		assert(pos < size());
+		std::size_t i = pos / _unit;
+		std::size_t j = pos % _unit;
+
+		return _chunks[i][j];
+	}
+
+	T& operator [](std::size_t pos)
+	noexcept
+	{
+		return at(pos);
+	}
+
+	const T& operator [](std::size_t pos) const
+	noexcept
+	{
+		return at(pos);
+	}
+
+	iterator begin(void)
+	noexcept
+	{
+		return iterator(*this);
+	}
+
+	const_iterator begin(void) const
+	noexcept
+	{
+		return const_iterator(*this);
+	}
+
+	iterator end(void)
+	noexcept
+	{
+		return iterator(*this, _size);
+	}
+
+	const_iterator end(void) const
+	noexcept
+	{
+		return const_iterator(*this, _size);
 	}
 
 	void push_back(const T& value)
