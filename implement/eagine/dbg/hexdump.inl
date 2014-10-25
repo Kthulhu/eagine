@@ -1,6 +1,5 @@
 /**
  *  @file eagine/dbg/hexdump.inl
- *  @brief Implementation component-related functions
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
