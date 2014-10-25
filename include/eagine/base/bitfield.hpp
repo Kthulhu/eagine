@@ -12,6 +12,7 @@
 #define EAGINE_BASE_BITFIELD_1308281038_HPP
 
 #include <initializer_list>
+#include <type_traits>
 
 namespace EAGine {
 namespace base {
