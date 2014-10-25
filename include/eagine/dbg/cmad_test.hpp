@@ -27,9 +27,7 @@ struct cmad_tester
 	noexcept;
 
 	cmad_tester(void)
-	noexcept
-	 : cmad_tester(std::cout)
-	{ }
+	noexcept;
 
 	cmad_tester(cmad_tester&& tmp)
 	noexcept;
@@ -38,44 +36,20 @@ struct cmad_tester
 	noexcept;
 
 	~cmad_tester(void)
-	noexcept
-	{
-		_out()	<< "cmad|"
-			<< (void*)this
-			<< "|destroy|"
-			<< std::endl;
-	}
+	noexcept;
 
 	cmad_tester& operator = (cmad_tester&& tmp)
-	noexcept
-	{
-		_pout = tmp._pout;
-		_out()	<< "cmad|"
-			<< (void*)this
-			<< "|move assign from|"
-			<< &tmp
-			<< std::endl;
-		return *this;
-	}
+	noexcept;
 
 	cmad_tester& operator = (const cmad_tester& that)
-	noexcept
-	{
-		_pout = that._pout;
-		_out()	<< "cmad|"
-			<< (void*)this
-			<< "|copy assign from|"
-			<< &that
-			<< std::endl;
-		return *this;
-	}
+	noexcept;
 };
 
 } // namespace dbg
 } // namespace EAGine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
-#include <eagine/dbg/cmad_tester.inl>
+#include <eagine/dbg/cmad_test.inl>
 #endif
 
 #endif //include guard
