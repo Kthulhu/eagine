@@ -52,7 +52,7 @@ struct base_storage
 	virtual bool find(const Entity& ent, iter_t& pos) = 0;
 
 	// requires can_reserve
-	virtual bool reserve(std::size_t count) = 0;
+	virtual void reserve(std::size_t count) = 0;
 
 	// requires can_hide
 	virtual void hide(
@@ -68,8 +68,8 @@ struct base_storage
 
 	// requires can_swap
 	virtual void swap(
-		const Entity& to,
-		const Entity& from
+		const Entity& e1,
+		const Entity& e2
 	) = 0;
 
 	// requires can_copy

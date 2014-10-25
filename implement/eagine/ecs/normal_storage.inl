@@ -91,7 +91,7 @@ traits(void) const
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
-iter_t*
+storage_iterator<Entity>*
 normal_base_storage<Entity>::
 new_iterator(void)
 {
@@ -150,7 +150,7 @@ find(const Entity& ent, iter_t& pos)
 
 	_ns_iter_t* iter = static_cast<_ns_iter_t*>(&pos);
 	iter->set(epos);
-	return true
+	return true;
 }
 //------------------------------------------------------------------------------
 // normal_base_storage::hide
@@ -181,9 +181,43 @@ template <typename Entity>
 inline
 void
 normal_base_storage<Entity>::
-swap(const Entity& to, const Entity& from)
+swap(const Entity& e1, const Entity& e2)
 {
 	_index.swap(e1, e2);
+}
+//------------------------------------------------------------------------------
+// normal_component_storage::reserve
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+normal_component_storage<Entity, Component>::
+reserve(std::size_t count)
+{
+	this->_index.reserve(count);
+	// TODO
+}
+//------------------------------------------------------------------------------
+// normal_component_storage::store
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+storage_iterator<Entity>*
+normal_component_storage<Entity, Component>::
+store(Component&& src, const Entity& ent, iter_t* pos, iter_t* res)
+{
+	// TODO
+}
+//------------------------------------------------------------------------------
+// normal_component_storage::copy
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+storage_iterator<Entity>*
+normal_component_storage<Entity, Component>::
+copy(const Entity& to, const Entity& from, iter_t* pos, iter_t* res)
+{
+	// TODO
 }
 //------------------------------------------------------------------------------
 } // namespace ecs

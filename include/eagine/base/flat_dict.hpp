@@ -322,7 +322,7 @@ public:
 		return ((pos != _keys.end()) && (*pos == key));
 	}
 
-	std::ptrdiff_t pos_of(const Key& k) const
+	std::ptrdiff_t pos_of(const Key& key) const
 	{
 		auto pos = _klb(key);
 		if(pos == _keys.end()) return -1;

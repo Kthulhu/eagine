@@ -54,7 +54,7 @@ protected:
 	_ns_iter_t _iter;
 	bool _iter_taken;
 
-	friend class _ns_iter_t;
+	friend class normal_storage_iterator<Entity>;
 
 	normal_base_storage(const normal_base_storage&) = delete;
 public:
@@ -76,31 +76,30 @@ public:
 	void hide(const Entity& ent, iter_t* pos);
 	void show(const Entity& ent, iter_t* pos);
 	void swap(const Entity& to, const Entity& from);
-
 };
 
+// normal_component_storage
 template <typename Entity, typename Component>
 class normal_component_storage
  : public component_storage<Entity, Component>
 {
 private:
+
 public:
 	typedef storage_iterator<Entity> iter_t;
 
-	bool reserve(std::size_t count)
-	{
-	}
-
-	iter_t* copy(
-		const Entity& to,
-		const Entity& from,
-		iter_t* pos
-		iter_t* res
-	);
+	void reserve(std::size_t count);
 
 	iter_t* store(
 		Component&& src,
 		const Entity& ent,
+		iter_t* pos,
+		iter_t* res
+	);
+
+	iter_t* copy(
+		const Entity& to,
+		const Entity& from,
 		iter_t* pos,
 		iter_t* res
 	);
