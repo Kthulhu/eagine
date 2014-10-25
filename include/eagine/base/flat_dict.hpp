@@ -322,6 +322,13 @@ public:
 		return ((pos != _keys.end()) && (*pos == key));
 	}
 
+	std::ptrdiff_t pos_of(const Key& k) const
+	{
+		auto pos = _klb(key);
+		if(pos == _keys.end()) return -1;
+		else return pos - _keys.begin();
+	}
+
 	const Key& key_at(std::size_t pos) const
 	{
 		assert(pos < _keys.size());

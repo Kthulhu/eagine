@@ -12,6 +12,7 @@
 #define EAGINE_ECS_STORAGE_1408161720_HPP
 
 #include <eagine/ecs/storage_bits.hpp>
+#include <eagine/base/access_type.hpp>
 #include <eagine/base/functor.hpp>
 
 namespace EAGine {
@@ -21,7 +22,7 @@ namespace ecs {
 template <typename Entity>
 struct storage_iterator
 {
-	virtual ~storage_traversal(void) { }
+	virtual ~storage_iterator(void) { }
 
 	virtual void reset(void) = 0;
 
@@ -36,7 +37,7 @@ struct storage_iterator
 template <typename Entity>
 struct base_storage
 {
-	typedef storage_iterator iter_t;
+	typedef storage_iterator<Entity> iter_t;
 
 	virtual ~base_storage(void) { }
 
@@ -48,10 +49,7 @@ struct base_storage
 
 	virtual bool has(const Entity& ent) = 0;
 
-	virtual bool find(
-		const Entity& ent,
-		iter_t* pos = nullptr
-	) = 0;
+	virtual bool find(const Entity& ent, iter_t& pos) = 0;
 
 	// requires can_reserve
 	virtual bool reserve(std::size_t count) = 0;
@@ -94,7 +92,7 @@ template <typename Entity, typename Component>
 struct component_storage
  : base_storage<Entity>
 {
-	typedef storage_iterator iter_t;
+	typedef storage_iterator<Entity> iter_t;
 
 	// requires can_point_to
 	virtual const Component* read(
@@ -110,22 +108,22 @@ struct component_storage
 
 	// requires can_point_to
 	const Component* access(
-		base::access_type_read_t,
+		base::access_read_only_t,
 		const Entity& ent,
 		iter_t* pos = nullptr
 	)
 	{
-		return read(ent, key);
+		return read(ent, pos);
 	}
 
 	// requires can_point_to && can_modify
 	Component* access(
-		base::access_type_write_t,
+		base::access_read_write_t,
 		const Entity& ent,
 		iter_t* pos = nullptr
 	)
 	{
-		return write(ent, key);
+		return write(ent, pos);
 	}
 
 	// requires can_store
