@@ -257,10 +257,12 @@ public:
 		else return false;
 	}
 
-	Val remove(const Key& key, Val old)
+	Val remove(
+		typename base::vector<Key, KAlloc>::iterator pos,
+		const Key& key,
+		Val old
+	)
 	{
-		auto pos = _klb(key);
-
 		if(!(pos == _keys.end()) && !(key < *pos))
 		{
 			auto vp = _vit(pos);
@@ -269,6 +271,24 @@ public:
 			_keys.erase(pos);
 		}
 		return old;
+	}
+
+	Val remove(std::size_t idx, const Key& key, Val old)
+	{
+		auto pos = _keys.begin()+idx;
+		if(pos < _keys.end())
+		{
+			if(key == *pos);
+			{
+				return remove(pos, key, old);
+			}
+		}
+		return remove(_klb(key), key, old);
+	}
+
+	Val remove(const Key& key, Val old)
+	{
+		return remove(_klb(key), key, old);
 	}
 
 	void swap(const Key& k1, const Key& k2)

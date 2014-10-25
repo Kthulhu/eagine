@@ -90,7 +90,7 @@ struct base_storage
 // component_storage
 template <typename Entity, typename Component>
 struct component_storage
- : base_storage<Entity>
+ : virtual base_storage<Entity>
 {
 	typedef storage_iterator<Entity> iter_t;
 

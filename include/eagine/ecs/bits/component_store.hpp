@@ -35,12 +35,12 @@ private:
 	static constexpr bool _has_noexcept_move =
 		noexcept(Component(std::move(std::declval<Component>())));
 
-	static Component& _cast(_cstore_t& s)
+	static Component& _rw(_cstore_t& s)
 	{
 		return *((Component*)(void*)&s);
 	}
 
-	static const Component& _cast(const _cstore_t& s)
+	static const Component& _ro(const _cstore_t& s)
 	{
 		return *((const Component*)(const void*)&s);
 	}
@@ -48,19 +48,25 @@ private:
 	static void _move_in(_cstore_t& s, Component&& c)
 	noexcept(_has_noexcept_move)
 	{
-		new (&s) Component(std::move(c));
+		::new (&s) Component(std::move(c));
+	}
+
+	static void _destroy(_cstore_t& s)
+	noexcept(_has_noexcept_move)
+	{
+		_rw(s).~Component();
 	}
 
 	static Component _move_out(_cstore_t& s)
 	noexcept(_has_noexcept_move)
 	{
-		return std::move(_cast(s));
+		return std::move(_rw(s));
 	}
 
 	static void _move(_cstore_t& to, _cstore_t& from)
 	noexcept(_has_noexcept_move)
 	{
-		_move_in(to, std::move(_cast(from)));
+		_move_in(to, std::move(_rw(from)));
 	}
 public:
 	component_store_entry(const component_store_entry&) = delete;
@@ -104,7 +110,7 @@ public:
 	{
 		if(_neg_rc_or_nf < 0)
 		{
-			try { _move_out(_cstore); }
+			try { _destroy(_cstore); }
 			catch(...) { }
 		}
 	}
@@ -119,14 +125,14 @@ public:
 	noexcept
 	{
 		assert(!empty());
-		return _cast(_cstore);
+		return _ro(_cstore);
 	}
 
-	Component& rw(void) const
+	Component& rw(void)
 	noexcept
 	{
 		assert(!empty());
-		return _cast(_cstore);
+		return _rw(_cstore);
 	}
 
 	std::ptrdiff_t store(Component&& c)
@@ -180,16 +186,23 @@ public:
 	 : _next_free(-1)
 	{ }
 
-	Component* access(std::size_t pos)
+	Component* write(std::size_t pos)
 	{
 		if(pos >= _ents.size()) return nullptr;
 		return &_ents[pos].rw();
 	}
 
-	const Component* access(std::size_t pos) const
+	const Component* read(std::size_t pos) const
 	{
 		if(pos >= _ents.size()) return nullptr;
 		return &_ents[pos].ro();
+	}
+
+	Component copy(std::size_t pos) const
+	{
+		const Component* cptr = read(pos);
+		assert(cptr);
+		return *cptr;
 	}
 
 	void reserve(std::size_t size)
@@ -219,12 +232,6 @@ public:
 		assert(pos < _ents.size());
 		_ents[pos].rw() = std::move(component);
 		return pos;
-	}
-
-	std::size_t copy(std::size_t pos)
-	{
-		assert(pos < _ents.size());
-		return insert(Component(_ents[pos].ro()));
 	}
 
 	void add_ref(std::size_t pos)

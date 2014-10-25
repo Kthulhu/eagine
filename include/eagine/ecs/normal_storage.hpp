@@ -13,6 +13,7 @@
 
 #include <eagine/ecs/storage.hpp>
 #include <eagine/base/flat_dict.hpp>
+#include <eagine/meta/type_traits.hpp>
 
 namespace EAGine {
 namespace ecs {
@@ -35,6 +36,7 @@ public:
 	 , _pos(0)
 	{ }
 
+	std::size_t get(void) const;
 	void set(std::size_t pos);
 	void reset(void);
 	bool done(void);
@@ -45,7 +47,7 @@ public:
 // normal_base_storage
 template <typename Entity>
 class normal_base_storage
- : public base_storage<Entity>
+ : public virtual base_storage<Entity>
 {
 protected:
 	base::flat_dict<Entity, std::size_t> _index;
@@ -65,8 +67,6 @@ public:
 	 , _iter_taken(false)
 	{ }
 
-	storage_traits traits(void) const;
-
 	iter_t* new_iterator(void);
 	void delete_iterator(iter_t* iter);
 
@@ -81,12 +81,28 @@ public:
 // normal_component_storage
 template <typename Entity, typename Component>
 class normal_component_storage
- : public component_storage<Entity, Component>
+ : public normal_base_storage<Entity>
+ , public component_storage<Entity, Component>
 {
 private:
+	component_store<Component> _store;
 
+	typedef normal_storage_iterator<Entity> _ns_iter_t;
+
+	static constexpr std::size_t _nil_stor_pos(void);
+
+	std::size_t _stor_pos(
+		const Entity& e,
+		storage_iterator<Entity>*
+	);
+	void _set_iter(
+		std::size_t,
+		storage_iterator<Entity>*
+	);
 public:
 	typedef storage_iterator<Entity> iter_t;
+
+	storage_traits traits(void) const;
 
 	void reserve(std::size_t count);
 
@@ -105,9 +121,13 @@ public:
 	);
 
 	bool remove(const Entity& from, iter_t* pos);
+
 	const Component* read(const Entity& ent, iter_t* pos);
+
 	Component* write(const Entity& ent, iter_t* pos);
 
+	bool _fetch(Component&, const Entity&, iter_t*, meta::true_type);
+	bool _fetch(Component&, const Entity&, iter_t*, meta::false_type);
 	bool fetch(Component& dst, const Entity& ent, iter_t* pos);
 
 	void for_single(
