@@ -24,6 +24,13 @@ cmad_tester::_out(void) const
 	return *_pout;
 }
 //------------------------------------------------------------------------------
+// cmad_tester - default
+//------------------------------------------------------------------------------
+cmad_tester::cmad_tester(void)
+noexcept
+ : cmad_tester(std::cout)
+{ }
+//------------------------------------------------------------------------------
 // cmad_tester - init
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
@@ -47,7 +54,7 @@ noexcept
 	_out()	<< "cmad|"
 		<< (void*)this
 		<< "|move from|"
-		<< &tmp
+		<< (void*)&tmp
 		<< std::endl;
 }
 //------------------------------------------------------------------------------
@@ -61,7 +68,7 @@ noexcept
 	_out()	<< "cmad|"
 		<< (void*)this
 		<< "|copy from|"
-		<< &that
+		<< (void*)&that
 		<< std::endl;
 }
 //------------------------------------------------------------------------------
@@ -88,7 +95,7 @@ noexcept
 	_out()	<< "cmad|"
 		<< (void*)this
 		<< "|move assign from|"
-		<< &tmp
+		<< (void*)&tmp
 		<< std::endl;
 	return *this;
 }
@@ -104,7 +111,7 @@ noexcept
 	_out()	<< "cmad|"
 		<< (void*)this
 		<< "|copy assign from|"
-		<< &that
+		<< (void*)&that
 		<< std::endl;
 	return *this;
 }
