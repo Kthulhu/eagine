@@ -278,7 +278,7 @@ public:
 		auto pos = _keys.begin()+idx;
 		if(pos < _keys.end())
 		{
-			if(key == *pos);
+			if(key == *pos)
 			{
 				return remove(pos, key, old);
 			}

@@ -94,8 +94,10 @@ protected:
 
 	posix_fs_base_storage(const posix_fs_base_storage&) = delete;
 
-	base::string _get_path(const Entity&) const;
-	base::string _get_hdn_path(const Entity&) const;
+	typedef base::string _path_str_t;
+
+	_path_str_t _get_path(const Entity&) const;
+	_path_str_t _get_hdn_path(const Entity&) const;
 public:
 	typedef storage_iterator<Entity> iter_t;
 
@@ -108,6 +110,7 @@ public:
 	iter_t* new_iterator(void);
 	void delete_iterator(iter_t* iter);
 
+	bool _has_file(const base::cstrref& path);
 	bool has(const Entity& ent);
 	bool find(const Entity& ent, iter_t& pos);
 
@@ -144,7 +147,7 @@ public:
 
 	void reserve(std::size_t count);
 
-	bool store(
+	void store(
 		Component&& src,
 		const Entity& ent,
 		iter_t* pos,

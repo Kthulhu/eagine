@@ -67,6 +67,17 @@ private:
 
 	bool _does_know_cmp_type(component_uid_t) const;
 
+	template <typename Result, typename Func>
+	Result _apply_on_base_stg(
+		Result,
+		const Func&,
+		component_uid_t,
+		base::string(*)(void)
+	) const;
+
+	template <typename C, typename Result, typename Func>
+	Result _apply_on_cmp_stg(Result, const Func&) const;
+
 	storage_capabilities _get_cmp_type_caps(
 		component_uid_t,
 		base::string(*)(void)
@@ -78,10 +89,35 @@ private:
 		base::string(*)(void)
 	);
 
+	bool _is_hidn(
+		const Entity&,
+		component_uid_t,
+		base::string(*)(void)
+	);
+
+	bool _do_show(
+		const Entity&,
+		component_uid_t,
+		base::string(*)(void)
+	);
+
+	bool _do_hide(
+		const Entity&,
+		component_uid_t,
+		base::string(*)(void)
+	);
+
 	template <typename Component>
 	bool _do_add(const Entity&, Component&& component);
 
 	bool _do_cpy(
+		const Entity& f,
+		const Entity& t,
+		component_uid_t,
+		base::string(*)(void)
+	);
+
+	bool _do_swp(
 		const Entity& f,
 		const Entity& t,
 		component_uid_t,
@@ -171,6 +207,38 @@ public:
 		) == (sizeof...(C));
 	}
 
+	template <typename C>
+	bool hidden(const Entity& ent)
+	{
+		return _is_hidn(
+			ent,
+			get_component_uid<C>(),
+			_cmp_name_getter<C>()
+		);
+	}
+
+	template <typename ... C>
+	manager& show(const Entity& ent)
+	{
+		_eat(_do_show(
+			ent,
+			get_component_uid<C>(),
+			_cmp_name_getter<C>()
+		)...);
+		return *this;
+	}
+
+	template <typename ... C>
+	manager& hide(const Entity& ent)
+	{
+		_eat(_do_hide(
+			ent,
+			get_component_uid<C>(),
+			_cmp_name_getter<C>()
+		)...);
+		return *this;
+	}
+
 	template <typename ... C>
 	manager& add(const Entity& ent, C&& ... components)
 	{
@@ -184,6 +252,18 @@ public:
 		_eat(_do_cpy(
 			from,
 			to,
+			get_component_uid<C>(),
+			_cmp_name_getter<C>()
+		)...);
+		return *this;
+	}
+
+	template <typename ... C>
+	manager& swap(const Entity& e1, const Entity& e2)
+	{
+		_eat(_do_swp(
+			e1,
+			e2,
 			get_component_uid<C>(),
 			_cmp_name_getter<C>()
 		)...);

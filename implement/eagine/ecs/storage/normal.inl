@@ -177,7 +177,7 @@ normal_base_storage<Entity>::
 show(const Entity& ent, iter_t* pos)
 {
 	assert(!"Showing is currently not supported!"); // TODO
-	return true;
+	return false;
 }
 //------------------------------------------------------------------------------
 // normal_base_storage::swap
@@ -300,7 +300,7 @@ reserve(std::size_t count)
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-bool
+void
 normal_component_storage<Entity, Component>::
 store(Component&& src, const Entity& ent, iter_t* pos, iter_t* res)
 {
@@ -321,8 +321,6 @@ store(Component&& src, const Entity& ent, iter_t* pos, iter_t* res)
 	}
 
 	_set_iter(spos, res);
-
-	return true;
 }
 //------------------------------------------------------------------------------
 // normal_component_storage::copy
@@ -337,7 +335,8 @@ copy(const Entity& to, const Entity& from, iter_t* pos, iter_t* res)
 
 	if(spos != _nil_stor_pos())
 	{
-		return store(this->_store.copy(spos), to, nullptr, res);
+		store(this->_store.copy(spos), to, nullptr, res);
+		return true;
 	}
 	return false;
 }
@@ -372,7 +371,8 @@ remove(const Entity& from, iter_t* pos)
 
 	if(spos != _nil_stor_pos())
 	{
-		return this->_store.release(spos);
+		this->_store.release(spos);
+		return true;
 	}
 	return false;
 }

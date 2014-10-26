@@ -108,7 +108,7 @@ public:
 
 	void reserve(std::size_t count);
 
-	bool store(
+	void store(
 		Component&& src,
 		const Entity& ent,
 		iter_t* pos,

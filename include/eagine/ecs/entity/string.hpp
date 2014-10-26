@@ -32,7 +32,7 @@ struct entity_traits<base::string>
 	noexcept
 	{
 		assert(n != 0);
-		static const std::hash<base::string> func;
+		static std::hash<base::string> func;
 		return func(s) % n;
 	}
 

@@ -60,24 +60,33 @@ struct base_storage
 	) = 0;
 
 	// requires can_hide
+	// result indicates if visilibility has changed.
+	// failure to hide existing component is indicated
+	// by throwing.
 	virtual bool hide(
 		const Entity& ent,
 		iter_t* pos = nullptr
 	) = 0;
 
 	// requires can_hide
+	// result indicates if visibility has changed.
+	// failure to show existing hidden component is indicated
+	// by throwing.
 	virtual bool show(
 		const Entity& ent,
 		iter_t* pos = nullptr
 	) = 0;
 
 	// requires can_swap
+	// failure to swap is indicated by throwing.
 	virtual void swap(
 		const Entity& e1,
 		const Entity& e2
 	) = 0;
 
 	// requires can_copy
+	// result indicates if the from entity had the component.
+	// failure to copy existing is indicated by throwing.
 	virtual bool copy(
 		const Entity& to,
 		const Entity& from,
@@ -86,6 +95,9 @@ struct base_storage
 	) = 0;
 
 	// requires can_remove
+	// result indicates if the entity had component.
+	// failure to remove existing component is indicated
+	// by throwing.
 	virtual bool remove(
 		const Entity& from,
 		iter_t* pos = nullptr
@@ -132,7 +144,8 @@ struct component_storage
 	}
 
 	// requires can_store
-	virtual bool store(
+	// failure to store is indicated by throwing
+	virtual void store(
 		Component&& src,
 		const Entity& ent,
 		iter_t* pos = nullptr,
@@ -140,6 +153,9 @@ struct component_storage
 	) = 0;
 
 	// requires can_fetch
+	// result indicates if the entity has the component.
+	// failure to fetch exisiting component is indicated
+	// by throwing
 	virtual bool fetch(
 		Component& dst,
 		const Entity& ent,

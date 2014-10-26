@@ -26,46 +26,200 @@ namespace detail {
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-void posix_fs_stg_handle_opendir_fail(int ec, const base::string& path)
+void posix_fs_stg_handle_opendir_fail(int ec, const base::cstrref& path)
 {
+	assert(path.null_terminated());
+
 	using namespace base;
-	throw system_error(std::error_code(errno, std::system_category()), (
+	throw system_error(std::error_code(ec, std::system_category()), (
 		format(translate(
-			"POSIX Filesystem component storage failed "
+			"POSIX filesystem component storage failed "
 			"to open directory '{1}'."
-		)) % path.c_str()
+		)) % path.data()
 	).str());
 }
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-void posix_fs_stg_handle_readdir_fail(int ec, const base::string& path)
+void posix_fs_stg_handle_readdir_fail(int ec, const base::cstrref& path)
 {
+	assert(path.null_terminated());
+
 	using namespace base;
-	throw system_error(std::error_code(errno, std::system_category()), (
+	throw system_error(std::error_code(ec, std::system_category()), (
 		format(translate(
-			"POSIX Filesystem component storage failed "
+			"POSIX filesystem component storage failed "
 			"to read directory '{1}'."
+		)) % path.data()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_handle_store_fail(const base::string& s)
+{
+	using namespace base;
+	throw runtime_error((
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to store component for entity '{1}'."
+		)) % s.c_str()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_handle_fetch_fail(const base::string& s)
+{
+	using namespace base;
+	throw runtime_error((
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to fetch component for entity '{1}'."
+		)) % s.c_str()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_handle_swap_fail(const base::string& f, const base::string& t)
+{
+	using namespace base;
+	throw runtime_error((
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to swap component between entity '{1}' and '{2}'."
+		)) % f.c_str() % t.c_str()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_handle_copy_fail(const base::string& f, const base::string& t)
+{
+	using namespace base;
+	throw runtime_error((
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to copy component from entity '{1}' to '{2}'."
+		)) % f.c_str() % t.c_str()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_handle_rmv_fail(const base::string& path)
+{
+	using namespace base;
+	throw runtime_error((
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to remove component from entity '{1}'."
 		)) % path.c_str()
 	).str());
 }
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-void posix_fs_stg_handle_readdir_fail(int ec)
+void posix_fs_stg_do_move(const base::cstrref& f, const base::cstrref& t)
 {
+	assert(f.null_terminated());
+	assert(t.null_terminated());
+
+	int ec = ::std::rename(f.data(), t.data());
+
+	if(ec == 0) return;
+
 	using namespace base;
-	throw system_error(std::error_code(errno, std::system_category()),
-		translate(
-			"POSIX Filesystem component storage failed "
-			"to read directory."
-		)
-	);
+	throw system_error(std::error_code(ec, std::system_category()), (
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to rename file '{1}' to '{2}'."
+		)) % f.data() % t.data()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+int posix_fs_stg_do_copy_file(::FILE* src, ::FILE* dst)
+{
+	int ec = 0;
+	char buf[BUFSIZ];
+	std::size_t size;
+	while(std::feof(src) == 0)
+	{
+		size = std::fread(buf, 1, BUFSIZ, src);
+		ec = std::ferror(src);
+		if(ec) return ec;
+
+		std::fwrite(buf, 1, size, dst);
+		ec = std::ferror(dst);
+		if(ec) return ec;
+	}
+	return 0;
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_do_copy(const base::cstrref& f, const base::cstrref& t)
+{
+	assert(f.null_terminated());
+	assert(t.null_terminated());
+
+	typedef base::unique_ptr< ::FILE, int (*)(::FILE*)> safe_FILE;
+	safe_FILE src(std::fopen(f.data(), "rb"), &std::fclose);
+	safe_FILE dst(std::fopen(t.data(), "wb"), &std::fclose);
+
+	int ec = posix_fs_stg_do_copy_file(src.get(), dst.get());
+	if(ec == 0) return;
+
+	using namespace base;
+	throw system_error(std::error_code(ec, std::system_category()), (
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to copy file '{1}' to '{2}'."
+		)) % f.data() % t.data()
+	).str());
+}
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void posix_fs_stg_do_swap(const base::cstrref& p1, const base::cstrref& p2)
+{
+	assert(p1.null_terminated());
+	assert(p2.null_terminated());
+
+	typedef base::unique_ptr< ::FILE, int (*)(::FILE*)> safe_FILE;
+	safe_FILE fp1(std::fopen(p1.data(), "rb"), &std::fclose);
+	safe_FILE fp2(std::fopen(p2.data(), "rb"), &std::fclose);
+	safe_FILE tmp(std::tmpfile(), &std::fclose);
+
+	int ec = posix_fs_stg_do_copy_file(fp1.get(), tmp.get());
+	if(ec == 0)
+	{
+		std::freopen(p1.data(), "wb", fp1.get());
+		ec = posix_fs_stg_do_copy_file(fp2.get(), fp1.get());
+		if(ec == 0)
+		{
+			std::freopen(p2.data(), "wb", fp2.get());
+			std::rewind(tmp.get());
+			ec = posix_fs_stg_do_copy_file(tmp.get(), fp2.get());
+			if(ec == 0) return;
+		}
+	}
+
+	using namespace base;
+	throw system_error(std::error_code(ec, std::system_category()), (
+		format(translate(
+			"POSIX filesystem component storage failed "
+			"to swap files '{1}' and '{2}'."
+		)) % p1.data() % p2.data()
+	).str());
 }
 //------------------------------------------------------------------------------
 #else
 //------------------------------------------------------------------------------
-void posix_fs_stg_handle_opendir_fail(int ec, const base::string& path);
-void posix_fs_stg_handle_readdir_fail(int ec, const base::string& path);
+void posix_fs_stg_handle_opendir_fail(int ec, const base::cstrref& path);
+void posix_fs_stg_handle_readdir_fail(int ec, const base::cstrref& path);
 void posix_fs_stg_handle_readdir_fail(int ec);
+void posix_fs_stg_handle_store_fail(const base::string& s);
+void posix_fs_stg_handle_fetch_fail(const base::string& s);
+void posix_fs_stg_handle_swap_fail(const base::string& f, const base::string& t);
+void posix_fs_stg_handle_copy_fail(const base::string& f, const base::string& t);
+void posix_fs_stg_handle_rmv_fail(const base::string& s);
+void posix_fs_stg_do_move(const base::cstrref& f, const base::cstrref& t);
+void posix_fs_stg_do_copy(const base::cstrref& f, const base::cstrref& t);
+void posix_fs_stg_do_swap(const base::cstrref& p1, const base::cstrref& p2);
 //------------------------------------------------------------------------------
 #endif // LIBRARY
 //------------------------------------------------------------------------------
@@ -249,7 +403,7 @@ delete_iterator(iter_t* iter)
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
-base::string
+typename posix_fs_base_storage<Entity>::_path_str_t
 posix_fs_base_storage<Entity>::
 _get_path(const Entity& ent) const
 {
@@ -261,7 +415,7 @@ _get_path(const Entity& ent) const
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
-base::string
+typename posix_fs_base_storage<Entity>::_path_str_t
 posix_fs_base_storage<Entity>::
 _get_hdn_path(const Entity& ent) const
 {
@@ -275,13 +429,21 @@ template <typename Entity>
 inline
 bool
 posix_fs_base_storage<Entity>::
+_has_file(const base::cstrref& path)
+{
+	assert(path.null_terminated());
+	return ::access(path.data(), F_OK) == 0;
+}
+//------------------------------------------------------------------------------
+// posix_fs_base_storage::has
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+bool
+posix_fs_base_storage<Entity>::
 has(const Entity& ent)
 {
-	base::string filename =
-		_prefix+
-		entity_traits<Entity>::to_string(ent);
-
-	return ::access(_get_path(ent).c_str(), F_OK) == 0;
+	return _has_file(_get_path(ent));
 }
 //------------------------------------------------------------------------------
 // posix_fs_base_storage::find
@@ -303,8 +465,7 @@ bool
 posix_fs_base_storage<Entity>::
 hidden(const Entity& ent, iter_t*)
 {
-	return	(::access(_get_hdn_path(ent).c_str(), F_OK) == 0) &&
-		(::access(_get_path(ent).c_str(), F_OK) != 0);
+	return	_has_file(_get_hdn_path(ent)) && !_has_file(_get_path(ent));
 }
 //------------------------------------------------------------------------------
 // posix_fs_base_storage::hide
@@ -315,21 +476,19 @@ bool
 posix_fs_base_storage<Entity>::
 hide(const Entity& ent, iter_t* pos)
 {
-	if(!hidden(ent, pos))
+	auto p = _get_path(ent);
+	auto ph = _get_hdn_path(ent);
+
+	if(!_has_file(ph))
 	{
-		if(!has(ent))
+		if(!_has_file(p))
 		{
 			return false;
 		}
-		if(int ec = ::std::rename(
-			_get_path(ent).c_str(),
-			_get_hdn_path(ent).c_str()
-		))
-		{
-			return false;
-		}
+		detail::posix_fs_stg_do_move(p, ph);
+		return true;
 	}
-	return true;
+	return false;
 }
 //------------------------------------------------------------------------------
 // posix_fs_base_storage::show
@@ -340,17 +499,15 @@ bool
 posix_fs_base_storage<Entity>::
 show(const Entity& ent, iter_t* pos)
 {
-	if(hidden(ent, pos))
+	auto p = _get_path(ent);
+	auto ph = _get_hdn_path(ent);
+
+	if(_has_file(ph))
 	{
-		if(int ec = ::std::rename(
-			_get_hdn_path(ent).c_str(),
-			_get_path(ent).c_str()
-		))
-		{
-			return false;
-		}
+		detail::posix_fs_stg_do_move(ph, p);
+		return true;
 	}
-	return true;
+	return false;
 }
 //------------------------------------------------------------------------------
 // posix_fs_base_storage::swap
@@ -361,7 +518,21 @@ void
 posix_fs_base_storage<Entity>::
 swap(const Entity& e1, const Entity& e2)
 {
-	// TODO
+	auto p1 = _get_path(e1);
+	auto p2 = _get_path(e2);
+
+	if(_has_file(p1) && _has_file(p2))
+	{
+		detail::posix_fs_stg_do_swap(p1, p2);
+	}
+	else if(_has_file(p1))
+	{
+		detail::posix_fs_stg_do_move(p1, p2);
+	}
+	else if(_has_file(p2))
+	{
+		detail::posix_fs_stg_do_move(p2, p1);
+	}
 }
 //------------------------------------------------------------------------------
 // posix_fs_component_storage
@@ -404,12 +575,20 @@ reserve(std::size_t count)
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-bool
+void
 posix_fs_component_storage<Entity, Component>::
 store(Component&& src, const Entity& ent, iter_t*, iter_t*)
 {
 	assert(_cmp_io);
-	return _cmp_io->write(this->_get_path(ent), src);
+
+	auto p = this->_get_path(ent);
+
+	if(!_cmp_io->write(p, src))
+	{
+		detail::posix_fs_stg_handle_store_fail(
+			entity_traits<Entity>::to_string(ent)
+		);
+	}
 }
 //------------------------------------------------------------------------------
 // posix_fs_component_storage::copy
@@ -420,7 +599,14 @@ bool
 posix_fs_component_storage<Entity, Component>::
 copy(const Entity& to, const Entity& from, iter_t*, iter_t*)
 {
-	// TODO
+	auto pf = this->_get_path(from);
+
+	if(this->_has_file(pf))
+	{
+		auto pt = this->_get_path(to);
+		detail::posix_fs_stg_do_copy(pf, pt);
+		return true;
+	}
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -432,7 +618,19 @@ bool
 posix_fs_component_storage<Entity, Component>::
 remove(const Entity& ent, iter_t*)
 {
-	return ::std::remove(this->_get_path(ent).c_str()) == 0;
+	auto p = this->_get_path(ent);
+
+	if(!this->_has_file(p))
+	{
+		return false;
+	}
+	if(::std::remove(p.c_str()) != 0)
+	{
+		detail::posix_fs_stg_handle_rmv_fail(
+			entity_traits<Entity>::to_string(ent)
+		);
+	}
+	return true;
 }
 //------------------------------------------------------------------------------
 // posix_fs_component_storage::read
@@ -465,10 +663,23 @@ template <typename Entity, typename Component>
 inline
 bool
 posix_fs_component_storage<Entity, Component>::
-_fetch(Component& dst, const Entity& ent, iter_t*, meta::true_type)
+_fetch(Component& dst, const Entity& ent, iter_t* pos, meta::true_type)
 {
 	assert(_cmp_io);
-	return _cmp_io->read(this->_get_path(ent), dst);
+
+	auto p = this->_get_path(ent);
+
+	if(!this->_has_file(p))
+	{
+		return false;
+	}
+	if(!_cmp_io->read(p, dst))
+	{
+		detail::posix_fs_stg_handle_fetch_fail(
+			entity_traits<Entity>::to_string(ent)
+		);
+	}
+	return true;
 }
 //------------------------------------------------------------------------------
 // posix_fs_component_storage::_fetch - non copy assignable
@@ -553,6 +764,7 @@ for_single(
 	return _for_single(func, ent, pos, meta::false_type());
 }
 //------------------------------------------------------------------------------
+// posix_fs_component_storage::_for_each
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 template <typename Func, typename IsConst>
