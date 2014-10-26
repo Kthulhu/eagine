@@ -182,12 +182,17 @@ private:
 	shared_ptr<_intf> _store;
 	void* _impl;
 	_func_t _func;
+
+	template <typename T>
+	struct _fix
+	 : meta::remove_reference<T>
+	{ };
 public:
 	functor(void) = default;
 
 	template <typename Func>
 	functor(Func&& func)
-	 : _store(make_shared<_wrap<Func>>(std::move(func)))
+	 : _store(make_shared<_wrap<typename _fix<Func>::type>>(std::move(func)))
 	 , _impl(_store->impl_ptr())
 	 , _func(_store->func_ptr())
 	{ }
@@ -197,10 +202,15 @@ public:
 		std::allocator_arg_t,
 		Alloc& alloc,
 		Func&& func
-	): _store(allocate_shared<_wrap<Func>>(
-		typename Alloc::template rebind<_wrap<Func>>::other(alloc),
-		std::move(func)
-	)),_impl(_store->impl_ptr())
+	): _store(allocate_shared<
+		_wrap<typename _fix<Func>::type>>(
+			typename Alloc::
+				template rebind<
+					_wrap<typename _fix<Func>::type>
+				>::other(alloc),
+			std::move(func)
+		)
+	), _impl(_store->impl_ptr())
 	 , _func(_store->func_ptr())
 	{ }
 

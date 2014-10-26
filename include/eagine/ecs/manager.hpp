@@ -131,7 +131,13 @@ private:
 	);
 
 	template <typename C, typename Func>
+	bool _call_for_single(const Func&, const Entity&);
+
+	template <typename C, typename Func>
 	void _call_for_each(const Func&);
+
+	template <typename T, typename C>
+	T _do_get(T C::*, const Entity&, T);
 public:
 	manager(void) = default;
 
@@ -282,6 +288,26 @@ public:
 	}
 
 	template <typename C>
+	manager& for_single(
+		const base::functor_ref<void(const Entity&, const C&)>& func,
+		const Entity& ent
+	)
+	{
+		_call_for_single<C>(func, ent);
+		return *this;
+	}
+
+	template <typename C>
+	manager& for_single(
+		const base::functor_ref<void(const Entity&, C&)>& func,
+		const Entity& ent
+	)
+	{
+		_call_for_single<C>(func, ent);
+		return *this;
+	}
+
+	template <typename C>
 	manager& for_each(
 		const base::functor_ref<void(const Entity&, const C&)>& func
 	)
@@ -297,6 +323,12 @@ public:
 	{
 		_call_for_each<C>(func);
 		return *this;
+	}
+
+	template <typename T, typename C>
+	T get(T C::*mvp, const Entity& ent, T res = T())
+	{
+		return _do_get(mvp, ent, res);
 	}
 };
 

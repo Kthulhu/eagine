@@ -364,6 +364,23 @@ _do_rem(
 	);
 }
 //------------------------------------------------------------------------------
+// manager::_call_for_single
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component, typename Func>
+inline bool
+manager<Entity>::
+_call_for_single(const Func& func, const Entity& ent)
+{
+	return _apply_on_cmp_stg<Component>(
+		false,
+		[&func, &ent](auto& storage) -> auto
+		{
+			return storage->for_single(func, ent);
+		}
+	);
+}
+//------------------------------------------------------------------------------
 // manager::_call_for_each
 //------------------------------------------------------------------------------
 template <typename Entity>
@@ -380,6 +397,26 @@ _call_for_each(const Func& func)
 			return true;
 		}
 	);
+}
+//------------------------------------------------------------------------------
+// manager::_do_get
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename T, typename C>
+inline T
+manager<Entity>::
+_do_get(T C::* mvp, const Entity& ent, T res)
+{
+	assert(mvp);
+
+	auto getter = [mvp, &res](const Entity&, const C& cmp) -> void
+	{
+		res = cmp.*mvp;
+	};
+	base::functor<void(const Entity&, const C&)> func(getter);
+
+	_call_for_single<C>(func, ent);
+	return res;
 }
 //------------------------------------------------------------------------------
 } // namespace ecs
