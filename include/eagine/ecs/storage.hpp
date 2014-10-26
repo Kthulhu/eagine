@@ -11,7 +11,7 @@
 #ifndef EAGINE_ECS_STORAGE_1408161720_HPP
 #define EAGINE_ECS_STORAGE_1408161720_HPP
 
-#include <eagine/ecs/storage_bits.hpp>
+#include <eagine/ecs/storage_capability.hpp>
 #include <eagine/base/access_type.hpp>
 #include <eagine/base/functor.hpp>
 
@@ -41,7 +41,7 @@ struct base_storage
 
 	virtual ~base_storage(void) { }
 
-	virtual storage_traits traits(void) const = 0;
+	virtual storage_capabilities capabilities(void) const = 0;
 
 	virtual iter_t* new_iterator(void) = 0;
 
@@ -54,14 +54,19 @@ struct base_storage
 	// requires can_reserve
 	virtual void reserve(std::size_t count) = 0;
 
-	// requires can_hide
-	virtual void hide(
+	virtual bool hidden(
 		const Entity& ent,
 		iter_t* pos = nullptr
 	) = 0;
 
 	// requires can_hide
-	virtual void show(
+	virtual bool hide(
+		const Entity& ent,
+		iter_t* pos = nullptr
+	) = 0;
+
+	// requires can_hide
+	virtual bool show(
 		const Entity& ent,
 		iter_t* pos = nullptr
 	) = 0;
@@ -73,7 +78,7 @@ struct base_storage
 	) = 0;
 
 	// requires can_copy
-	virtual iter_t* copy(
+	virtual bool copy(
 		const Entity& to,
 		const Entity& from,
 		iter_t* pos = nullptr,
@@ -127,7 +132,7 @@ struct component_storage
 	}
 
 	// requires can_store
-	virtual iter_t* store(
+	virtual bool store(
 		Component&& src,
 		const Entity& ent,
 		iter_t* pos = nullptr,
@@ -142,7 +147,7 @@ struct component_storage
 	) = 0;
 
 	// requires can_fetch
-	virtual void for_single(
+	virtual bool for_single(
 		const base::functor_ref<
 			void(const Entity&, const Component&)
 		>& func,
@@ -151,7 +156,7 @@ struct component_storage
 	) = 0;
 
 	// requires can_modify
-	virtual void for_single(
+	virtual bool for_single(
 		const base::functor_ref<
 			void(const Entity&, Component&)
 		>& func,

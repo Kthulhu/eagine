@@ -1,5 +1,5 @@
 /**
- *  @file eagine/ecs/normal_storage.hpp
+ *  @file eagine/ecs/storage/normal.hpp
  *  @brief Basic in-memory R/W component storage
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
@@ -8,10 +8,11 @@
  */
 #pragma once
 
-#ifndef EAGINE_ECS_NORMAL_STORAGE_1408161720_HPP
-#define EAGINE_ECS_NORMAL_STORAGE_1408161720_HPP
+#ifndef EAGINE_ECS_STORAGE_NORMAL_1408161720_HPP
+#define EAGINE_ECS_STORAGE_NORMAL_1408161720_HPP
 
 #include <eagine/ecs/storage.hpp>
+#include <eagine/ecs/bits/component_store.hpp>
 #include <eagine/base/flat_dict.hpp>
 #include <eagine/meta/type_traits.hpp>
 
@@ -73,8 +74,9 @@ public:
 	bool has(const Entity& ent);
 	bool find(const Entity& ent, iter_t& pos);
 
-	void hide(const Entity& ent, iter_t* pos);
-	void show(const Entity& ent, iter_t* pos);
+	bool hidden(const Entity& ent, iter_t* pos);
+	bool hide(const Entity& ent, iter_t* pos);
+	bool show(const Entity& ent, iter_t* pos);
 	void swap(const Entity& to, const Entity& from);
 };
 
@@ -102,18 +104,18 @@ private:
 public:
 	typedef storage_iterator<Entity> iter_t;
 
-	storage_traits traits(void) const;
+	storage_capabilities capabilities(void) const;
 
 	void reserve(std::size_t count);
 
-	iter_t* store(
+	bool store(
 		Component&& src,
 		const Entity& ent,
 		iter_t* pos,
 		iter_t* res
 	);
 
-	iter_t* copy(
+	bool copy(
 		const Entity& to,
 		const Entity& from,
 		iter_t* pos,
@@ -130,7 +132,7 @@ public:
 	bool _fetch(Component&, const Entity&, iter_t*, meta::false_type);
 	bool fetch(Component& dst, const Entity& ent, iter_t* pos);
 
-	void for_single(
+	bool for_single(
 		const base::functor_ref<
 			void(const Entity&, const Component&)
 		>& func,
@@ -138,7 +140,7 @@ public:
 		iter_t* pos
 	);
 
-	void for_single(
+	bool for_single(
 		const base::functor_ref<
 			void(const Entity&, Component&)
 		>& func,
@@ -162,7 +164,7 @@ public:
 } // namespace ecs
 } // namespace EAGine
 
-#include <eagine/ecs/normal_storage.inl>
+#include <eagine/ecs/storage/normal.inl>
 
 #endif //include guard
 

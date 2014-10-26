@@ -8,9 +8,11 @@
  */
 #include <eagine/eagine_config.hpp>
 
+#if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/format.hpp>
 #include <eagine/base/locale.hpp>
 #include <eagine/base/error.hpp>
+#endif
 
 namespace EAGine {
 namespace ecs {
@@ -116,6 +118,31 @@ _does_know_cmp_type(component_uid_t cid) const
 	}
 }
 //------------------------------------------------------------------------------
+// manager::_get_cmp_type_caps
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+storage_capabilities
+manager<Entity>::
+_get_cmp_type_caps(
+	component_uid_t cid,
+	base::string(*get_name)(void)
+) const
+{
+	auto p_storage = _storages.find(cid);
+
+	if(p_storage != _storages.end())
+	{
+		auto& b_storage = *p_storage;
+		if(b_storage)
+		{
+			return b_storage->capabilities();
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(get_name());
+	return {};
+}
+//------------------------------------------------------------------------------
 template <typename Entity>
 inline bool
 manager<Entity>::
@@ -170,7 +197,33 @@ _do_add(const Entity& ent, Component&& component)
 	return false;
 }
 //------------------------------------------------------------------------------
-// manager::_do_add
+// manager::_do_cpy
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline bool
+manager<Entity>::
+_do_cpy(
+	const Entity& from,
+	const Entity& to,
+	component_uid_t cid,
+	base::string(*get_name)(void)
+)
+{
+	auto p_storage = _storages.find(cid);
+
+	if(p_storage != _storages.end())
+	{
+		auto& b_storage = *p_storage;
+		if(b_storage)
+		{
+			return b_storage->copy(to, from);
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(get_name());
+	return false;
+}
+//------------------------------------------------------------------------------
+// manager::_do_rem
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline bool
@@ -193,6 +246,36 @@ _do_rem(
 	}
 	detail::mgr_handle_cmp_not_reg(get_name());
 	return false;
+}
+//------------------------------------------------------------------------------
+// manager::_call_for_each
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component, typename Func>
+inline void
+manager<Entity>::
+_call_for_each(const Func& func)
+{
+	component_uid_t cid = get_component_uid<Component>();
+	auto p_storage = _storages.find(cid);
+
+	if(p_storage != _storages.end())
+	{
+		auto& b_storage = *p_storage;
+		if(b_storage)
+		{
+			typedef component_storage<Entity, Component> cs_t;
+
+			cs_t* storage = dynamic_cast<cs_t*>(b_storage.get());
+
+			assert(storage);
+
+			storage->for_each(func);
+
+			return;
+		}
+	}
+	detail::mgr_handle_cmp_not_reg(_cmp_name_getter<Component>()());
 }
 //------------------------------------------------------------------------------
 } // namespace ecs

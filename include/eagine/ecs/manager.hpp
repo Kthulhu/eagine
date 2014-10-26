@@ -63,12 +63,14 @@ private:
 		base::string(*)(void)
 	);
 
-	void _do_unr_cmp_type(
-		component_uid_t,
-		base::string(*)(void)
-	);
+	void _do_unr_cmp_type(component_uid_t, base::string(*)(void));
 
 	bool _does_know_cmp_type(component_uid_t) const;
+
+	storage_capabilities _get_cmp_type_caps(
+		component_uid_t,
+		base::string(*)(void)
+	) const;
 
 	bool _does_have(
 		const Entity&,
@@ -79,11 +81,21 @@ private:
 	template <typename Component>
 	bool _do_add(const Entity&, Component&& component);
 
+	bool _do_cpy(
+		const Entity& f,
+		const Entity& t,
+		component_uid_t,
+		base::string(*)(void)
+	);
+
 	bool _do_rem(
 		const Entity&,
 		component_uid_t,
 		base::string(*)(void)
 	);
+
+	template <typename C, typename Func>
+	void _call_for_each(const Func&);
 public:
 	manager(void) = default;
 
@@ -119,6 +131,24 @@ public:
 		return _does_know_cmp_type(get_component_uid<Component>());
 	}
 
+	template <typename Component>
+	storage_capabilities component_storage_caps(void) const
+	{
+		return _get_cmp_type_caps(
+			get_component_uid<Component>(),
+			_cmp_name_getter<Component>()
+		);
+	}
+
+	template <typename Component>
+	bool component_storage_can(storage_capability cap) const
+	{
+		return _get_cmp_type_caps(
+			get_component_uid<Component>(),
+			_cmp_name_getter<Component>()
+		).is_set(cap);
+	}
+
 	template <typename C>
 	bool has(const Entity& ent)
 	{
@@ -149,6 +179,18 @@ public:
 	}
 
 	template <typename ... C>
+	manager& copy(const Entity& from, const Entity& to)
+	{
+		_eat(_do_cpy(
+			from,
+			to,
+			get_component_uid<C>(),
+			_cmp_name_getter<C>()
+		)...);
+		return *this;
+	}
+
+	template <typename ... C>
 	manager& remove(const Entity& ent)
 	{
 		_eat(_do_rem(
@@ -156,6 +198,24 @@ public:
 			get_component_uid<C>(),
 			_cmp_name_getter<C>()
 		)...);
+		return *this;
+	}
+
+	template <typename C>
+	manager& for_each(
+		const base::functor_ref<void(const Entity&, const C&)>& func
+	)
+	{
+		_call_for_each<C>(func);
+		return *this;
+	}
+
+	template <typename C>
+	manager& for_each(
+		const base::functor_ref<void(const Entity&, C&)>& func
+	)
+	{
+		_call_for_each<C>(func);
 		return *this;
 	}
 };

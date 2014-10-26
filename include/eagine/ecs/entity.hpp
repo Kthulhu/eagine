@@ -15,10 +15,7 @@ namespace EAGine {
 namespace ecs {
 
 template <typename Entity>
-inline Entity nil_entity(void)
-{
-	return Entity::nil();
-}
+struct entity_traits;
 
 } // namespace ecs
 } // namespace EAGine

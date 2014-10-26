@@ -1,5 +1,5 @@
 /**
- *  @file eagine/ecs/normal_storage.inl
+ *  @file eagine/ecs/storage/normal.inl
  *  @brief Implementation normal_component_storage
  *
  *  Copyright 2014 Matus Chochlik. Distributed under the Boost
@@ -145,26 +145,39 @@ find(const Entity& ent, iter_t& pos)
 	return true;
 }
 //------------------------------------------------------------------------------
+// normal_base_storage::hidden
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+bool
+normal_base_storage<Entity>::
+hidden(const Entity& ent, iter_t* pos)
+{
+	return false;
+}
+//------------------------------------------------------------------------------
 // normal_base_storage::hide
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
-void
+bool
 normal_base_storage<Entity>::
 hide(const Entity& ent, iter_t* pos)
 {
-	assert(!"Hiding currently not supported!"); // TODO
+	assert(!"Hiding is currently not supported!"); // TODO
+	return false;
 }
 //------------------------------------------------------------------------------
 // normal_base_storage::show
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
-void
+bool
 normal_base_storage<Entity>::
 show(const Entity& ent, iter_t* pos)
 {
-	assert(!"Showing currently not supported!"); // TODO
+	assert(!"Showing is currently not supported!"); // TODO
+	return true;
 }
 //------------------------------------------------------------------------------
 // normal_base_storage::swap
@@ -245,29 +258,30 @@ _set_iter(std::size_t spos, iter_t* pos)
 	}
 }
 //------------------------------------------------------------------------------
-// normal_component_storage::traits
+// normal_component_storage::capabilities
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-storage_traits
+storage_capabilities
 normal_component_storage<Entity, Component>::
-traits(void) const
+capabilities(void) const
 {
-	//storage_bits::can_hide| TODO or decorator?
-	storage_traits bits = 
-		storage_bits::can_copy|
-		storage_bits::can_swap|
-		storage_bits::can_store|
-		storage_bits::can_modify|
-		storage_bits::can_remove|
-		storage_bits::can_reserve|
-		storage_bits::can_point_to;
+	//storage_capability::hide| TODO or decorator?
+	storage_capabilities caps = 
+		storage_capability::find|
+		storage_capability::copy|
+		storage_capability::swap|
+		storage_capability::store|
+		storage_capability::modify|
+		storage_capability::remove|
+		storage_capability::reserve|
+		storage_capability::point_to;
 
 	if(meta::is_copy_assignable<Component>())
 	{
-		return bits | storage_bits::can_fetch;
+		return caps | storage_capability::fetch;
 	}
-	return bits;
+	return caps;
 }
 //------------------------------------------------------------------------------
 // normal_component_storage::reserve
@@ -286,7 +300,7 @@ reserve(std::size_t count)
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-storage_iterator<Entity>*
+bool
 normal_component_storage<Entity, Component>::
 store(Component&& src, const Entity& ent, iter_t* pos, iter_t* res)
 {
@@ -308,24 +322,24 @@ store(Component&& src, const Entity& ent, iter_t* pos, iter_t* res)
 
 	_set_iter(spos, res);
 
-	return res;
+	return true;
 }
 //------------------------------------------------------------------------------
 // normal_component_storage::copy
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-storage_iterator<Entity>*
+bool
 normal_component_storage<Entity, Component>::
 copy(const Entity& to, const Entity& from, iter_t* pos, iter_t* res)
 {
 	std::size_t spos = _stor_pos(from, pos);
 
-	if(spos == _nil_stor_pos())
+	if(spos != _nil_stor_pos())
 	{
 		return store(this->_store.copy(spos), to, nullptr, res);
 	}
-	else return res;
+	return false;
 }
 //------------------------------------------------------------------------------
 // normal_component_storage::remove
@@ -423,6 +437,7 @@ bool
 normal_component_storage<Entity, Component>::
 _fetch(Component& dst, const Entity& ent, iter_t* pos, meta::false_type)
 {
+	assert(!"Fetching non assignable components is not supported!");
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -444,7 +459,7 @@ fetch(Component& dst, const Entity& ent, iter_t* pos)
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-void
+bool
 normal_component_storage<Entity, Component>::
 for_single(
 	const base::functor_ref<
@@ -457,14 +472,16 @@ for_single(
 	if(const Component* cptr = this->read(ent, pos))
 	{
 		func(ent, *cptr);
+		return true;
 	}
+	return false;
 }
 //------------------------------------------------------------------------------
 // normal_component_storage::for_single
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
 inline
-void
+bool
 normal_component_storage<Entity, Component>::
 for_single(
 	const base::functor_ref<
@@ -477,7 +494,9 @@ for_single(
 	if(Component* cptr = this->write(ent, pos))
 	{
 		func(ent, *cptr);
+		return true;
 	}
+	return false;
 }
 //------------------------------------------------------------------------------
 // normal_component_storage::for_each
