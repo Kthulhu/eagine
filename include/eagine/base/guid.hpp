@@ -34,6 +34,9 @@ struct guid
 	/// Constructs a nil GUID value
 	guid(std::nullptr_t);
 
+	/// Returns a string representing the GUID
+	string to_string(void) const;
+
 	/// Constructs a nil GUID value
 	static guid nil(void);
 };
