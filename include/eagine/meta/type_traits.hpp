@@ -29,6 +29,7 @@ using ::std::is_convertible;
 using ::std::is_function;
 using ::std::is_pod;
 using ::std::is_copy_assignable;
+using ::std::is_trivially_destructible;
 
 template <typename Src, typename Dst>
 struct add_same_constness

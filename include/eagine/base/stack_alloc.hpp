@@ -14,6 +14,7 @@
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/memory.hpp>
 #include <eagine/base/memory_range.hpp>
+#include <eagine/meta/type_traits.hpp>
 #include <cstring>
 
 namespace EAGine {
@@ -58,18 +59,6 @@ public:
 	 , _pfb(that._pfb)
 	{ }
 
-	pointer address(reference r)
-	noexcept
-	{
-		return allocator<T>().address(r);
-	}
-
-	const_pointer address(const_reference r)
-	noexcept
-	{
-		return allocator<T>().address(r);
-	}
-
 	size_type max_size(void) const
 	noexcept
 	{
@@ -88,26 +77,6 @@ public:
 	noexcept
 	{
 		assert(p == _blk.addr());
-	}
-
-	template <typename U, typename ... A>
-	void construct(U* p, A&&...a)
-	noexcept(noexcept(U(std::forward<A>(a)...)))
-	{
-		::new((void*)p) U(std::forward<A>(a)...);
-	}
-
-	void destroy(pointer p)
-	noexcept(noexcept(((T*)p)->~T()))
-	{
-		((T*)p)->~T();
-	}
-
-	template <typename U>
-	void destroy(U* p)
-	noexcept(noexcept(p->~U()))
-	{
-		p->~U();
 	}
 };
 
@@ -153,6 +122,15 @@ public:
 
 	base_stack_allocator(const base_stack_allocator&) = delete;
 
+	~base_stack_allocator(void)
+	noexcept
+	{
+		if(!meta::is_trivially_destructible<T>())
+		{
+			assert(_pos == _btm);
+		}
+	}
+
 	void reset(const memory_block& blk)
 	{
 		_btm = (T*)blk.aligned_begin(alignof(T));
@@ -169,23 +147,23 @@ public:
 		return _top - _pos;
 	}
 
-	pointer address(reference r)
+	bool has_allocated(const_pointer p, size_type n) const
 	noexcept
 	{
-		return allocator<T>().address(r);
+		if((p >= _btm) && (p+n <= _top))
+		{
+			assert(p+n <= _pos);
+			return true;
+		}
+		return false;
 	}
 
-	const_pointer address(const_reference r)
+	pointer allocate_noexcept(size_type n)
 	noexcept
-	{
-		return allocator<T>().address(r);
-	}
-
-	pointer allocate(size_type n)
 	{
 		if(n > max_size())
 		{
-			throw std::bad_alloc();
+			return nullptr;
 		}
 
 		pointer result = (pointer)_pos;
@@ -202,6 +180,16 @@ public:
 
 		_pos += n;
 		return result;
+	}
+
+	pointer allocate(size_type n)
+	{
+		pointer p = allocate_noexcept(n);
+		if(p == nullptr)
+		{
+			throw std::bad_alloc();
+		}
+		return p;
 	}
 
 	pointer truncate(pointer p, pointer pn, pointer nn)
@@ -265,26 +253,6 @@ public:
 		{
 			_pos = _min;
 		}
-	}
-
-	template <typename U, typename ... A>
-	void construct(U* p, A&&...a)
-	noexcept(noexcept(U(std::forward<A>(a)...)))
-	{
-		::new((void*)p) U(std::forward<A>(a)...);
-	}
-
-	void destroy(pointer p)
-	noexcept(noexcept(((T*)p)->~T()))
-	{
-		((T*)p)->~T();
-	}
-
-	template <typename U>
-	void destroy(U* p)
-	noexcept(noexcept(p->~U()))
-	{
-		p->~U();
 	}
 };
 
@@ -391,6 +359,21 @@ public:
 			return _bsa->max_size();
 		}
 		return 0;
+	}
+
+	bool has_allocated(const_pointer p, size_type n) const
+	noexcept
+	{
+		assert(_bsa);
+		return _bsa->has_allocated(p, n);
+	}
+	
+
+	pointer allocate_noexcept(size_type n, const void* = nullptr)
+	noexcept
+	{
+		assert(_bsa);
+		return _bsa->allocate_noexcept(n);
 	}
 
 	pointer allocate(size_type n, const void* = nullptr)

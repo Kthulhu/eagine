@@ -9,6 +9,7 @@
 #include <eagine/base/functor.hpp>
 #include <eagine/base/multi_alloc.hpp>
 #include <eagine/base/stack_alloc.hpp>
+#include <eagine/base/fallback_alloc.hpp>
 #include <eagine/base/memory_buffer.hpp>
 #include <eagine/base/vector.hpp>
 //------------------
@@ -33,11 +34,16 @@ int main(int argc, const char**)
 	using namespace EAGine::dbg;
 	using namespace EAGine::base;
 
-	memory_buffer buf1(2*1024);
+	memory_buffer buf1(1024);
 	memory_block blk1 = buf1;
 	std::memset(blk1.addr(), 0, blk1.size());
 
-	typedef multi_allocator<stack_allocator<byte>> ma_t;
+	typedef multi_allocator<
+		allocator_with_fallback<
+			byte,
+			stack_allocator<byte>
+		>
+	> ma_t;
 
 	ma_t ma(blk1);
 
