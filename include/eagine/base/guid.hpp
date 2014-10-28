@@ -37,6 +37,12 @@ struct guid
 	/// Returns a string representing the GUID
 	string to_string(void) const;
 
+	/// Returns a lim_string representing the GUID
+	lim_string<36> to_lim_string(void) const;
+
+	/// Returns true if str is a valid GUID string
+	static bool is_valid_string(const cstrref& str);
+
 	/// Constructs a nil GUID value
 	static guid nil(void);
 };

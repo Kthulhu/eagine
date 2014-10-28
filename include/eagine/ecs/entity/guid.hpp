@@ -40,19 +40,7 @@ struct entity_traits<base::guid>
 	bool is_valid_string(const base::cstrref& s)
 	noexcept
 	{
-		if(s.size() != 36) return false;
-
-		static const char* h = "0123456789abcdefABCDEF";
-		static const char* c = "-";
-		static const char* m = "000000001000010000100001000000000000";
-		static const char* x[2] = {h, c};
-
-		for(unsigned i=0; i<36; ++i)
-		{
-			if(!std::strchr(x[int(m[i]-'0')], s[i]))
-				return false;
-		}
-		return true;
+		return base::guid::is_valid_string(s);
 	}
 
 	static inline

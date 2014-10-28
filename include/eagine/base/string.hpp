@@ -55,12 +55,24 @@ public:
 	typedef typename meta::add_const<value_type>::type const_value_type;
 	typedef typename meta::remove_const<value_type>::type nonconst_value_type;
 
-	basic_lim_string(void)
+	constexpr basic_lim_string(void)
 	noexcept
 	 : _len(0)
 	{ }
 
-	basic_lim_string(const basic_lim_string& that)
+	template <
+		typename ... Char_,
+		typename = typename meta::enable_if<
+			sizeof ... (Char_) <= N
+		>::type
+	>
+	constexpr basic_lim_string(Char_ ... c)
+	noexcept
+	 : _str{{Char(c)...}}
+	 , _len(sizeof ... (Char_))
+	{ }
+
+	constexpr basic_lim_string(const basic_lim_string& that)
 	noexcept
 	 : _str(that._str)
 	 , _len(that._len)
@@ -84,6 +96,12 @@ public:
 	basic_lim_string& operator = (const basic_string_ref<const Char>& str)
 	noexcept;
 
+	static constexpr
+	std::size_t capacity(void)
+	{
+		return N;
+	}
+
 	bool empty(void) const
 	noexcept
 	{
@@ -94,6 +112,12 @@ public:
 	noexcept
 	{
 		return _len;
+	}
+
+	std::basic_string<Char>
+	str(void) const
+	{
+		return std::basic_string<Char>(_str.data(), _len);
 	}
 
 	const_value_type*
