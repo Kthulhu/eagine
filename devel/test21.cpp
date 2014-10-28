@@ -38,14 +38,25 @@ int main(int argc, const char**)
 	memory_block blk1 = buf1;
 	std::memset(blk1.addr(), 0, blk1.size());
 
+	memory_buffer buf2(1024);
+	memory_block blk2 = buf2;
+	std::memset(blk2.addr(), 0, blk2.size());
+
+	typedef allocator_with_fallback<
+		byte,
+		stack_allocator<byte>,
+		stack_allocator<byte>
+	> awf_ss;
+
+
 	typedef multi_allocator<
 		allocator_with_fallback<
 			byte,
-			stack_allocator<byte>
+			awf_ss
 		>
 	> ma_t;
 
-	ma_t ma(blk1);
+	ma_t ma(awf_ss(blk1, blk2));
 
 	const long N = 16;
 
@@ -55,7 +66,7 @@ int main(int argc, const char**)
 
 		for(long i=0; i<N; ++i)
 		{
-			cs.push_back(ma.allocate<char>(1));
+			cs.push_back(ma.allocate<char>(1, nullptr));
 			*cs.back() = 'A'+i;
 
 			ls.push_back(ma.allocate<long>(1));
@@ -130,6 +141,9 @@ int main(int argc, const char**)
 	std::cout << hexdump(blk1) << std::endl;
 
 	std::cout << v.back().ref()(12, 34) << std::endl;
+
+	std::cout << ma.base_allocator().default_allocator().had_to_fallback() << std::endl;
+	std::cout << ma.base_allocator().had_to_fallback() << std::endl;
 
 	return 0;
 }

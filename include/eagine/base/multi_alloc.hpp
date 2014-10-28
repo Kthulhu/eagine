@@ -37,6 +37,13 @@ public:
 	typedef const void* const_pointer;
 	typedef std::size_t size_type;
 	typedef std::ptrdiff_t difference_type;
+	typedef Alloc base_allocator_type;
+
+	const base_allocator_type& base_allocator(void) const
+	noexcept
+	{
+		return _a;
+	}
 
 	multi_allocator(void) = default;
 	multi_allocator(const multi_allocator&) = default;

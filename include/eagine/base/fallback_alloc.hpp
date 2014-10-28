@@ -39,6 +39,48 @@ private:
 		>::value,
 		"Both allocators must have the same value type"
 	);
+
+	// _has_allocate_noexcept helpers
+	template <
+		typename X, 
+		typename X::pointer
+		(X::*)(typename X::size_type, const void*)
+	> struct _has_alc_noe_hlp { };
+
+	template <typename X>
+	static meta::true_type _has_alc_noe(
+		_has_alc_noe_hlp<X, &X::allocate_noexcept>*
+	);
+
+	template <typename X>
+	static meta::false_type _has_alc_noe(...);
+
+	// _has_allocate_noexcept
+	template <typename X>
+	struct _has_allocate_noexcept
+	 : decltype(_has_alc_noe<X>(nullptr))
+	{ };
+
+	// _has_has_allocated helpers
+	template <
+		typename X, 
+		bool
+		(X::*)(typename X::const_pointer, typename X::size_type) const
+	> struct _has_has_alc_hlp { };
+
+	template <typename X>
+	static meta::true_type _has_has_alc(
+		_has_has_alc_hlp<X, &X::has_allocated>*
+	);
+
+	template <typename X>
+	static meta::false_type _has_has_alc(...);
+
+	// _has_has_allocated
+	template <typename X>
+	struct _has_has_allocated
+	 : decltype(_has_has_alc<X>(nullptr))
+	{ };
 public:
 	typedef T value_type;
 	typedef T* pointer;
@@ -47,6 +89,9 @@ public:
 	typedef const T& const_reference;
 	typedef std::size_t size_type;
 	typedef std::ptrdiff_t difference_type;
+
+	typedef DefaultAlloc default_allocator_type;
+	typedef FallbackAlloc fallback_allocator_type;
 
 	template <typename U>
 	struct rebind
@@ -113,6 +158,39 @@ public:
 		size_type mfbk = _fbk_alloc.max_size();
 
 		return (mfbk>mdft)?mfbk:mdft;
+	}
+
+	template <typename ConstPointer>
+	typename meta::enable_if<
+		meta::is_same<ConstPointer, const_pointer>::value ||
+		_has_has_allocated<FallbackAlloc>::value,
+		bool
+	>::type
+	has_allocated(ConstPointer p, size_type n) const
+	noexcept
+	{
+		return	_dft_alloc.has_allocated(p, n) ||
+			_fbk_alloc.has_allocated(p, n);
+	}
+
+	template <typename Void = void>
+	typename meta::enable_if<
+		meta::is_same<Void, void>::value &&
+		_has_allocate_noexcept<FallbackAlloc>::value,
+		pointer
+	>::type
+	allocate_noexcept(size_type n, const Void* h = nullptr)
+	noexcept
+	{
+		if(n <= _dft_alloc.max_size())
+		{
+			if(pointer p = _dft_alloc.allocate_noexcept(n, h))
+			{
+				return p;
+			}
+		}
+		_had_to_fbk = true;
+		return _fbk_alloc.allocate_noexcept(n, h);
 	}
 
 	pointer allocate(size_type n, const void* h = nullptr)
