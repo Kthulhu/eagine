@@ -23,11 +23,83 @@
 namespace EAGine {
 namespace base {
 
+// is_char_string
+template <typename Char, typename X>
+struct is_char_string
+ : meta::false_type
+{ };
+
+// is_char_string_container
+template <typename Char, typename X>
+struct is_char_string_container
+ : meta::false_type
+{ };
+
+// is_char_string_any_const
+template <typename Char, typename X>
+struct is_char_string_any_const
+ : meta::integral_constant<
+	bool,
+	is_char_string<
+		typename meta::add_const<Char>::type, X
+	>::value || is_char_string<
+		typename meta::remove_const<Char>::type, X
+	>::value
+> { };
+
+// is_char_string_container_any_const
+template <typename Char, typename X>
+struct is_char_string_container_any_const
+ : meta::integral_constant<
+	bool,
+	is_char_string_container<
+		typename meta::add_const<Char>::type, X
+	>::value || is_char_string_container<
+		typename meta::remove_const<Char>::type, X
+	>::value
+> { };
+
+
+// string
 using ::std::string;
 
+// is_char_string<basic_string>
+template <typename Char, typename Alloc>
+struct is_char_string<
+	Char, std::basic_string<Char, std::char_traits<Char>, Alloc>
+>: meta::true_type
+{ };
+
+// is_char_string_container<basic_string>
+template <typename Char, typename Alloc>
+struct is_char_string_container<
+	Char, std::basic_string<Char, std::char_traits<Char>, Alloc>
+>: meta::true_type
+{ };
+
+// basic_string_ref
 template <typename Char>
 class basic_string_ref;
 
+// is_char_string_container<basic_string_ref>
+template <typename Char>
+struct is_char_string_container<
+	Char, basic_string_ref<Char>
+>: meta::true_type
+{ };
+
+// basic_lim_string
+template <typename Char, std::size_t N>
+class basic_lim_string;
+
+// is_char_string_container<basic_lim_string>
+template <typename Char, std::size_t N>
+struct is_char_string_container<
+	Char, basic_lim_string<Char, N>
+>: meta::true_type
+{ };
+
+// basic_lim_string
 template <typename Char, std::size_t N>
 class basic_lim_string
 {
@@ -157,9 +229,22 @@ public:
 	}
 };
 
+// lim_string
 template <std::size_t N>
 using lim_string = basic_lim_string<char, N>;
 
+// basic_const_var_string
+template <typename Char, typename Size>
+struct basic_const_var_string;
+
+// is_char_string_container<basic_const_var_string>
+template <typename Char, typename Size>
+struct is_char_string_container<
+	Char, basic_const_var_string<Char, Size>
+>: meta::true_type
+{ };
+
+// basic_const_var_string
 template <typename Char, typename Size>
 struct basic_const_var_string
 {
@@ -186,8 +271,10 @@ public:
 	}
 };
 
+// cvarstr
 typedef basic_const_var_string<char, std::uint32_t> cvarstr;
 
+// basic_string_ref
 template <typename Char>
 class basic_string_ref
 {
@@ -374,52 +461,6 @@ public:
 		return *this;
 	}
 
-	friend bool operator == (pcself a, pcself b)
-	noexcept
-	{
-		if(a._len != b._len) return false;
-		int cmp = ::std::strncmp(a._ptr, b._ptr, a._len);
-		return cmp == 0;
-	}
-
-	friend bool operator != (pcself a, pcself b)
-	noexcept
-	{
-		if(a._len != b._len) return true;
-		int cmp = ::std::strncmp(a._ptr, b._ptr, a._len);
-		return cmp != 0;
-	}
-
-	friend bool operator <  (pcself a, pcself b)
-	noexcept
-	{
-		return ::std::strcmp(a._ptr, b._ptr) <  0;
-	}
-
-	friend bool operator >  (pcself a, pcself b)
-	noexcept
-	{
-		return ::std::strcmp(a._ptr, b._ptr) >  0;
-	}
-
-	friend bool operator <= (pcself a, pcself b)
-	noexcept
-	{
-		return ::std::strcmp(a._ptr, b._ptr) <= 0;
-	}
-
-	friend bool operator >= (pcself a, pcself b)
-	noexcept
-	{
-		return ::std::strcmp(a._ptr, b._ptr) >= 0;
-	}
-
-	bool equal_to(pcself sr) const
-	noexcept
-	{
-		return *this == sr;
-	}
-
 	bool in(void) const
 	noexcept
 	{
@@ -430,7 +471,7 @@ public:
 	bool in(pcself sr0, P&& ... sri) const
 	noexcept
 	{
-		return equal_to(sr0) || in(std::forward<P>(sri)...);
+		return (*this == sr0) || in(std::forward<P>(sri)...);
 	}
 
 	bool empty(void) const
@@ -538,10 +579,14 @@ public:
 	}
 };
 
+// string_ref
 typedef basic_string_ref<char> string_ref;
+// const_string_ref
 typedef basic_string_ref<const char> const_string_ref;
 
+// strref
 typedef string_ref strref;
+// cstrref
 typedef const_string_ref cstrref;
 
 template <typename Char, std::size_t N>
@@ -582,23 +627,151 @@ noexcept
 	return *this;
 }
 
-template <typename Char>
+namespace detail {
+// are_cmpable_str_cntnrs
+template <typename Char, typename X1, typename X2>
+struct are_cmpable_str_cntnrs
+ : meta::integral_constant<
+	bool,
+	is_char_string_container_any_const<Char, X1>::value &&
+	is_char_string_container_any_const<Char, X2>::value && !(
+		is_char_string_any_const<Char, X1>::value &&
+		is_char_string_any_const<Char, X2>::value
+	)
+>
+{ };
+
+} // namespace detail
+
+// operator == (S1, S2)
+template <typename S1, typename S2>
 inline
-std::basic_ostream<Char>&
-operator << (
-	std::basic_ostream<Char>& out,
-	const basic_string_ref<Char>& sref
-)
+typename meta::enable_if<
+	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	bool
+>::type operator == (const S1& s1, const S2& s2)
+noexcept
 {
-	return out.write(sref.data(), sref.size());
+	if(s1.size() != s2.size())
+	{
+		return false;
+	}
+
+	typedef std::char_traits<char> cht;
+
+	return cht::compare(s1.data(), s2.data(), s1.size()) == 0;
 }
 
-template <typename Char>
+// operator != (S1, S2)
+template <typename S1, typename S2>
 inline
-std::basic_ostream<Char>&
+typename meta::enable_if<
+	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	bool
+>::type operator != (const S1& s1, const S2& s2)
+noexcept
+{
+	if(s1.size() != s2.size())
+	{
+		return true;
+	}
+
+	typedef std::char_traits<char> cht;
+
+	return cht::compare(s1.data(), s2.data(), s1.size()) != 0;
+}
+
+// operator <  (S1, S2)
+template <typename S1, typename S2>
+inline
+typename meta::enable_if<
+	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	bool
+>::type operator <  (const S1& s1, const S2& s2)
+noexcept
+{
+	typedef std::char_traits<char> cht;
+
+	std::size_t s1s = s1.size();
+	std::size_t s2s = s2.size();
+
+	std::ptrdiff_t lcmp = s1s - s2s;
+	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
+
+	return (scmp < 0) || ((scmp == 0) && (lcmp < 0));
+}
+
+// operator >  (S1, S2)
+template <typename S1, typename S2>
+inline
+typename meta::enable_if<
+	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	bool
+>::type operator >  (const S1& s1, const S2& s2)
+noexcept
+{
+	typedef std::char_traits<char> cht;
+
+	std::size_t s1s = s1.size();
+	std::size_t s2s = s2.size();
+
+	std::ptrdiff_t lcmp = s1s - s2s;
+	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
+
+	return (scmp > 0) || ((scmp == 0) && (lcmp > 0));
+}
+
+// operator <= (S1, S2)
+template <typename S1, typename S2>
+inline
+typename meta::enable_if<
+	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	bool
+>::type operator <= (const S1& s1, const S2& s2)
+noexcept
+{
+	typedef std::char_traits<char> cht;
+
+	std::size_t s1s = s1.size();
+	std::size_t s2s = s2.size();
+
+	std::ptrdiff_t lcmp = s1s - s2s;
+	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
+
+	return (scmp < 0) || ((scmp == 0) && (lcmp <= 0));
+}
+
+// operator >= (S1, S2)
+template <typename S1, typename S2>
+inline
+typename meta::enable_if<
+	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	bool
+>::type operator >= (const S1& s1, const S2& s2)
+noexcept
+{
+	typedef std::char_traits<char> cht;
+
+	std::size_t s1s = s1.size();
+	std::size_t s2s = s2.size();
+
+	std::ptrdiff_t lcmp = s1s - s2s;
+	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
+
+	return (scmp > 0) || ((scmp == 0) && (lcmp >= 0));
+}
+
+// operator <<
+template <typename Char, typename StrCtr>
+inline
+typename meta::enable_if<
+	is_char_string_container_any_const<Char, StrCtr>::value &&
+	!is_char_string_any_const<Char, StrCtr>::value,
+	std::basic_ostream<Char>&
+>::type
 operator << (
 	std::basic_ostream<Char>& out,
-	const basic_string_ref<const Char>& sref
+	const StrCtr& sref
 )
 {
 	return out.write(sref.data(), sref.size());
