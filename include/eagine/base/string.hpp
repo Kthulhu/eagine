@@ -12,13 +12,13 @@
 #define EAGINE_BASE_STRING_1308281038_HPP
 
 #include <eagine/meta/type_traits.hpp>
+#include <eagine/meta/identity.hpp>
+#include <eagine/base/array.hpp>
 #include <iosfwd>
 #include <vector>
-#include <array>
 #include <string>
 #include <cstring>
 #include <cassert>
-#include <type_traits>
 
 namespace EAGine {
 namespace base {
@@ -34,6 +34,13 @@ template <typename Char, typename X>
 struct is_char_string_container
  : meta::false_type
 { };
+
+// string_container_traits
+template <typename X>
+struct string_container_traits
+{
+	typedef void value_type;
+};
 
 // is_char_string_any_const
 template <typename Char, typename X>
@@ -59,23 +66,55 @@ struct is_char_string_container_any_const
 	>::value
 > { };
 
+// is_string_container
+template <typename X>
+struct is_string_container
+ : is_char_string_container<
+	typename string_container_traits<X>::value_type, X
+>{ };
 
+
+// is_char_string_container<array>
+template <typename Char, std::size_t N>
+struct is_char_string_container<
+	Char, array<Char, N>
+>: meta::true_type
+{ };
+
+// string_container_traits<array>
+template <typename Char, std::size_t N>
+struct string_container_traits<array<Char, N>>
+{
+	typedef Char value_type;
+};
+
+// basic_string
+using ::std::basic_string;
 // string
 using ::std::string;
 
 // is_char_string<basic_string>
 template <typename Char, typename Alloc>
 struct is_char_string<
-	Char, std::basic_string<Char, std::char_traits<Char>, Alloc>
+	Char, basic_string<Char, std::char_traits<Char>, Alloc>
 >: meta::true_type
 { };
 
 // is_char_string_container<basic_string>
 template <typename Char, typename Alloc>
 struct is_char_string_container<
-	Char, std::basic_string<Char, std::char_traits<Char>, Alloc>
+	Char, basic_string<Char, std::char_traits<Char>, Alloc>
 >: meta::true_type
 { };
+
+// string_container_traits<basic_string>
+template <typename Char, typename Alloc>
+struct string_container_traits<
+	basic_string<Char, std::char_traits<Char>, Alloc>
+>
+{
+	typedef Char value_type;
+};
 
 // basic_string_ref
 template <typename Char>
@@ -88,6 +127,13 @@ struct is_char_string_container<
 >: meta::true_type
 { };
 
+// string_container_traits<basic_string_ref>
+template <typename Char>
+struct string_container_traits<basic_string_ref<Char>>
+{
+	typedef Char value_type;
+};
+
 // basic_lim_string
 template <typename Char, std::size_t N>
 class basic_lim_string;
@@ -99,12 +145,19 @@ struct is_char_string_container<
 >: meta::true_type
 { };
 
+// string_container_traits<basic_lim_string>
+template <typename Char, std::size_t N>
+struct string_container_traits<basic_lim_string<Char, N>>
+{
+	typedef Char value_type;
+};
+
 // basic_lim_string
 template <typename Char, std::size_t N>
 class basic_lim_string
 {
 private:
-	std::array<Char, N+1> _str;
+	array<Char, N+1> _str;
 	std::size_t _len;
 
 	static std::size_t _min(std::size_t n1, std::size_t n2)
@@ -186,10 +239,10 @@ public:
 		return _len;
 	}
 
-	std::basic_string<Char>
+	basic_string<Char>
 	str(void) const
 	{
-		return std::basic_string<Char>(_str.data(), _len);
+		return basic_string<Char>(_str.data(), _len);
 	}
 
 	const_value_type*
@@ -213,8 +266,8 @@ public:
 		return _str.data();
 	}
 
-	typedef typename std::array<Char, N>::iterator iterator;
-	typedef typename std::array<Char, N>::const_iterator const_iterator;
+	typedef typename array<Char, N>::iterator iterator;
+	typedef typename array<Char, N>::const_iterator const_iterator;
 
 	iterator begin(void) const
 	noexcept
@@ -243,6 +296,13 @@ struct is_char_string_container<
 	Char, basic_const_var_string<Char, Size>
 >: meta::true_type
 { };
+
+// string_container_traits<basic_const_var_string>
+template <typename Char, typename Size>
+struct string_container_traits<basic_const_var_string<Char, Size>>
+{
+	typedef Char value_type;
+};
 
 // basic_const_var_string
 template <typename Char, typename Size>
@@ -325,7 +385,7 @@ public:
 	typedef ::std::reverse_iterator<iterator> reverse_iterator;
 	typedef ::std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-	typedef ::std::basic_string<nonconst_value_type> string_type;
+	typedef basic_string<nonconst_value_type> string_type;
 
 	basic_string_ref(void)
 	noexcept
@@ -374,7 +434,7 @@ public:
 
 	template <typename Char_, typename CharTraits_>
 	basic_string_ref(
-		const ::std::basic_string<Char_, CharTraits_>& s,
+		const basic_string<Char_, CharTraits_>& s,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
 	) noexcept
 	 : _ptr(_init_by_string(s))
@@ -383,7 +443,7 @@ public:
 
 	template <typename Char_, typename CharTraits_>
 	basic_string_ref(
-		::std::basic_string<Char_, CharTraits_>& s,
+		basic_string<Char_, CharTraits_>& s,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
 	) noexcept
 	 : _ptr(_init_by_string(s))
@@ -437,7 +497,7 @@ public:
 
 	template <typename Char_, std::size_t N>
 	basic_string_ref(
-		const ::std::array<Char_, N>& a,
+		const array<Char_, N>& a,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
 	) noexcept
 	 : _ptr(a.data())
@@ -446,7 +506,7 @@ public:
 
 	template <typename Char_, std::size_t N>
 	basic_string_ref(
-		::std::array<Char_, N>& a,
+		array<Char_, N>& a,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
 	) noexcept
 	 : _ptr(a.data())
@@ -564,19 +624,6 @@ public:
 	{
 		return at(_len-1);
 	}
-
-	basic_string_ref slice(std::size_t pos, std::size_t len) const
-	noexcept
-	{
-		assert(pos+len <= _len);
-		return basic_string_ref(_ptr+pos, len);
-	}
-
-	basic_string_ref slice(std::size_t pos) const
-	noexcept
-	{
-		return slice(pos, _len-pos);
-	}
 };
 
 // string_ref
@@ -628,9 +675,10 @@ noexcept
 }
 
 namespace detail {
-// are_cmpable_str_cntnrs
+
+// are_binopable_str_cntnrs
 template <typename Char, typename X1, typename X2>
-struct are_cmpable_str_cntnrs
+struct are_binopable_chr_str_cntnrs
  : meta::integral_constant<
 	bool,
 	is_char_string_container_any_const<Char, X1>::value &&
@@ -641,13 +689,21 @@ struct are_cmpable_str_cntnrs
 >
 { };
 
+template <typename X1, typename X2>
+struct are_binopable_str_cntnrs
+ : are_binopable_chr_str_cntnrs<
+	typename string_container_traits<X1>::value_type,
+	X1, X2
+>
+{ };
+
 } // namespace detail
 
 // operator == (S1, S2)
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	detail::are_binopable_str_cntnrs<S1, S2>::value,
 	bool
 >::type operator == (const S1& s1, const S2& s2)
 noexcept
@@ -657,7 +713,9 @@ noexcept
 		return false;
 	}
 
-	typedef std::char_traits<char> cht;
+	typedef std::char_traits<
+		typename string_container_traits<S1>::value_type
+	> cht;
 
 	return cht::compare(s1.data(), s2.data(), s1.size()) == 0;
 }
@@ -666,7 +724,7 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	detail::are_binopable_str_cntnrs<S1, S2>::value,
 	bool
 >::type operator != (const S1& s1, const S2& s2)
 noexcept
@@ -676,7 +734,9 @@ noexcept
 		return true;
 	}
 
-	typedef std::char_traits<char> cht;
+	typedef std::char_traits<
+		typename string_container_traits<S1>::value_type
+	> cht;
 
 	return cht::compare(s1.data(), s2.data(), s1.size()) != 0;
 }
@@ -685,12 +745,14 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	detail::are_binopable_str_cntnrs<S1, S2>::value,
 	bool
 >::type operator <  (const S1& s1, const S2& s2)
 noexcept
 {
-	typedef std::char_traits<char> cht;
+	typedef std::char_traits<
+		typename string_container_traits<S1>::value_type
+	> cht;
 
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
@@ -705,12 +767,14 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	detail::are_binopable_str_cntnrs<S1, S2>::value,
 	bool
 >::type operator >  (const S1& s1, const S2& s2)
 noexcept
 {
-	typedef std::char_traits<char> cht;
+	typedef std::char_traits<
+		typename string_container_traits<S1>::value_type
+	> cht;
 
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
@@ -725,12 +789,14 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	detail::are_binopable_str_cntnrs<S1, S2>::value,
 	bool
 >::type operator <= (const S1& s1, const S2& s2)
 noexcept
 {
-	typedef std::char_traits<char> cht;
+	typedef std::char_traits<
+		typename string_container_traits<S1>::value_type
+	> cht;
 
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
@@ -745,12 +811,14 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_cmpable_str_cntnrs<char, S1, S2>::value,
+	detail::are_binopable_str_cntnrs<S1, S2>::value,
 	bool
 >::type operator >= (const S1& s1, const S2& s2)
 noexcept
 {
-	typedef std::char_traits<char> cht;
+	typedef std::char_traits<
+		typename string_container_traits<S1>::value_type
+	> cht;
 
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();

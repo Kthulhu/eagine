@@ -5,7 +5,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <eagine/ecs/package_immutable.hpp>
+//#include <eagine/ecs/package_immutable.hpp>
 #include <eagine/ecs/manager.hpp>
 //------------------
 #include <eagine/base/guid.hpp>
@@ -30,6 +30,7 @@ int main(void)
 
 		manager<base::guid> m;
 
+/* TODO
 		base::file_content fc("ecs_str.bin");
 
 		immutable_component_package<base::guid, some_str>
@@ -49,6 +50,7 @@ int main(void)
 		std::cout << std::endl;
 
 		strings.unregister_from(m);
+*/
 	}
 	catch(base::exception& error)
 	{

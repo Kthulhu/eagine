@@ -5,7 +5,6 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <eagine/ecs/package_normal.hpp>
 #include <eagine/ecs/manager.hpp>
 //------------------
 #include <eagine/base/guid.hpp>
@@ -48,6 +47,7 @@ int main(void)
 		using namespace EAGine::ecs;
 
 		manager<base::guid> m;
+/* TODO
 
 		normal_component_package<base::guid, cmp_1> pkg_cmp_1;
 		normal_component_package<base::guid, cmp_2> pkg_cmp_2;
@@ -151,6 +151,7 @@ int main(void)
 		m.unregister_component_type<cmp_1>();
 
 		std::cout << m.ro<cmp_2>(e2)->d << std::endl;
+*/
 
 		return 0;
 	}
