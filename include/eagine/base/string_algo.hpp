@@ -226,6 +226,37 @@ noexcept
 	return slice(str, 0, ofs);
 }
 
+// slice_before
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
+>::type
+slice_before(const Str1& str, const Str2& target)
+noexcept
+{
+	return slice(str, 0, find_pos(str, target));
+}
+
+// slice_after
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
+>::type
+slice_after(const Str1& str, const Str2& target)
+noexcept
+{
+	std::size_t pos = find_pos(str, target);
+	if(pos < str.size())
+	{
+		pos += target.size();
+	}
+	return slice(str, pos);
+}
+
 } // namespace base
 } // namespace EAGine
 
