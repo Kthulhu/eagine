@@ -123,6 +123,109 @@ noexcept
 	return tail(str, with.size()) == with;
 }
 
+// find_pos
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	is_char_string_container<char, Str1>::value &&
+	is_char_string_container<char, Str2>::value,
+	std::size_t
+>::type
+find_pos(const Str1& str, const Str2& target)
+noexcept
+{
+	// TODO other char types?
+	if(!str.empty() && !target.empty())
+	{
+		const void* ptr = str.data();
+		std::size_t ofs = 0;
+		const std::size_t len = str.size();
+		const int chr = int(target.data()[0]);
+
+		while(
+			(ofs < len) &&
+			((ptr = std::memchr(ptr, chr, len-ofs)) != nullptr)
+		)
+		{
+			ofs = (const char*)ptr - str.data();
+			if(std::memcmp(ptr, target.data(), target.size()) == 0)
+			{
+				return ofs;
+			}
+			ptr = ((const char*)ptr+1);
+			ofs += 1;
+		}
+		return len;
+	}
+	return 0;
+}
+
+// contains
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	is_string_container<Str1>::value &&
+	is_string_container<Str2>::value,
+	bool
+>::type
+contains(const Str1& str, const Str2& target)
+noexcept
+{
+	return find_pos(str, target) < str.size();
+}
+
+// find
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	is_string_container<Str1>::value &&
+	is_string_container<Str2>::value,
+	typename const_view_of<Str1>::type
+>::type
+find(const Str1& str, const Str2& target)
+noexcept
+{
+	return slice(str, find_pos(str, target));
+}
+
+// strip_prefix
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	is_string_container<Str1>::value &&
+	is_string_container<Str2>::value,
+	typename const_view_of<Str1>::type
+>::type
+strip_prefix(const Str1& str, const Str2& target)
+noexcept
+{
+	std::size_t ofs = 0;
+	if(starts_with(str, target))
+	{
+		ofs = target.size();
+	}
+	return slice(str, ofs);
+}
+
+// strip_suffix
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	is_string_container<Str1>::value &&
+	is_string_container<Str2>::value,
+	typename const_view_of<Str1>::type
+>::type
+strip_suffix(const Str1& str, const Str2& target)
+noexcept
+{
+	std::size_t ofs = str.size();
+	if(ends_with(str, target))
+	{
+		ofs = ofs-target.size();
+	}
+	return slice(str, 0, ofs);
+}
+
 } // namespace base
 } // namespace EAGine
 
