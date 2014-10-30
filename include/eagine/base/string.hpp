@@ -23,24 +23,36 @@
 namespace EAGine {
 namespace base {
 
+// is_ext_char_string
+template <typename Char, typename X>
+struct is_ext_char_string
+ : meta::false_type
+{ };
+
 // is_char_string
 template <typename Char, typename X>
 struct is_char_string
  : meta::false_type
 { };
 
-// is_char_string_container
-template <typename Char, typename X>
-struct is_char_string_container
- : meta::false_type
-{ };
-
-// string_container_traits
+// char_string_traits
 template <typename X>
-struct string_container_traits
+struct char_string_traits
 {
 	typedef void value_type;
 };
+
+// is_ext_char_string_any_const
+template <typename Char, typename X>
+struct is_ext_char_string_any_const
+ : meta::integral_constant<
+	bool,
+	is_ext_char_string<
+		typename meta::add_const<Char>::type, X
+	>::value || is_ext_char_string<
+		typename meta::remove_const<Char>::type, X
+	>::value
+> { };
 
 // is_char_string_any_const
 template <typename Char, typename X>
@@ -54,36 +66,24 @@ struct is_char_string_any_const
 	>::value
 > { };
 
-// is_char_string_container_any_const
-template <typename Char, typename X>
-struct is_char_string_container_any_const
- : meta::integral_constant<
-	bool,
-	is_char_string_container<
-		typename meta::add_const<Char>::type, X
-	>::value || is_char_string_container<
-		typename meta::remove_const<Char>::type, X
-	>::value
-> { };
-
-// is_string_container
+// is_string
 template <typename X>
-struct is_string_container
- : is_char_string_container<
-	typename string_container_traits<X>::value_type, X
+struct is_string
+ : is_char_string<
+	typename char_string_traits<X>::value_type, X
 >{ };
 
 
-// is_char_string_container<array>
+// is_char_string<array>
 template <typename Char, std::size_t N>
-struct is_char_string_container<
+struct is_char_string<
 	Char, array<Char, N>
 >: meta::true_type
 { };
 
-// string_container_traits<array>
+// char_string_traits<array>
 template <typename Char, std::size_t N>
-struct string_container_traits<array<Char, N>>
+struct char_string_traits<array<Char, N>>
 {
 	typedef Char value_type;
 };
@@ -93,6 +93,13 @@ using ::std::basic_string;
 // string
 using ::std::string;
 
+// is_ext_char_string<basic_string>
+template <typename Char, typename Alloc>
+struct is_ext_char_string<
+	Char, basic_string<Char, std::char_traits<Char>, Alloc>
+>: meta::true_type
+{ };
+
 // is_char_string<basic_string>
 template <typename Char, typename Alloc>
 struct is_char_string<
@@ -100,16 +107,9 @@ struct is_char_string<
 >: meta::true_type
 { };
 
-// is_char_string_container<basic_string>
+// char_string_traits<basic_string>
 template <typename Char, typename Alloc>
-struct is_char_string_container<
-	Char, basic_string<Char, std::char_traits<Char>, Alloc>
->: meta::true_type
-{ };
-
-// string_container_traits<basic_string>
-template <typename Char, typename Alloc>
-struct string_container_traits<
+struct char_string_traits<
 	basic_string<Char, std::char_traits<Char>, Alloc>
 >
 {
@@ -120,16 +120,16 @@ struct string_container_traits<
 template <typename Char>
 class basic_string_ref;
 
-// is_char_string_container<basic_string_ref>
+// is_char_string<basic_string_ref>
 template <typename Char>
-struct is_char_string_container<
+struct is_char_string<
 	Char, basic_string_ref<Char>
 >: meta::true_type
 { };
 
-// string_container_traits<basic_string_ref>
+// char_string_traits<basic_string_ref>
 template <typename Char>
-struct string_container_traits<basic_string_ref<Char>>
+struct char_string_traits<basic_string_ref<Char>>
 {
 	typedef Char value_type;
 };
@@ -138,16 +138,16 @@ struct string_container_traits<basic_string_ref<Char>>
 template <typename Char, std::size_t N>
 class basic_lim_string;
 
-// is_char_string_container<basic_lim_string>
+// is_char_string<basic_lim_string>
 template <typename Char, std::size_t N>
-struct is_char_string_container<
+struct is_char_string<
 	Char, basic_lim_string<Char, N>
 >: meta::true_type
 { };
 
-// string_container_traits<basic_lim_string>
+// char_string_traits<basic_lim_string>
 template <typename Char, std::size_t N>
-struct string_container_traits<basic_lim_string<Char, N>>
+struct char_string_traits<basic_lim_string<Char, N>>
 {
 	typedef Char value_type;
 };
@@ -290,16 +290,16 @@ using lim_string = basic_lim_string<char, N>;
 template <typename Char, typename Size>
 struct basic_const_var_string;
 
-// is_char_string_container<basic_const_var_string>
+// is_char_string<basic_const_var_string>
 template <typename Char, typename Size>
-struct is_char_string_container<
+struct is_char_string<
 	Char, basic_const_var_string<Char, Size>
 >: meta::true_type
 { };
 
-// string_container_traits<basic_const_var_string>
+// char_string_traits<basic_const_var_string>
 template <typename Char, typename Size>
-struct string_container_traits<basic_const_var_string<Char, Size>>
+struct char_string_traits<basic_const_var_string<Char, Size>>
 {
 	typedef Char value_type;
 };
@@ -674,25 +674,37 @@ noexcept
 	return *this;
 }
 
+
+// detail
 namespace detail {
 
-// are_binopable_str_cntnrs
+// are_char_strings_any_const
 template <typename Char, typename X1, typename X2>
-struct are_binopable_chr_str_cntnrs
+struct are_char_strings_any_const
  : meta::integral_constant<
 	bool,
-	is_char_string_container_any_const<Char, X1>::value &&
-	is_char_string_container_any_const<Char, X2>::value && !(
-		is_char_string_any_const<Char, X1>::value &&
-		is_char_string_any_const<Char, X2>::value
+	is_char_string_any_const<Char, X1>::value &&
+	is_char_string_any_const<Char, X2>::value
+>
+{ };
+
+// are_bin_op_char_strings
+template <typename Char, typename X1, typename X2>
+struct are_bin_op_char_strings
+ : meta::integral_constant<
+	bool,
+	are_char_strings_any_const<Char, X1, X2>::value && !(
+		is_ext_char_string_any_const<Char, X1>::value &&
+		is_ext_char_string_any_const<Char, X2>::value
 	)
 >
 { };
 
+// are_bin_op_strings
 template <typename X1, typename X2>
-struct are_binopable_str_cntnrs
- : are_binopable_chr_str_cntnrs<
-	typename string_container_traits<X1>::value_type,
+struct are_bin_op_strings
+ : are_bin_op_char_strings<
+	typename char_string_traits<X1>::value_type,
 	X1, X2
 >
 { };
@@ -703,7 +715,7 @@ struct are_binopable_str_cntnrs
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_binopable_str_cntnrs<S1, S2>::value,
+	detail::are_bin_op_strings<S1, S2>::value,
 	bool
 >::type operator == (const S1& s1, const S2& s2)
 noexcept
@@ -714,7 +726,7 @@ noexcept
 	}
 
 	typedef std::char_traits<
-		typename string_container_traits<S1>::value_type
+		typename char_string_traits<S1>::value_type
 	> cht;
 
 	return cht::compare(s1.data(), s2.data(), s1.size()) == 0;
@@ -724,7 +736,7 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_binopable_str_cntnrs<S1, S2>::value,
+	detail::are_bin_op_strings<S1, S2>::value,
 	bool
 >::type operator != (const S1& s1, const S2& s2)
 noexcept
@@ -735,7 +747,7 @@ noexcept
 	}
 
 	typedef std::char_traits<
-		typename string_container_traits<S1>::value_type
+		typename char_string_traits<S1>::value_type
 	> cht;
 
 	return cht::compare(s1.data(), s2.data(), s1.size()) != 0;
@@ -745,13 +757,13 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_binopable_str_cntnrs<S1, S2>::value,
+	detail::are_bin_op_strings<S1, S2>::value,
 	bool
 >::type operator <  (const S1& s1, const S2& s2)
 noexcept
 {
 	typedef std::char_traits<
-		typename string_container_traits<S1>::value_type
+		typename char_string_traits<S1>::value_type
 	> cht;
 
 	std::size_t s1s = s1.size();
@@ -767,13 +779,13 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_binopable_str_cntnrs<S1, S2>::value,
+	detail::are_bin_op_strings<S1, S2>::value,
 	bool
 >::type operator >  (const S1& s1, const S2& s2)
 noexcept
 {
 	typedef std::char_traits<
-		typename string_container_traits<S1>::value_type
+		typename char_string_traits<S1>::value_type
 	> cht;
 
 	std::size_t s1s = s1.size();
@@ -789,13 +801,13 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_binopable_str_cntnrs<S1, S2>::value,
+	detail::are_bin_op_strings<S1, S2>::value,
 	bool
 >::type operator <= (const S1& s1, const S2& s2)
 noexcept
 {
 	typedef std::char_traits<
-		typename string_container_traits<S1>::value_type
+		typename char_string_traits<S1>::value_type
 	> cht;
 
 	std::size_t s1s = s1.size();
@@ -811,13 +823,13 @@ noexcept
 template <typename S1, typename S2>
 inline
 typename meta::enable_if<
-	detail::are_binopable_str_cntnrs<S1, S2>::value,
+	detail::are_bin_op_strings<S1, S2>::value,
 	bool
 >::type operator >= (const S1& s1, const S2& s2)
 noexcept
 {
 	typedef std::char_traits<
-		typename string_container_traits<S1>::value_type
+		typename char_string_traits<S1>::value_type
 	> cht;
 
 	std::size_t s1s = s1.size();
@@ -833,8 +845,8 @@ noexcept
 template <typename Char, typename StrCtr>
 inline
 typename meta::enable_if<
-	is_char_string_container_any_const<Char, StrCtr>::value &&
-	!is_char_string_any_const<Char, StrCtr>::value,
+	is_char_string_any_const<Char, StrCtr>::value &&
+	!is_ext_char_string_any_const<Char, StrCtr>::value,
 	std::basic_ostream<Char>&
 >::type
 operator << (

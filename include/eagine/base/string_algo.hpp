@@ -16,23 +16,32 @@
 namespace EAGine {
 namespace base {
 
-// const_view_of
+// string_view
 template <typename Str>
-struct const_view_of
+struct string_view
 {
 	typedef basic_string_ref<
 		typename meta::add_const<
-			typename string_container_traits<Str>::value_type
+			typename char_string_traits<Str>::value_type
 		>::type
 	> type;
 };
+
+// are_compatible_string_views
+template <typename X1, typename X2>
+struct are_compatible_string_views
+ : detail::are_char_strings_any_const<
+	typename char_string_traits<X1>::value_type,
+	X1, X2
+>
+{ };
 
 // slice
 template <typename Str>
 inline 
 typename meta::enable_if<
-	is_string_container<Str>::value,
-	typename const_view_of<Str>::type
+	is_string<Str>::value,
+	typename string_view<Str>::type
 >::type
 slice(const Str& str, std::size_t pos, std::size_t len)
 noexcept
@@ -52,8 +61,8 @@ noexcept
 template <typename Str>
 inline 
 typename meta::enable_if<
-	is_string_container<Str>::value,
-	typename const_view_of<Str>::type
+	is_string<Str>::value,
+	typename string_view<Str>::type
 >::type
 slice(const Str& str, std::size_t pos)
 noexcept
@@ -69,8 +78,8 @@ noexcept
 template <typename Str>
 inline 
 typename meta::enable_if<
-	is_string_container<Str>::value,
-	typename const_view_of<Str>::type
+	is_string<Str>::value,
+	typename string_view<Str>::type
 >::type
 head(const Str& str, std::size_t len)
 noexcept
@@ -82,8 +91,8 @@ noexcept
 template <typename Str>
 inline 
 typename meta::enable_if<
-	is_string_container<Str>::value,
-	typename const_view_of<Str>::type
+	is_string<Str>::value,
+	typename string_view<Str>::type
 >::type
 tail(const Str& str, std::size_t len)
 noexcept
@@ -99,8 +108,7 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_string_container<Str1>::value &&
-	is_string_container<Str2>::value,
+	are_compatible_string_views<Str1, Str2>::value,
 	bool
 >::type
 starts_with(const Str1& str, const Str2& with)
@@ -113,8 +121,7 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_string_container<Str1>::value &&
-	is_string_container<Str2>::value,
+	are_compatible_string_views<Str1, Str2>::value,
 	bool
 >::type
 ends_with(const Str1& str, const Str2& with)
@@ -127,35 +134,32 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_char_string_container<char, Str1>::value &&
-	is_char_string_container<char, Str2>::value,
+	are_compatible_string_views<Str1, Str2>::value,
 	std::size_t
 >::type
 find_pos(const Str1& str, const Str2& target)
 noexcept
 {
-	// TODO other char types?
 	if(!str.empty() && !target.empty())
 	{
-		const void* ptr = str.data();
-		std::size_t ofs = 0;
-		const std::size_t len = str.size();
-		const int chr = int(target.data()[0]);
+		const std::size_t ls = str.size();
+		const std::size_t lt = target.size();
 
-		while(
-			(ofs < len) &&
-			((ptr = std::memchr(ptr, chr, len-ofs)) != nullptr)
-		)
+		if(ls >= lt)
 		{
-			ofs = (const char*)ptr - str.data();
-			if(std::memcmp(ptr, target.data(), target.size()) == 0)
+			std::size_t p = 0;
+			const std::size_t n = ls-lt;
+
+			while(p != n)
 			{
-				return ofs;
+				if(slice(str, p, lt) == target)
+				{
+					return p;
+				}
+				++p;
 			}
-			ptr = ((const char*)ptr+1);
-			ofs += 1;
 		}
-		return len;
+		return ls;
 	}
 	return 0;
 }
@@ -164,8 +168,7 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_string_container<Str1>::value &&
-	is_string_container<Str2>::value,
+	are_compatible_string_views<Str1, Str2>::value,
 	bool
 >::type
 contains(const Str1& str, const Str2& target)
@@ -178,9 +181,8 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_string_container<Str1>::value &&
-	is_string_container<Str2>::value,
-	typename const_view_of<Str1>::type
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
 >::type
 find(const Str1& str, const Str2& target)
 noexcept
@@ -192,9 +194,8 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_string_container<Str1>::value &&
-	is_string_container<Str2>::value,
-	typename const_view_of<Str1>::type
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
 >::type
 strip_prefix(const Str1& str, const Str2& target)
 noexcept
@@ -211,9 +212,8 @@ noexcept
 template <typename Str1, typename Str2>
 inline
 typename meta::enable_if<
-	is_string_container<Str1>::value &&
-	is_string_container<Str2>::value,
-	typename const_view_of<Str1>::type
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
 >::type
 strip_suffix(const Str1& str, const Str2& target)
 noexcept
