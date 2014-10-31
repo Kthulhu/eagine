@@ -66,6 +66,26 @@ struct is_char_string_any_const
 	>::value
 > { };
 
+// are_char_strings_any_const
+template <typename Char, typename ... XN>
+struct are_char_strings_any_const;
+
+// are_char_strings_any_const
+template <typename Char, typename X1>
+struct are_char_strings_any_const<Char, X1>
+ : is_char_string_any_const<Char, X1>
+{ };
+
+// are_char_strings_any_const
+template <typename Char, typename X1, typename X2, typename ... XN>
+struct are_char_strings_any_const<Char, X1, X2, XN...>
+ : meta::integral_constant<
+	bool,
+	is_char_string_any_const<Char, X1>::value &&
+	are_char_strings_any_const<Char, X2, XN...>::value
+>
+{ };
+
 // is_string
 template <typename X>
 struct is_string
@@ -677,16 +697,6 @@ noexcept
 
 // detail
 namespace detail {
-
-// are_char_strings_any_const
-template <typename Char, typename X1, typename X2>
-struct are_char_strings_any_const
- : meta::integral_constant<
-	bool,
-	is_char_string_any_const<Char, X1>::value &&
-	is_char_string_any_const<Char, X2>::value
->
-{ };
 
 // are_bin_op_char_strings
 template <typename Char, typename X1, typename X2>

@@ -28,11 +28,11 @@ struct string_view
 };
 
 // are_compatible_string_views
-template <typename X1, typename X2>
+template <typename X1, typename ... XN>
 struct are_compatible_string_views
- : detail::are_char_strings_any_const<
+ : are_char_strings_any_const<
 	typename char_string_traits<X1>::value_type,
-	X1, X2
+	X1, XN ...
 >
 { };
 
@@ -148,7 +148,7 @@ noexcept
 		if(ls >= lt)
 		{
 			std::size_t p = 0;
-			const std::size_t n = ls-lt;
+			const std::size_t n = ls-lt+1;
 
 			while(p != n)
 			{
@@ -255,6 +255,22 @@ noexcept
 		pos += target.size();
 	}
 	return slice(str, pos);
+}
+
+// slice_between
+template <typename Str1, typename Str2, typename Str3>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2, Str3>::value,
+	typename string_view<Str1>::type
+>::type
+slice_between(const Str1& str, const Str2& bgn, const Str3& end)
+noexcept
+{
+	std::size_t bpos = find_pos(str, bgn);
+	std::size_t epos = find_pos(slice(str, bpos+bgn.size()), end);
+
+	return slice(str, bpos+bgn.size(), epos);
 }
 
 } // namespace base
