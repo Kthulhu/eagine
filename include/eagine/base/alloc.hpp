@@ -12,6 +12,8 @@
 #define EAGINE_BASE_ALLOC_1308281038_HPP
 
 #include <eagine/base/type.hpp>
+#include <eagine/meta/type_traits.hpp>
+#include <eagine/meta/nil_t.hpp>
 #include <memory>
 #include <limits>
 #include <cassert>
@@ -30,10 +32,16 @@ struct byte_allocator
 	noexcept
 	{ }
 
-	virtual byte_allocator* duplicate(void)
+	virtual
+	byte_allocator* duplicate(void)
 	noexcept = 0;
 
-	virtual bool release(void)
+	virtual
+	bool release(void)
+	noexcept = 0;
+
+	virtual
+	bool equal(byte_allocator* a) const
 	noexcept = 0;
 
 	virtual
@@ -56,6 +64,155 @@ struct byte_reallocator
 	virtual
 	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
 	noexcept = 0;
+};
+
+// shared_byte_allocator
+class shared_byte_allocator
+{
+private:
+	byte_allocator* _pballoc;
+
+	template <typename X>
+	static byte_allocator* _get_new(
+		const X& that,
+		typename meta::enable_if<
+			meta::is_convertible<X*, byte_allocator*>::value
+		>::type* = nullptr
+	) noexcept
+	{
+		try { return new X(that); }
+		catch(std::bad_alloc&) { }
+		return nullptr;
+	}
+
+	template <typename X>
+	static byte_allocator* _get_new(
+		X& that,
+		typename meta::enable_if<
+			meta::is_convertible<X*, byte_allocator*>::value
+		>::type* = nullptr
+	) noexcept
+	{
+		try { return new X(that); }
+		catch(std::bad_alloc&) { }
+		return nullptr;
+	}
+
+	template <typename X>
+	static byte_allocator* _get_new(
+		X&& that,
+		typename meta::enable_if<
+			meta::is_convertible<X*, byte_allocator*>::value
+		>::type* = nullptr
+	) noexcept
+	{
+		try { return new X(std::move(that)); }
+		catch(std::bad_alloc&) { }
+		return nullptr;
+	}
+
+	void _cleanup(void)
+	noexcept
+	{
+		if(_pballoc)
+		{
+			if(_pballoc->release())
+			{
+				delete _pballoc;
+			}
+		}
+	}
+
+	byte_allocator* _release(void)
+	noexcept
+	{
+		byte_allocator* result = _pballoc;
+		_pballoc = nullptr;
+		return result;
+	}
+
+	byte_allocator* _copy(void) const
+	noexcept
+	{
+		return _pballoc?_pballoc->duplicate():nullptr;
+	}
+public:
+	shared_byte_allocator(const shared_byte_allocator& that)
+	noexcept
+	 : _pballoc(that._copy())
+	{ }
+
+	shared_byte_allocator(shared_byte_allocator&& tmp)
+	noexcept
+	 : _pballoc(tmp._release())
+	{ }
+
+	template <typename X>
+	shared_byte_allocator(X&& x)
+	noexcept
+	 : _pballoc(_get_new(std::forward<X>(x)))
+	{ }
+
+	shared_byte_allocator& operator = (const shared_byte_allocator& that)
+	noexcept
+	{
+		_cleanup();
+		_pballoc = that._copy();
+		return *this;
+	}
+
+	shared_byte_allocator& operator = (shared_byte_allocator&& that)
+	noexcept
+	{
+		_cleanup();
+		_pballoc = that._release();
+		return *this;
+	}
+
+	~shared_byte_allocator(void)
+	noexcept
+	{
+		_cleanup();
+	}
+
+	std::size_t max_size(void) const
+	noexcept
+	{
+		return _pballoc?_pballoc->max_size():0;
+	}
+
+	byte_allocator& get(void)
+	noexcept
+	{
+		assert(_pballoc);
+		return *_pballoc;
+	}
+
+	friend bool operator == (
+		const shared_byte_allocator& a,
+		const shared_byte_allocator& b
+	)
+	noexcept
+	{
+		if((a._pballoc == nullptr) && (b._pballoc == nullptr))
+		{
+			return true;
+		}
+		else if(a._pballoc)
+		{
+			return a._pballoc->equal(b._pballoc);
+		}
+		return false;
+	}
+
+	friend bool operator != (
+		const shared_byte_allocator& a,
+		const shared_byte_allocator& b
+	)
+	noexcept
+	{
+		return !(a == b);
+	}
 };
 
 // c_byte_reallocator
@@ -96,6 +253,12 @@ public:
 	noexcept override
 	{
 		return (--_ref_count == 0);
+	}
+
+	bool equal(byte_allocator* a) const
+	noexcept override
+	{
+		return dynamic_cast<c_byte_reallocator*>(a) != nullptr;
 	}
 
 	size_type max_size(void)
@@ -154,94 +317,55 @@ public:
 // default byte_allocator
 typedef c_byte_reallocator default_byte_allocator;
 
+// allocator - fwd
+template <typename T>
+class allocator;
+
+template <>
+class allocator<void>
+{
+private:
+	shared_byte_allocator _sba; 
+public:
+	const shared_byte_allocator& _get_sba(void) const { return _sba; }
+
+	typedef meta::nil_t value_type;
+	typedef void* pointer;
+	typedef const void* const_pointer;
+	typedef std::size_t size_type;
+	typedef std::ptrdiff_t difference_type;
+
+	template <typename U>
+	struct rebind
+	{
+		typedef allocator<U> other;
+	};
+
+	template <typename U>
+	allocator(const allocator<U>& that)
+	 : _sba(that._get_sba())
+	{ }
+
+	allocator(shared_byte_allocator&& sba)
+	noexcept
+	 : _sba(std::move(sba))
+	{ }
+
+	allocator(void)
+	noexcept
+	 : _sba(default_byte_allocator())
+	{ }
+};
+
 
 // allocator
 template <typename T>
 class allocator
 {
 private:
-	byte_allocator* _pballoc;
-
-	template <typename X>
-	static byte_allocator* _get_new(
-		const X& that,
-		typename std::enable_if<
-			std::is_convertible<X*, byte_allocator*>::value
-		>::type* = nullptr
-	) noexcept
-	{
-		try { return new X(that); }
-		catch(std::bad_alloc&) { return nullptr; }
-		return nullptr;
-	}
-
-	template <typename X>
-	static byte_allocator* _get_new(
-		X& that,
-		typename std::enable_if<
-			std::is_convertible<X*, byte_allocator*>::value
-		>::type* = nullptr
-	) noexcept
-	{
-		try { return new X(that); }
-		catch(std::bad_alloc&) { return nullptr; }
-		return nullptr;
-	}
-
-	template <typename X>
-	static byte_allocator* _get_new(
-		X&& that,
-		typename std::enable_if<
-			std::is_convertible<X*, byte_allocator*>::value
-		>::type* = nullptr
-	) noexcept
-	{
-		try { return new X(std::move(that)); }
-		catch(std::bad_alloc&) { return nullptr; }
-		return nullptr;
-	}
-
-	template <typename U>
-	static byte_allocator* _get_new(const allocator<U>& a)
-	noexcept
-	{
-		return a._copy();
-	}
-
-	template <typename U>
-	static byte_allocator* _get_new(allocator<U>&& a)
-	noexcept
-	{
-		return a._release();
-	}
-
-	void _cleanup(void)
-	noexcept
-	{
-		if(_pballoc)
-		{
-			if(_pballoc->release())
-			{
-				delete _pballoc;
-			}
-		}
-	}
+	shared_byte_allocator _sba; 
 public:
-	// implementation detail DO NOT use directly
-	byte_allocator* _release(void)
-	noexcept
-	{
-		byte_allocator* result = _pballoc;
-		_pballoc = nullptr;
-		return result;
-	}
-
-	// implementation detail DO NOT use directly
-	byte_allocator* _copy(void) const
-	noexcept
-	{
-		return _pballoc?_pballoc->duplicate():nullptr;
-	}
+	const shared_byte_allocator& _get_sba(void) const { return _sba; }
 
 	typedef T value_type;
 	typedef T* pointer;
@@ -257,48 +381,20 @@ public:
 		typedef allocator<U> other;
 	};
 
+	template <typename U>
+	allocator(const allocator<U>& that)
+	 : _sba(that._get_sba())
+	{ }
+
+	allocator(shared_byte_allocator&& sba)
+	noexcept
+	 : _sba(std::move(sba))
+	{ }
+
 	allocator(void)
 	noexcept
-	 : allocator(default_byte_allocator())
+	 : _sba(default_byte_allocator())
 	{ }
-
-	allocator(const allocator& that)
-	noexcept
-	 : _pballoc(that._copy())
-	{ }
-
-	allocator(allocator&& tmp)
-	noexcept
-	 : _pballoc(tmp._release())
-	{ }
-
-	template <typename X>
-	allocator(X&& x)
-	noexcept
-	 : _pballoc(_get_new(std::forward<X>(x)))
-	{ }
-
-	allocator& operator = (const allocator& that)
-	noexcept
-	{
-		_cleanup();
-		_pballoc = that._copy();
-		return *this;
-	}
-
-	allocator& operator = (allocator&& that)
-	noexcept
-	{
-		_cleanup();
-		_pballoc = that._release();
-		return *this;
-	}
-
-	~allocator(void)
-	noexcept
-	{
-		_cleanup();
-	}
 
 	T* address(T& r)
 	noexcept
@@ -315,14 +411,12 @@ public:
 	size_type max_size(void) const
 	noexcept
 	{
-		return _pballoc?_pballoc->max_size():0;
+		return _sba.max_size();
 	}
 
 	T* allocate(size_type n, const void* = nullptr)
 	{
-		assert(_pballoc);
-
-		byte* p = _pballoc->allocate(n*sizeof(T), alignof(T));
+		byte* p = _sba.get().allocate(n*sizeof(T), alignof(T));
 
 		assert((reinterpret_cast<std::uintptr_t>(p) % alignof(T)) == 0);
 
@@ -336,9 +430,7 @@ public:
 
 	void deallocate(T* p, size_type n)
 	{
-		assert(_pballoc);
-
-		_pballoc->deallocate(
+		_sba.get().deallocate(
 			reinterpret_cast<byte*>(p),
 			n*sizeof(T),
 			alignof(T)
@@ -348,13 +440,13 @@ public:
 	friend bool operator == (const allocator& a, const allocator& b)
 	noexcept
 	{
-		return(a._pballoc == b._pballoc);
+		return(a._sba == b._sba);
 	}
 
 	friend bool operator != (const allocator& a, const allocator& b)
 	noexcept
 	{
-		return(a._pballoc != b._pballoc);
+		return(a._sba != b._sba);
 	}
 };
 

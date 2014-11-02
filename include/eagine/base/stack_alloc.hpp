@@ -194,6 +194,22 @@ public:
 			_pos = _min;
 		}
 	}
+
+	friend bool operator == (
+		const base_stack_allocator& a,
+		const base_stack_allocator& b
+	)
+	{
+		if((a._btm == b._btm) && (a._top == b._top))
+		{
+			assert(a._pos == b._pos);
+			assert(a._min == b._min);
+			assert(a._dif == b._dif);
+
+			return true;
+		}
+		return false;
+	}
 };
 
 // stack_byte_allocator
@@ -235,6 +251,15 @@ public:
 	noexcept override
 	{
 		return (--_ref_count == 0);
+	}
+
+	bool equal(byte_allocator* a) const
+	noexcept override
+	{
+		stack_byte_allocator* sba =
+			dynamic_cast<stack_byte_allocator*>(a);
+
+		return (sba != nullptr) && (this->_alloc == sba->_alloc);
 	}
 
 	size_type max_size(void)
