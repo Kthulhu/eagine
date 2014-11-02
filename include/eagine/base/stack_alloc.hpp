@@ -12,77 +12,14 @@
 #define EAGINE_BASE_STACK_ALLOC_1308281038_HPP
 
 #include <eagine/base/alloc.hpp>
-#include <eagine/base/memory.hpp>
 #include <eagine/base/memory_range.hpp>
 #include <eagine/meta/type_traits.hpp>
-#include <cstring>
 
 namespace EAGine {
 namespace base {
 
-// _sh_ptr_hlp_alloc
-// helper allocator used by stack_allocator
-// to allocate the shared_pointer data-block
-// in same memory block used by that stack_allocator
-// DO NOT use directly
-template <typename T>
-class _sh_ptr_hlp_alloc
-{
-public:
-	memory_block  _blk;
-	memory_block* _pfb;
-
-	typedef T value_type;
-	typedef T* pointer;
-	typedef const T* const_pointer;
-	typedef T& reference;
-	typedef const T& const_reference;
-	typedef std::size_t size_type;
-	typedef std::ptrdiff_t difference_type;
-
-	template <typename U>
-	struct rebind
-	{
-		typedef _sh_ptr_hlp_alloc<U> other;
-	};
-
-	_sh_ptr_hlp_alloc(const memory_block& blk, memory_block* pfb)
-	noexcept
-	 : _blk(blk)
-	 , _pfb(pfb)
-	{ }
-
-	template <typename U>
-	_sh_ptr_hlp_alloc(const _sh_ptr_hlp_alloc<U>& that)
-	noexcept
-	 : _blk(that._blk)
-	 , _pfb(that._pfb)
-	{ }
-
-	size_type max_size(void) const
-	noexcept
-	{
-		return _blk.size() / sizeof(T);
-	}
-
-	pointer allocate(size_type n, const void* = nullptr)
-	{
-		assert(n < max_size());
-		assert(_pfb);
-		*_pfb = _blk.slice(n*sizeof(T));
-		return (pointer)_blk.addr();
-	}
-
-	void deallocate(const_pointer p, size_type n)
-	noexcept
-	{
-		assert(p == _blk.addr());
-	}
-};
-
 // base_stack_allocator
 // non-rebindable non-copyable stack allocator
-// used as shared delegate by stack_allocator.
 // use with care!
 template <typename T>
 class base_stack_allocator
@@ -102,6 +39,23 @@ public:
 	typedef std::size_t size_type;
 	typedef std::ptrdiff_t difference_type;
 
+	base_stack_allocator(const base_stack_allocator&) = delete;
+
+	base_stack_allocator(base_stack_allocator&& tmp)
+	noexcept
+	 : _btm(tmp._btm)
+	 , _top(tmp._top)
+	 , _pos(tmp._pos)
+	 , _min(tmp._min)
+	 , _dif(tmp._dif)
+	{
+		tmp._btm = nullptr;
+		tmp._top = nullptr;
+		tmp._pos = nullptr;
+		tmp._min = nullptr;
+		tmp._dif = 0;
+	}
+
 	base_stack_allocator(void)
 	noexcept
 	 : _btm(nullptr)
@@ -120,8 +74,6 @@ public:
 	 , _dif(0)
 	{ }
 
-	base_stack_allocator(const base_stack_allocator&) = delete;
-
 	~base_stack_allocator(void)
 	noexcept
 	{
@@ -131,20 +83,18 @@ public:
 		}
 	}
 
-	void reset(const memory_block& blk)
-	{
-		_btm = (T*)blk.aligned_begin(alignof(T));
-		_top = (T*)blk.aligned_end(alignof(T));
-		_pos = _btm;
-		_min = _btm;
-		_dif = 0;
-	}
-
 	size_type max_size(void) const
 	noexcept
 	{
 		assert(_pos <= _top);
 		return _top - _pos;
+	}
+
+	size_type allocated_size(void) const
+	noexcept
+	{
+		assert(_btm <= _pos);
+		return _pos - _btm;
 	}
 
 	bool has_allocated(const_pointer p, size_type n) const
@@ -158,7 +108,7 @@ public:
 		return false;
 	}
 
-	pointer allocate_noexcept(size_type n)
+	pointer allocate(size_type n)
 	noexcept
 	{
 		if(n > max_size())
@@ -182,17 +132,7 @@ public:
 		return result;
 	}
 
-	pointer allocate(size_type n)
-	{
-		pointer p = allocate_noexcept(n);
-		if(p == nullptr)
-		{
-			throw std::bad_alloc();
-		}
-		return p;
-	}
-
-	pointer truncate(pointer p, pointer pn, pointer nn)
+	pointer truncate(pointer p, size_type pn, size_type nn)
 	noexcept
 	{
 		assert(pn >= nn);
@@ -256,187 +196,88 @@ public:
 	}
 };
 
-// stack_allocator - fwd
-template <typename T>
-class stack_allocator;
-
-// stack_allocator<void>
-template <>
-class stack_allocator<void>
+// stack_byte_allocator
+class stack_byte_allocator
+ : public byte_allocator
 {
 private:
-	memory_block _blk;
+	std::size_t _ref_count;
+
+	base_stack_allocator<byte> _alloc;
 public:
-	stack_allocator(void) = default;
-
-	stack_allocator(const memory_block& blk)
-	noexcept
-	 : _blk(blk)
-	{ }
-
-	operator memory_block(void) const
-	noexcept
-	{
-		return _blk;
-	}
-
-	typedef void value_type;
-	typedef void* pointer;
-	typedef const void* const_pointer;
-
-	template <typename U>
-	struct rebind
-	{
-		typedef stack_allocator<U> other;
-	};
-};
-
-// stack_allocator<T>
-template <typename T>
-class stack_allocator
-{
-private:
-	typedef shared_ptr<base_stack_allocator<T>> _sbsa_t;
-	_sbsa_t _bsa;
-
-	static _sbsa_t _make_bsa(const memory_block& blk)
-	{
-		typedef base_stack_allocator<T> _bsa_t;
-
-		memory_block fb;
-		_sh_ptr_hlp_alloc<T> ta(blk, &fb);
-
-		_sbsa_t result = allocate_shared<_bsa_t>(ta);
-
-		assert(result);
-		result->reset(fb);
-
-		return result;
-	}
-public:
-	stack_allocator(void)
-	noexcept
-	{ }
-
-	stack_allocator(const memory_block& blk)
-	noexcept
-	 : _bsa(_make_bsa(blk))
-	{ }
-
-	stack_allocator(const stack_allocator&) = default;
-
-	typedef T value_type;
-	typedef T* pointer;
-	typedef const T* const_pointer;
-	typedef T& reference;
-	typedef const T& const_reference;
+	typedef byte value_type;
 	typedef std::size_t size_type;
-	typedef std::ptrdiff_t difference_type;
 
-	template <typename U>
-	struct rebind
+	stack_byte_allocator(stack_byte_allocator&& tmp)
+	 : _ref_count(tmp._ref_count)
+	 , _alloc(std::move(tmp._alloc))
 	{
-		typedef stack_allocator<U> other;
-	};
-
-	pointer address(reference r)
-	noexcept
-	{
-		return allocator<T>().address(r);
+		tmp._ref_count = 0;
 	}
 
-	const_pointer address(const_reference r)
-	noexcept
+	stack_byte_allocator(void)
+	 : _ref_count(1)
+	{ }
+
+	stack_byte_allocator(const memory_block& blk)
+	 : _ref_count(1)
+	 , _alloc(blk)
+	{ }
+
+	byte_allocator* duplicate(void)
+	noexcept override
 	{
-		return allocator<T>().address(r);
+		++_ref_count;
+		return this;
 	}
 
-	size_type max_size(void) const
-	noexcept
+	bool release(void)
+	noexcept override
 	{
-		if(_bsa)
+		return (--_ref_count == 0);
+	}
+
+	size_type max_size(void)
+	noexcept override
+	{
+		return	_alloc.max_size()>alignof(void*)?
+			_alloc.max_size()-alignof(void*):0;
+	}
+
+	byte* allocate(size_type n, size_type a)
+	noexcept override
+	{
+		size_type m = a - _alloc.allocated_size() % a;
+		byte* p = _alloc.allocate(m+n);
+
+		assert((reinterpret_cast<std::uintptr_t>(p+m) % a) == 0);
+
+		if(p == nullptr)
 		{
-			return _bsa->max_size();
+			return nullptr;
 		}
-		return 0;
+
+		p[m-1] = byte(m);
+
+		return p+m;
 	}
 
-	bool has_allocated(const_pointer p, size_type n) const
-	noexcept
+	void deallocate(byte* p, size_type n, size_type a)
+	noexcept override
 	{
-		assert(_bsa);
-		return _bsa->has_allocated(p, n);
-	}
-	
+		assert(_alloc.has_allocated(p, n));
 
-	pointer allocate_noexcept(size_type n, const void* = nullptr)
-	noexcept
-	{
-		assert(_bsa);
-		return _bsa->allocate_noexcept(n);
+		size_type m = size_type(p[-1]);
+
+		_alloc.deallocate(p-m, m+n);
 	}
 
-	pointer allocate(size_type n, const void* = nullptr)
+/* TODO
+	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
+	noexcept override
 	{
-		assert(_bsa);
-		return _bsa->allocate(n);
 	}
-
-	pointer reallocate(pointer p, size_type pn, size_type nn)
-	{
-		assert(_bsa);
-		return _bsa->reallocate(p, pn, nn);
-	}
-
-	pointer truncate(pointer p, size_type pn, size_type nn)
-	noexcept
-	{
-		assert(_bsa);
-		return _bsa->truncate(p, pn, nn);
-	}
-
-	void deallocate(const_pointer p, size_type n)
-	noexcept
-	{
-		assert(_bsa);
-		_bsa->deallocate(p, n);
-	}
-
-	template <typename U, typename ... A>
-	void construct(U* p, A&&...a)
-	noexcept(noexcept(U(std::forward<A>(a)...)))
-	{
-		::new((void*)p) U(std::forward<A>(a)...);
-	}
-
-	void destroy(pointer p)
-	noexcept(noexcept(((T*)p)->~T()))
-	{
-		((T*)p)->~T();
-	}
-
-	template <typename U>
-	void destroy(U* p)
-	noexcept(noexcept(p->~U()))
-	{
-		p->~U();
-	}
-
-	friend bool operator == (
-		const stack_allocator& a,
-		const stack_allocator& b
-	) noexcept
-	{
-		return(a._bsa == b._bsa);
-	}
-
-	friend bool operator != (
-		const stack_allocator& a,
-		const stack_allocator& b
-	) noexcept
-	{
-		return(a._bsa != b._bsa);
-	}
+*/
 };
 
 } // namespace base

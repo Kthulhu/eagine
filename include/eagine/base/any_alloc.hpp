@@ -127,26 +127,6 @@ public:
 		assert(_pimpl);
 		_pimpl->dealloc(p, n);
 	}
-
-	template <typename U, typename ... A>
-	void construct(U* p, A&&...a)
-	noexcept(noexcept(U(std::forward<A>(a)...)))
-	{
-		::new((void*)p) U(std::forward<A>(a)...);
-	}
-
-	void destroy(pointer p)
-	noexcept(noexcept(((T*)p)->~T()))
-	{
-		((T*)p)->~T();
-	}
-
-	template <typename U>
-	void destroy(U* p)
-	noexcept(noexcept(p->~U()))
-	{
-		p->~U();
-	}
 };
 
 } // namespace base
