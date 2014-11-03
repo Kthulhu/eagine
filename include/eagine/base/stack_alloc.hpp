@@ -269,6 +269,12 @@ public:
 			_alloc.max_size()-alignof(void*):0;
 	}
 
+	bool has_allocated(const byte* p, size_type n)
+	noexcept override
+	{
+		return _alloc.has_allocated(p, n);
+	}
+
 	byte* allocate(size_type n, size_type a)
 	noexcept override
 	{

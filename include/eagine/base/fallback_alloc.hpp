@@ -12,229 +12,112 @@
 #define EAGINE_BASE_FALLBACK_ALLOC_1308281038_HPP
 
 #include <eagine/base/alloc.hpp>
-#include <eagine/meta/type_traits.hpp>
 
 namespace EAGine {
 namespace base {
 
-template <
-	typename T,
-	typename DefaultAlloc,
-	typename FallbackAlloc = allocator<T>
->
-class allocator_with_fallback
+class byte_allocator_with_fallback
+ : public byte_allocator
 {
 private:
-	DefaultAlloc _dft_alloc;
-	FallbackAlloc _fbk_alloc;
-	bool _had_to_fbk;
-
-	static_assert(
-		meta::is_same<
-			typename DefaultAlloc::value_type, T
-		>::value &&
-		meta::is_same<
-			typename DefaultAlloc::value_type,
-			typename FallbackAlloc::value_type
-		>::value,
-		"Both allocators must have the same value type"
-	);
-
-	// _has_allocate_noexcept helpers
-	template <
-		typename X, 
-		typename X::pointer
-		(X::*)(typename X::size_type, const void*)
-	> struct _has_alc_noe_hlp { };
-
-	template <typename X>
-	static meta::true_type _has_alc_noe(
-		_has_alc_noe_hlp<X, &X::allocate_noexcept>*
-	);
-
-	template <typename X>
-	static meta::false_type _has_alc_noe(...);
-
-	// _has_allocate_noexcept
-	template <typename X>
-	struct _has_allocate_noexcept
-	 : decltype(_has_alc_noe<X>(nullptr))
-	{ };
-
-	// _has_has_allocated helpers
-	template <
-		typename X, 
-		bool
-		(X::*)(typename X::const_pointer, typename X::size_type) const
-	> struct _has_has_alc_hlp { };
-
-	template <typename X>
-	static meta::true_type _has_has_alc(
-		_has_has_alc_hlp<X, &X::has_allocated>*
-	);
-
-	template <typename X>
-	static meta::false_type _has_has_alc(...);
-
-	// _has_has_allocated
-	template <typename X>
-	struct _has_has_allocated
-	 : decltype(_has_has_alc<X>(nullptr))
-	{ };
+	std::size_t _ref_count;
+	std::size_t _fbk_size;
+	std::size_t _fbk_max;
+	shared_byte_allocator _dft;
+	shared_byte_allocator _fbk;
 public:
-	typedef T value_type;
-	typedef T* pointer;
-	typedef const T* const_pointer;
-	typedef T& reference;
-	typedef const T& const_reference;
+	byte_allocator_with_fallback(
+		shared_byte_allocator&& dft,
+		shared_byte_allocator&& fbk
+	): _ref_count(1)
+	 , _fbk_size(0)
+	 , _fbk_max(0)
+	 , _dft(std::move(dft))
+	 , _fbk(std::move(fbk))
+	{ }
+
+	typedef byte value_type;
 	typedef std::size_t size_type;
-	typedef std::ptrdiff_t difference_type;
 
-	typedef DefaultAlloc default_allocator_type;
-	typedef FallbackAlloc fallback_allocator_type;
-
-	template <typename U>
-	struct rebind
+	byte_allocator* duplicate(void)
+	noexcept override
 	{
-		typedef allocator_with_fallback<
-			U,
-			typename DefaultAlloc::template rebind<U>::other,
-			typename FallbackAlloc::template rebind<U>::other
-		> other;
-	};
-
-	const DefaultAlloc& default_allocator(void) const
-	noexcept
-	{
-		return _dft_alloc;
+		++_ref_count;
+		return this;
 	}
 
-	const FallbackAlloc& fallback_allocator(void) const
-	noexcept
+	bool release(void)
+	noexcept override
 	{
-		return _fbk_alloc;
+		return (--_ref_count == 0);
 	}
 
-	bool had_to_fallback(void) const
-	noexcept
+	bool equal(byte_allocator* a) const
+	noexcept override
 	{
-		return _had_to_fbk;
+		byte_allocator_with_fallback* pa =
+			dynamic_cast<byte_allocator_with_fallback*>(a);
+
+		if(a != nullptr)
+		{
+			return (_dft == pa->_dft) && (_fbk == pa->_fbk);
+		}
+		return false;
 	}
 
-	allocator_with_fallback(const allocator_with_fallback&) = default;
-
-	allocator_with_fallback(void)
-	noexcept
-	 : _had_to_fbk(false)
-	{ }
-
-	allocator_with_fallback(const DefaultAlloc& dft_alloc)
-	noexcept
-	 : _dft_alloc(dft_alloc)
-	 , _had_to_fbk(false)
-	{ }
-
-	allocator_with_fallback(
-		const DefaultAlloc& dft_alloc,
-		const FallbackAlloc& fbk_alloc
-	) noexcept
-	 : _dft_alloc(dft_alloc)
-	 , _fbk_alloc(fbk_alloc)
-	 , _had_to_fbk(false)
-	{ }
-
-	template <typename U>
-	allocator_with_fallback(const typename rebind<U>::other& that)
-	noexcept
-	 : _dft_alloc(that.default_allocator())
-	 , _fbk_alloc(that.fallback_allocator())
-	 , _had_to_fbk(that._had_to_fbk)
-	{ }
-
-	size_type max_size(void) const
+	std::size_t required_fallback_size(void) const
 	noexcept
 	{
-		size_type mdft = _dft_alloc.max_size();
-		size_type mfbk = _fbk_alloc.max_size();
+		return _fbk_max;
+	}
+
+	size_type max_size(void)
+	noexcept override
+	{
+		size_type mdft = _dft.max_size();
+		size_type mfbk = _fbk.max_size();
 
 		return (mfbk>mdft)?mfbk:mdft;
 	}
 
-	template <typename ConstPointer>
-	typename meta::enable_if<
-		meta::is_same<ConstPointer, const_pointer>::value ||
-		_has_has_allocated<FallbackAlloc>::value,
-		bool
-	>::type
-	has_allocated(ConstPointer p, size_type n) const
+	bool has_allocated(const byte* p, std::size_t n)
 	noexcept
 	{
-		return	_dft_alloc.has_allocated(p, n) ||
-			_fbk_alloc.has_allocated(p, n);
+		return	_dft.has_allocated(p, n) ||
+			_fbk.has_allocated(p, n);
 	}
 
-	template <typename Void = void>
-	typename meta::enable_if<
-		meta::is_same<Void, void>::value &&
-		_has_allocate_noexcept<FallbackAlloc>::value,
-		pointer
-	>::type
-	allocate_noexcept(size_type n, const Void* h = nullptr)
-	noexcept
+	byte* allocate(size_type n, size_type a)
+	noexcept override
 	{
-		if(n <= _dft_alloc.max_size())
+		if(n <= _dft.max_size())
 		{
-			if(pointer p = _dft_alloc.allocate_noexcept(n, h))
+			if(byte* p = _dft.allocate(n, a))
 			{
 				return p;
 			}
 		}
-		_had_to_fbk = true;
-		return _fbk_alloc.allocate_noexcept(n, h);
-	}
 
-	pointer allocate(size_type n, const void* h = nullptr)
-	{
-		if(n <= _dft_alloc.max_size())
+		_fbk_size += n;
+		if(_fbk_max < _fbk_size)
 		{
-			if(pointer p = _dft_alloc.allocate_noexcept(n, h))
-			{
-				return p;
-			}
+			_fbk_max = _fbk_size;
 		}
-		_had_to_fbk = true;
-		return _fbk_alloc.allocate(n, h);
+		return _fbk.allocate(n, a);
 	}
 
-	void deallocate(pointer p, size_type n)
-	noexcept
+	void deallocate(byte* p, size_type n, size_type a)
+	noexcept override
 	{
-		if(_dft_alloc.has_allocated(p, n))
+		if(_dft.has_allocated(p, n))
 		{
-			_dft_alloc.deallocate(p, n);
+			_dft.deallocate(p, n, a);
 		}
 		else
 		{
-			_fbk_alloc.deallocate(p, n);
+			_fbk_size -= n;
+			_fbk.deallocate(p, n, a);
 		}
-	}
-
-	friend bool operator == (
-		const allocator_with_fallback& a,
-		const allocator_with_fallback& b
-	)
-	{
-		return	(a._dft_alloc == b._dft_alloc) &&
-			(a._fbk_alloc == b._fbk_alloc);
-	}
-
-	friend bool operator != (
-		const allocator_with_fallback& a,
-		const allocator_with_fallback& b
-	)
-	{
-		return	(a._dft_alloc != b._dft_alloc) &&
-			(a._fbk_alloc != b._fbk_alloc);
 	}
 };
 

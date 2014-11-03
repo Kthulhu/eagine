@@ -49,6 +49,10 @@ struct byte_allocator
 	noexcept = 0;
 
 	virtual
+	bool has_allocated(const byte* p, size_type n)
+	noexcept = 0;
+
+	virtual
 	byte* allocate(size_type n, size_type a)
 	noexcept = 0;
 
@@ -181,11 +185,29 @@ public:
 		return _pballoc?_pballoc->max_size():0;
 	}
 
-	byte_allocator& get(void)
+	bool has_allocated(const byte* p, std::size_t n)
 	noexcept
 	{
-		assert(_pballoc);
-		return *_pballoc;
+		return _pballoc?_pballoc->has_allocated(p, n):false;
+	}
+
+	byte* allocate(std::size_t n, std::size_t a)
+	noexcept
+	{
+		return _pballoc?_pballoc->allocate(n, a):nullptr;
+	}
+
+	void deallocate(byte* p, std::size_t n, std::size_t a)
+	noexcept
+	{
+		if(_pballoc)
+		{
+			_pballoc->deallocate(p, n, a);
+		}
+		else
+		{
+			assert(p == nullptr);
+		}
 	}
 
 	friend bool operator == (
@@ -212,6 +234,17 @@ public:
 	noexcept
 	{
 		return !(a == b);
+	}
+
+	template <typename ByteAlloc>
+	ByteAlloc& as(void)
+	{
+		ByteAlloc* pa = dynamic_cast<ByteAlloc*>(_pballoc);
+		if(pa == nullptr)
+		{
+			throw std::bad_cast();
+		}
+		return *pa;
 	}
 };
 
@@ -265,6 +298,13 @@ public:
 	noexcept override
 	{
 		return std::numeric_limits<size_type>::max();
+	}
+
+	bool has_allocated(const byte* p, size_type n)
+	noexcept override
+	{
+		// TODO this is actually unknown
+		return true;
 	}
 
 	byte* allocate(size_type n, size_type a)
@@ -355,6 +395,12 @@ public:
 	noexcept
 	 : _sba(default_byte_allocator())
 	{ }
+
+	template <typename ByteAlloc>
+	ByteAlloc& as(void)
+	{
+		return _sba.as<ByteAlloc>();
+	}
 };
 
 
@@ -396,6 +442,12 @@ public:
 	 : _sba(default_byte_allocator())
 	{ }
 
+	template <typename ByteAlloc>
+	ByteAlloc& as(void)
+	{
+		return _sba.as<ByteAlloc>();
+	}
+
 	T* address(T& r)
 	noexcept
 	{
@@ -416,7 +468,7 @@ public:
 
 	T* allocate(size_type n, const void* = nullptr)
 	{
-		byte* p = _sba.get().allocate(n*sizeof(T), alignof(T));
+		byte* p = _sba.allocate(n*sizeof(T), alignof(T));
 
 		assert((reinterpret_cast<std::uintptr_t>(p) % alignof(T)) == 0);
 
@@ -430,7 +482,7 @@ public:
 
 	void deallocate(T* p, size_type n)
 	{
-		_sba.get().deallocate(
+		_sba.deallocate(
 			reinterpret_cast<byte*>(p),
 			n*sizeof(T),
 			alignof(T)
