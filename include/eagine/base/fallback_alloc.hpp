@@ -36,6 +36,21 @@ public:
 	 , _fbk(std::move(fbk))
 	{ }
 
+	byte_allocator_with_fallback(byte_allocator_with_fallback&& tmp)
+	 : _ref_count(tmp._ref_count)
+	 , _fbk_size(tmp._fbk_size)
+	 , _fbk_max(tmp._fbk_max)
+	 , _dft(std::move(tmp._dft))
+	 , _fbk(std::move(tmp._fbk))
+	{
+		tmp._ref_count = 0;
+	}
+
+	~byte_allocator_with_fallback(void)
+	{
+		assert(_ref_count == 0);
+	}
+
 	typedef byte value_type;
 	typedef std::size_t size_type;
 
