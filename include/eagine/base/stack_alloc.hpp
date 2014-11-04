@@ -309,6 +309,18 @@ public:
 	{
 	}
 */
+
+	byte_allocator* accomodate_self(void)
+	noexcept
+	{
+		return accomodate_derived(*this);
+	}
+
+	void eject_self(void)
+	noexcept override
+	{
+		eject_derived(*this);
+	}
 };
 
 } // namespace base

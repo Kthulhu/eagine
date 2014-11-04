@@ -60,6 +60,30 @@ struct byte_allocator
 	virtual
 	void deallocate(byte* p, size_type n, size_type a)
 	noexcept = 0;
+
+	template <typename Derived>
+	static byte_allocator* accomodate_derived(Derived& that)
+	noexcept
+	{
+		void* p = that.allocate(sizeof(Derived), alignof(Derived));
+		return new(p) Derived(std::move(that));
+	}
+
+	template <typename Derived>
+	static void eject_derived(Derived& that)
+	noexcept
+	{
+		Derived tmp = std::move(that);
+		tmp.deallocate(
+			(byte*)(void*)&that,
+			sizeof(Derived),
+			alignof(Derived)
+		);
+	}
+
+	virtual
+	void eject_self(void)
+	noexcept = 0;
 };
 
 // byte_reallocator
@@ -79,39 +103,13 @@ private:
 
 	template <typename X>
 	static byte_allocator* _get_new(
-		const X& that,
-		typename meta::enable_if<
-			meta::is_convertible<X*, byte_allocator*>::value
-		>::type* = nullptr
-	) noexcept
-	{
-		try { return new X(that); }
-		catch(std::bad_alloc&) { }
-		return nullptr;
-	}
-
-	template <typename X>
-	static byte_allocator* _get_new(
-		X& that,
-		typename meta::enable_if<
-			meta::is_convertible<X*, byte_allocator*>::value
-		>::type* = nullptr
-	) noexcept
-	{
-		try { return new X(that); }
-		catch(std::bad_alloc&) { }
-		return nullptr;
-	}
-
-	template <typename X>
-	static byte_allocator* _get_new(
 		X&& that,
 		typename meta::enable_if<
 			meta::is_convertible<X*, byte_allocator*>::value
 		>::type* = nullptr
 	) noexcept
 	{
-		try { return new X(std::move(that)); }
+		try { return that.accomodate_self(); }
 		catch(std::bad_alloc&) { }
 		return nullptr;
 	}
@@ -123,7 +121,7 @@ private:
 		{
 			if(_pballoc->release())
 			{
-				delete _pballoc;
+				_pballoc->eject_self();
 			}
 		}
 	}
@@ -351,6 +349,18 @@ public:
 		assert((reinterpret_cast<std::uintptr_t>(p) % a) == 0);
 
 		return p;
+	}
+
+	byte_allocator* accomodate_self(void)
+	noexcept
+	{
+		return accomodate_derived(*this);
+	}
+
+	void eject_self(void)
+	noexcept override
+	{
+		eject_derived(*this);
 	}
 };
 
