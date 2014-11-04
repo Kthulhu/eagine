@@ -12,6 +12,7 @@
 #define EAGINE_BASE_ALLOC_1308281038_HPP
 
 #include <eagine/base/type.hpp>
+#include <eagine/base/tribool.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/nil_t.hpp>
 #include <memory>
@@ -49,7 +50,7 @@ struct byte_allocator
 	noexcept = 0;
 
 	virtual
-	bool has_allocated(const byte* p, size_type n)
+	tribool has_allocated(const byte* p, size_type n)
 	noexcept = 0;
 
 	virtual
@@ -185,10 +186,10 @@ public:
 		return _pballoc?_pballoc->max_size():0;
 	}
 
-	bool has_allocated(const byte* p, std::size_t n)
+	tribool has_allocated(const byte* p, std::size_t n)
 	noexcept
 	{
-		return _pballoc?_pballoc->has_allocated(p, n):false;
+		return _pballoc?_pballoc->has_allocated(p, n):tribool{false};
 	}
 
 	byte* allocate(std::size_t n, std::size_t a)
@@ -300,11 +301,10 @@ public:
 		return std::numeric_limits<size_type>::max();
 	}
 
-	bool has_allocated(const byte* p, size_type n)
+	tribool has_allocated(const byte* p, size_type n)
 	noexcept override
 	{
-		// TODO this is actually unknown
-		return true;
+		return indeterminate;
 	}
 
 	byte* allocate(size_type n, size_type a)

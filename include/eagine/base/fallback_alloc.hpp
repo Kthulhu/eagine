@@ -80,7 +80,7 @@ public:
 		return (mfbk>mdft)?mfbk:mdft;
 	}
 
-	bool has_allocated(const byte* p, std::size_t n)
+	tribool has_allocated(const byte* p, std::size_t n)
 	noexcept
 	{
 		return	_dft.has_allocated(p, n) ||
@@ -113,10 +113,14 @@ public:
 		{
 			_dft.deallocate(p, n, a);
 		}
-		else
+		else if(!!_fbk.has_allocated(p, n))
 		{
 			_fbk_size -= n;
 			_fbk.deallocate(p, n, a);
+		}
+		else
+		{
+			assert(!"Pointer not allocated by this allocator!");
 		}
 	}
 };

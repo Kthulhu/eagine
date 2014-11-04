@@ -97,7 +97,7 @@ public:
 		return _pos - _btm;
 	}
 
-	bool has_allocated(const_pointer p, size_type n) const
+	tribool has_allocated(const_pointer p, size_type n) const
 	noexcept
 	{
 		if((p >= _btm) && (p+n <= _top))
@@ -269,7 +269,7 @@ public:
 			_alloc.max_size()-alignof(void*):0;
 	}
 
-	bool has_allocated(const byte* p, size_type n)
+	tribool has_allocated(const byte* p, size_type n)
 	noexcept override
 	{
 		return _alloc.has_allocated(p, n);
@@ -296,7 +296,7 @@ public:
 	void deallocate(byte* p, size_type n, size_type a)
 	noexcept override
 	{
-		assert(_alloc.has_allocated(p, n));
+		assert(!!_alloc.has_allocated(p, n));
 
 		size_type m = size_type(p[-1]);
 
