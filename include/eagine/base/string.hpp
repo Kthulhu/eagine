@@ -187,11 +187,11 @@ private:
 	}
 
 	template <typename Char_>
-	std::size_t _copy_from(Char_* str, std::size_t len)
+	std::size_t _copy_from(Char_* cstr, std::size_t len)
 	noexcept
 	{
 		len = _min(N, len);
-		std::copy(str, str+len, _str.begin());
+		std::copy(cstr, cstr+len, _str.begin());
 		_str[len] = Char(0);
 		return len;
 	}
@@ -659,27 +659,27 @@ typedef const_string_ref cstrref;
 template <typename Char, std::size_t N>
 inline
 basic_lim_string<Char, N>::
-basic_lim_string(const basic_string_ref<Char>& str)
+basic_lim_string(const basic_string_ref<Char>& bsr)
 noexcept
- : _len(_copy_from(str.data(), str.size()))
+ : _len(_copy_from(bsr.data(), bsr.size()))
 { }
 
 template <typename Char, std::size_t N>
 inline
 basic_lim_string<Char, N>::
-basic_lim_string(const basic_string_ref<const Char>& str)
+basic_lim_string(const basic_string_ref<const Char>& bsr)
 noexcept
- : _len(_copy_from(str.data(), str.size()))
+ : _len(_copy_from(bsr.data(), bsr.size()))
 { }
 
 template <typename Char, std::size_t N>
 inline
 basic_lim_string<Char, N>&
 basic_lim_string<Char, N>::
-operator = (const basic_string_ref<Char>& str)
+operator = (const basic_string_ref<Char>& bsr)
 noexcept
 {
-	_len = _copy_from(str.data(), str.size());
+	_len = _copy_from(bsr.data(), bsr.size());
 	return *this;
 }
 
@@ -687,10 +687,10 @@ template <typename Char, std::size_t N>
 inline
 basic_lim_string<Char, N>&
 basic_lim_string<Char, N>::
-operator = (const basic_string_ref<const Char>& str)
+operator = (const basic_string_ref<const Char>& bsr)
 noexcept
 {
-	_len = _copy_from(str.data(), str.size());
+	_len = _copy_from(bsr.data(), bsr.size());
 	return *this;
 }
 

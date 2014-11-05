@@ -148,6 +148,7 @@ BOOST_AUTO_TEST_CASE(base_string_ref_construction_string)
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_literal)
 {
 	EAGine::base::const_string_ref sr ="a string"; 
+	(void)sr;
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_construction_const_vector)
@@ -182,6 +183,7 @@ BOOST_AUTO_TEST_CASE(base_string_ref_copy_construction)
 	EAGine::base::string_ref sr2 = sr1;
 	EAGine::base::const_string_ref csr1 = sr2;
 	EAGine::base::const_string_ref csr2 = csr1;
+	(void)csr2;
 }
 
 BOOST_AUTO_TEST_CASE(base_string_ref_empty)
@@ -244,23 +246,5 @@ BOOST_AUTO_TEST_CASE(base_string_ref_iterator_2)
 	BOOST_ASSERT(std::equal(sr1.begin(), sr1.end(), c_str));
 	BOOST_ASSERT(std::equal(c_str, c_str+8, sr1.begin()));
 }
-
-BOOST_AUTO_TEST_CASE(base_string_ref_slice)
-{
-	char c_str[8] = {'a', ' ', 's','t', 'r', 'i', 'n', 'g'};
-	EAGine::base::const_string_ref sr1 = c_str;
-	EAGine::base::const_string_ref sr2 = sr1.slice(2);
-	EAGine::base::const_string_ref sr3 = sr1.slice(2, 6);
-	EAGine::base::const_string_ref sr4 = sr1.slice(4);
-	EAGine::base::const_string_ref sr5 = sr3.slice(2, 4);
-
-	BOOST_ASSERT(sr1 != sr2);
-	BOOST_ASSERT(sr2 == sr3);
-	BOOST_ASSERT(sr4 == sr5);
-	BOOST_ASSERT(sr4 == "ring");
-	BOOST_ASSERT(sr5 == "ring");
-
-}
-
 
 BOOST_AUTO_TEST_SUITE_END()
