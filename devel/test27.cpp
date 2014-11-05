@@ -32,6 +32,7 @@ int main(int argc, const char* argv [])
 	memory_block blk1 = buf1;
 	std::memset(blk1.addr(), 0, blk1.size());
 
+	{
 	allocator<void> a((
 		byte_allocator_with_fallback(
 			stack_byte_allocator(blk1),
@@ -52,6 +53,20 @@ int main(int argc, const char* argv [])
 
 	std::cout << a.as<byte_allocator_with_fallback>().required_fallback_size() << std::endl;
 	std::cout << v.size() << std::endl;
+	}
+
+	{
+	allocator<void> a((stack_aligned_byte_allocator(blk1, alignof(float))));
+
+	std::vector<float, allocator<float>> v(a);
+	for(int i=0; i<128; ++i)
+	{
+		v.push_back(float(i));
+	}
+
+	std::cout << v.size() << std::endl;
+	}
+
 
 	return 0;
 }

@@ -65,13 +65,18 @@ public:
 	 , _dif(0)
 	{ }
 
-	base_stack_allocator(const memory_block& blk)
+	base_stack_allocator(const memory_block& blk, std::size_t align)
 	noexcept
-	 : _btm((T*)blk.aligned_begin(alignof(T)))
-	 , _top((T*)blk.aligned_end(alignof(T)))
+	 : _btm((T*)blk.aligned_begin(align))
+	 , _top((T*)blk.aligned_end(align))
 	 , _pos(_btm)
 	 , _min(_btm)
 	 , _dif(0)
+	{ }
+
+	base_stack_allocator(const memory_block& blk)
+	noexcept
+	 : base_stack_allocator(blk, alignof(T))
 	{ }
 
 	~base_stack_allocator(void)
@@ -231,10 +236,6 @@ public:
 		tmp._ref_count = 0;
 	}
 
-	stack_byte_allocator(void)
-	 : _ref_count(1)
-	{ }
-
 	stack_byte_allocator(const memory_block& blk)
 	 : _ref_count(1)
 	 , _alloc(blk)
@@ -262,11 +263,11 @@ public:
 		return (sba != nullptr) && (this->_alloc == sba->_alloc);
 	}
 
-	size_type max_size(void)
+	size_type max_size(size_type a)
 	noexcept override
 	{
-		return	_alloc.max_size()>alignof(void*)?
-			_alloc.max_size()-alignof(void*):0;
+		return	_alloc.max_size()>a?
+			_alloc.max_size()-a:0;
 	}
 
 	tribool has_allocated(const byte* p, size_type n)
@@ -303,13 +304,6 @@ public:
 		_alloc.deallocate(p-m, m+n);
 	}
 
-/* TODO
-	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
-	noexcept override
-	{
-	}
-*/
-
 	byte_allocator* accomodate_self(void)
 	noexcept
 	{
@@ -319,6 +313,121 @@ public:
 	void eject_self(void)
 	noexcept override
 	{
+		eject_derived(*this);
+	}
+};
+
+// stack_aligned_byte_allocator
+class stack_aligned_byte_allocator
+ : public byte_allocator
+{
+private:
+	std::size_t _ref_count;
+	std::size_t _align;
+
+	base_stack_allocator<byte> _alloc;
+	typedef stack_aligned_byte_allocator this_class;
+public:
+	typedef byte value_type;
+	typedef std::size_t size_type;
+
+	stack_aligned_byte_allocator(stack_aligned_byte_allocator&& tmp)
+	 : _ref_count(tmp._ref_count)
+	 , _align(tmp._align)
+	 , _alloc(std::move(tmp._alloc))
+	{
+		tmp._ref_count = 0;
+	}
+
+	stack_aligned_byte_allocator(const memory_block& blk, std::size_t align)
+	 : _ref_count(1)
+	 , _align(align)
+	 , _alloc(blk, _align)
+	{ }
+
+	byte_allocator* duplicate(void)
+	noexcept override
+	{
+		++_ref_count;
+		return this;
+	}
+
+	bool release(void)
+	noexcept override
+	{
+		return (--_ref_count == 0);
+	}
+
+	bool equal(byte_allocator* a) const
+	noexcept override
+	{
+		this_class* sba = dynamic_cast<this_class*>(a);
+
+		return (sba != nullptr) && (this->_alloc == sba->_alloc);
+	}
+
+	size_type max_size(size_type a)
+	noexcept override
+	{
+		return _alloc.max_size();
+	}
+
+	tribool has_allocated(const byte* p, size_type n)
+	noexcept override
+	{
+		return _alloc.has_allocated(p, n);
+	}
+
+	byte* allocate(size_type n, size_type a)
+	noexcept override
+	{
+		byte* p = _alloc.allocate(n);
+		assert((reinterpret_cast<std::uintptr_t>(p)) % a == 0);
+		return p;
+	}
+
+	void deallocate(byte* p, size_type n, size_type a)
+	noexcept override
+	{
+		assert((reinterpret_cast<std::uintptr_t>(p)) % a == 0);
+		_alloc.deallocate(p, n);
+	}
+
+	std::size_t _own_end_misalign(this_class* p) const
+	noexcept
+	{
+		std::uintptr_t e =
+			reinterpret_cast<std::uintptr_t>(p)+
+			sizeof(this_class);
+
+		return (_align - (e % _align)) % _align;
+	}
+
+	byte_allocator* accomodate_self(void)
+	noexcept
+	{
+		auto* ba = accomodate_derived(*this);
+
+		if(std::size_t m = _own_end_misalign(ba))
+		{
+			ba->_alloc.allocate(m);
+		}
+
+		return ba;
+	}
+
+	void eject_self(void)
+	noexcept override
+	{
+		if(std::size_t m = _own_end_misalign(this))
+		{
+			_alloc.deallocate(
+				((byte*)(void*)this)+
+				sizeof(this_class),
+				m
+			);
+		}
+
 		eject_derived(*this);
 	}
 };

@@ -46,7 +46,7 @@ struct byte_allocator
 	noexcept = 0;
 
 	virtual
-	size_type max_size(void)
+	size_type max_size(size_type a)
 	noexcept = 0;
 
 	virtual
@@ -62,7 +62,7 @@ struct byte_allocator
 	noexcept = 0;
 
 	template <typename Derived>
-	static byte_allocator* accomodate_derived(Derived& that)
+	static Derived* accomodate_derived(Derived& that)
 	noexcept
 	{
 		void* p = that.allocate(sizeof(Derived), alignof(Derived));
@@ -140,6 +140,9 @@ private:
 		return _pballoc?_pballoc->duplicate():nullptr;
 	}
 public:
+	typedef byte value_type;
+	typedef std::size_t size_type;
+
 	shared_byte_allocator(const shared_byte_allocator& that)
 	noexcept
 	 : _pballoc(that._copy())
@@ -178,25 +181,25 @@ public:
 		_cleanup();
 	}
 
-	std::size_t max_size(void) const
+	size_type max_size(size_type a) const
 	noexcept
 	{
-		return _pballoc?_pballoc->max_size():0;
+		return _pballoc?_pballoc->max_size(a):0;
 	}
 
-	tribool has_allocated(const byte* p, std::size_t n)
+	tribool has_allocated(const byte* p, size_type n)
 	noexcept
 	{
 		return _pballoc?_pballoc->has_allocated(p, n):tribool{false};
 	}
 
-	byte* allocate(std::size_t n, std::size_t a)
+	byte* allocate(size_type n, size_type a)
 	noexcept
 	{
 		return _pballoc?_pballoc->allocate(n, a):nullptr;
 	}
 
-	void deallocate(byte* p, std::size_t n, std::size_t a)
+	void deallocate(byte* p, size_type n, size_type a)
 	noexcept
 	{
 		if(_pballoc)
@@ -293,7 +296,7 @@ public:
 		return dynamic_cast<c_byte_reallocator*>(a) != nullptr;
 	}
 
-	size_type max_size(void)
+	size_type max_size(size_type a)
 	noexcept override
 	{
 		return std::numeric_limits<size_type>::max();
@@ -473,7 +476,7 @@ public:
 	size_type max_size(void) const
 	noexcept
 	{
-		return _sba.max_size();
+		return _sba.max_size(alignof(T));
 	}
 
 	T* allocate(size_type n, const void* = nullptr)

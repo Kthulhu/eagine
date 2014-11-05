@@ -86,11 +86,11 @@ public:
 		return _fbk_max;
 	}
 
-	size_type max_size(void)
+	size_type max_size(std::size_t a)
 	noexcept override
 	{
-		size_type mdft = _dft.max_size();
-		size_type mfbk = _fbk.max_size();
+		size_type mdft = _dft.max_size(a);
+		size_type mfbk = _fbk.max_size(a);
 
 		return (mfbk>mdft)?mfbk:mdft;
 	}
@@ -105,7 +105,7 @@ public:
 	byte* allocate(size_type n, size_type a)
 	noexcept override
 	{
-		if(n <= _dft.max_size())
+		if(n <= _dft.max_size(a))
 		{
 			if(byte* p = _dft.allocate(n, a))
 			{
