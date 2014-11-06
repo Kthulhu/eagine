@@ -34,9 +34,9 @@ int main(int argc, const char* argv [])
 
 	{
 	allocator<void> a((
-		byte_allocator_with_fallback(
-			stack_byte_allocator(blk1),
-			default_byte_allocator()
+		byte_allocator_with_fallback<>(
+			stack_byte_allocator<>(blk1),
+			default_byte_allocator<>()
 		)
 	));
 
@@ -51,12 +51,12 @@ int main(int argc, const char* argv [])
 
 	std::cout << hexdump(blk1) << std::endl;
 
-	std::cout << a.as<byte_allocator_with_fallback>().required_fallback_size() << std::endl;
+	std::cout << a.as<byte_allocator_with_fallback<>>().required_fallback_size() << std::endl;
 	std::cout << v.size() << std::endl;
 	}
 
 	{
-	allocator<void> a((stack_aligned_byte_allocator(blk1, alignof(float))));
+	allocator<void> a((stack_aligned_byte_allocator<>(blk1, alignof(float))));
 
 	std::vector<float, allocator<float>> v(a);
 	for(int i=0; i<128; ++i)

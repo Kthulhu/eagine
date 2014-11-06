@@ -218,41 +218,20 @@ public:
 };
 
 // stack_byte_allocator
+template <typename Policy = default_byte_allocator_policy>
 class stack_byte_allocator
- : public byte_allocator
+ : public byte_allocator_impl<Policy, stack_byte_allocator>
 {
 private:
-	std::size_t _ref_count;
-
 	base_stack_allocator<byte> _alloc;
 public:
 	typedef byte value_type;
 	typedef std::size_t size_type;
 
-	stack_byte_allocator(stack_byte_allocator&& tmp)
-	 : _ref_count(tmp._ref_count)
-	 , _alloc(std::move(tmp._alloc))
-	{
-		tmp._ref_count = 0;
-	}
-
+	stack_byte_allocator(stack_byte_allocator&&) = default;
 	stack_byte_allocator(const memory_block& blk)
-	 : _ref_count(1)
-	 , _alloc(blk)
+	 : _alloc(blk)
 	{ }
-
-	byte_allocator* duplicate(void)
-	noexcept override
-	{
-		++_ref_count;
-		return this;
-	}
-
-	bool release(void)
-	noexcept override
-	{
-		return (--_ref_count == 0);
-	}
 
 	bool equal(byte_allocator* a) const
 	noexcept override
@@ -303,26 +282,14 @@ public:
 
 		_alloc.deallocate(p-m, m+n);
 	}
-
-	byte_allocator* accomodate_self(void)
-	noexcept
-	{
-		return accomodate_derived(*this);
-	}
-
-	void eject_self(void)
-	noexcept override
-	{
-		eject_derived(*this);
-	}
 };
 
 // stack_aligned_byte_allocator
+template <typename Policy = default_byte_allocator_policy>
 class stack_aligned_byte_allocator
- : public byte_allocator
+ : public byte_allocator_impl<Policy, stack_aligned_byte_allocator>
 {
 private:
-	std::size_t _ref_count;
 	std::size_t _align;
 
 	base_stack_allocator<byte> _alloc;
@@ -331,32 +298,12 @@ public:
 	typedef byte value_type;
 	typedef std::size_t size_type;
 
-	stack_aligned_byte_allocator(stack_aligned_byte_allocator&& tmp)
-	 : _ref_count(tmp._ref_count)
-	 , _align(tmp._align)
-	 , _alloc(std::move(tmp._alloc))
-	{
-		tmp._ref_count = 0;
-	}
+	stack_aligned_byte_allocator(stack_aligned_byte_allocator&&) = default;
 
 	stack_aligned_byte_allocator(const memory_block& blk, std::size_t align)
-	 : _ref_count(1)
-	 , _align(align)
+	 : _align(align)
 	 , _alloc(blk, _align)
 	{ }
-
-	byte_allocator* duplicate(void)
-	noexcept override
-	{
-		++_ref_count;
-		return this;
-	}
-
-	bool release(void)
-	noexcept override
-	{
-		return (--_ref_count == 0);
-	}
 
 	bool equal(byte_allocator* a) const
 	noexcept override
@@ -406,7 +353,7 @@ public:
 	byte_allocator* accomodate_self(void)
 	noexcept
 	{
-		auto* ba = accomodate_derived(*this);
+		auto* ba = this->accomodate_derived(*this);
 
 		if(std::size_t m = _own_end_misalign(ba))
 		{
@@ -428,7 +375,7 @@ public:
 			);
 		}
 
-		eject_derived(*this);
+		this->eject_derived(*this);
 	}
 };
 

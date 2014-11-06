@@ -15,6 +15,7 @@
 #include <eagine/base/tribool.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/nil_t.hpp>
+#include <utility>
 #include <memory>
 #include <limits>
 #include <cassert>
@@ -61,7 +62,130 @@ struct byte_allocator
 	void deallocate(byte* p, size_type n, size_type a)
 	noexcept = 0;
 
-	template <typename Derived>
+	virtual
+	bool can_reallocate(byte* p, size_type o, size_type n, size_type a)
+	noexcept = 0;
+
+	virtual
+	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
+	noexcept = 0;
+
+	virtual
+	void eject_self(void)
+	noexcept = 0;
+};
+
+// byte_alloc_managed_policy
+struct byte_alloc_managed_policy
+{
+	inline
+	byte_allocator* duplicate(byte_allocator* that)
+	noexcept
+	{
+		return that;
+	}
+
+	inline
+	bool release(byte_allocator*)
+	noexcept
+	{
+		return false;
+	}
+};
+
+// byte_alloc_ref_count_policy
+class byte_alloc_ref_count_policy
+{
+private:
+	std::size_t _ref_count;
+public:
+	byte_alloc_ref_count_policy(const byte_alloc_ref_count_policy&) =delete;
+
+	byte_alloc_ref_count_policy&
+	operator = (const byte_alloc_ref_count_policy&) = delete;
+
+	byte_alloc_ref_count_policy&
+	operator = (byte_alloc_ref_count_policy&& tmp) = delete;
+
+	byte_alloc_ref_count_policy(void)
+	 : _ref_count(1)
+	{ }
+
+	byte_alloc_ref_count_policy(byte_alloc_ref_count_policy&& tmp)
+	 : _ref_count(tmp._ref_count)
+	{
+		tmp._ref_count = 0;
+	}
+
+	~byte_alloc_ref_count_policy(void)
+	{
+		assert(_ref_count == 0);
+	}
+
+	byte_allocator* duplicate(byte_allocator* that)
+	noexcept
+	{
+		++_ref_count;
+		return that;
+	}
+
+	bool release(byte_allocator*)
+	noexcept
+	{
+		return (--_ref_count == 0);
+	}
+};
+
+// default_byte_allocator_policy
+typedef byte_alloc_ref_count_policy default_byte_allocator_policy;
+
+// byte_allocator_impl
+template <typename Policy, template <class> class DerivedTpl>
+class byte_allocator_impl
+ : public byte_allocator
+{
+private:
+	Policy _policy;
+
+	typedef DerivedTpl<Policy> Derived;
+
+	Derived& derived(void)
+	{
+		return *static_cast<Derived*>(this);
+	}
+public:
+	typedef std::size_t size_type;
+
+	byte_allocator_impl(void) = default;
+	byte_allocator_impl(byte_allocator_impl&&) = default;
+	byte_allocator_impl(const byte_allocator_impl&) = delete;
+
+	byte_allocator* duplicate(void)
+	noexcept override
+	{
+		return _policy.duplicate(this);
+	}
+
+	bool release(void)
+	noexcept override
+	{
+		return _policy.release(this);
+	}
+
+	bool can_reallocate(byte*, size_type, size_type, size_type)
+	noexcept override
+	{
+		// TODO default impl
+		return false;
+	}
+
+	byte* reallocate(byte*, size_type, size_type, size_type)
+	noexcept override
+	{
+		// TODO default impl
+		return nullptr;
+	}
+
 	static Derived* accomodate_derived(Derived& that)
 	noexcept
 	{
@@ -69,7 +193,6 @@ struct byte_allocator
 		return new(p) Derived(std::move(that));
 	}
 
-	template <typename Derived>
 	static void eject_derived(Derived& that)
 	noexcept
 	{
@@ -81,18 +204,17 @@ struct byte_allocator
 		);
 	}
 
-	virtual
-	void eject_self(void)
-	noexcept = 0;
-};
+	Derived* accomodate_self(void)
+	noexcept
+	{
+		return accomodate_derived(derived());
+	}
 
-// byte_reallocator
-struct byte_reallocator
- : byte_allocator
-{
-	virtual
-	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
-	noexcept = 0;
+	void eject_self(void)
+	noexcept override
+	{
+		eject_derived(derived());
+	}
 };
 
 // shared_byte_allocator
@@ -251,44 +373,12 @@ public:
 };
 
 // c_byte_reallocator
+template <typename Policy = default_byte_allocator_policy>
 class c_byte_reallocator
- : public byte_reallocator
+ : public byte_allocator_impl<Policy, c_byte_reallocator>
 {
-private:
-	std::size_t _ref_count;
 public:
-	c_byte_reallocator(const c_byte_reallocator&) = delete;
-
-	c_byte_reallocator(c_byte_reallocator&& tmp)
-	noexcept
-	 : _ref_count(tmp._ref_count)
-	{
-		tmp._ref_count = 0;
-	}
-
-	c_byte_reallocator(void)
-	noexcept
-	 : _ref_count(1)
-	{ }
-
-	~c_byte_reallocator(void)
-	noexcept
-	{
-		assert(_ref_count == 0);
-	}
-
-	c_byte_reallocator* duplicate(void)
-	noexcept override
-	{
-		++_ref_count;
-		return this;
-	}
-
-	bool release(void)
-	noexcept override
-	{
-		return (--_ref_count == 0);
-	}
+	typedef std::size_t size_type;
 
 	bool equal(byte_allocator* a) const
 	noexcept override
@@ -335,6 +425,12 @@ public:
 		}
 	}
 
+	bool can_reallocate(byte*, size_type, size_type, size_type)
+	noexcept override
+	{
+		return true;
+	}
+
 	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
 	noexcept override
 	{
@@ -353,22 +449,11 @@ public:
 
 		return p;
 	}
-
-	byte_allocator* accomodate_self(void)
-	noexcept
-	{
-		return accomodate_derived(*this);
-	}
-
-	void eject_self(void)
-	noexcept override
-	{
-		eject_derived(*this);
-	}
 };
 
 // default byte_allocator
-typedef c_byte_reallocator default_byte_allocator;
+template <typename Policy = default_byte_allocator_policy>
+using default_byte_allocator = c_byte_reallocator<Policy>;
 
 // allocator - fwd
 template <typename T>
@@ -406,7 +491,7 @@ public:
 
 	allocator(void)
 	noexcept
-	 : _sba(default_byte_allocator())
+	 : _sba(default_byte_allocator<>()) // TODO customize
 	{ }
 
 	template <typename ByteAlloc>
@@ -452,7 +537,7 @@ public:
 
 	allocator(void)
 	noexcept
-	 : _sba(default_byte_allocator())
+	 : _sba(default_byte_allocator<>())
 	{ }
 
 	template <typename ByteAlloc>
