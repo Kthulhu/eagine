@@ -33,12 +33,12 @@ int main(int argc, const char* argv [])
 	std::memset(blk1.addr(), 0, blk1.size());
 
 	{
-	allocator<void> a((
-		byte_allocator_with_fallback<>(
-			stack_byte_allocator<>(blk1),
-			default_byte_allocator<>()
-		)
-	));
+	concrete_byte_allocator<byte_allocator_with_fallback> cba(
+		stack_byte_allocator<>(blk1),
+		default_byte_allocator()
+	);
+
+	allocator<void> a((cba.reference()));
 
 	typedef std::basic_string<char, std::char_traits<char>, allocator<char>> s_t;
 
@@ -51,7 +51,7 @@ int main(int argc, const char* argv [])
 
 	std::cout << hexdump(blk1) << std::endl;
 
-	std::cout << a.as<byte_allocator_with_fallback<>>().required_fallback_size() << std::endl;
+	std::cout << cba.get().required_fallback_size() << std::endl;
 	std::cout << v.size() << std::endl;
 	}
 

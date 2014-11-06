@@ -218,6 +218,57 @@ public:
 };
 
 // shared_byte_allocator
+class shared_byte_allocator;
+
+// byte_allocator_reference
+class byte_allocator_reference
+{
+private:
+	byte_allocator* _pballoc;
+
+	friend class shared_byte_allocator;
+public:
+	byte_allocator_reference(byte_allocator& alloc)
+	noexcept
+	 : _pballoc(&alloc)
+	{ }
+};
+
+// concrete_byte_allocator
+template <template <class, class...> class ByteAllocTpl, typename ... Arg>
+class concrete_byte_allocator
+{
+private:
+	typedef ByteAllocTpl<byte_alloc_managed_policy, Arg...> ByteAlloc;
+
+	ByteAlloc _alloc;
+public:
+	template <typename ... P>
+	concrete_byte_allocator(P&& ... p)
+	noexcept
+	 : _alloc(std::forward<P>(p)...)
+	{ }
+
+	ByteAlloc& get(void)
+	noexcept
+	{
+		return _alloc;
+	}
+
+	byte_allocator_reference reference(void)
+	noexcept
+	{
+		return byte_allocator_reference(_alloc);
+	}
+
+	operator byte_allocator_reference (void)
+	noexcept
+	{
+		return reference();
+	}
+};
+
+// shared_byte_allocator
 class shared_byte_allocator
 {
 private:
@@ -275,7 +326,17 @@ public:
 	 : _pballoc(tmp._release())
 	{ }
 
-	template <typename X>
+	shared_byte_allocator(byte_allocator_reference mballoc)
+	noexcept
+	 : _pballoc(mballoc._pballoc)
+	{ }
+
+	template <
+		typename X,
+		typename = typename meta::enable_if<
+			meta::is_base_of<byte_allocator, X>::value
+		>::type
+	>
 	shared_byte_allocator(X&& x)
 	noexcept
 	 : _pballoc(_get_new(std::forward<X>(x)))
@@ -452,8 +513,12 @@ public:
 };
 
 // default byte_allocator
-template <typename Policy = default_byte_allocator_policy>
-using default_byte_allocator = c_byte_reallocator<Policy>;
+inline
+byte_allocator_reference default_byte_allocator(void)
+{
+	static c_byte_reallocator<byte_alloc_managed_policy> balloc;
+	return byte_allocator_reference(balloc);
+}
 
 // allocator - fwd
 template <typename T>
@@ -491,7 +556,7 @@ public:
 
 	allocator(void)
 	noexcept
-	 : _sba(default_byte_allocator<>()) // TODO customize
+	 : _sba(default_byte_allocator())
 	{ }
 
 	template <typename ByteAlloc>
@@ -537,7 +602,7 @@ public:
 
 	allocator(void)
 	noexcept
-	 : _sba(default_byte_allocator<>())
+	 : _sba(default_byte_allocator())
 	{ }
 
 	template <typename ByteAlloc>
