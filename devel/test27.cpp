@@ -6,6 +6,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 //------------------
+#include <eagine/base/logging_alloc.hpp>
 #include <eagine/base/fallback_alloc.hpp>
 #include <eagine/base/stack_alloc.hpp>
 #include <eagine/base/alloc.hpp>
@@ -49,14 +50,18 @@ int main(int argc, const char* argv [])
 		v.push_back(s_t(argv[i%argc], a));
 	}
 
-	std::cout << hexdump(blk1) << std::endl;
+	//std::cout << hexdump(blk1) << std::endl;
 
 	std::cout << cba.get().required_fallback_size() << std::endl;
 	std::cout << v.size() << std::endl;
 	}
 
 	{
-	allocator<void> a((stack_aligned_byte_allocator<>(blk1, alignof(float))));
+	allocator<void> a((
+		logging_byte_allocator<>(
+			stack_aligned_byte_allocator<>(blk1, alignof(float))
+		)
+	));
 
 	std::vector<float, allocator<float>> v(a);
 	for(int i=0; i<128; ++i)

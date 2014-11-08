@@ -395,6 +395,18 @@ public:
 		}
 	}
 
+	bool can_reallocate(byte* p, size_type o, size_type n, size_type a)
+	noexcept
+	{
+		return _pballoc?_pballoc->can_reallocate(p, o, n, a):false;
+	}
+
+	byte* reallocate(byte* p, size_type o, size_type n, size_type a)
+	noexcept
+	{
+		return _pballoc?_pballoc->reallocate(p, o, n, a):nullptr;
+	}
+
 	friend bool operator == (
 		const shared_byte_allocator& a,
 		const shared_byte_allocator& b
