@@ -94,6 +94,13 @@ public:
 		return ((pos != _ekeys) && (*pos == key));
 	}
 
+	std::ptrdiff_t pos_of(const Key& key) const
+	{
+		auto pos = _klb(key);
+		if(pos == _ekeys) return -1;
+		else return pos - _bkeys;
+	}
+
 	Val get(const Key& key, Val not_found) const
 	{
 		auto pos = _klb(key);
