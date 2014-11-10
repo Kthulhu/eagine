@@ -30,18 +30,19 @@ template <typename Entity>
 class immutable_storage_iterator
  : public storage_iterator<Entity>
 {
-private:
+protected:
 	immutable_base_storage<Entity>& _storage;
+private:
 	std::size_t _idx;
 public:
 	immutable_storage_iterator(immutable_base_storage<Entity>&);
 
 	std::size_t get(void) const;
 	void set(std::size_t idx);
-	void reset(void);
-	bool done(void);
-	void next(void);
-	const Entity& current(void);
+	void reset(void) override;
+	bool done(void) override;
+	void next(void) override;
+	const Entity& current(void) override;
 };
 
 // immutable_base_storage
@@ -86,16 +87,16 @@ public:
 
 	immutable_base_storage(const base::const_memory_block&);
 
-	iter_t* new_iterator(void);
-	void delete_iterator(iter_t* iter);
+	iter_t* new_iterator(void) override;
+	void delete_iterator(iter_t* iter) override;
 
-	bool has(const Entity& ent);
-	bool find(const Entity& ent, iter_t& pos);
+	bool has(const Entity& ent) override;
+	bool find(const Entity& ent, iter_t& pos) override;
 
-	bool hidden(const Entity& ent, iter_t* pos);
-	bool hide(const Entity& ent, iter_t* pos);
-	bool show(const Entity& ent, iter_t* pos);
-	void swap(const Entity& to, const Entity& from);
+	bool hidden(const Entity& ent, iter_t* pos) override;
+	bool hide(const Entity& ent, iter_t* pos) override;
+	bool show(const Entity& ent, iter_t* pos) override;
+	void swap(const Entity& to, const Entity& from) override;
 };
 
 // immutable_component_storage
@@ -113,42 +114,38 @@ private:
 		const Entity& e,
 		storage_iterator<Entity>*
 	);
-	void _set_iter(
-		std::size_t,
-		storage_iterator<Entity>*
-	);
 public:
 	typedef storage_iterator<Entity> iter_t;
 
 	immutable_component_storage(const base::const_memory_block&);
 
-	storage_capabilities capabilities(void) const;
+	storage_capabilities capabilities(void) const override;
 
-	void reserve(std::size_t count);
+	void reserve(std::size_t count) override;
 
 	void store(
 		Component&& src,
 		const Entity& ent,
 		iter_t* pos,
 		iter_t* res
-	);
+	) override;
 
 	bool copy(
 		const Entity& to,
 		const Entity& from,
 		iter_t* pos,
 		iter_t* res
-	);
+	) override;
 
-	bool remove(const Entity& from, iter_t* pos);
+	bool remove(const Entity& from, iter_t* pos) override;
 
-	const Component* read(const Entity& ent, iter_t* pos);
+	const Component* read(const Entity& ent, iter_t* pos) override;
 
-	Component* write(const Entity& ent, iter_t* pos);
+	Component* write(const Entity& ent, iter_t* pos) override;
 
 	bool _fetch(Component&, const Entity&, iter_t*, meta::true_type);
 	bool _fetch(Component&, const Entity&, iter_t*, meta::false_type);
-	bool fetch(Component& dst, const Entity& ent, iter_t* pos);
+	bool fetch(Component& dst, const Entity& ent, iter_t* pos) override;
 
 	bool for_single(
 		const base::functor_ref<
@@ -156,7 +153,7 @@ public:
 		>& func,
 		const Entity& ent,
 		iter_t* pos
-	);
+	) override;
 
 	bool for_single(
 		const base::functor_ref<
@@ -164,19 +161,19 @@ public:
 		>& func,
 		const Entity& ent,
 		iter_t* pos
-	);
+	) override;
 
 	void for_each(
 		const base::functor_ref<
 			void(const Entity&, const Component&)
 		>& func
-	);
+	) override;
 
 	void for_each(
 		const base::functor_ref<
 			void(const Entity&, Component&)
 		>& func
-	);
+	) override;
 };
 
 } // namespace ecs

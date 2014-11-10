@@ -278,23 +278,6 @@ _stor_pos(const Entity& ent, iter_t* pos)
 	return res;
 }
 //------------------------------------------------------------------------------
-// immutable_component_storage::_set_iter
-//------------------------------------------------------------------------------
-template <typename Entity, typename Component>
-inline
-void
-immutable_component_storage<Entity, Component>::
-_set_iter(std::size_t spos, iter_t* pos)
-{
-	if(pos)
-	{
-		assert(dynamic_cast<_ns_iter_t*>(pos));
-		_ns_iter_t* iter = static_cast<_ns_iter_t*>(pos);
-
-		iter->set(spos);
-	}
-}
-//------------------------------------------------------------------------------
 // immutable_component_storage::immutable_component_storage
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
