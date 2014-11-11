@@ -186,21 +186,23 @@ public:
 		return nullptr;
 	}
 
-	static Derived* accomodate_derived(Derived& that)
+	template <typename Final>
+	static Final* accomodate_derived(Final& that)
 	noexcept
 	{
-		void* p = that.allocate(sizeof(Derived), alignof(Derived));
-		return new(p) Derived(std::move(that));
+		void* p = that.allocate(sizeof(Final), alignof(Final));
+		return new(p) Final(std::move(that));
 	}
 
-	static void eject_derived(Derived& that)
+	template <typename Final>
+	static void eject_derived(Final& that)
 	noexcept
 	{
-		Derived tmp = std::move(that);
+		Final tmp = std::move(that);
 		tmp.deallocate(
 			(byte*)(void*)&that,
-			sizeof(Derived),
-			alignof(Derived)
+			sizeof(Final),
+			alignof(Final)
 		);
 	}
 
