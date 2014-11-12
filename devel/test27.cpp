@@ -6,6 +6,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 //------------------
+#include <eagine/base/align_alloc.hpp>
 #include <eagine/base/expand_alloc.hpp>
 #include <eagine/base/buffer_alloc.hpp>
 #include <eagine/base/logging_alloc.hpp>
@@ -29,6 +30,7 @@ namespace base {
 int main(int argc, const char* argv [])
 {
 	using namespace EAGine::base;
+	using namespace EAGine::meta;
 	using namespace EAGine::dbg;
 
 	memory_buffer buf1(8*1024);
@@ -61,9 +63,11 @@ int main(int argc, const char* argv [])
 	{
 	allocator<void> a((
 		logging_byte_allocator<>(
-			expanding_byte_allocator<>([](void){
-				return buffer_backed_byte_allocator<stack_aligned_byte_allocator>(6*1024, alignof(float));
-			})
+			multi_align_byte_allocator<integer_sequence<std::size_t, alignof(float)>>(
+				expanding_byte_allocator<>([](void){
+					return buffer_backed_byte_allocator<stack_aligned_byte_allocator>(6*1024, alignof(float));
+				})
+			)
 		)
 	));
 

@@ -13,6 +13,7 @@
 
 #include <eagine/meta/instead_of.hpp>
 #include <utility>
+#include <cassert>
 
 namespace EAGine {
 namespace base {
@@ -52,6 +53,12 @@ struct type_to_value
 		typename meta::instead_of<Keys, Value>::type ... values
 	): type_to_value_unit<Value, Keys>(values)...
 	{ }
+
+	static constexpr inline
+	std::size_t size(void)
+	{
+		return sizeof ... (Keys);
+	}
 
 	type_to_value_unit_base<Value>& unit(std::size_t pos)
 	{

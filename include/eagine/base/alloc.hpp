@@ -140,14 +140,18 @@ public:
 typedef byte_alloc_ref_count_policy default_byte_allocator_policy;
 
 // byte_allocator_impl
-template <typename Policy, template <class> class DerivedTpl>
+template <
+	typename Policy,
+	template <class...> class DerivedTpl,
+	typename ... Args
+>
 class byte_allocator_impl
  : public byte_allocator
 {
 private:
 	Policy _policy;
 
-	typedef DerivedTpl<Policy> Derived;
+	typedef DerivedTpl<Args..., Policy> Derived;
 
 	Derived& derived(void)
 	{

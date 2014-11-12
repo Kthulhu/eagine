@@ -88,7 +88,7 @@ public:
 	}
 
 	tribool has_allocated(const byte* p, std::size_t n)
-	noexcept
+	noexcept override
 	{
 		return	_has_allocated(_head_alloc, p, n) ||
 			_has_allocated(_tail_alloc, p, n);
