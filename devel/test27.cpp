@@ -6,6 +6,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 //------------------
+#include <eagine/base/expand_alloc.hpp>
 #include <eagine/base/buffer_alloc.hpp>
 #include <eagine/base/logging_alloc.hpp>
 #include <eagine/base/fallback_alloc.hpp>
@@ -21,54 +22,6 @@
 
 namespace EAGine {
 namespace base {
-
-template <typename Policy = default_byte_allocator_policy>
-class expanding_byte_allocator
- : public byte_allocator_impl<Policy, byte_allocator_with_fallback>
-{
-private:
-public:
-
-	typedef byte value_type;
-	typedef std::size_t size_type;
-
-/*
-	bool equal(byte_allocator* a) const
-	noexcept override
-	{
-		byte_allocator_with_fallback* pa =
-			dynamic_cast<byte_allocator_with_fallback*>(a);
-
-		if(a != nullptr)
-		{
-			return (_dft == pa->_dft) && (_fbk == pa->_fbk);
-		}
-		return false;
-	}
-
-	std::size_t required_fallback_size(void) const
-	noexcept
-	{
-		return _fbk_max;
-	}
-
-	size_type max_size(std::size_t a)
-	noexcept override
-	{
-		size_type mdft = _dft.max_size(a);
-		size_type mfbk = _fbk.max_size(a);
-
-		return (mfbk>mdft)?mfbk:mdft;
-	}
-
-	tribool has_allocated(const byte* p, std::size_t n)
-	noexcept
-	{
-		return	_dft.has_allocated(p, n) ||
-			_fbk.has_allocated(p, n);
-	}
-*/
-};
 
 } // namespace base
 } // namespace EAGine
@@ -108,12 +61,14 @@ int main(int argc, const char* argv [])
 	{
 	allocator<void> a((
 		logging_byte_allocator<>(
-			buffer_backed_byte_allocator<stack_aligned_byte_allocator>(2048, alignof(float))
+			expanding_byte_allocator<>([](void){
+				return buffer_backed_byte_allocator<stack_aligned_byte_allocator>(6*1024, alignof(float));
+			})
 		)
 	));
 
 	std::vector<float, allocator<float>> v(a);
-	for(int i=0; i<128; ++i)
+	for(int i=0; i<1024; ++i)
 	{
 		v.push_back(float(i));
 	}

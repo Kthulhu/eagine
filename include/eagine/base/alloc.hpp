@@ -318,6 +318,11 @@ public:
 	typedef byte value_type;
 	typedef std::size_t size_type;
 
+	shared_byte_allocator(void)
+	noexcept
+	 : _pballoc(nullptr)
+	{ }
+
 	shared_byte_allocator(const shared_byte_allocator& that)
 	noexcept
 	 : _pballoc(that._copy())
@@ -364,6 +369,19 @@ public:
 	noexcept
 	{
 		_cleanup();
+	}
+
+	explicit
+	operator bool (void) const
+	noexcept
+	{
+		return _pballoc != nullptr;
+	}
+
+	bool operator ! (void) const
+	noexcept
+	{
+		return _pballoc == nullptr;
 	}
 
 	size_type max_size(size_type a) const

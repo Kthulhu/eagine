@@ -23,9 +23,13 @@ class allocator_backing_buffer
 protected:
 	memory_buffer _buffer;
 
+
 	allocator_backing_buffer(std::size_t size)
 	 : _buffer(size)
 	{ }
+public:
+	allocator_backing_buffer(const allocator_backing_buffer&) = delete;
+	allocator_backing_buffer(allocator_backing_buffer&&) = default;
 };
 
 // buffer_backed_byte_allocator

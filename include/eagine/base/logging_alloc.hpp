@@ -32,7 +32,10 @@ private:
 		return *this;
 	}
 
-	typedef byte_allocator_impl<Policy, logging_byte_allocator> Impl;
+	typedef byte_allocator_impl<
+		Policy,
+		EAGine::base::logging_byte_allocator
+	> Impl;
 
 	std::ostream& _log(const char* action) const
 	{
@@ -70,6 +73,7 @@ public:
 	}
 
 	~logging_byte_allocator(void)
+	noexcept
 	{
 		_log("destruction")
 			<< std::endl;
