@@ -23,10 +23,9 @@ class expanding_byte_allocator
  : public byte_allocator_impl<Policy, expanding_byte_allocator>
 {
 private:
-	function<shared_byte_allocator(void)> _constructor;
 	shared_byte_allocator _head_alloc;
 	shared_byte_allocator _tail_alloc;
-	tribool _fresh_tail;
+	function<shared_byte_allocator(void)> _constructor;
 
 	tribool _has_allocated(
 		shared_byte_allocator& alloc,

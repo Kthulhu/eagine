@@ -24,6 +24,159 @@
 namespace EAGine {
 namespace base {
 
+template <typename Policy = default_byte_allocator_policy>
+class chunk_byte_allocator
+{
+private:
+	byte* _bgn;
+	byte* _end;
+
+	struct _elem
+	{
+		_elem* _next;
+		std::size_t _size;
+
+		static _elem* _cast(byte* ptr, std::size_t size)
+		{
+			assert(sizeof(_elem) <= size);
+			assert((((std::uintptr_t)ptr) % alignof(_elem*)) == 0);
+			return (_elem*)(void*)ptr;
+		}
+
+		_elem(void)
+		 : _next(nullptr)
+		 , _size(0)
+		{ }
+
+		_elem(byte* ptr, std::size_t size)
+		 : _next(_cast(ptr, size))
+		 , _size(size)
+		{ }
+	};
+
+	_elem _head;
+
+	std::size_t _max;
+	const std::size_t _chunk_size;
+
+	static std::size_t _adj_align(std::size_t align)
+	{
+		if(align < alignof(_link))
+		{
+			align = alignof(_link);
+		}
+
+		return align;
+	}
+
+	static std::size_t _adj_chunk_size(std::size_t chunk, std::size_t align)
+	{
+		if(chunk < sizeof(std::ptrdiff_t)+sizeof(std::size_t))
+		{
+			chunk = sizeof(std::ptrdiff_t)+sizeof(std::size_t);
+		}
+
+		if((chunk % align) != 0)
+		{
+			chunk += (align - chunk % align);
+			assert((chunk % align) == 0);
+		}
+
+		return chunk;
+	}
+public:
+	chunk_byte_allocator(
+		const memory_block& blk,
+		std::size_t chunk,
+		std::size_t align
+	): _bgn((T*)blk.aligned_begin(_adj_align(align)))
+	 , _end((T*)blk.aligned_end(_adj_align(align)))
+	 , _head(bgn, _end-_bgn)
+	 , _max(_head._size)
+	 , _chunk_size(_adj_chunk_size(chunk, _adj_align(align)))
+	{
+		*_head._next = _elem();
+	}
+
+	bool equal(byte_allocator* a) const
+	noexcept override
+	{
+		chunk_byte_allocator* pa =
+			dynamic_cast<chung_byte_allocator*>(a);
+
+		if(a != nullptr)
+		{
+			if(_bgn == pa->_bgn)
+			{
+				assert(_end == pa->_end);
+				assert(_chunk_size == pa->_chunk_size);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	_size_type max_chunk(void)
+	noexcept
+	{
+		// TODO make this O(1)
+		std::size_t max = 0;
+		_elem* elem = &_head;
+
+		while(elem)
+		{
+			if(max < elem->_size)
+			{
+				max = elem->_size;
+			}
+			elem = elem->_next;
+		}
+	
+		return max;
+	}
+
+	size_type max_size(std::size_t)
+	noexcept override
+	{
+		assert(_max == _max_chunk());
+		return _max;
+	}
+
+	tribool has_allocated(const byte* p, std::size_t n)
+	noexcept override
+	{
+		if((_bgn <= p) && (p <= e))
+		{
+			assert(p+n <= e);
+			return true;
+		}
+		return false;
+	}
+
+	byte* allocate(size_type n, size_type a)
+	noexcept override
+	{
+		// TODO
+		if(n < max_size())
+		{
+			_elem* elem = &_head;
+			while(elem)
+			{
+				if(n < elem->size)
+				{
+					
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	void deallocate(byte* p, size_type n, size_type a)
+	noexcept override
+	{
+	}
+};
+
 } // namespace base
 } // namespace EAGine
 
