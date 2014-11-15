@@ -55,6 +55,8 @@ private:
 		return _head_alloc;
 	}
 public:
+	expanding_byte_allocator(expanding_byte_allocator&&) = default;
+
 	expanding_byte_allocator(
 		const function<shared_byte_allocator(void)>& constructor
 	): _constructor(constructor)

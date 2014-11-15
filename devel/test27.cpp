@@ -26,6 +26,7 @@ namespace base {
 
 template <typename Policy = default_byte_allocator_policy>
 class chunk_byte_allocator
+ : public byte_allocator_impl<Policy, chunk_byte_allocator>
 {
 private:
 	byte* _bgn;
@@ -33,22 +34,29 @@ private:
 
 	struct _elem
 	{
-		_elem* _next;
+		union {
+			_elem* _next;
+			byte* _addr;
+		};
 		std::size_t _size;
 
 		static _elem* _cast(byte* ptr, std::size_t size)
+		noexcept
 		{
 			assert(sizeof(_elem) <= size);
 			assert((((std::uintptr_t)ptr) % alignof(_elem*)) == 0);
 			return (_elem*)(void*)ptr;
 		}
 
+		constexpr
 		_elem(void)
+		noexcept
 		 : _next(nullptr)
 		 , _size(0)
 		{ }
 
 		_elem(byte* ptr, std::size_t size)
+		noexcept
 		 : _next(_cast(ptr, size))
 		 , _size(size)
 		{ }
@@ -60,16 +68,18 @@ private:
 	const std::size_t _chunk_size;
 
 	static std::size_t _adj_align(std::size_t align)
+	noexcept
 	{
-		if(align < alignof(_link))
+		if(align < alignof(_elem))
 		{
-			align = alignof(_link);
+			align = alignof(_elem);
 		}
 
 		return align;
 	}
 
 	static std::size_t _adj_chunk_size(std::size_t chunk, std::size_t align)
+	noexcept
 	{
 		if(chunk < sizeof(std::ptrdiff_t)+sizeof(std::size_t))
 		{
@@ -85,24 +95,30 @@ private:
 		return chunk;
 	}
 public:
+	chunk_byte_allocator(chunk_byte_allocator&& tmp) = default;
+
 	chunk_byte_allocator(
 		const memory_block& blk,
-		std::size_t chunk,
-		std::size_t align
-	): _bgn((T*)blk.aligned_begin(_adj_align(align)))
-	 , _end((T*)blk.aligned_end(_adj_align(align)))
-	 , _head(bgn, _end-_bgn)
+		std::size_t chunk = 1,
+		std::size_t align = 1
+	) noexcept
+	 : _bgn((byte*)blk.aligned_begin(_adj_align(align)))
+	 , _end((byte*)blk.aligned_end(_adj_align(align)))
+	 , _head(_bgn, _end-_bgn)
 	 , _max(_head._size)
 	 , _chunk_size(_adj_chunk_size(chunk, _adj_align(align)))
 	{
 		*_head._next = _elem();
 	}
 
+	typedef byte value_type;
+	typedef std::size_t size_type;
+
 	bool equal(byte_allocator* a) const
 	noexcept override
 	{
 		chunk_byte_allocator* pa =
-			dynamic_cast<chung_byte_allocator*>(a);
+			dynamic_cast<chunk_byte_allocator*>(a);
 
 		if(a != nullptr)
 		{
@@ -116,14 +132,13 @@ public:
 		return false;
 	}
 
-	_size_type max_chunk(void)
+	size_type _max_chunk(void)
 	noexcept
 	{
-		// TODO make this O(1)
 		std::size_t max = 0;
 		_elem* elem = &_head;
 
-		while(elem)
+		while(elem != nullptr)
 		{
 			if(max < elem->_size)
 			{
@@ -138,16 +153,17 @@ public:
 	size_type max_size(std::size_t)
 	noexcept override
 	{
-		assert(_max == _max_chunk());
-		return _max;
+		//assert(_max == _max_chunk());
+		//return _max;
+		return _max_chunk();
 	}
 
 	tribool has_allocated(const byte* p, std::size_t n)
 	noexcept override
 	{
-		if((_bgn <= p) && (p <= e))
+		if((_bgn <= p) && (p <= _end))
 		{
-			assert(p+n <= e);
+			assert(p+n <= _end);
 			return true;
 		}
 		return false;
@@ -156,16 +172,37 @@ public:
 	byte* allocate(size_type n, size_type a)
 	noexcept override
 	{
-		// TODO
-		if(n < max_size())
+		if(n < max_size(a))
 		{
 			_elem* elem = &_head;
 			while(elem)
 			{
-				if(n < elem->size)
+				if(n <= elem->_size)
 				{
-					
+					byte* r = elem->_addr;
+					std::size_t rem_size = elem->_size - n;
+					if(_chunk_size < rem_size)
+					{
+						std::size_t o =
+							(n/_chunk_size)+
+							(n%_chunk_size?1:0);
+						o *= _chunk_size;
+
+						assert(o >= sizeof(_elem));
+
+						_elem* new_elem = (_elem*)(r+o);
+
+						*new_elem = *elem->_next;
+						_head._next = new_elem;
+						_head._size = rem_size;
+					}
+					else
+					{
+						_head = *elem->_next;
+					}
+					return r;
 				}
+				elem = elem->_next;
 			}
 		}
 		return nullptr;
@@ -174,6 +211,26 @@ public:
 	void deallocate(byte* p, size_type n, size_type a)
 	noexcept override
 	{
+		assert(has_allocated(p, n));
+
+		std::size_t size =
+			(n/_chunk_size)+
+			(n%_chunk_size?1:0);
+		size *= _chunk_size;
+
+		_elem* elem = (_elem*)(void*)p;
+		*elem = _head;
+		_head._next = elem;
+		_head._size = size;
+
+/*
+		// TODO join adjacent
+		_elem* tmp = elem->_next;
+		while(tmp != nullptr)
+		{
+			if(
+		}
+*/
 	}
 };
 
@@ -218,7 +275,8 @@ int main(int argc, const char* argv [])
 		logging_byte_allocator<>(
 			multi_align_byte_allocator<integer_sequence<std::size_t, alignof(float)>>(
 				expanding_byte_allocator<>([](void){
-					return buffer_backed_byte_allocator<stack_aligned_byte_allocator>(6*1024, alignof(float));
+					//return buffer_backed_byte_allocator<stack_aligned_byte_allocator>(6*1024, alignof(float));
+					return buffer_backed_byte_allocator<chunk_byte_allocator>(6*1024);
 				})
 			)
 		)

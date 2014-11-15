@@ -42,6 +42,8 @@ class buffer_backed_byte_allocator
  , public ByteAllocTpl<Policy>
 {
 public:
+	buffer_backed_byte_allocator(buffer_backed_byte_allocator&&) = default;
+
 	template <typename ... P>
 	buffer_backed_byte_allocator(std::size_t buf_size, P&& ... p)
 	 : allocator_backing_buffer(buf_size)
