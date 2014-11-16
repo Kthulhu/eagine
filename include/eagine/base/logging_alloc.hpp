@@ -54,10 +54,8 @@ public:
 	 : Impl(static_cast<Impl&&>(tmp))
 	 , _alloc(std::move(tmp._alloc))
 	 , _out(tmp._out)
-	 , _label(tmp._label)
-	{
-		tmp._label.append(" (moved out)");
-	}
+	 , _label(std::move(tmp._label))
+	{ }
 
 	logging_byte_allocator(
 		shared_byte_allocator&& alloc,

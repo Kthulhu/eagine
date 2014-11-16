@@ -30,7 +30,7 @@ public:
 
 	byte_allocator_with_fallback(
 		shared_byte_allocator&& dft,
-		shared_byte_allocator&& fbk
+		shared_byte_allocator&& fbk = default_byte_allocator()
 	): _fbk_size(0)
 	 , _fbk_max(0)
 	 , _dft(std::move(dft))
