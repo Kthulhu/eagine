@@ -129,6 +129,13 @@ int main(int argc, const char**)
 {
 	using namespace EAGine::base;
 
+	static_variant_dispatcher<
+		static_variant<void, 4, point, line, circle, rectangle, triangle>,
+		render_shape
+	> svd;
+
+	render_shape rs = {std::cout};
+
 	test t = {
 		0, {1.f, 2.f},
 		3, {{3.f, 4.f},{5.f, 6.f},{7.f, 8.f}},
@@ -139,6 +146,13 @@ int main(int argc, const char**)
 	(*((shape*)(void*)&t.v1)).render(std::cout) << std::endl;
 	(*((shape*)(void*)&t.v2)).render(std::cout) << std::endl;
 
+	std::cout << std::endl;
+	svd(*((shape*)(void*)&t.v0), rs);
+	std::cout << std::endl;
+	svd(*((shape*)(void*)&t.v1), rs);
+	std::cout << std::endl;
+	svd(*((shape*)(void*)&t.v2), rs);
+	std::cout << std::endl;
 
 	return 0;
 }
