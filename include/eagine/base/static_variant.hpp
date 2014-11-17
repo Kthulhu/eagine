@@ -19,7 +19,7 @@
 namespace EAGine {
 namespace base {
 
-template <std::size_t Offset, typename ... T>
+template <typename RV, std::size_t Offset, typename ... T>
 struct static_variant
 {
 private:
@@ -28,10 +28,10 @@ private:
 		"No types in static_variant!"
 	);
 
-	const unsigned var_id;
+	const unsigned _var_id;
 
 	template <typename V, unsigned I>
-	void _do_accept(
+	RV _do_accept(
 		V& v,
 		meta::integral_constant<unsigned, I>,
 		meta::integral_constant<unsigned, I>
@@ -41,55 +41,66 @@ private:
 			I, tuple<T...>
 		>::type _e_t;
 
-		v(*(const _e_t*)((const byte*)(const void*)(&var_id)+Offset));
+		return v(
+			*(const _e_t*)
+			((const byte*)(const void*)(&_var_id)+Offset)
+		);
 	}
 
 	template <typename V, unsigned L, unsigned H>
-	void _do_accept(
+	RV _do_accept(
 		V& v,
 		meta::integral_constant<unsigned, L>,
 		meta::integral_constant<unsigned, H>
 	)
 	{
-		if(var_id <= (L+H)/2)
+		constexpr unsigned M = (L+H)/2;
+		if(_var_id <= M)
 		{
-			_do_accept(v,
+			return _do_accept(v,
 				meta::integral_constant<unsigned, L>(),
-				meta::integral_constant<unsigned, (L+H)/2>()
+				meta::integral_constant<unsigned, M>()
 			);
 		}
 		else
 		{
-			_do_accept(v,
-				meta::integral_constant<unsigned, (L+H)/2+1>(),
+			return _do_accept(v,
+				meta::integral_constant<unsigned, M+1>(),
 				meta::integral_constant<unsigned, H>()
 			);
 		}
 	}
 
 	template <typename Visitor>
-	void _do_accept_ref(Visitor& v)
+	RV _do_accept_ref(Visitor& v)
 	{
-		_do_accept(v,
+		return _do_accept(v,
 			meta::integral_constant<unsigned, 0>(),
 			meta::integral_constant<unsigned, sizeof...(T)-1>()
 		);
 	}
 
 	static_variant(void)
-	 : var_id(0)
+	noexcept
+	 : _var_id(0)
 	{ }
 public:
-	template <typename Visitor>
-	void accept(Visitor visit)
+	unsigned var_id(void) const
+	noexcept
 	{
-		_do_accept_ref(visit);
+		return _var_id;
 	}
 
 	template <typename Visitor>
-	void accept(reference_wrapper<Visitor> visit)
+	RV accept(Visitor visit)
 	{
-		_do_accept_ref(visit.get());
+		return _do_accept_ref(visit);
+	}
+
+	template <typename Visitor>
+	RV accept(reference_wrapper<Visitor> visit)
+	{
+		return _do_accept_ref(visit.get());
 	}
 };
 

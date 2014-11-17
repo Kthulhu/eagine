@@ -101,7 +101,7 @@ public:
 };
 
 struct shape
- : static_variant<4, point, line, circle, rectangle, triangle>
+ : static_variant<void, 4, point, line, circle, rectangle, triangle>
 {
 public:
 	std::ostream& render(std::ostream& out)
