@@ -15,7 +15,7 @@
 #include <eagine/base/memory_range.hpp>
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // base_stack_allocator
@@ -380,7 +380,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

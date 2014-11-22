@@ -10,7 +10,7 @@
 
 #include <eagine/base/error.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 //------------------------------------------------------------------------------
 // loader::main_exe
@@ -45,6 +45,6 @@ library loader::try_load(base::cstrref path)
 }
 //------------------------------------------------------------------------------
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 

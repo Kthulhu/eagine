@@ -18,7 +18,7 @@
 #include <cassert>
 #include <algorithm>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename Key, typename Val, typename KeyIter, typename ValIter>
@@ -392,7 +392,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

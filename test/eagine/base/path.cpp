@@ -9,7 +9,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE EAGine_base_path
+#define BOOST_TEST_MODULE eagine_base_path
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/path.hpp>
@@ -18,31 +18,31 @@ BOOST_AUTO_TEST_SUITE(base_path)
 
 BOOST_AUTO_TEST_CASE(base_path_default_construction)
 {
-	EAGine::base::path p;
+	eagine::base::path p;
 }
 
 BOOST_AUTO_TEST_CASE(base_path_construction_1)
 {
-	EAGine::base::path p = EAGine::base::pa::th/"test"/"eagine"/"base"/"path";
+	eagine::base::path p = eagine::base::pa::th/"test"/"eagine"/"base"/"path";
 }
 
 BOOST_AUTO_TEST_CASE(base_path_construction_2)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 	path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
 }
 
 BOOST_AUTO_TEST_CASE(base_path_copy_construction)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 	path p2 = p1;
 }
 
 BOOST_AUTO_TEST_CASE(base_path_empty)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	const path p0;
 	const path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 	const path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(base_path_empty)
 
 BOOST_AUTO_TEST_CASE(base_path_size)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	const path p0;
 	const path p1 = pa::th/"test";
 	const path p2 = pa::th/par::ent;
@@ -76,8 +76,8 @@ BOOST_AUTO_TEST_CASE(base_path_size)
 
 BOOST_AUTO_TEST_CASE(base_path_clear)
 {
-	using namespace EAGine::base;
-	EAGine::base::path p0;
+	using namespace eagine::base;
+	eagine::base::path p0;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 
 	BOOST_ASSERT( p0.empty());
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(base_path_clear)
 
 BOOST_AUTO_TEST_CASE(base_path_front_back)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 	const path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
 
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(base_path_front_back)
 
 BOOST_AUTO_TEST_CASE(base_path_front_back_read)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 	path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
 
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(base_path_front_back_read)
 
 BOOST_AUTO_TEST_CASE(base_path_entry_ref_compare_equality)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	path p1 = pa::th/"test"/par::ent/"eagine"/"base"/"path";
 	path p2 = pa::th/par::ent/"test"/"eagine"/"base"/"path";
 

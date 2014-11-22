@@ -14,7 +14,7 @@
 #include <eagine/base/memory_block.hpp>
 #include <cstdint>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename T>
@@ -117,7 +117,7 @@ typedef typed_memory_range<byte> byte_range;
 typedef typed_memory_range<const byte> const_byte_range;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -14,7 +14,7 @@
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/memory_buffer.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // allocator_backing_buffer
@@ -67,7 +67,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

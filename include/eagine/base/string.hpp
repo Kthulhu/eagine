@@ -20,7 +20,7 @@
 #include <cstring>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // is_ext_char_string
@@ -868,7 +868,7 @@ operator << (
 }
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

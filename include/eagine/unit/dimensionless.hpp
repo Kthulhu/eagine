@@ -13,7 +13,7 @@
 #include <eagine/unit/fwd.hpp>
 #include <eagine/unit/detail.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef bits::dimless dimensionless;
@@ -26,7 +26,7 @@ struct info<dimensionless>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -14,7 +14,7 @@
 #include <type_traits>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 template <typename Component>
@@ -257,7 +257,7 @@ public:
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

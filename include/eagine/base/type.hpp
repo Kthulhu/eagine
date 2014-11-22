@@ -11,13 +11,13 @@
 #ifndef EAGINE_BASE_TYPE_1308281038_HPP
 #define EAGINE_BASE_TYPE_1308281038_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 typedef unsigned char byte;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

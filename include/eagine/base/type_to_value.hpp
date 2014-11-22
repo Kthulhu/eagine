@@ -15,7 +15,7 @@
 #include <utility>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename Value>
@@ -122,7 +122,7 @@ struct type_to_value
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

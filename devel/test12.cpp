@@ -12,19 +12,19 @@
 #include <eagine/base/file_content.hpp>
 #include <eagine/base/indexed_array.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(int argc, const char* argv[])
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		cstrref fn = cstrref(argv[0]);
 

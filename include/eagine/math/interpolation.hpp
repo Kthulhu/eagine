@@ -16,7 +16,7 @@
 #include <eagine/vect/lerp.hpp>
 #include <utility>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 template <typename T>
@@ -107,7 +107,7 @@ public:
 };
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

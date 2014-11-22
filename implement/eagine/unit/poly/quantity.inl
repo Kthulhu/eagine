@@ -7,7 +7,7 @@
  */
 #include <eagine/eagine_config.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 //------------------------------------------------------------------------------
@@ -27,6 +27,6 @@ quantity_base::_assert_compatible(const unit& a, const unit& b)
 //------------------------------------------------------------------------------
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 

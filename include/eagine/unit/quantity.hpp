@@ -14,7 +14,7 @@
 #include <eagine/unit/traits.hpp>
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 template <typename Unit, typename T>
@@ -181,7 +181,7 @@ operator / (const quantity<U, T>& a, const T& c)
 }
 
 } // namespace quantity
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

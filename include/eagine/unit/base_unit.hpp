@@ -12,7 +12,7 @@
 
 #include <eagine/unit/base_dim.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -29,7 +29,7 @@ struct unit_info;
 
 } // namespace base
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

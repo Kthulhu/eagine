@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::weak_ptr;
@@ -34,7 +34,7 @@ using std::static_pointer_cast;
 using std::dynamic_pointer_cast;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

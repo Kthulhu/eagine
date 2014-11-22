@@ -14,7 +14,7 @@
 //------------------
 #include <eagine/base/optional.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 optional<float> my_sqrt(float f)
@@ -25,15 +25,15 @@ optional<float> my_sqrt(float f)
 }
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		std::srand(std::time(nullptr));
 

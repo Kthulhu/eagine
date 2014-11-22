@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/energy.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(energy()/time()) power;
@@ -24,7 +24,7 @@ struct info<power>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

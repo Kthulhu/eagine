@@ -13,7 +13,7 @@
 
 #include <eagine/dyli/library.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 
 class loader
@@ -25,7 +25,7 @@ public:
 };
 
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/dyli/loader.inl>

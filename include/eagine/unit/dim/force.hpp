@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/acceleration.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(acceleration()*mass()) force;
@@ -24,7 +24,7 @@ struct info<force>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

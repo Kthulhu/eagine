@@ -36,11 +36,11 @@
 #include <eagine/unit/dim/frequency.hpp>
 #include <eagine/unit/dim/radioactivity.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

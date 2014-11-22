@@ -11,15 +11,15 @@
 #include <eagine/base/error.hpp>
 //------------------
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 struct cmp_1
- : EAGine::ecs::component<cmp_1>
+ : eagine::ecs::component<cmp_1>
 {
 	int i;
 
@@ -29,7 +29,7 @@ struct cmp_1
 };
 
 struct cmp_2
- : EAGine::ecs::component<cmp_2>
+ : eagine::ecs::component<cmp_2>
 {
 	double d;
 
@@ -40,11 +40,11 @@ struct cmp_2
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::ecs;
+		using namespace eagine::ecs;
 
 		manager<base::guid> m;
 /* TODO

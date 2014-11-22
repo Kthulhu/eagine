@@ -13,14 +13,14 @@
 
 #include <tuple>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::tuple;
 using ::std::tuple_element;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

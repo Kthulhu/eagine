@@ -16,7 +16,7 @@
 #include <cstddef>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename T, typename I = std::uint32_t>
@@ -111,7 +111,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

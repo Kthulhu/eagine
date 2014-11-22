@@ -20,7 +20,7 @@
 #include <iosfwd>
 #endif
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 #if EAGINE_USE_BOOST_LOCALE
@@ -66,7 +66,7 @@ public:
 #endif // !EAGINE_USE_BOOST_LOCALE
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/locale.inl>

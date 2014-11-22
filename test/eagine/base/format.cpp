@@ -9,7 +9,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE EAGine_base_format
+#define BOOST_TEST_MODULE eagine_base_format
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/format.hpp>
@@ -19,13 +19,13 @@ BOOST_AUTO_TEST_SUITE(base_format)
 
 BOOST_AUTO_TEST_CASE(base_format_construction)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	format f(text_message("a message"));
 }
 
 BOOST_AUTO_TEST_CASE(base_format_parameters)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	int a = 1;
 	bool b = false;
 	float c = 23.45f;
@@ -36,14 +36,14 @@ BOOST_AUTO_TEST_CASE(base_format_parameters)
 
 BOOST_AUTO_TEST_CASE(base_format_str)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	format f(text_message("a message"));
 	string s = f.str();
 }
 
 BOOST_AUTO_TEST_CASE(base_format_ostream)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 	format f(text_message("a message"));
 
 	std::stringstream out;

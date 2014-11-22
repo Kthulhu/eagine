@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
 // path::path
@@ -193,4 +193,4 @@ std::ostream& operator << (std::ostream& out, const path& p)
 }
 //------------------------------------------------------------------------------
 } // namespace base
-} // namespace EAGine
+} // namespace eagine

@@ -14,7 +14,7 @@
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/memory_block.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename Policy = default_byte_allocator_policy>
@@ -221,7 +221,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

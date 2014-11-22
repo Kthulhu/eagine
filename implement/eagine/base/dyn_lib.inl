@@ -12,7 +12,7 @@
 #include <dlfcn.h>
 // TODO winapi
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
 // dynamic_library::_check_and_open
@@ -82,6 +82,6 @@ void* dynamic_library::symbol(cstrref symbol_name)
 }
 //------------------------------------------------------------------------------
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 

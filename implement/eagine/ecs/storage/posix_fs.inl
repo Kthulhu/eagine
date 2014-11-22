@@ -18,7 +18,7 @@
 #include <cstdio>
 #include <unistd.h>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 //------------------------------------------------------------------------------
 namespace detail {
@@ -804,6 +804,6 @@ for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 }
 //------------------------------------------------------------------------------
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 

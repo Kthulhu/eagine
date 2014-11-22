@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dimension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(mass()/volume()) mass_density;
@@ -26,7 +26,7 @@ struct info<mass_density>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

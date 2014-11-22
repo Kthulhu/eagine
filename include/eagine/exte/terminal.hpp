@@ -13,7 +13,7 @@
 #include <eagine/exte/expression.hpp>
 #include <utility>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 // terminal tag
@@ -58,7 +58,7 @@ terminal<T&> ref(T& r)
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

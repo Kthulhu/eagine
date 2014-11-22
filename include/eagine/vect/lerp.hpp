@@ -12,7 +12,7 @@
 
 #include <eagine/vect/fill.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N>
@@ -29,7 +29,7 @@ struct lerp
 };
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

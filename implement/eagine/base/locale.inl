@@ -9,7 +9,7 @@
 #include <eagine/eagine_config.hpp>
 #include <iostream>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 #if EAGINE_USE_BOOST_LOCALE
@@ -67,6 +67,6 @@ text_message translate(
 #endif // !EAGINE_USE_BOOST_LOCALE
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 

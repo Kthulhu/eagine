@@ -12,7 +12,7 @@
 
 #include <eagine/exte/terminal.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 // evaluate terminal
@@ -64,7 +64,7 @@ decltype(auto) evaluate(
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

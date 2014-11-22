@@ -15,7 +15,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename T, typename Alloc = allocator<T>>
@@ -245,8 +245,8 @@ private:
 			return _v->_chunks[_i][_j];
 		}
 	};
-	friend class _iterator<vectre>;
-	friend class _iterator<const vectre>;
+	friend struct _iterator<vectre>;
+	friend struct _iterator<const vectre>;
 public:
 	typedef T value_type;
 	typedef T& reference;
@@ -458,7 +458,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

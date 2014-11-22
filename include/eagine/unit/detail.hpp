@@ -15,7 +15,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/nil_t.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace bits {
 
@@ -415,7 +415,7 @@ struct _sc_unit_sc_hlp
 
 } // namespace bits
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

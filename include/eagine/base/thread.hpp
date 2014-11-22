@@ -13,14 +13,14 @@
 
 #include <thread>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::thread;
 using namespace ::std::this_thread;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -28,20 +28,20 @@ EAGINE_DL_PUBLIC(const data*) get_data(void)
 	return &g_data;
 }
 
-EAGINE_DL_PUBLIC(EAGine::base::shared_ptr<data>) make_data(void)
+EAGINE_DL_PUBLIC(eagine::base::shared_ptr<data>) make_data(void)
 {
 	data d = {23, 45.67, true};
-	return EAGine::base::make_shared<data>(d);
+	return eagine::base::make_shared<data>(d);
 }
 
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::dyli;
+		using namespace eagine::dyli;
 
 		dyli::loader ldr;
 		dyli::library lib = ldr.load("libm.so");

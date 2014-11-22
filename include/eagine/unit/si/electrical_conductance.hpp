@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/electrical_conductance.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // siemens
@@ -27,7 +27,7 @@ struct info<siemens>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

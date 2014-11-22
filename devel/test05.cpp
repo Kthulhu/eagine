@@ -16,11 +16,11 @@
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		string s = "Blable";
 		const_string_ref sr = s;

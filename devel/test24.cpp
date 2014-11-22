@@ -35,7 +35,7 @@ public:
 
 int main(int argc, const char**)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 
 	//std::srand(std::time(0));
 

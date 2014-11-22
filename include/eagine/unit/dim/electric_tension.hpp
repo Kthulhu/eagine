@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/power.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(power()/electric_current()) electric_tension;
@@ -27,7 +27,7 @@ struct info<electric_tension>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

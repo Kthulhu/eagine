@@ -13,7 +13,7 @@
 #include <eagine/unit/fwd.hpp>
 #include <eagine/unit/detail.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 template <typename Dims, typename System>
@@ -107,7 +107,7 @@ typename meta::enable_if<
 >::type operator / (U1, U2) noexcept { return {}; }
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

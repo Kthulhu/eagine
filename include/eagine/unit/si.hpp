@@ -20,11 +20,11 @@
 #include <eagine/unit/si/luminous_intensity.hpp>
 #include <eagine/unit/si/amount_of_substance.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

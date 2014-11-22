@@ -18,20 +18,20 @@
 #include <eagine/meta/string.hpp>
 #include <map>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 
 class dimension;
 
-typedef EAGine::base::vector<std::pair<dimension, int>> combined_dimension;
+typedef eagine::base::vector<std::pair<dimension, int>> combined_dimension;
 
 class dimension
 {
 public:
 	static constexpr unsigned max_dims = 12;
 private:
-	typedef EAGine::base::array<signed char, max_dims> _dims_t;
+	typedef eagine::base::array<signed char, max_dims> _dims_t;
 	_dims_t _dims;
 
 	static void _add(_dims_t& c, const _dims_t& a, const _dims_t& b);
@@ -63,7 +63,7 @@ private:
 	static const _info_t* _get_info(const _dims_t& dims);
 
 	bool _enum_hlp(
-		const EAGine::base::function<bool(const combined_dimension&)>&,
+		const eagine::base::function<bool(const combined_dimension&)>&,
 		combined_dimension&,
 		std::map<_dims_t, _info_t>::const_iterator,
 		unsigned depth
@@ -81,7 +81,7 @@ public:
 	{ }
 
 	dimension(void)
-	 : dimension(EAGine::unit::dimensionless())
+	 : dimension(eagine::unit::dimensionless())
 	{ }
 
 	friend bool operator == (const dimension& a, const dimension& b)
@@ -114,13 +114,13 @@ public:
 	}
 
 	void enumerate_combinations(
-		const EAGine::base::function<
+		const eagine::base::function<
 			bool(const combined_dimension&)
 		>&,
 		unsigned depth
 	) const;
 
-	EAGine::base::cstrref name(void) const;
+	eagine::base::cstrref name(void) const;
 
 	template <typename BaseDim>
 	int power(base::dimension<BaseDim> = BaseDim())
@@ -131,7 +131,7 @@ public:
 
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/unit/poly/dimension.inl>
 

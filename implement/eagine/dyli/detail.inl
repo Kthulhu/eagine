@@ -11,7 +11,7 @@
 #include <eagine/base/locale.hpp>
 #include <eagine/dyli/error.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 namespace detail {
 //------------------------------------------------------------------------------
@@ -37,6 +37,6 @@ void required_res_n_a(void)
 //------------------------------------------------------------------------------
 } // namespace detail
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 

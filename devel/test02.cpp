@@ -11,24 +11,24 @@
 #include <eagine/base/error.hpp>
 #include <eagine/base/path.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		path p = pa::th/"eagine"/"base"/"path";
 		std::cout << p << std::endl;
 
-		p.front() = "EAGine";
+		p.front() = "eagine";
 		p.push_back(par::ent);
 		std::cout << p << std::endl;
 

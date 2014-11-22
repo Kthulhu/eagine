@@ -16,7 +16,7 @@
 #include <cstddef>
 #include <iosfwd>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 /// Universaly/globally-unique identifier
@@ -50,7 +50,7 @@ struct guid
 std::ostream& operator << (std::ostream& out, const guid&);
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/guid.inl>

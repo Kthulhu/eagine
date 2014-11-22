@@ -13,7 +13,7 @@
 
 #include <eagine/base/string.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // string_view
@@ -274,7 +274,7 @@ noexcept
 }
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

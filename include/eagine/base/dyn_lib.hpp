@@ -15,7 +15,7 @@
 #include <eagine/base/error.hpp>
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 /// A wrapper for dynamic libraries/shader objects
@@ -92,7 +92,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/dyn_lib.inl>

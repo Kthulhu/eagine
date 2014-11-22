@@ -11,7 +11,7 @@
 #include <exception>
 #include <tuple>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 struct point
@@ -123,11 +123,11 @@ struct test
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(int argc, const char**)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 
 	static_variant_dispatcher<
 		static_variant<void, 4, point, line, circle, rectangle, triangle>,

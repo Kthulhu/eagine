@@ -12,7 +12,7 @@
 
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -71,7 +71,7 @@ typedef make_scaled_unit<base::hour, si>::type hour;
 typedef make_scaled_unit<base::day, si>::type day;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

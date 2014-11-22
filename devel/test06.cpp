@@ -23,11 +23,11 @@ EAGINE_DL_PUBLIC(int) add(int a, int b)
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		std::cout << "begin" << std::endl;
 

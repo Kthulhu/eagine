@@ -15,7 +15,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // basic_pod_varray
@@ -286,7 +286,7 @@ make_basic_pod_varray(const std::initializer_list<T>& il)
 }
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,13 +13,13 @@
 
 #include <vector>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::vector;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cctype>
 
-namespace EAGine {
+namespace eagine {
 namespace dbg {
 //------------------------------------------------------------------------------
 // hexdump::_to_hex_b
@@ -92,6 +92,6 @@ operator << (std::ostream& out, const hexdump& hd)
 }
 //------------------------------------------------------------------------------
 } // namespace dbg
-} // namespace EAGine
+} // namespace eagine
 
 

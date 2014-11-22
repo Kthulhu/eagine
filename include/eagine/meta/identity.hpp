@@ -11,7 +11,7 @@
 #ifndef EAGINE_META_IDENTITY_1308281038_HPP
 #define EAGINE_META_IDENTITY_1308281038_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename X>
@@ -21,7 +21,7 @@ struct identity
 };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

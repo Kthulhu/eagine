@@ -13,7 +13,7 @@
 
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename T, T ...>
@@ -43,7 +43,7 @@ struct max_constant<T, M, N, I...>
 { };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

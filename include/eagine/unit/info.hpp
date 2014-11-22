@@ -18,7 +18,7 @@
 #include <eagine/meta/utf8.hpp>
 #include <eagine/base/string.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // pow_str
@@ -142,7 +142,7 @@ struct info<scaled_unit<Dims, UnitScales, System>>
 template <typename Unit>
 static inline typename meta::enable_if<
 	is_unit<Unit>::value,
-	EAGine::base::cstrref
+	eagine::base::cstrref
 >::type quantity_name(const Unit& = Unit())
 noexcept
 {
@@ -165,7 +165,7 @@ noexcept
 template <typename Unit>
 static inline typename meta::enable_if<
 	is_unit<Unit>::value,
-	EAGine::base::cstrref
+	eagine::base::cstrref
 >::type unit_name(const Unit& = Unit())
 noexcept
 {
@@ -176,7 +176,7 @@ noexcept
 template <typename Unit>
 static inline typename meta::enable_if<
 	is_unit<Unit>::value,
-	EAGine::base::cstrref
+	eagine::base::cstrref
 >::type unit_symbol(const Unit& = Unit())
 noexcept
 {
@@ -200,7 +200,7 @@ noexcept
 }
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

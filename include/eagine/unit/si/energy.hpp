@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/energy.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // joule
@@ -27,7 +27,7 @@ struct info<joule>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

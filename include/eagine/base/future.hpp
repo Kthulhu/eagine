@@ -13,7 +13,7 @@
 
 #include <future>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::future;
@@ -29,7 +29,7 @@ using ::std::future_error;
 using ::std::future_errc;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

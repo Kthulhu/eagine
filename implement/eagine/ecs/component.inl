@@ -9,7 +9,7 @@
 #include <eagine/eagine_config.hpp>
 
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 //------------------------------------------------------------------------------
 // component_uid_getter::_curr_uid
@@ -32,6 +32,6 @@ component_uid_getter::new_uid(void)
 }
 //------------------------------------------------------------------------------
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 

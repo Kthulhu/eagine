@@ -16,7 +16,7 @@
 #include <eagine/base/flat_dict.hpp>
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 // normal_base_storage - fwd
@@ -163,7 +163,7 @@ public:
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/ecs/storage/normal.inl>
 

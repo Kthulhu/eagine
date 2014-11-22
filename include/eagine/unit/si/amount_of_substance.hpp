@@ -12,7 +12,7 @@
 
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -35,7 +35,7 @@ struct si::base_unit<base::amount_of_substance> : base::mole { };
 typedef unit<amount_of_substance, si> mole;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

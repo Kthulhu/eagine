@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/force.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(force()*length()) energy;
@@ -24,7 +24,7 @@ struct info<energy>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -12,7 +12,7 @@
 
 #include <eagine/exte/wrap_or_fwd.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 // ampersand_tag
@@ -99,7 +99,7 @@ operator && (L&& l, R&& r)
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -14,7 +14,7 @@
 #include <eagine/base/string.hpp>
 #include <typeinfo>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 string demangle_type_name(const char*)
@@ -35,7 +35,7 @@ noexcept
 }
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/type_name.inl>

@@ -18,7 +18,7 @@
 #include <eagine/math/angle.hpp>
 #include <cmath>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 template <typename T, unsigned N>
@@ -206,7 +206,7 @@ cross(const vector<T, 3>& a, const vector<T, 3>& b)
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

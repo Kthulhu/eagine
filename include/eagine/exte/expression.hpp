@@ -13,7 +13,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/string.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 template <typename Symbol, int Arity>
@@ -109,7 +109,7 @@ template <typename Tag, typename L, typename R>
 using binary_expression = nary_expression<Tag, L, R>;
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

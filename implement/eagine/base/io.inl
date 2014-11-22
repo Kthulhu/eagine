@@ -13,7 +13,7 @@
 #include <eagine/base/string.hpp>
 #include <eagine/base/error.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
 // load_stream_data
@@ -65,5 +65,5 @@ vector<byte> load_file_data(const cstrref& fs_path)
 }
 //------------------------------------------------------------------------------
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 

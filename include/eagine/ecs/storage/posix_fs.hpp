@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 // posix_fs_component_io
@@ -208,7 +208,7 @@ public:
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/ecs/storage/posix_fs.inl>
 

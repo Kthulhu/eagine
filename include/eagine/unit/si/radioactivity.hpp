@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/radioactivity.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // becquerel
@@ -27,7 +27,7 @@ struct info<becquerel>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -11,7 +11,7 @@
 #ifndef EAGINE_META_INSTEAD_OF_1308281038_HPP
 #define EAGINE_META_INSTEAD_OF_1308281038_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename Src, typename Dst>
@@ -27,7 +27,7 @@ struct instead_of
 };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

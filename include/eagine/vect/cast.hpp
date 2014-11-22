@@ -13,7 +13,7 @@
 #include <eagine/vect/fill.hpp>
 #include <eagine/meta/int_sequence.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename DF, typename DT>
@@ -83,7 +83,7 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 };
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

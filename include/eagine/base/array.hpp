@@ -13,13 +13,13 @@
 
 #include <array>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::array;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

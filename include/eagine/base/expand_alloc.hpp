@@ -14,7 +14,7 @@
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/function.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // expanding byte allocator
@@ -150,7 +150,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

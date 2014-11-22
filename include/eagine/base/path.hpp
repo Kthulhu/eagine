@@ -18,7 +18,7 @@
 
 #include <iosfwd>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 /// Helper enumeration for starting path definitions
@@ -321,7 +321,7 @@ public:
 std::ostream& operator << (std::ostream& out, const path& p);
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || EAGINE_IMPLEMENTING_LIBRARY
 #include <eagine/base/path.inl>

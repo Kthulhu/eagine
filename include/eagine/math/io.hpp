@@ -16,7 +16,7 @@
 #include <eagine/math/matrix.hpp>
 #include <iostream>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 template <typename T, unsigned N>
@@ -104,7 +104,7 @@ operator << (std::ostream& o, const matrix<T,R,C,false>& m)
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

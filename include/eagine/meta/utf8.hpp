@@ -13,7 +13,7 @@
 
 #include <eagine/meta/string.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename String, template <char> class Transf>
@@ -113,7 +113,7 @@ struct superscript<'9'>
 { };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

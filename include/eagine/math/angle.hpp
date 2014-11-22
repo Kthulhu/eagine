@@ -14,7 +14,7 @@
 #include <eagine/unit/si/angle.hpp>
 #include <cmath>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 template <typename T>
@@ -63,7 +63,7 @@ inline T tan(angle<T> v)
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -12,7 +12,7 @@
 
 #include <eagine/exte/wrap_or_fwd.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 // increment_tag
@@ -66,7 +66,7 @@ operator ++ (U&& v, int)
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,13 +13,13 @@
 
 #include <functional>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::function;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

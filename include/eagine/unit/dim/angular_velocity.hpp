@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dimension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(angle()/time()) angular_velocity;
@@ -27,7 +27,7 @@ struct info<angular_velocity>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

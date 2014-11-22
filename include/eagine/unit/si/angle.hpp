@@ -12,7 +12,7 @@
 
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -96,7 +96,7 @@ typedef make_scaled_unit<base::turn, si>::type turn;
 typedef make_scaled_unit<base::scaled_unit<scales::pi, base::radian>, si>::type pi_rad;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,7 +13,7 @@
 
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 /// A class measuring a simulation time period
@@ -189,7 +189,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

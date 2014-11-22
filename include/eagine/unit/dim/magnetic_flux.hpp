@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/energy.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(energy()/electric_current()) magnetic_flux;
@@ -26,7 +26,7 @@ struct info<magnetic_flux>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

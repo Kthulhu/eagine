@@ -17,16 +17,16 @@
 #include <iostream>
 #include <fstream>
 
-namespace EAGine {
-} // namespace EAGine
+namespace eagine {
+} // namespace eagine
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		future<vector<byte>> b = async(load_file_data, cstrref("test01.cpp"));
 

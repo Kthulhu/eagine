@@ -18,7 +18,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 template <typename Entity>
@@ -333,7 +333,7 @@ public:
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/ecs/manager.inl>
 

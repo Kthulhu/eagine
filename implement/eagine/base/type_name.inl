@@ -16,7 +16,7 @@
 #include <cxxabi.h>
 #endif
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
 // demangle_type_name
@@ -48,5 +48,5 @@ noexcept
 }
 //------------------------------------------------------------------------------
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 

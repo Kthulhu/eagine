@@ -18,7 +18,7 @@
 #include <eagine/base/memory_range.hpp>
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 // immutable_base_storage - fwd
@@ -177,7 +177,7 @@ public:
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/ecs/storage/immutable.inl>
 

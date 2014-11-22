@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <bool Const>
@@ -177,7 +177,7 @@ typedef basic_memory_block<false> memory_block;
 typedef basic_memory_block<true > const_memory_block;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

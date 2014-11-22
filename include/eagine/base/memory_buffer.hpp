@@ -14,7 +14,7 @@
 #include <eagine/base/memory_block.hpp>
 #include <cstdlib>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 class memory_buffer
@@ -117,7 +117,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

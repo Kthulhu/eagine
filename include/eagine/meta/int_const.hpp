@@ -13,7 +13,7 @@
 
 #include <type_traits>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 using ::std::integral_constant;
@@ -46,7 +46,7 @@ struct negate<integral_constant<Int, I>>
 
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -14,7 +14,7 @@
 #include <eagine/meta/string.hpp>
 #include <eagine/unit/scales.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -166,7 +166,7 @@ struct dim_info<amount_of_substance>
 
 } // namespace base
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

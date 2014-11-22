@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/electrical_resistance.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // ohm
@@ -27,7 +27,7 @@ struct info<ohm>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

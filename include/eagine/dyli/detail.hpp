@@ -16,7 +16,7 @@
 #include <eagine/base/dyn_lib.hpp>
 #include <eagine/base/error.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 
 template <typename T>
@@ -105,7 +105,7 @@ struct func_util<product<RV>(P...)>
 
 } // namespace detail
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/dyli/detail.inl>

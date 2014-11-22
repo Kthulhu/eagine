@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/force.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // newton 
@@ -27,7 +27,7 @@ struct info<newton>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

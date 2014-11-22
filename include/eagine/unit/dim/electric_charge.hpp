@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dimension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(electric_current()*time()) electric_charge;
@@ -27,7 +27,7 @@ struct info<electric_charge>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

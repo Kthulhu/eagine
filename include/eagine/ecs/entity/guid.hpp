@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 template <>
@@ -57,7 +57,7 @@ struct entity_traits<base::guid>
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

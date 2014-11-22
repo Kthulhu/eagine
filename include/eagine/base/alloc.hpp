@@ -21,7 +21,7 @@
 #include <cassert>
 #include <cstdlib>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // byte_allocator
@@ -706,7 +706,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -16,7 +16,7 @@
 #include <eagine/unit/unit.hpp>
 #include <eagine/unit/scaled_unit.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // international system of units
@@ -32,7 +32,7 @@ struct system_id<si>
 { };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

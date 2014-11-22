@@ -12,7 +12,7 @@
 
 #include <eagine/math/swizzle.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 namespace swizzles {
 
@@ -20,7 +20,7 @@ namespace swizzles {
 
 } // namespace swizzle
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

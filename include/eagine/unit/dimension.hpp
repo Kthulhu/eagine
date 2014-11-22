@@ -15,7 +15,7 @@
 #include <eagine/unit/traits.hpp>
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // dimension
@@ -57,7 +57,7 @@ typedef dimension<base::luminous_intensity,  1> luminous_intensity;
 typedef dimension<base::amount_of_substance, 1> amount_of_substance;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

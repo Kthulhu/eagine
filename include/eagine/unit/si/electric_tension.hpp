@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/electric_tension.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // volt
@@ -27,7 +27,7 @@ struct info<volt>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

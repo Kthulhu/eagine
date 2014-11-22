@@ -14,7 +14,7 @@
 #include <eagine/base/error.hpp>
 #endif
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 //------------------------------------------------------------------------------
 namespace detail {
@@ -420,6 +420,6 @@ _do_get(T C::* mvp, const Entity& ent, T res)
 }
 //------------------------------------------------------------------------------
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 

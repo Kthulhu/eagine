@@ -13,8 +13,8 @@
 
 int main(void)
 {
-	using namespace EAGine;
-	using namespace EAGine::math;
+	using namespace eagine;
+	using namespace eagine::math;
 
 	//typedef angle<double> ang;
 	typedef vector<double, 3> vec3;

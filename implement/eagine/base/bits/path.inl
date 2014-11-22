@@ -12,7 +12,7 @@
 #include <string>
 #include <stdexcept>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 namespace bits {
 //------------------------------------------------------------------------------
@@ -237,4 +237,4 @@ void path_cat_base::_fill(vector<path_entry>& v, const char* elem) const
 //------------------------------------------------------------------------------
 } // namespace bits
 } // namespace base
-} // namespace EAGine
+} // namespace eagine

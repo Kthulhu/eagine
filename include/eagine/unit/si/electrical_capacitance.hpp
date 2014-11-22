@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/electrical_capacitance.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // farad
@@ -27,7 +27,7 @@ struct info<farad>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

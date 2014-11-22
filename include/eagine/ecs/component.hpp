@@ -15,7 +15,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <cstddef>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 // component unique identifier
@@ -110,7 +110,7 @@ public:
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/ecs/component.inl>

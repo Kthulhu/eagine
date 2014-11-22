@@ -11,14 +11,14 @@
 #ifndef EAGINE_ECS_ENTITY_1408161720_HPP
 #define EAGINE_ECS_ENTITY_1408161720_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 template <typename Entity>
 struct entity_traits;
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

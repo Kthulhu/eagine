@@ -15,7 +15,7 @@
 #include <eagine/unit/unit.hpp>
 #include <cmath>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 template <typename Dims, typename Scales, typename System>
@@ -170,7 +170,7 @@ struct div_result<scaled_unit<D1, US1, S>, scaled_unit<D2, US2, S>>
 { };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

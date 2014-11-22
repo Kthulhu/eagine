@@ -12,7 +12,7 @@
 
 #include <eagine/math/matrix.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 // reordered_matrix_constructor
@@ -1140,7 +1140,7 @@ reorder_mat_ctr(const screen_stretch<matrix<T,4,4,RM>>& c)
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -12,7 +12,7 @@
 
 #include <eagine/unit/poly/unit.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 
@@ -143,7 +143,7 @@ public:
 
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/unit/poly/quantity.inl>
 

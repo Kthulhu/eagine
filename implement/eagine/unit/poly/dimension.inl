@@ -7,7 +7,7 @@
  */
 #include <eagine/eagine_config.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 //------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ dimension::_dimls(const _dims_t& a)
 template <typename ... DimPow>
 struct _dim_init_hlp
 {
-	typedef EAGine::base::array<signed char, dimension::max_dims> _dims_t;
+	typedef eagine::base::array<signed char, dimension::max_dims> _dims_t;
 
 	typedef _dim_init_hlp type;
 
@@ -121,10 +121,10 @@ dimension::_make_info(void)
 {
 	return {
 		meta::c_str<
-			typename EAGine::unit::info<Dim>::name
+			typename eagine::unit::info<Dim>::name
 		>::value,
 		meta::size<
-			typename EAGine::unit::info<Dim>::name
+			typename eagine::unit::info<Dim>::name
 		>::value
 	};
 }
@@ -181,7 +181,7 @@ dimension::_get_info(const _dims_t& dims)
 EAGINE_LIB_FUNC
 bool
 dimension::_enum_hlp(
-	const EAGine::base::function<bool(const combined_dimension&)>& func,
+	const eagine::base::function<bool(const combined_dimension&)>& func,
 	combined_dimension& cdims,
 	std::map<_dims_t, _info_t>::const_iterator pos,
 	unsigned depth
@@ -260,7 +260,7 @@ dimension::_enum_hlp(
 EAGINE_LIB_FUNC
 void
 dimension::enumerate_combinations(
-	const EAGine::base::function<
+	const eagine::base::function<
 		bool(const combined_dimension&)
 	>& func,
 	unsigned depth
@@ -277,23 +277,23 @@ dimension::enumerate_combinations(
 // dimension::name
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-EAGine::base::cstrref
+eagine::base::cstrref
 dimension::name(void) const
 {
 	if(_info)
 	{
-		return EAGine::base::cstrref(
+		return eagine::base::cstrref(
 			_info->name,
 			_info->name_len
 		);
 	}
-	return EAGine::base::cstrref();
+	return eagine::base::cstrref();
 }
 //------------------------------------------------------------------------------
 #endif
 //------------------------------------------------------------------------------
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 

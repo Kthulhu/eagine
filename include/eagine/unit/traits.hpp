@@ -13,7 +13,7 @@
 #include <eagine/unit/fwd.hpp>
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 template <typename X>
@@ -67,7 +67,7 @@ struct same_dimension<scaled_unit<D, US1, S>, scaled_unit<D, US2, S>>
 { };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

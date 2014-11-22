@@ -13,7 +13,7 @@
 
 #include <eagine/base/bitfield.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 // storage_capability
@@ -45,7 +45,7 @@ storage_capabilities operator | (storage_capability b1, storage_capability b2)
 }
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -12,7 +12,7 @@
 
 #include <eagine/meta/type_traits.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N>
@@ -184,7 +184,7 @@ struct data<T,4> : _data<T,4>
 #endif
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

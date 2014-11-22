@@ -12,7 +12,7 @@
 
 #include <eagine/exte/wrap_or_fwd.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 // assign_tag
@@ -79,7 +79,7 @@ nary_expression<
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -9,7 +9,7 @@
 #include <eagine/eagine_config.hpp>
 #include <iostream>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 #if EAGINE_USE_BOOST_LOCALE
@@ -30,6 +30,6 @@ std::ostream& operator << (std::ostream& out, const format& fmt)
 #endif // !EAGINE_USE_BOOST_LOCALE
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 

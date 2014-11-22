@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/power.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // watt
@@ -27,7 +27,7 @@ struct info<watt>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,19 +13,19 @@
 #include <eagine/base/format.hpp>
 #include <eagine/base/locale.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 		std::cout.imbue(std::locale("en_US.UTF-8"));
 		std::cout << format(translate("Blable {1}")) % 12345 << std::endl;
 

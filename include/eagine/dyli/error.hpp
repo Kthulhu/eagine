@@ -14,7 +14,7 @@
 #include <eagine/base/string.hpp>
 #include <eagine/base/error.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 
 class not_loaded
@@ -27,7 +27,7 @@ public:
 };
 
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

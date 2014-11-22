@@ -12,7 +12,7 @@
 
 #include <eagine/vect/shuffle.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N>
@@ -102,7 +102,7 @@ struct hsum<T, 4>
 #endif
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

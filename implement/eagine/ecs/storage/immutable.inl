@@ -8,7 +8,7 @@
  */
 #include <eagine/eagine_config.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 //------------------------------------------------------------------------------
 // immutable_storage_iterator::immutable_storage_iterator
@@ -506,6 +506,6 @@ for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 }
 //------------------------------------------------------------------------------
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 

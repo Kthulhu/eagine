@@ -26,7 +26,7 @@ std::ostream& print_usage(std::ostream& out)
 
 int main(int argc, const char* argv[])
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 
 	bool inv_opt = false;
 	bool gen_nil = false;

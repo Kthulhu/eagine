@@ -14,7 +14,7 @@
 #include <eagine/base/string.hpp>
 #include <eagine/base/iterator.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 class program_args
@@ -80,7 +80,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

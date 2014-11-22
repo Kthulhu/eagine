@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/electric_charge.hpp>
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 // coulomb
@@ -27,7 +27,7 @@ struct info<coulomb>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

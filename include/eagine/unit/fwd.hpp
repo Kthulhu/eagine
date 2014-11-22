@@ -10,7 +10,7 @@
 #ifndef EAGINE_UNIT_FWD_1308281038_HPP
 #define EAGINE_UNIT_FWD_1308281038_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace bits {
 
@@ -77,7 +77,7 @@ template <typename Unit, typename T = double>
 struct quantity;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

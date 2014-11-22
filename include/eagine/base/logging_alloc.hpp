@@ -14,7 +14,7 @@
 #include <eagine/base/alloc.hpp>
 #include <iostream>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename Policy = default_byte_allocator_policy>
@@ -34,7 +34,7 @@ private:
 
 	typedef byte_allocator_impl<
 		Policy,
-		EAGine::base::logging_byte_allocator
+		eagine::base::logging_byte_allocator
 	> Impl;
 
 	std::ostream& _log(const char* action) const
@@ -239,7 +239,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

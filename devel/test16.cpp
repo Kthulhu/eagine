@@ -16,21 +16,21 @@
 #include <eagine/unit/si/electric_tension.hpp>
 #include <eagine/unit/derived.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
-#define EAGine_PRINT(EXPR) \
+#define eagine_PRINT(EXPR) \
 	std::cout << "|" << quantity_name(EXPR) << "|" << #EXPR << "| "<< value(EXPR) << unit_symbol(EXPR) << std::endl
 
 int main(void)
 {
-	using namespace EAGine::unit;
-	using EAGine::unit::time;
+	using namespace eagine::unit;
+	using eagine::unit::time;
 
-	std::cout << EAGine::meta::c_str<info<area>::name>::value << std::endl;
+	std::cout << eagine::meta::c_str<info<area>::name>::value << std::endl;
 
 	quantity<turn> at = {1};
 	quantity<radian> ar = at;
@@ -39,22 +39,22 @@ int main(void)
 	quantity<pi_rad> ap = ag;
 	quantity<quarter> aq = ar;
 
-	EAGine_PRINT(at);
-	EAGine_PRINT(ar);
-	EAGine_PRINT(ad);
-	EAGine_PRINT(ag);
-	EAGine_PRINT(ap);
+	eagine_PRINT(at);
+	eagine_PRINT(ar);
+	eagine_PRINT(ad);
+	eagine_PRINT(ag);
+	eagine_PRINT(ap);
 
 	quantity<minute> tm = {2};
 	quantity<second> ts = tm;
 	quantity<hour> th = tm;
 
-	EAGine_PRINT(tm);
-	EAGine_PRINT(ts);
-	EAGine_PRINT(th);
+	eagine_PRINT(tm);
+	eagine_PRINT(ts);
+	eagine_PRINT(th);
 
-	EAGine_PRINT(aq/th);
-	EAGine_PRINT(at/tm);
+	eagine_PRINT(aq/th);
+	eagine_PRINT(at/tm);
 
 	quantity<millimeter> lmm = {1000};
 	quantity<unit<length>> lm = {1};
@@ -63,24 +63,24 @@ int main(void)
 
 	quantity<ampere> eca = {1};
 
-	EAGine_PRINT(eca);
-	EAGine_PRINT(lm);
-	EAGine_PRINT(lkm);
-	EAGine_PRINT(lkm*lm);
-	EAGine_PRINT(lkm/lm);
-	EAGine_PRINT(lkm*lkm);
-	EAGine_PRINT(lkm/lkm);
-	EAGine_PRINT(lkm/tm);
+	eagine_PRINT(eca);
+	eagine_PRINT(lm);
+	eagine_PRINT(lkm);
+	eagine_PRINT(lkm*lm);
+	eagine_PRINT(lkm/lm);
+	eagine_PRINT(lkm*lkm);
+	eagine_PRINT(lkm/lkm);
+	eagine_PRINT(lkm/tm);
 
-	EAGine_PRINT(lmm*lmm);
-	EAGine_PRINT(lmm*lmm*lmm);
-	EAGine_PRINT(lm*lmm);
-	EAGine_PRINT(lmm*lm);
+	eagine_PRINT(lmm*lmm);
+	eagine_PRINT(lmm*lmm*lmm);
+	eagine_PRINT(lm*lmm);
+	eagine_PRINT(lmm*lm);
 
-	EAGine_PRINT(mkg*lm/(ts*ts));
-	EAGine_PRINT(mkg*lm*lm/(ts*ts));
-	EAGine_PRINT(mkg*lm*lm/(ts*ts*ts));
-	EAGine_PRINT(mkg*lm*lm/(ts*ts*ts*eca));
+	eagine_PRINT(mkg*lm/(ts*ts));
+	eagine_PRINT(mkg*lm*lm/(ts*ts));
+	eagine_PRINT(mkg*lm*lm/(ts*ts*ts));
+	eagine_PRINT(mkg*lm*lm/(ts*ts*ts*eca));
 
 
 	auto x = (mkg*mkg)/lm;
@@ -88,8 +88,8 @@ int main(void)
 	auto z = x+y;
 	auto w = x-y;
 
-	EAGine_PRINT(z);
-	EAGine_PRINT(w);
+	eagine_PRINT(z);
+	eagine_PRINT(w);
 
 	return 0;
 }

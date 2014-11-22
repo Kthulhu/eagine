@@ -9,7 +9,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE EAGine_base_guid
+#define BOOST_TEST_MODULE eagine_base_guid
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/guid.hpp>
@@ -21,19 +21,19 @@ BOOST_AUTO_TEST_SUITE(base_guid)
 
 BOOST_AUTO_TEST_CASE(base_guid_default_construction)
 {
-	EAGine::base::guid g;
+	eagine::base::guid g;
 }
 
 BOOST_AUTO_TEST_CASE(base_guid_copy_construction)
 {
-	EAGine::base::guid g1;
-	EAGine::base::guid g2(g1);
+	eagine::base::guid g1;
+	eagine::base::guid g2(g1);
 }
 
 BOOST_AUTO_TEST_CASE(base_guid_uniqueness)
 {
 	std::size_t n = 1000;
-	std::vector<EAGine::base::guid> gv(n);
+	std::vector<eagine::base::guid> gv(n);
 	for(std::size_t i=0; i!=n; ++i)
 	{
 		for(std::size_t j=i+1; j!=n; ++j)
@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE(base_guid_uniqueness)
 
 BOOST_AUTO_TEST_CASE(base_guid_nil)
 {
-	EAGine::base::guid n1 = EAGine::base::guid(nullptr);
+	eagine::base::guid n1 = eagine::base::guid(nullptr);
 	BOOST_ASSERT(n1.is_nil());
 
-	EAGine::base::guid n2 = EAGine::base::guid::nil();
+	eagine::base::guid n2 = eagine::base::guid::nil();
 	BOOST_ASSERT(n2.is_nil());
 
 	BOOST_ASSERT(n1 == n2);
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(base_guid_not_nil)
 	std::size_t n = 1000;
 	for(std::size_t i=0; i!=n; ++i)
 	{
-		EAGine::base::guid g;
+		eagine::base::guid g;
 		BOOST_ASSERT(!g.is_nil());
 	}
 }
@@ -71,11 +71,11 @@ BOOST_AUTO_TEST_CASE(base_guid_string_1)
 	{
 		std::stringstream ss;
 
-		EAGine::base::guid g1;
+		eagine::base::guid g1;
 
 		ss << g1;
 
-		EAGine::base::guid g2 = EAGine::base::guid(ss.str());
+		eagine::base::guid g2 = eagine::base::guid(ss.str());
 
 		BOOST_ASSERT(g1 == g2);
 	}
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(base_guid_from_string)
 
 		};
 
-		EAGine::base::guid g(gs);
+		eagine::base::guid g(gs);
 	}
 }
 

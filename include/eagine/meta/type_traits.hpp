@@ -13,7 +13,7 @@
 
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 using ::std::conditional;
@@ -40,7 +40,7 @@ struct add_same_constness
 > { };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -11,7 +11,7 @@
 #include <utility>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace dbg {
 //------------------------------------------------------------------------------
 // cmad_tester::_out
@@ -117,6 +117,6 @@ noexcept
 }
 //------------------------------------------------------------------------------
 } // namespace dbg
-} // namespace EAGine
+} // namespace eagine
 
 

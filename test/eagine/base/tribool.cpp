@@ -9,7 +9,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE EAGine_base_tribool
+#define BOOST_TEST_MODULE eagine_base_tribool
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/tribool.hpp>
@@ -18,27 +18,27 @@ BOOST_AUTO_TEST_SUITE(base_tribool)
 
 BOOST_AUTO_TEST_CASE(base_guid_tribool)
 {
-	EAGine::base::tribool b;
+	eagine::base::tribool b;
 }
 
 BOOST_AUTO_TEST_CASE(base_tribool_copy_construction)
 {
-	EAGine::base::tribool b1;
-	EAGine::base::tribool b2(b1);
+	eagine::base::tribool b1;
+	eagine::base::tribool b2(b1);
 }
 
 BOOST_AUTO_TEST_CASE(base_tribool_initialization)
 {
-	EAGine::base::tribool t(true);
-	EAGine::base::tribool f(false);
-	EAGine::base::tribool i(EAGine::base::indeterminate);
+	eagine::base::tribool t(true);
+	eagine::base::tribool f(false);
+	eagine::base::tribool i(eagine::base::indeterminate);
 }
 
 BOOST_AUTO_TEST_CASE(base_tribool_ops)
 {
-	EAGine::base::tribool a = true;
-	EAGine::base::tribool b = false;
-	EAGine::base::tribool c = EAGine::base::indeterminate;
+	eagine::base::tribool a = true;
+	eagine::base::tribool b = false;
+	eagine::base::tribool c = eagine::base::indeterminate;
 
 	BOOST_ASSERT(a == a);
 	BOOST_ASSERT(a == true);

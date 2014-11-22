@@ -16,17 +16,17 @@
 #include <iostream>
 
 struct some_str
- : EAGine::base::cvarstr
- , EAGine::ecs::component<some_str>
+ : eagine::base::cvarstr
+ , eagine::ecs::component<some_str>
 { };
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::ecs;
+		using namespace eagine::ecs;
 
 		manager<base::guid> m;
 

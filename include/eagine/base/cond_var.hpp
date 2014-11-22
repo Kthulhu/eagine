@@ -13,14 +13,14 @@
 
 #include <condition_variable>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::condition_variable;
 using ::std::cv_status;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

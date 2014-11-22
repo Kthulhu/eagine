@@ -13,14 +13,14 @@
 
 #include <boost/optional.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::boost::optional;
 // TODO: C++14 optional where available
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

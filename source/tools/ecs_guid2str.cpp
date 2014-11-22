@@ -32,8 +32,8 @@ std::ostream& print_usage(std::ostream& out)
 
 int main(int argc, const char* argv[])
 {
-	using namespace EAGine;
-	using namespace EAGine::base;
+	using namespace eagine;
+	using namespace eagine::base;
 
 	const char dirsep = '/'; // TODO
 

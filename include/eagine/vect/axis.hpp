@@ -12,7 +12,7 @@
 
 #include <eagine/vect/data.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N, unsigned I>
@@ -201,7 +201,7 @@ struct axis<T, 4, I>
 };
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

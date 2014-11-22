@@ -13,7 +13,7 @@
 
 #include <eagine/base/file_mapping.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 class file_content
@@ -44,7 +44,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

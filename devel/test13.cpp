@@ -12,19 +12,19 @@
 #include <eagine/base/offset_ptr.hpp>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(int argc, const char* argv[])
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		struct test_data_t
 		{
@@ -48,7 +48,7 @@ int main(int argc, const char* argv[])
 			123.456,
 			7890,
 			6U,
-			"EAGine",
+			"eagine",
 			'X'
 		};
 

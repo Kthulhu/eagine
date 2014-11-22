@@ -15,7 +15,7 @@
 #include <exception>
 #include <cstddef>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 class on_scope_exit
@@ -93,7 +93,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

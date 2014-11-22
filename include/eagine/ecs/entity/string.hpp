@@ -14,7 +14,7 @@
 #include <eagine/base/string.hpp>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 template <>
@@ -57,7 +57,7 @@ struct entity_traits<base::string>
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

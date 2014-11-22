@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/magnetic_flux.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(magnetic_flux()/electric_current()) inductance;
@@ -27,7 +27,7 @@ struct info<inductance>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

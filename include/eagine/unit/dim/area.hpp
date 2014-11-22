@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dimension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(length()*length()) area;
@@ -24,7 +24,7 @@ struct info<area>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

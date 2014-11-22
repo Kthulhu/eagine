@@ -17,7 +17,7 @@
 #include <cassert>
 #include <algorithm>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <
@@ -122,7 +122,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

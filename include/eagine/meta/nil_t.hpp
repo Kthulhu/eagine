@@ -13,7 +13,7 @@
 
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 struct nil_t
@@ -33,7 +33,7 @@ struct is_nil<nil_t>
 { };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

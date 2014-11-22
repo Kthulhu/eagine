@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dimension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(number_of_cycles()/time()) frequency;
@@ -26,7 +26,7 @@ struct info<frequency>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -12,7 +12,7 @@
 
 #include <eagine/math/vector.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 template <typename T>
@@ -162,7 +162,7 @@ rotate(const vector<T, 3>& v, const quaternion<T>& q)
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

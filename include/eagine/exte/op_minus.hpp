@@ -12,7 +12,7 @@
 
 #include <eagine/exte/wrap_or_fwd.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 // minus_tag
@@ -70,7 +70,7 @@ operator - (U&& v)
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

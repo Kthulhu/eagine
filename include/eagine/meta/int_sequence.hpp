@@ -13,7 +13,7 @@
 
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename Int, Int ... I>
@@ -52,7 +52,7 @@ struct make_integer_sequence
 { };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

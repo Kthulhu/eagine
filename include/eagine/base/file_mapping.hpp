@@ -18,7 +18,7 @@
 #include <boost/interprocess/file_mapping.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 class mapped_file_region;
@@ -96,7 +96,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

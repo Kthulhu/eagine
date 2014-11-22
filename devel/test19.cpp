@@ -14,7 +14,7 @@
 
 int main(int argc, const char**)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	using math::row;
 	using math::column;

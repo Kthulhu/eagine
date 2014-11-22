@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/force.hpp>
 #include <eagine/unit/dim/area.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(force()/area()) pressure;
@@ -25,7 +25,7 @@ struct info<pressure>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

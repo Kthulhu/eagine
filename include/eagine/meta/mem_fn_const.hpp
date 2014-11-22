@@ -13,7 +13,7 @@
 
 #include <utility>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename T, T Ptr>
@@ -60,7 +60,7 @@ struct member_function_constant<RV(C::*)(P...) const, Ptr>
 };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

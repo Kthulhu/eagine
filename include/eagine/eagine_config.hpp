@@ -41,8 +41,8 @@
 #define EAGINE_USE_BOOST_LOCALE EAGINE_BOOST_LOCALE_FOUND
 #endif
 
-namespace EAGine {
+namespace eagine {
 
-} // namespace EAGine
+} // namespace eagine
 
 #endif // include guard

@@ -12,7 +12,7 @@
 
 #include <eagine/vect/shuffle.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N>
@@ -27,7 +27,7 @@ struct madd
 };
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

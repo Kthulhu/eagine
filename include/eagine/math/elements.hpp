@@ -15,7 +15,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/identity.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 // element_type
@@ -179,7 +179,7 @@ typename meta::enable_if<
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

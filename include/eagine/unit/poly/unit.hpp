@@ -13,7 +13,7 @@
 #include <eagine/unit/poly/dimension.hpp>
 #include <eagine/unit/poly/system.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 
@@ -46,21 +46,21 @@ private:
 
 	template <typename D, typename S>
 	static const _unit_info*
-	_get_info(EAGine::unit::unit<D,S>);
+	_get_info(eagine::unit::unit<D,S>);
 
 	template <typename D, typename S, typename Sys>
 	static const _unit_info*
-	_get_info(EAGine::unit::scaled_unit<D,S,Sys>);
+	_get_info(eagine::unit::scaled_unit<D,S,Sys>);
 
 	const value_conv* _conv;
 
 	template <typename T, typename D, typename S>
 	static const value_conv*
-	_get_conv(EAGine::unit::unit<D,S>);
+	_get_conv(eagine::unit::unit<D,S>);
 
 	template <typename T, typename D, typename S, typename Sys>
 	static const value_conv*
-	_get_conv(EAGine::unit::scaled_unit<D,S,Sys>);
+	_get_conv(eagine::unit::scaled_unit<D,S,Sys>);
 
 	unit(const _unit_info* info, const value_conv* conv)
 	 : _info(info)
@@ -105,19 +105,19 @@ public:
 		return _info->sys;
 	}
 
-	EAGine::base::cstrref name(void) const
+	eagine::base::cstrref name(void) const
 	{
 		assert(_info);
-		return EAGine::base::cstrref(
+		return eagine::base::cstrref(
 			_info->name,
 			_info->name_len
 		);
 	}
 
-	EAGine::base::cstrref symbol(void) const
+	eagine::base::cstrref symbol(void) const
 	{
 		assert(_info);
-		return EAGine::base::cstrref(
+		return eagine::base::cstrref(
 			_info->sym,
 			_info->sym_len
 		);
@@ -134,7 +134,7 @@ public:
 
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #include <eagine/unit/poly/unit.inl>
 

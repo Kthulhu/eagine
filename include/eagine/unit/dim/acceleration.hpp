@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/velocity.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(velocity()/time()) acceleration;
@@ -26,7 +26,7 @@ struct info<acceleration>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

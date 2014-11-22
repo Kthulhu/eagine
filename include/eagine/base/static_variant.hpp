@@ -17,7 +17,7 @@
 #include <eagine/base/array.hpp>
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // static_variant
@@ -164,7 +164,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

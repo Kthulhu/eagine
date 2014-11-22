@@ -13,7 +13,7 @@
 #include <eagine/unit/base_unit.hpp>
 #include <eagine/unit/scales.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -41,7 +41,7 @@ struct unit_info<scaled_unit<Scale, Unit>>
 
 } // namespace base
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

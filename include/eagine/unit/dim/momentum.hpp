@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/velocity.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(velocity()*mass()) momentum;
@@ -24,7 +24,7 @@ struct info<momentum>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -12,7 +12,7 @@
 
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -36,7 +36,7 @@ struct si::base_unit<base::solid_angle> : base::steradian { };
 typedef unit<solid_angle, si> steradian;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

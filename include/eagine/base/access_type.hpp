@@ -11,7 +11,7 @@
 #ifndef EAGINE_BASE_ACCESS_TYPE_1408161720_HPP
 #define EAGINE_BASE_ACCESS_TYPE_1408161720_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 struct access_read_only_t
@@ -53,7 +53,7 @@ struct access<T&>
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

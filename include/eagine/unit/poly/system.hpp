@@ -10,7 +10,7 @@
 #ifndef EAGINE_UNIT_POLY_SYSTEM_1308281038_HPP
 #define EAGINE_UNIT_POLY_SYSTEM_1308281038_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 template <typename System>
@@ -46,7 +46,7 @@ public:
 
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -11,13 +11,13 @@
 #ifndef EAGINE_BASE_UTILITY_1408161728_HPP
 #define EAGINE_BASE_UTILITY_1408161728_HPP
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using std::move;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,7 +13,7 @@
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/vect/data.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <int ... I>
@@ -70,7 +70,7 @@ struct shuffle2
 };
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

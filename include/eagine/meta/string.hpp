@@ -14,7 +14,7 @@
 #include <eagine/meta/int_const.hpp>
 #include <cstddef>
 
-namespace EAGine {
+namespace eagine {
 namespace meta {
 
 template <typename Char, Char ... C>
@@ -127,7 +127,7 @@ struct int_to_str
 >::type{ };
 
 } // namespace meta
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

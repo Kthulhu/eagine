@@ -12,7 +12,7 @@
 
 #include <cmath>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace scales {
 
@@ -163,7 +163,7 @@ struct divided
 
 } // namespace scales
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

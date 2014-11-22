@@ -13,7 +13,7 @@
 #include <eagine/unit/dim/magnetic_flux.hpp>
 #include <eagine/unit/dim/area.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(magnetic_flux()/area()) magnetic_flux_density;
@@ -29,7 +29,7 @@ struct info<magnetic_flux_density>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

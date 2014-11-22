@@ -14,7 +14,7 @@
 #include <initializer_list>
 #include <type_traits>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename Bits>
@@ -125,7 +125,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

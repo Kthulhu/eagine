@@ -13,7 +13,7 @@
 
 #include <iosfwd>
 
-namespace EAGine {
+namespace eagine {
 namespace dbg {
 
 // copy-move-assign-destroy test
@@ -46,7 +46,7 @@ struct cmad_tester
 };
 
 } // namespace dbg
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/dbg/cmad_test.inl>

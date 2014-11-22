@@ -15,7 +15,7 @@
 #include <iosfwd>
 #include <memory>
 
-namespace EAGine {
+namespace eagine {
 namespace dbg {
 
 using base::byte;
@@ -49,7 +49,7 @@ public:
 };
 
 } // namespace dbg
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/dbg/hexdump.inl>

@@ -22,17 +22,17 @@
 #include <exception>
 #include <cstring>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(int argc, const char* argv [])
 {
-	using namespace EAGine::base;
-	using namespace EAGine::meta;
-	using namespace EAGine::dbg;
+	using namespace eagine::base;
+	using namespace eagine::meta;
+	using namespace eagine::dbg;
 
 	memory_buffer buf1(8*1024);
 	memory_block blk1 = buf1;

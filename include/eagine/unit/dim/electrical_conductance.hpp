@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/electric_tension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(electric_current()/electric_tension()) electrical_conductance;
@@ -27,7 +27,7 @@ struct info<electrical_conductance>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -8,7 +8,7 @@
  */
 #include <eagine/eagine_config.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 //------------------------------------------------------------------------------
 // normal_storage_iterator::get
@@ -540,6 +540,6 @@ for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 }
 //------------------------------------------------------------------------------
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 

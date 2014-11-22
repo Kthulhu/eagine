@@ -13,7 +13,7 @@
 #include <eagine/exte/terminal.hpp>
 #include <utility>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 template <typename X>
@@ -65,7 +65,7 @@ typename meta::enable_if<
 }
 
 } // namespace exte
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

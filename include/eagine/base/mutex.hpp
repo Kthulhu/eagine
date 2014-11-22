@@ -13,7 +13,7 @@
 
 #include <mutex>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::mutex;
@@ -28,7 +28,7 @@ using ::std::try_lock;
 using ::std::lock;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,7 +13,7 @@
 
 #include <eagine/dyli/function.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 
 class loader;
@@ -104,7 +104,7 @@ public:
 };
 
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

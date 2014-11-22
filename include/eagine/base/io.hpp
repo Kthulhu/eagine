@@ -18,7 +18,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::istream;
@@ -33,7 +33,7 @@ vector<byte> load_stream_data(istream& input);
 vector<byte> load_file_data(const cstrref& fs_path);
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/io.inl>

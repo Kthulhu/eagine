@@ -17,7 +17,7 @@
 #include <eagine/meta/int_sequence.hpp>
 #include <eagine/meta/instead_of.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 // multi_align_byte_allocator - fwd
@@ -128,7 +128,7 @@ public:
 
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

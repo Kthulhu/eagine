@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 enum class pa;
@@ -620,7 +620,7 @@ public:
 	typedef path_entry_ref_tpl<Storage, Entries> reference;
 	typedef path_entry_ptr_tpl<Storage, Entries> pointer;
 private:
-	friend class EAGine::base::path;
+	friend class eagine::base::path;
 
 	reference _ref;
 
@@ -767,6 +767,6 @@ public:
 
 } // namespace bits
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif // include guard

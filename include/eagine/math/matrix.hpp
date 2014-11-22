@@ -15,7 +15,7 @@
 #include <eagine/meta/int_sequence.hpp>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 // matrix
@@ -674,7 +674,7 @@ identity<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&) { return {}; }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

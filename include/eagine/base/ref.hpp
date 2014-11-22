@@ -13,7 +13,7 @@
 
 #include <functional>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::ref;
@@ -21,7 +21,7 @@ using ::std::cref;
 using ::std::reference_wrapper;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

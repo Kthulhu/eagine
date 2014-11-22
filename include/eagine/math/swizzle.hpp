@@ -13,7 +13,7 @@
 #include <eagine/math/vector.hpp>
 #include <eagine/meta/int_const.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace math {
 
 template <typename C, unsigned ... I>
@@ -78,7 +78,7 @@ operator / (const vector<T, N>& v, swizzle_mask<C, I...> m)
 }
 
 } // namespace math
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -16,7 +16,7 @@
 #include <eagine/base/dyn_lib.hpp>
 #include <eagine/dyli/detail.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace dyli {
 
 template <typename FuncType>
@@ -107,7 +107,7 @@ public:
 };
 
 } // namespace dyli
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

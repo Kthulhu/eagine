@@ -20,20 +20,20 @@
 #include <cassert>
 #include <algorithm>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 int main(void)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	try
 	{
-		using namespace EAGine::base;
+		using namespace eagine::base;
 
 		typedef flat_dict<guid, std::size_t> vm_t;
 		vm_t vm;

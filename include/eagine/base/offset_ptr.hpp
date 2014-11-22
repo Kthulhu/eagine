@@ -15,7 +15,7 @@
 #include <cstddef>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename T, typename OffsT>
@@ -72,7 +72,7 @@ template <typename T>
 using offset_ptr = basic_offset_ptr<T, std::ptrdiff_t>;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

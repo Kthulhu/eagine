@@ -12,7 +12,7 @@
 
 #include <eagine/unit/si/common.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace base {
 
@@ -35,7 +35,7 @@ struct si::base_unit<base::luminous_intensity> : base::candela { };
 typedef unit<luminous_intensity, si> candela;
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

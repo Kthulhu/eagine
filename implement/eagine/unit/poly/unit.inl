@@ -9,7 +9,7 @@
 #include <typeinfo>
 #include <typeindex>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 //------------------------------------------------------------------------------
@@ -111,10 +111,10 @@ unit::_make_info(const unit::_unit_info* base_info)
 	return {
 		poly::dimension(typename U::dimension()),
 		poly::system(typename U::system()),
-		meta::c_str<typename EAGine::unit::info<U>::name>(),
-		meta::c_str<typename EAGine::unit::info<U>::symbol>(),
-		meta::size<typename EAGine::unit::info<U>::name>(),
-		meta::size<typename EAGine::unit::info<U>::symbol>(),
+		meta::c_str<typename eagine::unit::info<U>::name>(),
+		meta::c_str<typename eagine::unit::info<U>::symbol>(),
+		meta::size<typename eagine::unit::info<U>::name>(),
+		meta::size<typename eagine::unit::info<U>::symbol>(),
 		base_info
 	};
 }
@@ -124,9 +124,9 @@ unit::_make_info(const unit::_unit_info* base_info)
 template <typename D, typename S>
 inline
 const unit::_unit_info*
-unit::_get_info(EAGine::unit::unit<D,S> u)
+unit::_get_info(eagine::unit::unit<D,S> u)
 {
-	typedef EAGine::unit::unit<D,S> U;
+	typedef eagine::unit::unit<D,S> U;
 
 	auto p = _infos().find({dimension((D())), system((S()))});
 
@@ -146,10 +146,10 @@ unit::_get_info(EAGine::unit::unit<D,S> u)
 template <typename D, typename S, typename Sys>
 inline
 const unit::_unit_info*
-unit::_get_info(EAGine::unit::scaled_unit<D,S,Sys>)
+unit::_get_info(eagine::unit::scaled_unit<D,S,Sys>)
 {
-	typedef EAGine::unit::scaled_unit<D,S,Sys> SU;
-	typedef EAGine::unit::unit<D,Sys> U;
+	typedef eagine::unit::scaled_unit<D,S,Sys> SU;
+	typedef eagine::unit::unit<D,Sys> U;
 	static _unit_info su = _make_info<SU>(_get_info(U()));
 
 	return &su;
@@ -160,7 +160,7 @@ unit::_get_info(EAGine::unit::scaled_unit<D,S,Sys>)
 template <typename T, typename D, typename S>
 inline
 const value_conv*
-unit::_get_conv(EAGine::unit::unit<D,S>)
+unit::_get_conv(eagine::unit::unit<D,S>)
 {
 	static value_conv conv(
 		(T*)nullptr,
@@ -176,25 +176,25 @@ unit::_get_conv(EAGine::unit::unit<D,S>)
 template <typename T, typename D, typename S, typename Sys>
 inline
 const value_conv*
-unit::_get_conv(EAGine::unit::scaled_unit<D,S,Sys>)
+unit::_get_conv(eagine::unit::scaled_unit<D,S,Sys>)
 {
 	static value_conv conv(
 		(T*)nullptr,
 		(T(*)(T))([](T v) -> T
 		{
-			return EAGine::unit::value_conv<
-				EAGine::unit::scaled_unit<D,S,Sys>,
-				EAGine::unit::unit<D,Sys>
+			return eagine::unit::value_conv<
+				eagine::unit::scaled_unit<D,S,Sys>,
+				eagine::unit::unit<D,Sys>
 			>::type::template apply<T>(v);
 		}),
 		(T(*)(T))([](T v) -> T
 		{
-			return EAGine::unit::value_conv<
-				EAGine::unit::unit<D,Sys>,
-				EAGine::unit::scaled_unit<D,S,Sys>
+			return eagine::unit::value_conv<
+				eagine::unit::unit<D,Sys>,
+				eagine::unit::scaled_unit<D,S,Sys>
 			>::type::template apply<T>(v);
 		}),
-		_get_conv<T>(EAGine::unit::unit<D,Sys>())
+		_get_conv<T>(eagine::unit::unit<D,Sys>())
 	);
 	return &conv;
 }
@@ -301,6 +301,6 @@ T unit::_from_base(T v) const
 //------------------------------------------------------------------------------
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 

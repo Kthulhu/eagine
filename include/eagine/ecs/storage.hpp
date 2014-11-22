@@ -15,7 +15,7 @@
 #include <eagine/base/access_type.hpp>
 #include <eagine/base/functor.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace ecs {
 
 // storage_iterator
@@ -196,7 +196,7 @@ struct component_storage
 };
 
 } // namespace ecs
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

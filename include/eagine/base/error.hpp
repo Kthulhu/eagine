@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <system_error>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 using ::std::exception;
@@ -24,7 +24,7 @@ using ::std::throw_with_nested;
 using ::std::rethrow_if_nested;
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

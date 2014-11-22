@@ -27,7 +27,7 @@ void finished(void)
 
 int main(int argc, const char**)
 {
-	using namespace EAGine::base;
+	using namespace eagine::base;
 
 	{
 		on_scope_exit se(&success, &failure);

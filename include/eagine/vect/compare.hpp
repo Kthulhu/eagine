@@ -12,7 +12,7 @@
 
 #include <eagine/vect/data.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N>
@@ -34,7 +34,7 @@ struct equal
 // TODO: some optimizations ?
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

@@ -13,7 +13,7 @@
 #include <eagine/vect/fill.hpp>
 #include <cmath>
 
-namespace EAGine {
+namespace eagine {
 namespace vect {
 
 template <typename T>
@@ -86,7 +86,7 @@ public:
 };
 
 } // namespace vect
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

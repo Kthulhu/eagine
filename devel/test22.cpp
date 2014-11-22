@@ -12,7 +12,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace EAGine {
+namespace eagine {
 namespace exte {
 
 template <typename T>
@@ -77,11 +77,11 @@ struct myeval
 	}
 };
 
-} // namespace EAGine
+} // namespace eagine
 
 int main(int argc, const char**)
 {
-	using namespace EAGine;
+	using namespace eagine;
 
 	using exte::val;
 	using exte::ref;

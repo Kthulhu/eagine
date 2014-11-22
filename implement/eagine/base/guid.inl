@@ -14,7 +14,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <cstring>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
 // guid::guid
@@ -146,5 +146,5 @@ std::ostream& operator << (std::ostream& out, const guid& id)
 }
 //------------------------------------------------------------------------------
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 

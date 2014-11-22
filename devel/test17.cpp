@@ -19,19 +19,19 @@
 #include <eagine/unit/si/electric_tension.hpp>
 #include <eagine/unit/derived.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 namespace poly {
 
 
 } // namespace poly
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 int main(void)
 {
-	using namespace EAGine::unit;
-	using EAGine::unit::time;
+	using namespace eagine::unit;
+	using eagine::unit::time;
 
 	poly::dimension m((mass()));
 	poly::dimension L((length()));

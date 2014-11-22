@@ -9,7 +9,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE EAGine_base_sim_clock
+#define BOOST_TEST_MODULE eagine_base_sim_clock
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/sim_clock.hpp>
@@ -20,25 +20,25 @@ BOOST_AUTO_TEST_SUITE(base_sim_clock)
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_default_construction)
 {
-	EAGine::base::sim_clock c;
+	eagine::base::sim_clock c;
 }
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_init_construction)
 {
-	EAGine::base::sim_clock c(1.5);
+	eagine::base::sim_clock c(1.5);
 }
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_copy_construction)
 {
-	EAGine::base::sim_clock c1;
-	EAGine::base::sim_clock c2(c1);
+	eagine::base::sim_clock c1;
+	eagine::base::sim_clock c2(c1);
 }
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_update_time)
 {
 	const double irm = 1.0/RAND_MAX;
 	double t = 0.0;
-	EAGine::base::sim_clock c;
+	eagine::base::sim_clock c;
 
 	for(int k=0; k!=100000; ++k)
 	{
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(base_sim_clock_advance_time)
 {
 	const double irm = 1.0/RAND_MAX;
 	double t = 0.0;
-	EAGine::base::sim_clock c;
+	eagine::base::sim_clock c;
 
 	for(int k=0; k!=100000; ++k)
 	{
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(base_sim_clock_pace_1)
 		double t = 0.0;
 		double p = 0.1+4.9*irm*std::rand();
 
-		EAGine::base::sim_clock c;
+		eagine::base::sim_clock c;
 		c.pace(p);
 
 		for(int k=0; k!=1000; ++k)
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(base_sim_clock_pace_2)
 {
 	const double irm = 1.0/RAND_MAX;
 
-	EAGine::base::sim_clock c;
+	eagine::base::sim_clock c;
 
 	for(int j=0; j!=100; ++j)
 	{
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(base_sim_clock_pace_2)
 
 BOOST_AUTO_TEST_CASE(base_sim_time_period_1)
 {
-	EAGine::base::sim_clock c;
+	eagine::base::sim_clock c;
 	BOOST_ASSERT(c.now().second() == 0);
 	BOOST_ASSERT(c.now().minute() == 0);
 	BOOST_ASSERT(c.now().hour() == 0);
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(base_sim_time_period_1)
 BOOST_AUTO_TEST_CASE(base_sim_time_period_2)
 {
 	const double irm = 1.0/RAND_MAX;
-	EAGine::base::sim_clock c;
+	eagine::base::sim_clock c;
 
 	for(int j=0; j!=100; ++j)
 	{

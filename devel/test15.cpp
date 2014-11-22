@@ -12,8 +12,8 @@
 
 int main(void)
 {
-	using namespace EAGine::math;
-	using namespace EAGine::math::swizzles;
+	using namespace eagine::math;
+	using namespace eagine::math::swizzles;
 
 	typedef vector<float, 3> vec3;
 	typedef vector<float, 4> vec4;

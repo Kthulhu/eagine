@@ -12,7 +12,7 @@
 
 #include <eagine/unit/dim/electric_tension.hpp>
 
-namespace EAGine {
+namespace eagine {
 namespace unit {
 
 typedef decltype(electric_charge()/electric_tension()) electrical_capacitance;
@@ -27,7 +27,7 @@ struct info<electrical_capacitance>
 };
 
 } // namespace unit
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 

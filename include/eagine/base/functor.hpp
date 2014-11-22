@@ -18,7 +18,7 @@
 #include <utility>
 #include <cassert>
 
-namespace EAGine {
+namespace eagine {
 namespace base {
 
 template <typename FuncSig>
@@ -243,7 +243,7 @@ public:
 };
 
 } // namespace base
-} // namespace EAGine
+} // namespace eagine
 
 #endif //include guard
 
