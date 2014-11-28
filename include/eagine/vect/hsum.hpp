@@ -20,7 +20,9 @@ struct hsum
 {
 	typedef typename data<T,  N>::type _dT;
 
-	static _dT apply(_dT v)
+	static
+	_dT apply(_dT v)
+	noexcept
 	{
 		for(unsigned i=1; i<N; ++i)
 		{
@@ -42,6 +44,7 @@ struct hsum<T, 1>
 
 	static constexpr inline
 	_dT apply(_dT v)
+	noexcept
 	{
 		return v;
 	}
@@ -55,6 +58,7 @@ struct hsum<T, 2>
 
 	static constexpr inline
 	_dT apply(_dT v)
+	noexcept
 	{
 		return v + _sh::template apply<1,0>(v);
 	}
@@ -70,12 +74,14 @@ struct hsum<T, 3>
 	
 	static constexpr inline
 	_dT _hlp(_dT t, _dT v)
+	noexcept
 	{
 		return t + _sh::template apply<2,2,1>(v);
 	}
 
 	static constexpr inline
 	_dT apply(_dT v)
+	noexcept
 	{
 		return _hlp(v + _sh::template apply<1,0,0>(v), v);
 	}
@@ -89,12 +95,14 @@ struct hsum<T, 4>
 	
 	static constexpr inline
 	_dT _hlp(_dT v)
+	noexcept
 	{
 		return v + _sh::template apply<2,3,0,1>(v);
 	}
 	
 	static constexpr inline
 	_dT apply(_dT v)
+	noexcept
 	{
 		return _hlp(v + _sh::template apply<1,0,3,2>(v));
 	}

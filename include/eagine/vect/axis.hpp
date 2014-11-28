@@ -21,12 +21,12 @@ struct axis
 	static
 	typename data<T, N>::type
 	apply(T v)
+	noexcept
 	{
 		typename data<T, N>::type r;
 		for(unsigned i=0; i<N; ++i)
 		{
-			if(i == I) r[I] = v;
-			else r[i] = T(0);
+			r[i] = (i == I)?v:T(0);
 		}
 		return r;
 	}
@@ -38,6 +38,7 @@ struct axis<T, 1, 0>
 	static constexpr
 	typename data<T, 1>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 1>::type
 			{v};
@@ -50,6 +51,7 @@ struct axis<T, 1, I>
 	static constexpr
 	typename data<T, 1>::type
 	apply(T)
+	noexcept
 	{
 		return typename data<T, 1>::type
 			{0};
@@ -62,6 +64,7 @@ struct axis<T, 2, 0>
 	static constexpr
 	typename data<T, 2>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 2>::type
 			{v,T(0)};
@@ -74,6 +77,7 @@ struct axis<T, 2, 1>
 	static constexpr
 	typename data<T, 2>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 2>::type
 			{T(0),v};
@@ -86,6 +90,7 @@ struct axis<T, 2, I>
 	static constexpr
 	typename data<T, 2>::type
 	apply(T)
+	noexcept
 	{
 		return typename data<T, 2>::type
 			{T(0),T(0)};
@@ -98,6 +103,7 @@ struct axis<T, 3, 0>
 	static constexpr
 	typename data<T, 3>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 3>::type
 			{v,T(0),T(0)};
@@ -110,6 +116,7 @@ struct axis<T, 3, 1>
 	static constexpr
 	typename data<T, 3>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 3>::type
 			{T(0),v,T(0)};
@@ -122,6 +129,7 @@ struct axis<T, 3, 2>
 	static constexpr
 	typename data<T, 3>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 3>::type
 			{T(0),T(0),v};
@@ -134,6 +142,7 @@ struct axis<T, 3, I>
 	static constexpr
 	typename data<T, 3>::type
 	apply(T)
+	noexcept
 	{
 		return typename data<T, 3>::type
 			{T(0),T(0),T(0)};
@@ -146,6 +155,7 @@ struct axis<T, 4, 0>
 	static constexpr
 	typename data<T, 4>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 4>::type
 			{v,T(0),T(0),T(0)};
@@ -158,6 +168,7 @@ struct axis<T, 4, 1>
 	static constexpr
 	typename data<T, 4>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 4>::type
 			{T(0),v,T(0),T(0)};
@@ -170,6 +181,7 @@ struct axis<T, 4, 2>
 	static constexpr
 	typename data<T, 4>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 4>::type
 			{T(0),T(0),v,T(0)};
@@ -182,6 +194,7 @@ struct axis<T, 4, 3>
 	static constexpr
 	typename data<T, 4>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 4>::type
 			{T(0),T(0),T(0),v};
@@ -194,6 +207,7 @@ struct axis<T, 4, I>
 	static constexpr
 	typename data<T, 4>::type
 	apply(T v)
+	noexcept
 	{
 		return typename data<T, 4>::type
 			{T(0),T(0),T(0),T(0)};

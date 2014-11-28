@@ -24,26 +24,35 @@ struct _ary_data
 		typename ... P,
 		typename = std::enable_if<sizeof...(P) == N>
 	>
-	constexpr _ary_data(P&& ... p)
+	constexpr
+	_ary_data(P&& ... p)
 	 : _v{T(p)...}
 	{ }
 
-	constexpr inline T operator [] (unsigned i) const
+	constexpr inline
+	T operator [] (unsigned i) const
+	noexcept
 	{
 		return _v[i];
 	}
 
-	constexpr inline T& operator [] (unsigned i)
+	constexpr inline
+	T& operator [] (unsigned i)
+	noexcept
 	{
 		return _v[i];
 	}
 
-	friend constexpr inline _ary_data operator + (_ary_data a)
+	friend constexpr inline
+	_ary_data operator + (_ary_data a)
+	noexcept
 	{
 		return a;
 	}
 
-	friend _ary_data operator - (const _ary_data& a)
+	friend
+	_ary_data operator - (const _ary_data& a)
+	noexcept
 	{
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
@@ -53,7 +62,9 @@ struct _ary_data
 		return c;
 	}
 
-	friend _ary_data operator + (const _ary_data& a, const _ary_data& b)
+	friend
+	_ary_data operator + (const _ary_data& a, const _ary_data& b)
+	noexcept
 	{
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
@@ -63,7 +74,9 @@ struct _ary_data
 		return c;
 	}
 
-	friend _ary_data operator - (const _ary_data& a, const _ary_data& b)
+	friend
+	_ary_data operator - (const _ary_data& a, const _ary_data& b)
+	noexcept
 	{
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
@@ -73,7 +86,9 @@ struct _ary_data
 		return c;
 	}
 
-	friend _ary_data operator * (const _ary_data& a, const _ary_data& b)
+	friend
+	_ary_data operator * (const _ary_data& a, const _ary_data& b)
+	noexcept
 	{
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
@@ -83,7 +98,9 @@ struct _ary_data
 		return c;
 	}
 
-	friend _ary_data operator / (const _ary_data& a, const _ary_data& b)
+	friend
+	_ary_data operator / (const _ary_data& a, const _ary_data& b)
+	noexcept
 	{
 		_ary_data c;
 		for(unsigned i=0; i<N; ++i)

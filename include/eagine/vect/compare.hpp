@@ -20,12 +20,16 @@ struct equal
 {
 	typedef typename data<T,  N>::type _dT;
 
-	static bool apply(const _dT& a, const _dT& b)
+	static
+	bool apply(_dT a, _dT b)
+	noexcept
 	{
 		for(unsigned i=0; i<N; ++i)
 		{
 			if(a[i] != b[i])
+			{
 				return false;
+			}
 		}
 		return true;
 	}

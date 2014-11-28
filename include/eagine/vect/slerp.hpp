@@ -29,27 +29,36 @@ private:
 	}
 public:
 	constexpr slerp_coefs(T angle_rad)
+	noexcept
 	 : _phi(angle_rad)
 	 , _isin_phi(_isp(_phi))
 	{ }
 
-	inline bool degenerate(void) const
+	inline
+	bool degenerate(void) const
+	noexcept
 	{
 		return _isin_phi == 0;
 	}
 
-	inline bool close(T eps) const
+	inline
+	bool close(T eps) const
+	noexcept
 	{
 		return _phi < eps;
 	}
 
-	inline T p(T t) const
+	inline
+	T p(T t) const
+	noexcept
 	{
 		using std::sin;
 		return sin((1-t)*_phi)*_isin_phi;
 	}
 
-	inline T q(T t) const
+	inline
+	T q(T t) const
+	noexcept
 	{
 		using std::sin;
 		return sin(t*_phi)*_isin_phi;
@@ -64,20 +73,27 @@ private:
 	typedef typename data<T, N>::type _dT;
 public:
 	constexpr slerp(T angle_rad)
+	noexcept
 	 : _sc(angle_rad)
 	{ }
 
-	inline bool degenerate(void) const
+	inline
+	bool degenerate(void) const
+	noexcept
 	{
 		return _sc.degenerate();
 	}
 
-	inline bool close(T eps) const
+	inline
+	bool close(T eps) const
+	noexcept
 	{
 		return _sc.close(eps);
 	}
 
-	_dT operator ()(const _dT& a, const _dT& b, T t) const
+	inline
+	_dT operator ()(_dT a, _dT b, T t) const
+	noexcept
 	{
 		typedef fill<T, N> _fill;
 		return	a*_fill::apply(_sc.p(t))+

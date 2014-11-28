@@ -20,7 +20,8 @@ struct lerp
 {
 	typedef typename data<T, N>::type _dT;
 
-	_dT operator()(const _dT& a, const _dT& b, T t) const
+	_dT operator()(_dT a, _dT b, T t) const
+	noexcept
 	{
 		typedef fill<T, N> _fill;
 		return	a*_fill::apply(1-t)+

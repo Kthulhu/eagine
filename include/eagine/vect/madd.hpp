@@ -20,7 +20,9 @@ struct madd
 {
 	typedef typename data<T,  N>::type _dT;
 
-	static _dT apply(_dT a, _dT b, _dT c)
+	static
+	_dT apply(_dT a, _dT b, _dT c)
+	noexcept
 	{
 		return a*b+c;
 	}

@@ -21,6 +21,7 @@ struct fill
 	static
 	typename data<T, N>::type
 	apply(T v)
+	noexcept
 	{
 		typename data<T, N>::type r;
 		for(unsigned i=0; i<N; ++i)
@@ -37,6 +38,7 @@ struct fill<T, 0>
 	static constexpr
 	typename data<T, 0>::type
 	apply(T)
+	noexcept
 	{
 		return {};
 	}
@@ -48,6 +50,7 @@ struct fill<T, 1>
 	static constexpr
 	typename data<T, 1>::type
 	apply(T v)
+	noexcept
 	{
 		return {v};
 	}
@@ -59,6 +62,7 @@ struct fill<T, 2>
 	static constexpr
 	typename data<T, 2>::type
 	apply(T v)
+	noexcept
 	{
 		return {v,v};
 	}
@@ -70,6 +74,7 @@ struct fill<T, 3>
 	static constexpr
 	typename data<T, 3>::type
 	apply(T v)
+	noexcept
 	{
 		return {v,v,v};
 	}
@@ -81,6 +86,7 @@ struct fill<T, 4>
 	static constexpr
 	typename data<T, 4>::type
 	apply(T v)
+	noexcept
 	{
 		return {v,v,v,v};
 	}

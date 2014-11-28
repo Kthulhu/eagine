@@ -22,6 +22,7 @@ struct data_caster;
 template <typename DF, typename DT>
 static constexpr inline
 typename DT::type data_cast(const typename DF::type& v)
+noexcept
 {
 	return data_caster<DF, DT>::apply(v, 0);
 }
@@ -32,6 +33,7 @@ struct data_caster<data<T, N>, data<T, N>>
 	static constexpr inline
 	typename data<T, N>::type
 	apply(const typename data<T, N>::type& v, T)
+	noexcept
 	{
 		return v;
 	}
@@ -48,7 +50,7 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 		const typename data<TT, sizeof...(D)>::type& d,
 		meta::integer_sequence<unsigned, I...>,
 		meta::integer_sequence<unsigned, D...>
-	)
+	) noexcept
 	{
 		return {TT(v[I])..., d[D]...};
 	}
@@ -61,7 +63,7 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 		const typename data<TT, 0u>::type&,
 		meta::integer_sequence<unsigned, I...>,
 		meta::integer_sequence<unsigned>
-	)
+	) noexcept
 	{
 		return {TT(v[I])...};
 	}
@@ -69,6 +71,7 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 	static constexpr inline
 	typename data<TT, NT>::type
 	apply(const typename data<TF, NF>::type& v, TT d)
+	noexcept
 	{
 		typedef typename meta::make_integer_sequence<
 			unsigned,

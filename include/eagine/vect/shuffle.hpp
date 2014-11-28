@@ -28,9 +28,9 @@ struct shuffle
 	template <int ... I>
 	static inline
 	_dT apply(
-		const _dT& v,
+		_dT v,
 		shuffle_mask<I...> = {}
-	)
+	) noexcept
 	{
 #if defined(__clang__) && __SSE__
 		return __builtin_shufflevector(v,v, I...);
@@ -51,10 +51,10 @@ struct shuffle2
 	template <int ... I>
 	static inline
 	_dT apply(
-		const _dT& v1,
-		const _dT& v2,
+		_dT v1,
+		_dT v2,
 		shuffle_mask<I...> = {}
-	)
+	) noexcept
 	{
 #if defined(__clang__) && __SSE__
 		return __builtin_shufflevector(v1,v2, I...);
