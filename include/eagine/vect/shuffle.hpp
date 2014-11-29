@@ -36,7 +36,7 @@ struct shuffle
 #if defined(__clang__) && __SSE__
 		return __builtin_shufflevector(v,v, I...);
 #elif defined(__GNUC__) && __SSE__
-		typedef typename data<unsigned,N>::type _mT;
+		typedef typename data<int, N>::type _mT;
 		return __builtin_shuffle(v, _mT{I...});
 #else
 		return typename data<T, N>::type{v[I]...};
@@ -61,7 +61,7 @@ struct shuffle2
 #if defined(__clang__) && __SSE__
 		return __builtin_shufflevector(v1,v2, I...);
 #elif defined(__GNUC__) && __SSE__
-		typedef typename data<unsigned,N>::type _mT;
+		typedef typename data<int, N>::type _mT;
 		return __builtin_shuffle(v1, v2, _mT{I...});
 #else
 		return typename data<T, N>::type{

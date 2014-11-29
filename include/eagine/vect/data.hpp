@@ -36,7 +36,7 @@ struct _ary_data
 		return _v[i];
 	}
 
-	constexpr inline
+	inline
 	T& operator [] (unsigned i)
 	noexcept
 	{
