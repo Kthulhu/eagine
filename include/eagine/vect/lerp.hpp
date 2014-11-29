@@ -19,8 +19,9 @@ template <typename T, unsigned N>
 struct lerp
 {
 	typedef typename data<T, N>::type _dT;
+	typedef typename data_param<T, N>::type _dpT;
 
-	_dT operator()(_dT a, _dT b, T t) const
+	_dT operator()(_dpT a, _dpT b, T t) const
 	noexcept
 	{
 		typedef fill<T, N> _fill;

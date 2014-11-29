@@ -71,6 +71,7 @@ struct slerp
 private:
 	slerp_coefs<T> _sc;
 	typedef typename data<T, N>::type _dT;
+	typedef typename data_param<T, N>::type _dpT;
 public:
 	constexpr slerp(T angle_rad)
 	noexcept
@@ -92,7 +93,7 @@ public:
 	}
 
 	inline
-	_dT operator ()(_dT a, _dT b, T t) const
+	_dT operator ()(_dpT a, _dpT b, T t) const
 	noexcept
 	{
 		typedef fill<T, N> _fill;

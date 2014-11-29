@@ -18,7 +18,7 @@ namespace vect {
 template <typename T, unsigned N>
 struct hsum
 {
-	typedef typename data<T,  N>::type _dT;
+	typedef typename data<T, N>::type _dT;
 
 	static
 	_dT apply(_dT v)
@@ -40,10 +40,11 @@ struct hsum
 template <typename T>
 struct hsum<T, 1>
 {
-	typedef typename data<T,  1>::type _dT;
+	typedef typename data<T, 1>::type _dT;
+	typedef typename data_param<T, 1>::type _dpT;
 
 	static constexpr inline
-	_dT apply(_dT v)
+	_dT apply(_dpT v)
 	noexcept
 	{
 		return v;
@@ -53,11 +54,12 @@ struct hsum<T, 1>
 template <typename T>
 struct hsum<T, 2>
 {
-	typedef typename data<T,  2>::type _dT;
+	typedef typename data<T, 2>::type _dT;
+	typedef typename data_param<T, 2>::type _dpT;
 	typedef shuffle<T, 2> _sh;
 
 	static constexpr inline
-	_dT apply(_dT v)
+	_dT apply(_dpT v)
 	noexcept
 	{
 		return v + _sh::template apply<1,0>(v);
@@ -69,18 +71,19 @@ struct hsum<T, 2>
 template <typename T>
 struct hsum<T, 3>
 {
-	typedef typename data<T,  3>::type _dT;
+	typedef typename data<T, 3>::type _dT;
+	typedef typename data_param<T, 3>::type _dpT;
 	typedef shuffle<T, 3> _sh;
 	
 	static constexpr inline
-	_dT _hlp(_dT t, _dT v)
+	_dT _hlp(_dpT t, _dpT v)
 	noexcept
 	{
 		return t + _sh::template apply<2,2,1>(v);
 	}
 
 	static constexpr inline
-	_dT apply(_dT v)
+	_dT apply(_dpT v)
 	noexcept
 	{
 		return _hlp(v + _sh::template apply<1,0,0>(v), v);
@@ -90,18 +93,19 @@ struct hsum<T, 3>
 template <typename T>
 struct hsum<T, 4>
 {
-	typedef typename data<T,  4>::type _dT;
+	typedef typename data<T, 4>::type _dT;
+	typedef typename data_param<T, 4>::type _dpT;
 	typedef shuffle<T, 4> _sh;
 	
 	static constexpr inline
-	_dT _hlp(_dT v)
+	_dT _hlp(_dpT v)
 	noexcept
 	{
 		return v + _sh::template apply<2,3,0,1>(v);
 	}
 	
 	static constexpr inline
-	_dT apply(_dT v)
+	_dT apply(_dpT v)
 	noexcept
 	{
 		return _hlp(v + _sh::template apply<1,0,3,2>(v));

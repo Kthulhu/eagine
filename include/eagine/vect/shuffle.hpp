@@ -24,11 +24,12 @@ template <typename T, unsigned N>
 struct shuffle
 {
 	typedef typename data<T, N>::type _dT;
+	typedef typename data_param<T, N>::type _dpT;
 
 	template <int ... I>
 	static inline
 	_dT apply(
-		_dT v,
+		_dpT v,
 		shuffle_mask<I...> = {}
 	) noexcept
 	{
@@ -47,12 +48,13 @@ template <typename T, unsigned N>
 struct shuffle2
 {
 	typedef typename data<T, N>::type _dT;
+	typedef typename data_param<T, N>::type _dpT;
 
 	template <int ... I>
 	static inline
 	_dT apply(
-		_dT v1,
-		_dT v2,
+		_dpT v1,
+		_dpT v2,
 		shuffle_mask<I...> = {}
 	) noexcept
 	{

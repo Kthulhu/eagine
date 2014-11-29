@@ -18,10 +18,10 @@ namespace vect {
 template <typename T, unsigned N>
 struct equal
 {
-	typedef typename data<T,  N>::type _dT;
+	typedef typename data_param<T,  N>::type _dpT;
 
 	static
-	bool apply(_dT a, _dT b)
+	bool apply(_dpT a, _dpT b)
 	noexcept
 	{
 		for(unsigned i=0; i<N; ++i)

@@ -123,6 +123,12 @@ struct data
 	typedef _ary_data<T, N> type;
 };
 
+template <typename T, unsigned N>
+struct data_param
+{
+	typedef const _ary_data<T, N>& type;
+};
+
 
 #if defined(__clang__) && __SSE__
 
@@ -199,6 +205,34 @@ struct data<T,4> : _data<T,4>
 { };
 
 #endif
+
+#if (defined(__clang__) || defined(__GNUC__)) && __SSE__
+
+template <typename T>
+struct data_param<T,1> : data<T,1>
+{ };
+
+template <typename T>
+struct data_param<T,2> : data<T,2>
+{ };
+
+template <typename T>
+struct data_param<T,3> : data<T,4>
+{ };
+
+template <typename T>
+struct data_param<T,4> : data<T,4>
+{ };
+
+#endif
+
+template <typename Data>
+struct param;
+
+template <typename T, unsigned N>
+struct param<data<T, N>>
+ : data_param<T, N>
+{ };
 
 } // namespace vect
 } // namespace eagine

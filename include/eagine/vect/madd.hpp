@@ -19,9 +19,10 @@ template <typename T, unsigned N>
 struct madd
 {
 	typedef typename data<T,  N>::type _dT;
+	typedef typename data_param<T, N>::type _dpT;
 
 	static
-	_dT apply(_dT a, _dT b, _dT c)
+	_dT apply(_dpT a, _dpT b, _dpT c)
 	noexcept
 	{
 		return a*b+c;
