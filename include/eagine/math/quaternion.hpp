@@ -35,7 +35,7 @@ struct quaternion
 		const T& sca
 	)
 	{
-		return {vec[0], vec[1], vec[2], sca};
+		return {{vec[0], vec[1], vec[2], sca}};
 	}
 
 	static constexpr quaternion from_vector(
@@ -73,7 +73,7 @@ struct quaternion
 
 	friend constexpr vector<T, 3> vector_part(_cpT q)
 	{
-		return {q._v[0], q._v[1], q._v[2]};
+		return {{q._v[0], q._v[1], q._v[2]}};
 	}
 
 	friend constexpr T scalar_part(_cpT q)
@@ -83,7 +83,7 @@ struct quaternion
 
 	friend constexpr quaternion conjugate(_cpT q)
 	{
-		return {-q._v[0],-q._v[1],-q._v[2], q._v[3]};
+		return {{-q._v[0],-q._v[1],-q._v[2], q._v[3]}};
 	}
 
 	quaternion operator * (void) const

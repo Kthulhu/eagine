@@ -63,7 +63,7 @@ swizzle(
 	swizzle_mask<C, I...> m
 )
 {
-	return {m.template get<I,T>(v._v)...};
+	return {{m.template get<I,T>(v._v)...}};
 }
 
 template <unsigned ... I, typename T, typename C, unsigned N>

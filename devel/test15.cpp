@@ -73,7 +73,7 @@ int main(void)
 
 	vec4 v40 = vec4::axis<0>();
 	vec4 v41 = vec4::fill(2);
-	vec4 v42 = {1,2,3,4};
+	vec4 v42 = {{1,2,3,4}};
 	vec4 v43 = v41+v42;
 
 	std::cout << v40 << std::endl;

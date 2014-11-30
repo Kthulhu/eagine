@@ -146,11 +146,11 @@ static inline typename meta::enable_if<
 >::type quantity_name(const Unit& = Unit())
 noexcept
 {
-	return meta::c_str<
-		typename info<
-			typename Unit::dimension
-		>::name
-	>::value;
+	typedef typename info<typename Unit::dimension>::name ctn;
+	return eagine::base::cstrref(
+		meta::c_str<ctn>::value,
+		meta:: size<ctn>::value
+	);
 }
 
 // quantity_name(quanity)
@@ -169,7 +169,11 @@ static inline typename meta::enable_if<
 >::type unit_name(const Unit& = Unit())
 noexcept
 {
-	return meta::c_str<typename info<Unit>::name>::value;
+	typedef typename info<Unit>::name ctn;
+	return eagine::base::cstrref(
+		meta::c_str<ctn>::value,
+		meta:: size<ctn>::value
+	);
 }
 
 // unit_symbol(Unit)
@@ -180,7 +184,11 @@ static inline typename meta::enable_if<
 >::type unit_symbol(const Unit& = Unit())
 noexcept
 {
-	return meta::c_str<typename info<Unit>::symbol>::value;
+	typedef typename info<Unit>::symbol cts;
+	return eagine::base::cstrref(
+		meta::c_str<cts>::value,
+		meta:: size<cts>::value
+	);
 }
 
 // unit_name(quantity)

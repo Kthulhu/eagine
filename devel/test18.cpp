@@ -20,14 +20,14 @@ int main(void)
 	typedef vector<double, 3> vec3;
 	typedef quaternion<double> quat;
 
-	quat q0 = {0, 0, 0, 1};
-	quat q1 = quat::from_axis_angle(vec3{1,0,0}, unit::quantity<unit::degree>(90));
+	quat q0 = {{0, 0, 0, 1}};
+	quat q1 = quat::from_axis_angle(vec3{{1,0,0}}, unit::quantity<unit::degree>(90));
 	quat q2 = conjugate(q1);
 	quat q3 = inverse(q2);
 	quat q4 = *q3;
 	quat q5 = grassman_product(q3,q4);
 
-	vec3 v = {0,1,0};
+	vec3 v = {{0,1,0}};
 
 	std::cout << magnitude(q1) << std::endl;
 	std::cout << magnitude(q2) << std::endl;

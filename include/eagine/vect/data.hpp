@@ -20,9 +20,12 @@ struct _ary_data
 {
 	T _v[N];
 
+	_ary_data(void) = default;
+	_ary_data(const _ary_data&) = default;
+
 	template <
 		typename ... P,
-		typename = std::enable_if<sizeof...(P) == N>
+		typename = typename std::enable_if<sizeof...(P) == N>::type
 	>
 	constexpr
 	_ary_data(P&& ... p)
@@ -217,7 +220,7 @@ struct data_param<T,2> : data<T,2>
 { };
 
 template <typename T>
-struct data_param<T,3> : data<T,4>
+struct data_param<T,3> : data<T,3>
 { };
 
 template <typename T>

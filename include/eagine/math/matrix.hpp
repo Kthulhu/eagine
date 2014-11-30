@@ -469,7 +469,7 @@ _multiply_hlp(
 	const vector<T, C>& v
 )
 {
-	return {dot(row<I>(m), v)...};
+	return {{dot(row<I>(m), v)...}};
 }
 
 // multipliable_matrices MxV

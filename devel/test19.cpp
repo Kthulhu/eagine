@@ -23,7 +23,7 @@ int main(int argc, const char**)
 	typedef math::vector<float,4> vec4;
 	typedef math::matrix<float,4,4, true> mat4;
 
-	vec4 v = {0, 0, 0, 1};
+	vec4 v = {{0, 0, 0, 1}};
 	mat4 m0 = math::identity<mat4>();
 	mat4 m1 = {{
 		{ 1, 2, 3, 4},
@@ -96,7 +96,7 @@ int main(int argc, const char**)
 		math::identity<mat4>()*
 		math::perspective<mat4>::x(quantity<unit::degree>(75), 4.0/3.0, 1, 100)*
 		math::shear<mat4>(0,-1, 0)*
-		vec4{ 1, 0, 0, 1}
+		vec4{{ 1, 0, 0, 1}}
 		<< std::endl;
 
 	return 0;
