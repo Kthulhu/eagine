@@ -21,15 +21,28 @@ struct _ary_data
 	T _v[N];
 
 	_ary_data(void) = default;
-	_ary_data(const _ary_data&) = default;
+	_ary_data(const _ary_data& that) = default;
 
 	template <
 		typename ... P,
-		typename = typename std::enable_if<sizeof...(P) == N>::type
+		typename = typename meta::enable_if<
+			(N > 1) && (sizeof...(P) == N)
+		>::type
 	>
 	constexpr
 	_ary_data(P&& ... p)
-	 : _v{T(p)...}
+	 : _v{T(std::forward<P>(p))...}
+	{ }
+
+	template <
+		typename P,
+		typename = typename meta::enable_if<
+			(N == 1) && (meta::is_convertible<P, T>::value)
+		>::type
+	>
+	constexpr
+	_ary_data(P&& p)
+	 : _v{T(std::forward<P>(p))}
 	{ }
 
 	constexpr inline

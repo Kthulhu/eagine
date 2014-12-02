@@ -16,7 +16,7 @@
 
 BOOST_AUTO_TEST_SUITE(vect_fill)
 
-template <typename T, unsigned I, unsigned N>
+template <typename T, unsigned N>
 void test_vect_fill_apply(void)
 {
 	for(unsigned k=0; k<1000; ++k)
@@ -36,86 +36,23 @@ void test_vect_fill_apply(void)
 BOOST_AUTO_TEST_CASE(vect_fill_apply)
 {
 
-	test_vect_fill_apply<int, 0, 2>();
-	test_vect_fill_apply<int, 1, 2>();
+	test_vect_fill_apply<int, 2>();
+	test_vect_fill_apply<int, 3>();
+	test_vect_fill_apply<int, 4>();
+	test_vect_fill_apply<int, 5>();
+	test_vect_fill_apply<int, 8>();
 
-	test_vect_fill_apply<int, 0, 3>();
-	test_vect_fill_apply<int, 1, 3>();
-	test_vect_fill_apply<int, 2, 3>();
+	test_vect_fill_apply<float, 2>();
+	test_vect_fill_apply<float, 3>();
+	test_vect_fill_apply<float, 4>();
+	test_vect_fill_apply<float, 5>();
+	test_vect_fill_apply<float, 8>();
 
-	test_vect_fill_apply<int, 0, 4>();
-	test_vect_fill_apply<int, 1, 4>();
-	test_vect_fill_apply<int, 2, 4>();
-	test_vect_fill_apply<int, 3, 4>();
-
-	test_vect_fill_apply<int, 0, 5>();
-	test_vect_fill_apply<int, 1, 5>();
-	test_vect_fill_apply<int, 2, 5>();
-	test_vect_fill_apply<int, 3, 5>();
-	test_vect_fill_apply<int, 4, 5>();
-
-	test_vect_fill_apply<int, 0, 8>();
-	test_vect_fill_apply<int, 1, 8>();
-	test_vect_fill_apply<int, 2, 8>();
-	test_vect_fill_apply<int, 3, 8>();
-	test_vect_fill_apply<int, 4, 8>();
-	test_vect_fill_apply<int, 5, 8>();
-	test_vect_fill_apply<int, 6, 8>();
-	test_vect_fill_apply<int, 7, 8>();
-
-	test_vect_fill_apply<float, 0, 2>();
-	test_vect_fill_apply<float, 1, 2>();
-
-	test_vect_fill_apply<float, 0, 3>();
-	test_vect_fill_apply<float, 1, 3>();
-	test_vect_fill_apply<float, 2, 3>();
-
-	test_vect_fill_apply<float, 0, 4>();
-	test_vect_fill_apply<float, 1, 4>();
-	test_vect_fill_apply<float, 2, 4>();
-	test_vect_fill_apply<float, 3, 4>();
-
-	test_vect_fill_apply<float, 0, 5>();
-	test_vect_fill_apply<float, 1, 5>();
-	test_vect_fill_apply<float, 2, 5>();
-	test_vect_fill_apply<float, 3, 5>();
-	test_vect_fill_apply<float, 4, 5>();
-
-	test_vect_fill_apply<float, 0, 8>();
-	test_vect_fill_apply<float, 1, 8>();
-	test_vect_fill_apply<float, 2, 8>();
-	test_vect_fill_apply<float, 3, 8>();
-	test_vect_fill_apply<float, 4, 8>();
-	test_vect_fill_apply<float, 5, 8>();
-	test_vect_fill_apply<float, 6, 8>();
-	test_vect_fill_apply<float, 7, 8>();
-
-	test_vect_fill_apply<double, 0, 2>();
-	test_vect_fill_apply<double, 1, 2>();
-
-	test_vect_fill_apply<double, 0, 3>();
-	test_vect_fill_apply<double, 1, 3>();
-	test_vect_fill_apply<double, 2, 3>();
-
-	test_vect_fill_apply<double, 0, 4>();
-	test_vect_fill_apply<double, 1, 4>();
-	test_vect_fill_apply<double, 2, 4>();
-	test_vect_fill_apply<double, 3, 4>();
-
-	test_vect_fill_apply<double, 0, 5>();
-	test_vect_fill_apply<double, 1, 5>();
-	test_vect_fill_apply<double, 2, 5>();
-	test_vect_fill_apply<double, 3, 5>();
-	test_vect_fill_apply<double, 4, 5>();
-
-	test_vect_fill_apply<double, 0, 8>();
-	test_vect_fill_apply<double, 1, 8>();
-	test_vect_fill_apply<double, 2, 8>();
-	test_vect_fill_apply<double, 3, 8>();
-	test_vect_fill_apply<double, 4, 8>();
-	test_vect_fill_apply<double, 5, 8>();
-	test_vect_fill_apply<double, 6, 8>();
-	test_vect_fill_apply<double, 7, 8>();
+	test_vect_fill_apply<double, 2>();
+	test_vect_fill_apply<double, 3>();
+	test_vect_fill_apply<double, 4>();
+	test_vect_fill_apply<double, 5>();
+	test_vect_fill_apply<double, 8>();
 }
 
 

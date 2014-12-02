@@ -13,6 +13,7 @@
 
 #include <eagine/vect/data.hpp>
 #include <cstdlib>
+#include <type_traits>
 
 BOOST_AUTO_TEST_SUITE(vect_data)
 
@@ -276,6 +277,29 @@ BOOST_AUTO_TEST_CASE(vect_data_elements)
 	BOOST_ASSERT(v8d[7] == 8.0);
 }
 
+template <typename T>
+bool test_vect_data_close(T a, T b, std::true_type)
+{
+	return a == b;
+}
+
+template <typename T>
+bool test_vect_data_close(T a, T b, std::false_type)
+{
+	using namespace boost::test_tools;
+	return check_is_close(
+		a, b,
+		boost::test_tools::percent_tolerance_t<double>(0.001),
+		FPC_STRONG
+	);
+}
+
+template <typename T>
+bool test_vect_data_close(T a, T b)
+{
+	return test_vect_data_close(a, b, typename std::is_integral<T>::type());
+}
+
 template <typename T, unsigned N>
 void test_vect_data_plus(void)
 {
@@ -288,22 +312,23 @@ void test_vect_data_plus(void)
 			b[i] = std::rand() / T(2);
 		}
 
-		typename eagine::vect::data<T, N>::type vNia;
-		typename eagine::vect::data<T, N>::type vNib;
+		typename eagine::vect::data<T, N>::type vNa;
+		typename eagine::vect::data<T, N>::type vNb;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			vNia[i] = a[i];
-			vNib[i] = b[i];
+			vNa[i] = a[i];
+			vNb[i] = b[i];
 		}
 
-		typename eagine::vect::data<T, N>::type vNic = vNia + vNib;
-		typename eagine::vect::data<T, N>::type vNid = vNib + vNia;
+		typename eagine::vect::data<T, N>::type vNc = vNa + vNb;
+		typename eagine::vect::data<T, N>::type vNd = vNb + vNa;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(vNic[i] == a[i] + b[i]);
-			BOOST_ASSERT(vNid[i] == b[i] + a[i]);
+			BOOST_ASSERT(test_vect_data_close(vNc[i], vNd[i]));
+			BOOST_ASSERT(test_vect_data_close(vNc[i], a[i] + b[i]));
+			BOOST_ASSERT(test_vect_data_close(vNd[i], b[i] + a[i]));
 		}
 	}
 }
@@ -344,22 +369,22 @@ void test_vect_data_minus(void)
 			b[i] = std::rand() / T(2);
 		}
 
-		typename eagine::vect::data<T, N>::type vNia;
-		typename eagine::vect::data<T, N>::type vNib;
+		typename eagine::vect::data<T, N>::type vNa;
+		typename eagine::vect::data<T, N>::type vNb;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			vNia[i] = a[i];
-			vNib[i] = b[i];
+			vNa[i] = a[i];
+			vNb[i] = b[i];
 		}
 
-		typename eagine::vect::data<T, N>::type vNic = vNia - vNib;
-		typename eagine::vect::data<T, N>::type vNid = vNib - vNia;
+		typename eagine::vect::data<T, N>::type vNc = vNa - vNb;
+		typename eagine::vect::data<T, N>::type vNd = vNb - vNa;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(vNic[i] == a[i] - b[i]);
-			BOOST_ASSERT(vNid[i] == b[i] - a[i]);
+			BOOST_ASSERT(test_vect_data_close(vNc[i], a[i] - b[i]));
+			BOOST_ASSERT(test_vect_data_close(vNd[i], b[i] - a[i]));
 		}
 	}
 }
@@ -400,22 +425,23 @@ void test_vect_data_multiply(void)
 			b[i] = std::rand() % 10000;
 		}
 
-		typename eagine::vect::data<T, N>::type vNia;
-		typename eagine::vect::data<T, N>::type vNib;
+		typename eagine::vect::data<T, N>::type vNa;
+		typename eagine::vect::data<T, N>::type vNb;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			vNia[i] = a[i];
-			vNib[i] = b[i];
+			vNa[i] = a[i];
+			vNb[i] = b[i];
 		}
 
-		typename eagine::vect::data<T, N>::type vNic = vNia * vNib;
-		typename eagine::vect::data<T, N>::type vNid = vNib * vNia;
+		typename eagine::vect::data<T, N>::type vNc = vNa * vNb;
+		typename eagine::vect::data<T, N>::type vNd = vNb * vNa;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(vNic[i] == a[i] * b[i]);
-			BOOST_ASSERT(vNid[i] == b[i] * a[i]);
+			BOOST_ASSERT(test_vect_data_close(vNc[i], vNd[i]));
+			BOOST_ASSERT(test_vect_data_close(vNc[i], a[i] * b[i]));
+			BOOST_ASSERT(test_vect_data_close(vNd[i], b[i] * a[i]));
 		}
 	}
 }
@@ -456,22 +482,22 @@ void test_vect_data_divide(void)
 			b[i] = 1 + std::rand() % 10000;
 		}
 
-		typename eagine::vect::data<T, N>::type vNia;
-		typename eagine::vect::data<T, N>::type vNib;
+		typename eagine::vect::data<T, N>::type vNa;
+		typename eagine::vect::data<T, N>::type vNb;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			vNia[i] = a[i];
-			vNib[i] = b[i];
+			vNa[i] = a[i];
+			vNb[i] = b[i];
 		}
 
-		typename eagine::vect::data<T, N>::type vNic = vNia / vNib;
-		typename eagine::vect::data<T, N>::type vNid = vNib / vNia;
+		typename eagine::vect::data<T, N>::type vNc = vNa / vNb;
+		typename eagine::vect::data<T, N>::type vNd = vNb / vNa;
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(vNic[i] == a[i] / b[i]);
-			BOOST_ASSERT(vNid[i] == b[i] / a[i]);
+			BOOST_ASSERT(test_vect_data_close(vNc[i], a[i] / b[i]));
+			BOOST_ASSERT(test_vect_data_close(vNd[i], b[i] / a[i]));
 		}
 	}
 }
