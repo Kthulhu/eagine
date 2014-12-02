@@ -145,8 +145,43 @@ struct data_param
 	typedef const _ary_data<T, N>& type;
 };
 
+template <typename T, unsigned N>
+struct default_init
+{
+	static constexpr inline
+	typename data<T, N>::type
+	apply(void)
+	noexcept
+	{
+		return typename data<T, N>::type();
+	}
+};
 
 #if defined(__clang__) && __SSE__
+
+template <>
+struct data<int, 1>
+{
+	typedef int type __attribute__ ((vector_size (1*__SIZEOF_INT__)));
+};
+
+template <>
+struct data<int, 2>
+{
+	typedef int type __attribute__ ((vector_size (2*__SIZEOF_INT__)));
+};
+
+template <>
+struct data<int, 3>
+{
+	typedef int type __attribute__ ((vector_size (3*__SIZEOF_INT__)));
+};
+
+template <>
+struct data<int, 4>
+{
+	typedef int type __attribute__ ((vector_size (4*__SIZEOF_INT__)));
+};
 
 template <>
 struct data<float, 1>
@@ -215,6 +250,19 @@ struct data<T,2> : _data<T,2>
 template <typename T>
 struct data<T,3> : _data<T,4>
 { };
+
+template <typename T>
+struct default_init<T, 3>
+{
+	static constexpr inline
+	typename data<T, 3>::type
+	apply(void)
+	noexcept
+	{
+		return typename data<T, 3>::type
+			{T(0), T(0), T(0), T(1)};
+	}
+};
 
 template <typename T>
 struct data<T,4> : _data<T,4>

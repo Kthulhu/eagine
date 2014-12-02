@@ -482,8 +482,10 @@ void test_vect_data_divide(void)
 			b[i] = 1 + std::rand() % 10000;
 		}
 
-		typename eagine::vect::data<T, N>::type vNa;
-		typename eagine::vect::data<T, N>::type vNb;
+		typename eagine::vect::data<T, N>::type vNa =
+			eagine::vect::default_init<T, N>::apply();
+		typename eagine::vect::data<T, N>::type vNb =
+			eagine::vect::default_init<T, N>::apply();
 
 		for(unsigned i=0; i<N; ++i)
 		{

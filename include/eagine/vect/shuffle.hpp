@@ -12,6 +12,7 @@
 
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/vect/data.hpp>
+#include <cstdint>
 
 namespace eagine {
 namespace vect {
@@ -19,6 +20,20 @@ namespace vect {
 template <int ... I>
 struct shuffle_mask
 { };
+
+#if defined(__GNUC__) && __SSE__
+template <typename T, unsigned N>
+struct mask : data<T, N>
+{ };
+
+template <unsigned N>
+struct mask<float, N> : data<std::int32_t, N>
+{ };
+
+template <unsigned N>
+struct mask<double, N> : data<std::int64_t, N>
+{ };
+#endif
 
 template <typename T, unsigned N>
 struct shuffle
@@ -28,19 +43,45 @@ struct shuffle
 
 	template <int ... I>
 	static inline
-	_dT apply(
+	_dT _do_apply(
 		_dpT v,
-		shuffle_mask<I...> = {}
+		shuffle_mask<I...>,
+		meta::true_type
 	) noexcept
 	{
+		return typename data<T, N>::type{v[I]...};
+	}
+
+	template <int ... I>
+	static inline
+	_dT _do_apply(
+		_dpT v,
+		shuffle_mask<I...> m,
+		meta::false_type
+	) noexcept
+	{
+		(void)m;
 #if defined(__clang__) && __SSE__
-		return __builtin_shufflevector(v,v, I...);
+		return __builtin_shufflevector(v, v, I...);
 #elif defined(__GNUC__) && __SSE__
-		typedef typename data<int, N>::type _mT;
+		typedef typename mask<T, N>::type _mT;
 		return __builtin_shuffle(v, _mT{I...});
 #else
-		return typename data<T, N>::type{v[I]...};
+		return _do_apply(v, m, meta::true_type());
 #endif
+	}
+
+	template <int ... I>
+	static inline
+	_dT apply(
+		_dpT v,
+		shuffle_mask<I...> m = {}
+	) noexcept
+	{
+		return _do_apply(
+			v, m,
+			typename meta::is_same<_dT, _ary_data<T, N>>::type()
+		);
 	}
 };
 
@@ -52,22 +93,50 @@ struct shuffle2
 
 	template <int ... I>
 	static inline
-	_dT apply(
+	_dT _do_apply(
 		_dpT v1,
 		_dpT v2,
-		shuffle_mask<I...> = {}
+		shuffle_mask<I...>,
+		meta::true_type
 	) noexcept
 	{
-#if defined(__clang__) && __SSE__
-		return __builtin_shufflevector(v1,v2, I...);
-#elif defined(__GNUC__) && __SSE__
-		typedef typename data<int, N>::type _mT;
-		return __builtin_shuffle(v1, v2, _mT{I...});
-#else
 		return typename data<T, N>::type{
 			I<0?T(0):(unsigned(I)<N? v1[I]: v2[I%N])...
 		};
+	}
+
+	template <int ... I>
+	static inline
+	_dT _do_apply(
+		_dpT v1,
+		_dpT v2,
+		shuffle_mask<I...> m,
+		meta::false_type
+	) noexcept
+	{
+		(void)m;
+#if defined(__clang__) && __SSE__
+		return __builtin_shufflevector(v1,v2, I...);
+#elif defined(__GNUC__) && __SSE__
+		typedef typename mask<T, N>::type _mT;
+		return __builtin_shuffle(v1, v2, _mT{I...});
+#else
+		return _do_apply(v1, v2, m, meta::true_type());
 #endif
+	}
+
+	template <int ... I>
+	static inline
+	_dT apply(
+		_dpT v1,
+		_dpT v2,
+		shuffle_mask<I...> m = {}
+	) noexcept
+	{
+		return _do_apply(
+			v1, v2, m,
+			typename meta::is_same<_dT, _ary_data<T, N>>::type()
+		);
 	}
 };
 
