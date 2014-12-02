@@ -18,31 +18,37 @@ BOOST_AUTO_TEST_SUITE(vect_data)
 
 BOOST_AUTO_TEST_CASE(vect_data_default_construct)
 {
+	eagine::vect::data<int, 1>::type v1i;
 	eagine::vect::data<int, 2>::type v2i;
 	eagine::vect::data<int, 3>::type v3i;
 	eagine::vect::data<int, 4>::type v4i;
 	eagine::vect::data<int, 8>::type v8i;
 
+	(void)v1i;
 	(void)v2i;
 	(void)v3i;
 	(void)v4i;
 	(void)v8i;
 
+	eagine::vect::data<float, 1>::type v1f;
 	eagine::vect::data<float, 2>::type v2f;
 	eagine::vect::data<float, 3>::type v3f;
 	eagine::vect::data<float, 4>::type v4f;
 	eagine::vect::data<float, 8>::type v8f;
 
+	(void)v1f;
 	(void)v2f;
 	(void)v3f;
 	(void)v4f;
 	(void)v8f;
 
+	eagine::vect::data<double, 1>::type v1d;
 	eagine::vect::data<double, 2>::type v2d;
 	eagine::vect::data<double, 3>::type v3d;
 	eagine::vect::data<double, 4>::type v4d;
 	eagine::vect::data<double, 8>::type v8d;
 
+	(void)v1d;
 	(void)v2d;
 	(void)v3d;
 	(void)v4d;
@@ -51,6 +57,8 @@ BOOST_AUTO_TEST_CASE(vect_data_default_construct)
 
 BOOST_AUTO_TEST_CASE(vect_data_initialization)
 {
+	eagine::vect::data<int, 1>::type v1i =
+		{1};
 	eagine::vect::data<int, 2>::type v2i =
 		{1, 2};
 	eagine::vect::data<int, 3>::type v3i =
@@ -62,12 +70,15 @@ BOOST_AUTO_TEST_CASE(vect_data_initialization)
 	eagine::vect::data<int, 8>::type v8i =
 		{1, 2, 3, 4, 5, 6, 7, 8};
 
+	(void)v1i;
 	(void)v2i;
 	(void)v3i;
 	(void)v4i;
 	(void)v7i;
 	(void)v8i;
 
+	eagine::vect::data<float, 1>::type v1f =
+		{1.f};
 	eagine::vect::data<float, 2>::type v2f =
 		{1.f, 2.f};
 	eagine::vect::data<float, 3>::type v3f =
@@ -79,12 +90,15 @@ BOOST_AUTO_TEST_CASE(vect_data_initialization)
 	eagine::vect::data<float, 8>::type v8f =
 		{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f};
 
+	(void)v1f;
 	(void)v2f;
 	(void)v3f;
 	(void)v4f;
 	(void)v7f;
 	(void)v8f;
 
+	eagine::vect::data<double, 1>::type v1d =
+		{1.0};
 	eagine::vect::data<double, 2>::type v2d =
 		{1.0, 2.0};
 	eagine::vect::data<double, 3>::type v3d =
@@ -96,6 +110,7 @@ BOOST_AUTO_TEST_CASE(vect_data_initialization)
 	eagine::vect::data<double, 8>::type v8d =
 		{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0};
 
+	(void)v1d;
 	(void)v2d;
 	(void)v3d;
 	(void)v4d;
@@ -105,6 +120,8 @@ BOOST_AUTO_TEST_CASE(vect_data_initialization)
 
 BOOST_AUTO_TEST_CASE(vect_data_copy_construct)
 {
+	eagine::vect::data<int, 1>::type v1i = { };
+	eagine::vect::data<int, 1>::type v1ic = v1i;
 	eagine::vect::data<int, 2>::type v2i = { };
 	eagine::vect::data<int, 2>::type v2ic = v2i;
 	eagine::vect::data<int, 3>::type v3i = { };
@@ -114,11 +131,14 @@ BOOST_AUTO_TEST_CASE(vect_data_copy_construct)
 	eagine::vect::data<int, 8>::type v8i = { };
 	eagine::vect::data<int, 8>::type v8ic = v8i;
 
+	(void)v1ic;
 	(void)v2ic;
 	(void)v3ic;
 	(void)v4ic;
 	(void)v8ic;
 
+	eagine::vect::data<float, 1>::type v1f = { };
+	eagine::vect::data<float, 1>::type v1fc = v1f;
 	eagine::vect::data<float, 2>::type v2f = { };
 	eagine::vect::data<float, 2>::type v2fc = v2f;
 	eagine::vect::data<float, 3>::type v3f = { };
@@ -128,11 +148,14 @@ BOOST_AUTO_TEST_CASE(vect_data_copy_construct)
 	eagine::vect::data<float, 8>::type v8f = { };
 	eagine::vect::data<float, 8>::type v8fc = v8f;
 
+	(void)v1fc;
 	(void)v2fc;
 	(void)v3fc;
 	(void)v4fc;
 	(void)v8fc;
 
+	eagine::vect::data<double, 1>::type v1d = { };
+	eagine::vect::data<double, 1>::type v1dc = v1d;
 	eagine::vect::data<double, 2>::type v2d = { };
 	eagine::vect::data<double, 2>::type v2dc = v2d;
 	eagine::vect::data<double, 3>::type v3d = { };
@@ -142,6 +165,7 @@ BOOST_AUTO_TEST_CASE(vect_data_copy_construct)
 	eagine::vect::data<double, 8>::type v8d = { };
 	eagine::vect::data<double, 8>::type v8dc = v8d;
 
+	(void)v1dc;
 	(void)v2dc;
 	(void)v3dc;
 	(void)v4dc;
@@ -150,6 +174,10 @@ BOOST_AUTO_TEST_CASE(vect_data_copy_construct)
 
 BOOST_AUTO_TEST_CASE(vect_data_elements)
 {
+	eagine::vect::data<int, 1>::type v1i =
+		{1};
+	BOOST_ASSERT(v1i[0] == 1);
+
 	eagine::vect::data<int, 2>::type v2i =
 		{1, 2};
 	BOOST_ASSERT(v2i[0] == 1);
@@ -282,18 +310,21 @@ void test_vect_data_plus(void)
 
 BOOST_AUTO_TEST_CASE(vect_data_plus)
 {
+	test_vect_data_plus<int, 1>();
 	test_vect_data_plus<int, 2>();
 	test_vect_data_plus<int, 3>();
 	test_vect_data_plus<int, 4>();
 	test_vect_data_plus<int, 5>();
 	test_vect_data_plus<int, 8>();
 
+	test_vect_data_plus<float, 1>();
 	test_vect_data_plus<float, 2>();
 	test_vect_data_plus<float, 3>();
 	test_vect_data_plus<float, 4>();
 	test_vect_data_plus<float, 5>();
 	test_vect_data_plus<float, 8>();
 
+	test_vect_data_plus<double, 1>();
 	test_vect_data_plus<double, 2>();
 	test_vect_data_plus<double, 3>();
 	test_vect_data_plus<double, 4>();
@@ -335,18 +366,21 @@ void test_vect_data_minus(void)
 
 BOOST_AUTO_TEST_CASE(vect_data_minus)
 {
+	test_vect_data_minus<int, 1>();
 	test_vect_data_minus<int, 2>();
 	test_vect_data_minus<int, 3>();
 	test_vect_data_minus<int, 4>();
 	test_vect_data_minus<int, 5>();
 	test_vect_data_minus<int, 8>();
 
+	test_vect_data_minus<float, 1>();
 	test_vect_data_minus<float, 2>();
 	test_vect_data_minus<float, 3>();
 	test_vect_data_minus<float, 4>();
 	test_vect_data_minus<float, 5>();
 	test_vect_data_minus<float, 8>();
 
+	test_vect_data_minus<double, 1>();
 	test_vect_data_minus<double, 2>();
 	test_vect_data_minus<double, 3>();
 	test_vect_data_minus<double, 4>();
@@ -388,18 +422,21 @@ void test_vect_data_multiply(void)
 
 BOOST_AUTO_TEST_CASE(vect_data_multiply)
 {
+	test_vect_data_multiply<int, 1>();
 	test_vect_data_multiply<int, 2>();
 	test_vect_data_multiply<int, 3>();
 	test_vect_data_multiply<int, 4>();
 	test_vect_data_multiply<int, 5>();
 	test_vect_data_multiply<int, 8>();
 
+	test_vect_data_multiply<float, 1>();
 	test_vect_data_multiply<float, 2>();
 	test_vect_data_multiply<float, 3>();
 	test_vect_data_multiply<float, 4>();
 	test_vect_data_multiply<float, 5>();
 	test_vect_data_multiply<float, 8>();
 
+	test_vect_data_multiply<double, 1>();
 	test_vect_data_multiply<double, 2>();
 	test_vect_data_multiply<double, 3>();
 	test_vect_data_multiply<double, 4>();
@@ -441,18 +478,21 @@ void test_vect_data_divide(void)
 
 BOOST_AUTO_TEST_CASE(vect_data_divide)
 {
+	test_vect_data_divide<int, 1>();
 	test_vect_data_divide<int, 2>();
 	test_vect_data_divide<int, 3>();
 	test_vect_data_divide<int, 4>();
 	test_vect_data_divide<int, 5>();
 	test_vect_data_divide<int, 8>();
 
+	test_vect_data_divide<float, 1>();
 	test_vect_data_divide<float, 2>();
 	test_vect_data_divide<float, 3>();
 	test_vect_data_divide<float, 4>();
 	test_vect_data_divide<float, 5>();
 	test_vect_data_divide<float, 8>();
 
+	test_vect_data_divide<double, 1>();
 	test_vect_data_divide<double, 2>();
 	test_vect_data_divide<double, 3>();
 	test_vect_data_divide<double, 4>();

@@ -5,3 +5,5 @@
 cmake_minimum_required(VERSION 2.8)
 
 eagine_exec_test(data)
+eagine_exec_test(fill)
+eagine_exec_test(axis)

@@ -52,7 +52,8 @@ struct fill<T, 1>
 	apply(T v)
 	noexcept
 	{
-		return {v};
+		return typename data<T, 1>::type
+			{v};
 	}
 };
 
@@ -64,7 +65,8 @@ struct fill<T, 2>
 	apply(T v)
 	noexcept
 	{
-		return {v,v};
+		return typename data<T, 2>::type
+			{v,v};
 	}
 };
 
@@ -76,7 +78,8 @@ struct fill<T, 3>
 	apply(T v)
 	noexcept
 	{
-		return {v,v,v};
+		return typename data<T, 3>::type
+			{v,v,v};
 	}
 };
 
@@ -88,7 +91,8 @@ struct fill<T, 4>
 	apply(T v)
 	noexcept
 	{
-		return {v,v,v,v};
+		return typename data<T, 4>::type
+			{v,v,v,v};
 	}
 };
 
