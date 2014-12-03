@@ -20,9 +20,9 @@ namespace detail {
 EAGINE_LIB_FUNC
 void required_lib_n_a(void)
 {
-	throw dyli::not_loaded(base::string(base::translate(
+	throw dyli::not_loaded(base::translate(
 		"Required dynamic library is not loaded"
-	)));
+	).str());
 }
 //------------------------------------------------------------------------------
 // required_res_n_a
@@ -30,9 +30,9 @@ void required_lib_n_a(void)
 EAGINE_LIB_FUNC
 void required_res_n_a(void)
 {
-	throw dyli::not_loaded(base::string(base::translate(
+	throw dyli::not_loaded(base::translate(
 		"Required dynamically loaded resource is not available "
-	)));
+	).str());
 }
 //------------------------------------------------------------------------------
 } // namespace detail

@@ -14,6 +14,7 @@
 #include <eagine/base/fallback_alloc.hpp>
 #include <eagine/base/stack_alloc.hpp>
 #include <eagine/base/alloc.hpp>
+#include <eagine/base/guid.hpp>
 #include <eagine/base/memory_buffer.hpp>
 #include <eagine/dbg/hexdump.hpp>
 //------------------
@@ -49,12 +50,14 @@ int main(int argc, const char* argv [])
 
 	std::vector<s_t, allocator<s_t>> v(a);
 
+	v.push_back(s_t(guid().to_lim_string().data(), a));
+
 	for(int i=0; i<256; ++i)
 	{
 		v.push_back(s_t(argv[i%argc], a));
 	}
 
-	//std::cout << hexdump(blk1) << std::endl;
+	std::cout << hexdump(blk1) << std::endl;
 
 	std::cout << cba.get().required_fallback_size() << std::endl;
 	std::cout << v.size() << std::endl;

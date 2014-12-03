@@ -13,9 +13,10 @@
 
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/identity.hpp>
+#include <eagine/base/alloc.hpp>
 #include <eagine/base/array.hpp>
+#include <eagine/base/vector.hpp>
 #include <iosfwd>
-#include <vector>
 #include <string>
 #include <cstring>
 #include <cassert>
@@ -109,9 +110,17 @@ struct char_string_traits<array<Char, N>>
 };
 
 // basic_string
+/*
+template <
+	typename Char,
+	typename CharTraits = std::char_traits<Char>,
+	typename Alloc = allocator<Char>
+> using basic_string = ::std::basic_string<Char, CharTraits, Alloc>;
+*/
 using ::std::basic_string;
+
 // string
-using ::std::string;
+typedef basic_string<char> string;
 
 // is_ext_char_string<basic_string>
 template <typename Char, typename Alloc>
@@ -263,6 +272,12 @@ public:
 	str(void) const
 	{
 		return basic_string<Char>(_str.data(), _len);
+	}
+
+	basic_string<Char>
+	str(const typename basic_string<Char>::allocator_type& alloc) const
+	{
+		return basic_string<Char>(_str.data(), _len, alloc);
 	}
 
 	const_value_type*
@@ -594,6 +609,11 @@ public:
 	string_type str(void) const
 	{
 		return string_type(_ptr, _len);
+	}
+
+	string_type str(const typename string_type::allocator_type& alloc) const
+	{
+		return string_type(_ptr, _len, alloc);
 	}
 
 	iterator begin(void)

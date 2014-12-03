@@ -55,7 +55,7 @@ EAGINE_LIB_FUNC
 string
 guid::to_string(void) const
 {
-	return ::boost::uuids::to_string(*this);
+	return to_lim_string().str();
 }
 //------------------------------------------------------------------------------
 // guid::to_lim_string

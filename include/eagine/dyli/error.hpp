@@ -21,7 +21,7 @@ class not_loaded
  : public base::runtime_error
 {
 public:
-	not_loaded(const base::string& msg)
+	not_loaded(const std::string& msg)
 	 : base::runtime_error(msg)
 	{ }
 };

@@ -32,7 +32,7 @@ public:
 	class open_error : public runtime_error
 	{
 	public:
-		open_error(const string& msg)
+		open_error(const std::string& msg)
 		 : runtime_error(msg)
 		{ }
 	};
@@ -40,7 +40,7 @@ public:
 	class symbol_error : public runtime_error
 	{
 	public:
-		symbol_error(const string& msg)
+		symbol_error(const std::string& msg)
 		 : runtime_error(msg)
 		{ }
 	};
