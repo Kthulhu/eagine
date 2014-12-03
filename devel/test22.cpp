@@ -9,6 +9,7 @@
 #include <eagine/exte/evaluate.hpp>
 //------------------
 #include <eagine/base/type_name.hpp>
+#include <eagine/base/sstream.hpp>
 #include <iostream>
 #include <sstream>
 
@@ -28,7 +29,7 @@ struct myeval
 	template <typename T>
 	base::string eval(exte::terminal_tag, T&& v) const
 	{
-		std::stringstream ss;
+		base::stringstream ss;
 		ss << v;
 		return ss.str();
 	}

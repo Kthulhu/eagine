@@ -50,7 +50,7 @@ int main(int argc, const char* argv [])
 
 	std::vector<s_t, allocator<s_t>> v(a);
 
-	v.push_back(s_t(guid().to_lim_string().data(), a));
+	v.push_back(guid().to_lim_string().str(a));
 
 	for(int i=0; i<256; ++i)
 	{
@@ -85,6 +85,10 @@ int main(int argc, const char* argv [])
 
 	std::cout << v.size() << std::endl;
 	}
+
+	std::cout << sizeof(std::string) << std::endl;
+	std::cout << sizeof(string) << std::endl;
+	std::cout << sizeof(cstrref) << std::endl;
 
 
 	return 0;

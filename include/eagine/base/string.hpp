@@ -110,14 +110,11 @@ struct char_string_traits<array<Char, N>>
 };
 
 // basic_string
-/*
 template <
 	typename Char,
 	typename CharTraits = std::char_traits<Char>,
 	typename Alloc = allocator<Char>
 > using basic_string = ::std::basic_string<Char, CharTraits, Alloc>;
-*/
-using ::std::basic_string;
 
 // string
 typedef basic_string<char> string;
@@ -889,6 +886,28 @@ operator << (
 
 } // namespace base
 } // namespace eagine
+
+namespace std {
+
+// std::hash<string>
+template <>
+struct hash<eagine::base::string>
+{
+	typedef eagine::base::string argument_type;
+	typedef size_t result_type;
+
+	size_t operator()(const eagine::base::string& s) const
+	noexcept
+	{
+#ifdef _HASH_BYTES_H
+		return std::_Hash_impl::hash(s.data(), s.length());
+#else
+		return std::hash<const char*>()(s.data());
+#endif
+	}
+};
+
+} // namespace std
 
 #endif //include guard
 
