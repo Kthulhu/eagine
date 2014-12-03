@@ -14,30 +14,9 @@
 #include <eagine/vect/hsum.hpp>
 #include <cstdlib>
 
+#include "common.hpp"
+
 BOOST_AUTO_TEST_SUITE(vect_hsum)
-
-template <typename T>
-bool test_vect_data_close(T a, T b, std::true_type)
-{
-	return a == b;
-}
-
-template <typename T>
-bool test_vect_data_close(T a, T b, std::false_type)
-{
-	using namespace boost::test_tools;
-	return check_is_close(
-		a, b,
-		boost::test_tools::percent_tolerance_t<double>(0.001),
-		FPC_STRONG
-	);
-}
-
-template <typename T>
-bool test_vect_data_close(T a, T b)
-{
-	return test_vect_data_close(a, b, typename std::is_integral<T>::type());
-}
 
 template <typename T, unsigned N>
 void test_vect_hsum_apply(void)

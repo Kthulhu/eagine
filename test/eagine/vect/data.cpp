@@ -13,7 +13,8 @@
 
 #include <eagine/vect/data.hpp>
 #include <cstdlib>
-#include <type_traits>
+
+#include "common.hpp"
 
 BOOST_AUTO_TEST_SUITE(vect_data)
 
@@ -275,29 +276,6 @@ BOOST_AUTO_TEST_CASE(vect_data_elements)
 	BOOST_ASSERT(v8d[5] == 6.0);
 	BOOST_ASSERT(v8d[6] == 7.0);
 	BOOST_ASSERT(v8d[7] == 8.0);
-}
-
-template <typename T>
-bool test_vect_data_close(T a, T b, std::true_type)
-{
-	return a == b;
-}
-
-template <typename T>
-bool test_vect_data_close(T a, T b, std::false_type)
-{
-	using namespace boost::test_tools;
-	return check_is_close(
-		a, b,
-		boost::test_tools::percent_tolerance_t<double>(0.001),
-		FPC_STRONG
-	);
-}
-
-template <typename T>
-bool test_vect_data_close(T a, T b)
-{
-	return test_vect_data_close(a, b, typename std::is_integral<T>::type());
 }
 
 template <typename T, unsigned N>
