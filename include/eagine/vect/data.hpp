@@ -11,6 +11,7 @@
 #define EAGINE_VECT_DATA_1308281038_HPP
 
 #include <eagine/meta/type_traits.hpp>
+#include <utility>
 
 namespace eagine {
 namespace vect {

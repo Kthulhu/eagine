@@ -23,9 +23,9 @@ vector<byte> load_stream_data(istream& input)
 {
 	if(!input.good())
 	{
-		throw runtime_error(string(translate(
+		throw runtime_error(translate(
 			"Input stream is not open for reading"
-		)));
+		).str());
 	}
 
 	streampos begin = input.tellg();
@@ -36,9 +36,9 @@ vector<byte> load_stream_data(istream& input)
 	vector<byte> buffer(end - begin, 0x00);
 	if(!input.read((char*)buffer.data(), buffer.size()).good())
 	{
-		throw runtime_error(string(translate(
+		throw runtime_error(translate(
 			"Failed to read data from input stream"
-		)));
+		).str());
 	}
 
 	return std::move(buffer);

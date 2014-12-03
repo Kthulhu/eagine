@@ -38,7 +38,7 @@ void validate_path_entry(const char* entry, std::size_t len)
 	if(!is_valid_path_entry(entry, len))
 	{
 		std::runtime_error(
-			string("Invalid path entry '")+
+			std::string("Invalid path entry '")+
 			(entry?entry:"<null>")+
 			"'"
 		);
