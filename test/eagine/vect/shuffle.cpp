@@ -281,7 +281,37 @@ void test_vect_shuffle2_apply_t(void)
 	test_vect_shuffle2_apply<T, 2, 3, 0>();
 	test_vect_shuffle2_apply<T, 2, 3, 1>();
 
-// TODO
+	test_vect_shuffle2_apply<T, 3, 0, 2, 4>();
+	test_vect_shuffle2_apply<T, 3, 1, 3, 5>();
+	test_vect_shuffle2_apply<T, 3, 5, 4, 3>();
+	test_vect_shuffle2_apply<T, 3, 1, 2, 3>();
+	test_vect_shuffle2_apply<T, 3, 1, 1, 1>();
+	test_vect_shuffle2_apply<T, 3, 4, 4, 4>();
+	test_vect_shuffle2_apply<T, 3, 2, 3, 1>();
+	test_vect_shuffle2_apply<T, 3, 0, 1, 2>();
+	test_vect_shuffle2_apply<T, 3, 3, 4, 5>();
+
+	test_vect_shuffle2_apply<T, 4, 0, 2, 4, 6>();
+	test_vect_shuffle2_apply<T, 4, 1, 3, 5, 7>();
+	test_vect_shuffle2_apply<T, 4, 1, 1, 1, 1>();
+	test_vect_shuffle2_apply<T, 4, 1, 1, 2, 2>();
+	test_vect_shuffle2_apply<T, 4, 4, 4, 5, 5>();
+	test_vect_shuffle2_apply<T, 4, 5, 5, 5, 5>();
+	test_vect_shuffle2_apply<T, 4, 3, 2, 1, 0>();
+	test_vect_shuffle2_apply<T, 4, 7, 6, 5, 4>();
+	test_vect_shuffle2_apply<T, 4, 6, 2, 4, 0>();
+	test_vect_shuffle2_apply<T, 4, 7, 1, 5, 3>();
+
+	test_vect_shuffle2_apply<T, 5, 0, 2, 4, 6, 8>();
+	test_vect_shuffle2_apply<T, 5, 1, 3, 5, 7, 9>();
+	test_vect_shuffle2_apply<T, 5, 8, 6, 4, 2, 0>();
+	test_vect_shuffle2_apply<T, 5, 9, 7, 5, 3, 1>();
+	test_vect_shuffle2_apply<T, 5, 0, 1, 2, 3, 4>();
+	test_vect_shuffle2_apply<T, 5, 5, 6, 7, 8, 9>();
+	test_vect_shuffle2_apply<T, 5, 2, 3, 4, 5, 6>();
+	test_vect_shuffle2_apply<T, 5, 0, 1, 2, 7, 9>();
+	test_vect_shuffle2_apply<T, 5, 2, 2, 2, 2, 2>();
+	test_vect_shuffle2_apply<T, 5, 7, 7, 7, 7, 7>();
 }
 
 BOOST_AUTO_TEST_CASE(vect_shuffle2_apply_int)

@@ -119,7 +119,14 @@ struct shuffle2
 		return __builtin_shufflevector(v1,v2, I...);
 #elif defined(__GNUC__) && __SSE__
 		typedef typename mask<T, N>::type _mT;
-		return __builtin_shuffle(v1, v2, _mT{I...});
+		if(N == 3)
+		{
+			return __builtin_shuffle(v1, v2, _mT{(I>=3?I+1:I)...});
+		}
+		else
+		{
+			return __builtin_shuffle(v1, v2, _mT{I...});
+		}
 #else
 		return _do_apply(v1, v2, m, meta::true_type());
 #endif
