@@ -483,13 +483,13 @@ public:
 		return dynamic_cast<c_byte_reallocator*>(a) != nullptr;
 	}
 
-	size_type max_size(size_type a)
+	size_type max_size(size_type)
 	noexcept override
 	{
 		return std::numeric_limits<size_type>::max();
 	}
 
-	tribool has_allocated(const byte* p, size_type n)
+	tribool has_allocated(const byte*, size_type)
 	noexcept override
 	{
 		return indeterminate;
