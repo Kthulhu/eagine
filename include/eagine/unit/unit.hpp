@@ -11,6 +11,7 @@
 #define EAGINE_UNIT_UNIT_1308281038_HPP
 
 #include <eagine/unit/fwd.hpp>
+#include <eagine/unit/traits.hpp>
 #include <eagine/unit/detail.hpp>
 
 namespace eagine {

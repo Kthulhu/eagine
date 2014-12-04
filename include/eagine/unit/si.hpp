@@ -19,6 +19,8 @@
 #include <eagine/unit/si/electric_current.hpp>
 #include <eagine/unit/si/luminous_intensity.hpp>
 #include <eagine/unit/si/amount_of_substance.hpp>
+#include <eagine/unit/si/frequency.hpp>
+#include <eagine/unit/si/radioactivity.hpp>
 
 namespace eagine {
 namespace unit {

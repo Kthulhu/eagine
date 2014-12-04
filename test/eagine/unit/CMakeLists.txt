@@ -4,8 +4,7 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
-include(./testing.cmake)
-
-add_subdirectory(base)
-add_subdirectory(vect)
-add_subdirectory(unit)
+eagine_exec_test(dimension)
+eagine_exec_test(dim_derived)
+eagine_exec_test(unit)
+eagine_exec_test(quantity)
