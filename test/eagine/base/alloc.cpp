@@ -13,8 +13,11 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/alloc.hpp>
+#include <memory>
 #include <vector>
+#include <map>
 #include <utility>
+#include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(base_alloc)
 
@@ -126,6 +129,65 @@ BOOST_AUTO_TEST_CASE(base_alloc_rebind)
 	(void) a_p2;
 }
 
+BOOST_AUTO_TEST_CASE(base_alloc_max_size)
+{
+	eagine::base::allocator<bool> a_b;
+	eagine::base::allocator<char> a_c;
+	eagine::base::allocator<short> a_s;
+	eagine::base::allocator<int> a_i;
+	eagine::base::allocator<long> a_l;
+	eagine::base::allocator<float> a_f;
+	eagine::base::allocator<double> a_d;
+	eagine::base::allocator<std::pair<char, double>> a_p;
+
+	BOOST_ASSERT(a_b.max_size() >= sizeof(decltype(a_b)::value_type));
+	BOOST_ASSERT(a_c.max_size() >= sizeof(decltype(a_c)::value_type));
+	BOOST_ASSERT(a_s.max_size() >= sizeof(decltype(a_s)::value_type));
+	BOOST_ASSERT(a_i.max_size() >= sizeof(decltype(a_i)::value_type));
+	BOOST_ASSERT(a_l.max_size() >= sizeof(decltype(a_l)::value_type));
+	BOOST_ASSERT(a_f.max_size() >= sizeof(decltype(a_f)::value_type));
+	BOOST_ASSERT(a_d.max_size() >= sizeof(decltype(a_d)::value_type));
+	BOOST_ASSERT(a_p.max_size() >= sizeof(decltype(a_p)::value_type));
+}
+
+BOOST_AUTO_TEST_CASE(base_alloc_allocate_deallocate)
+{
+	eagine::base::allocator<bool> a_b;
+	eagine::base::allocator<char> a_c;
+	eagine::base::allocator<short> a_s;
+	eagine::base::allocator<int> a_i;
+	eagine::base::allocator<long> a_l;
+	eagine::base::allocator<float> a_f;
+	eagine::base::allocator<double> a_d;
+	eagine::base::allocator<std::pair<char, double>> a_p;
+
+	unsigned m;
+
+	for(unsigned i=0; i<1000; ++i)
+	{
+		m = 1 + std::rand() % 10;
+		a_b.deallocate(a_b.allocate(m*m), m*m);
+
+		m = 1 + std::rand() % 10;
+		a_c.deallocate(a_c.allocate(m*m), m*m);
+
+		m = 1 + std::rand() % 10;
+		a_s.deallocate(a_s.allocate(m*m), m*m);
+
+		m = 1 + std::rand() % 10;
+		a_i.deallocate(a_i.allocate(m*m), m*m);
+
+		m = 1 + std::rand() % 10;
+		a_l.deallocate(a_l.allocate(m*m), m*m);
+
+		m = 1 + std::rand() % 10;
+		a_d.deallocate(a_d.allocate(m*m), m*m);
+
+		m = 1 + std::rand() % 10;
+		a_p.deallocate(a_p.allocate(m*m), m*m);
+	}
+}
+
 BOOST_AUTO_TEST_CASE(base_alloc_vector_1)
 {
 	eagine::base::allocator<int> a;
@@ -146,6 +208,17 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_1)
 		a.deallocate(v.back(), 1);
 		v.pop_back();
 	}
+
+	for(unsigned i=0; i!=n; ++i)
+	{
+		v.push_back(new (a.allocate(1)) int(i));
+	}
+
+	for(unsigned i=n; i!=0; --i)
+	{
+		a.deallocate(v[i], 1);
+	}
+	v.clear();
 }
 
 BOOST_AUTO_TEST_CASE(base_alloc_vector_2)
@@ -175,8 +248,8 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_3)
 
 	std::vector<std::vector<int>> v;
 
-	const unsigned n = 1000;
-	const unsigned m = 50;
+	const unsigned n = 1000+std::rand() % 1000;
+	const unsigned m = 50+std::rand() % 30;
 
 	for(unsigned i=0; i!=n; ++i)
 	{
@@ -209,6 +282,118 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_3)
 	for(unsigned i=0; i!=n; ++i)
 	{
 		v.pop_back();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(base_alloc_vector_4)
+{
+	eagine::base::allocator<void> a;
+
+	std::vector<
+		std::vector<int, eagine::base::allocator<int>>,
+		eagine::base::allocator<std::vector<int, eagine::base::allocator<int>>>
+	> v(a);
+
+	const unsigned n = 1000+std::rand() % 1000;
+	const unsigned m = 50+std::rand() % 30;
+
+	for(unsigned i=0; i!=n; ++i)
+	{
+		v.push_back(std::vector<int, eagine::base::allocator<int>>(a));
+		for(unsigned j=0; j!=m; ++j)
+		{
+			v.back().push_back(j);
+		}
+	}
+
+	BOOST_ASSERT(v.size() == n);
+
+	for(unsigned i=0; i!=n; ++i)
+	{
+		BOOST_ASSERT(v[i].size() == m);
+		for(unsigned j=0; j!=m; ++j)
+		{
+			BOOST_ASSERT(v[i][j] == int(j));
+		}
+	}
+
+	for(unsigned i=0; i!=n; ++i)
+	{
+		for(unsigned j=0; j!=m; ++j)
+		{
+			v[i].pop_back();
+		}
+	}
+
+	for(unsigned i=0; i!=n; ++i)
+	{
+		v.pop_back();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(base_alloc_vector_5)
+{
+	eagine::base::allocator<void> a;
+
+	const unsigned n = 1000+std::rand()%1000;
+
+	std::vector<std::shared_ptr<std::pair<long, double>>> v;
+
+	for(unsigned i=0; i!=n; ++i)
+	{
+		v.push_back(std::allocate_shared<std::pair<long, double>>(a, i, i));
+	}
+
+	for(unsigned i=n; i!=0; --i)
+	{
+		BOOST_ASSERT(v.back()->second == double(i-1));
+		v.pop_back();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(base_alloc_map_1)
+{
+	eagine::base::allocator<void> a;
+
+	std::map<
+		std::shared_ptr<std::pair<char, long>>,
+		std::vector<int, eagine::base::allocator<int>>,
+		std::less<std::shared_ptr<std::pair<char, long>>>,
+		eagine::base::allocator<
+			std::pair<
+				std::shared_ptr<std::pair<char, long>>,
+				std::vector<int, eagine::base::allocator<int>>
+			>
+		>
+	> m(a);
+
+	const unsigned n = 1000+std::rand()%1000;
+
+	for(unsigned i=0; i<n; ++i)
+	{
+		std::vector<int, eagine::base::allocator<int>> v(a);
+
+		const unsigned k = 50+std::rand()%30;
+
+		if(k % 3 == 0)
+		{
+			v.reserve(k);
+		}
+		else if(k % 4 == 0)
+		{
+			v.reserve(k / 2);
+		}
+
+		for(unsigned j=0; j<k; ++j)
+		{
+			v.push_back(std::rand());
+		}
+
+		m[std::allocate_shared<std::pair<char, long>>(
+			a,
+			'A'+std::rand()%10,
+			std::rand())
+		] = std::move(v);
 	}
 }
 
