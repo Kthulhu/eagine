@@ -4,9 +4,4 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
-include(./testing.cmake)
-
-add_subdirectory(base)
-add_subdirectory(vect)
-add_subdirectory(unit)
-add_subdirectory(math)
+eagine_exec_test(angle)
