@@ -464,9 +464,9 @@ public:
 	 , _len(that.size())
 	{ }
 
-	template <typename Char_, typename CharTraits_>
+	template <typename Char_, typename CharTraits_, typename Alloc_>
 	basic_string_ref(
-		const basic_string<Char_, CharTraits_>& s,
+		const basic_string<Char_, CharTraits_, Alloc_>& s,
 		typename meta::enable_if<_compatible<const Char_>::value>::type* = 0
 	) noexcept
 	 : _ptr(_init_by_string(s))
