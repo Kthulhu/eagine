@@ -383,7 +383,8 @@ private:
 		return &c;
 	}
 
-	Char* _init_by_string(const string& s)
+	template <typename String_>
+	Char* _init_by_string(const String_& s)
 	noexcept
 	{
 		if(s.empty()) return _empty_c_str();
@@ -473,9 +474,9 @@ public:
 	 , _len(s.size())
 	{ }
 
-	template <typename Char_, typename CharTraits_>
+	template <typename Char_, typename CharTraits_, typename Alloc_>
 	basic_string_ref(
-		basic_string<Char_, CharTraits_>& s,
+		basic_string<Char_, CharTraits_, Alloc_>& s,
 		typename meta::enable_if<_compatible<Char_>::value>::type* = 0
 	) noexcept
 	 : _ptr(_init_by_string(s))
