@@ -273,6 +273,59 @@ noexcept
 	return slice(str, bpos+bgn.size(), epos);
 }
 
+// split into
+template <typename BackInsertionSequence>
+inline
+BackInsertionSequence& split_into(
+	BackInsertionSequence& dest,
+	const cstrref& str,
+	const cstrref& delim
+)
+{
+	std::size_t n = 1, p;
+	cstrref tmp = str;
+
+	while(true)
+	{
+		p = find_pos(tmp, delim);
+		if(p == tmp.size())
+		{
+			break;
+		}
+
+		++n;
+		tmp = slice(tmp, p+delim.size());
+	}
+
+	dest.reserve(dest.size()+n);
+	tmp = str;
+
+	while(true)
+	{
+		p = find_pos(tmp, delim);
+		dest.emplace_back(head(tmp, p));
+
+		if(p == tmp.size())
+		{
+			break;
+		}
+
+		tmp = slice(tmp, p+delim.size());
+	}
+
+	return dest;
+}
+
+// split
+template <typename BackInsertionSequence>
+inline
+BackInsertionSequence
+split(const cstrref& str, const cstrref& delim)
+{
+	BackInsertionSequence result;
+	return std::move(split_into(result, str, delim));
+}
+
 } // namespace base
 } // namespace eagine
 

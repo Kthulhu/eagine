@@ -614,6 +614,12 @@ public:
 		return string_type(_ptr, _len, alloc);
 	}
 
+	explicit
+	operator string_type(void) const
+	{
+		return str();
+	}
+
 	iterator begin(void)
 	noexcept
 	{
