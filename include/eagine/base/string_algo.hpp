@@ -273,13 +273,38 @@ noexcept
 	return slice(str, bpos+bgn.size(), epos);
 }
 
+// for_splitted
+template <typename UnaryOperation>
+inline UnaryOperation for_splitted(
+	const cstrref& str,
+	const cstrref& delim,
+	UnaryOperation unary_op
+)
+{
+	cstrref tmp = str;
+	while(true)
+	{
+		std::size_t p = find_pos(tmp, delim);
+		unary_op(head(tmp, p));
+
+		if(p == tmp.size())
+		{
+			break;
+		}
+
+		tmp = slice(tmp, p+delim.size());
+	}
+	return unary_op;
+}
+
 // split into
-template <typename BackInsertionSequence>
+template <typename BackInsertionSequence, typename Transform>
 inline
 BackInsertionSequence& split_into(
 	BackInsertionSequence& dest,
 	const cstrref& str,
-	const cstrref& delim
+	const cstrref& delim,
+	Transform transform
 )
 {
 	std::size_t n = 1, p;
@@ -303,7 +328,7 @@ BackInsertionSequence& split_into(
 	while(true)
 	{
 		p = find_pos(tmp, delim);
-		dest.emplace_back(head(tmp, p));
+		dest.emplace_back(transform(head(tmp, p)));
 
 		if(p == tmp.size())
 		{
@@ -317,13 +342,82 @@ BackInsertionSequence& split_into(
 }
 
 // split
+template <typename BackInsertionSequence, typename Transform>
+inline
+BackInsertionSequence
+split(const cstrref& str, const cstrref& delim, Transform transform)
+{
+	BackInsertionSequence result;
+	return std::move(split_into(result, str, delim, transform));
+}
+
+// split
 template <typename BackInsertionSequence>
 inline
 BackInsertionSequence
 split(const cstrref& str, const cstrref& delim)
 {
-	BackInsertionSequence result;
-	return std::move(split_into(result, str, delim));
+	return split<BackInsertionSequence>(
+		str, delim,
+		[](const cstrref& sr) ->
+		typename BackInsertionSequence::value_type
+		{
+			return typename BackInsertionSequence::value_type(sr);
+		}
+	);
+}
+
+// join_into
+template <typename String, typename ForwardSequence>
+String& join_into(
+	String& dest,
+	const ForwardSequence& seq,
+	const cstrref& delim
+)
+{
+	if(!seq.empty())
+	{
+		std::size_t n = 0;
+		for(auto& part : seq)
+		{
+			n += part.size();
+		}
+
+		dest.reserve(dest.size()+n+(seq.size()-1)*delim.size());
+
+		bool first = true;
+
+		for(auto& part : seq)
+		{
+			if(!first)
+			{
+				dest.insert(
+					dest.end(),
+					delim.begin(),
+					delim.end()
+				);
+			}
+			else first = false;
+
+			dest.insert(
+				dest.end(),
+				part.begin(),
+				part.end()
+			);
+		}
+	}
+	return dest;
+}
+
+// join
+template <typename String, typename ForwardSequence>
+String join(
+	const ForwardSequence& seq,
+	const cstrref& delim
+)
+{
+	String result;
+	return std::move(join_into(result, seq, delim));
 }
 
 } // namespace base
