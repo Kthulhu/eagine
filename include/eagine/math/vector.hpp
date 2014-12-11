@@ -41,7 +41,7 @@ struct vector
 	static constexpr inline
 	vector make(P&& p)
 	{
-		return {{T(std::forward<P>(p))}};
+		return vector{{T(std::forward<P>(p))}};
 	}
 
 	template <
@@ -53,14 +53,14 @@ struct vector
 	static constexpr inline
 	vector make(P&& ... p)
 	{
-		return {{T(std::forward<P>(p))...}};
+		return vector{{T(std::forward<P>(p))...}};
 	}
 
-	template <unsigned ... I, unsigned M>
+	template <unsigned ... I, typename P, unsigned M>
 	static constexpr inline
-	vector from(const vector<T, M>& v)
+	vector from(const vector<P, M>& v)
 	{
-		return {{v._v[I]...}};
+		return vector{{T(v._v[I])...}};
 	}
 
 	static inline
