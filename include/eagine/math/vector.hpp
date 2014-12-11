@@ -32,111 +32,164 @@ struct vector
 
 	_vT _v;
 
-	template <unsigned ...I, unsigned M>
-	static inline vector from(const vector<T, M>& v)
+	template <
+		typename P,
+		typename = typename meta::enable_if<
+			(N == 1) && (meta::is_convertible<P, T>::value)
+		>::type
+	>
+	static constexpr inline
+	vector make(P&& p)
 	{
-		return {v._v[I]...};
+		return {{T(std::forward<P>(p))}};
 	}
 
-	static inline vector zero(void)
+	template <
+		typename ... P,
+		typename = typename meta::enable_if<
+			(N > 1) && (sizeof...(P) == N)
+		>::type
+	>
+	static constexpr inline
+	vector make(P&& ... p)
+	{
+		return {{T(std::forward<P>(p))...}};
+	}
+
+	template <unsigned ... I, unsigned M>
+	static constexpr inline
+	vector from(const vector<T, M>& v)
+	{
+		return {{v._v[I]...}};
+	}
+
+	static inline
+	vector zero(void)
 	{
 		return {vect::fill<T,N>::apply(T(0))};
 	}
 
-	static inline vector fill(T v)
+	static inline
+	vector fill(T v)
 	{
 		return {vect::fill<T,N>::apply(v)};
 	}
 
 	template <unsigned I>
-	static inline vector axis(void)
+	static inline
+	vector axis(void)
 	{
 		return {vect::axis<T,N,I>::apply(T(1))};
 	}
 
 	template <unsigned I>
-	static inline vector axis(T v)
+	static inline
+	vector axis(T v)
 	{
 		return {vect::axis<T,N,I>::apply(v)};
 	}
 
-	inline T operator [] (unsigned pos) const
+	inline
+	T operator [] (unsigned pos) const
+	noexcept
 	{
 		return _v[pos];
 	}
 
-	friend constexpr vector operator + (_cpT a, _cpT b)
+	friend constexpr
+	vector operator + (_cpT a, _cpT b)
 	{
 		return {a._v+b._v};
 	}
 
-	friend constexpr vector operator - (_cpT a, _cpT b)
+	friend constexpr
+	vector operator - (_cpT a, _cpT b)
 	{
 		return {a._v-b._v};
 	}
 
-	friend constexpr vector operator * (_cpT a, _cpT b)
+	friend constexpr
+	vector operator * (_cpT a, _cpT b)
 	{
 		return {a._v*b._v};
 	}
 
-	friend constexpr vector operator * (_cpT a, T c)
+	friend constexpr
+	vector operator * (_cpT a, T c)
 	{
 		return {a._v*vect::fill<T, N>::apply(c)};
 	}
 
-	friend constexpr vector operator / (_cpT a, _cpT b)
+	friend constexpr
+	vector operator / (_cpT a, _cpT b)
 	{
 		return {a._v/b._v};
 	}
 
-	friend constexpr vector operator / (_cpT a, T c)
+	friend constexpr
+	vector operator / (_cpT a, T c)
 	{
 		return {a._v/vect::fill<T, N>::apply(c)};
 	}
 
-	friend bool operator == (_cpT a, _cpT b)
+	friend
+	bool operator == (_cpT a, _cpT b)
+	noexcept
 	{
 		return vect::equal<T,N>::apply(a, b);
 	}
 
-	friend bool operator != (_cpT a, _cpT b)
+	friend
+	bool operator != (_cpT a, _cpT b)
+	noexcept
 	{
 		return !vect::equal<T,N>::apply(a, b);
 	}
 
-	friend constexpr vector hsum(_cpT a, _cpT b)
+	friend
+	constexpr vector hsum(_cpT a, _cpT b)
+	noexcept
 	{
 		return {vect::hsum<T, N>::apply(a._v * b._v)};
 	}
 
-	friend constexpr T dot(_cpT a, _cpT b)
+	friend constexpr
+	T dot(_cpT a, _cpT b)
+	noexcept
 	{
 		return vect::hsum<T, N>::apply(a._v * b._v)[0];
 	}
 
-	friend constexpr T magnitude(_cpT a)
+	friend constexpr
+	T magnitude(_cpT a)
+	noexcept
 	{
 		using std::sqrt;
 		return sqrt(dot(a, a));
 	}
 
-	friend constexpr T length(_cpT a)
+	friend constexpr
+	T length(_cpT a)
+	noexcept
 	{
 		return magnitude(a);
 	}
 
-	friend constexpr T distance(_cpT a, _cpT b)
+	friend constexpr
+	T distance(_cpT a, _cpT b)
+	noexcept
 	{
 		return magnitude(a-b);
 	}
 
-	friend constexpr vector normalized(_cpT a)
+	friend constexpr
+	vector normalized(_cpT a)
 	{
 		return a / magnitude(a);
 	}
 
-	friend constexpr angle<T> angle_between(_cpT a, _cpT b)
+	friend constexpr
+	angle<T> angle_between(_cpT a, _cpT b)
 	{
 		using std::acos;
 		return {T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
