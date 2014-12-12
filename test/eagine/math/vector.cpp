@@ -28,7 +28,6 @@ bool test_math_vector_close(
 	{
 		if(!test_math_close(a[i], b[i]))
 		{
-std::cout << i << "|" << a[i] << "|" << b[i] << std::endl;
 			return false;
 		}
 	}
