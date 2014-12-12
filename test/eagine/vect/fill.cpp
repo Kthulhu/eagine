@@ -21,7 +21,7 @@ void test_vect_fill_apply(void)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		T a = std::rand();
+		T a = std::rand() / T(3);
 
 		typename eagine::vect::data<T, N>::type v =
 			eagine::vect::fill<T, N>::apply(a);

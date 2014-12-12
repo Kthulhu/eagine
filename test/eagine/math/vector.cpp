@@ -18,6 +18,23 @@
 
 BOOST_AUTO_TEST_SUITE(math_vector)
 
+template <typename T, unsigned N>
+bool test_math_vector_close(
+	const eagine::math::vector<T, N>& a,
+	const eagine::math::vector<T, N>& b
+)
+{
+	for(unsigned i=0; i<N; ++i)
+	{
+		if(!test_math_close(a[i], b[i]))
+		{
+std::cout << i << "|" << a[i] << "|" << b[i] << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+
 BOOST_AUTO_TEST_CASE(math_vector_default_ctr)
 {
 	eagine::math::vector<int, 1> vi1;
@@ -148,38 +165,155 @@ BOOST_AUTO_TEST_CASE(math_vector_copy_ctr)
 	(void)vd1; (void)vd2; (void)vd3; (void)vd4; (void)vd5; (void)vd6; (void)vd7; (void)vd8;
 }
 
+template <typename T>
+void test_math_vector_element(void)
+{
+	static const unsigned N = 8;
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+	}
+
+	eagine::math::vector<T, 1> v1 = {{a[0]}};
+	eagine::math::vector<T, 2> v2 = {{a[0], a[1]}};
+	eagine::math::vector<T, 3> v3 = {{a[0], a[1], a[2]}};
+	eagine::math::vector<T, 4> v4 = {{a[0], a[1], a[2], a[3]}};
+	eagine::math::vector<T, 5> v5 = {{a[0], a[1], a[2], a[3], a[4]}};
+	eagine::math::vector<T, 6> v6 = {{a[0], a[1], a[2], a[3], a[4], a[5]}};
+	eagine::math::vector<T, 7> v7 = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6]}};
+	eagine::math::vector<T, 8> v8 = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]}};
+
+	BOOST_ASSERT(v1[0] == a[0]);
+
+	BOOST_ASSERT(v2[0] == a[0]);
+	BOOST_ASSERT(v2[1] == a[1]);
+
+	BOOST_ASSERT(v3[0] == a[0]);
+	BOOST_ASSERT(v3[1] == a[1]);
+	BOOST_ASSERT(v3[2] == a[2]);
+
+	BOOST_ASSERT(v4[0] == a[0]);
+	BOOST_ASSERT(v4[1] == a[1]);
+	BOOST_ASSERT(v4[2] == a[2]);
+	BOOST_ASSERT(v4[3] == a[3]);
+
+	BOOST_ASSERT(v5[0] == a[0]);
+	BOOST_ASSERT(v5[1] == a[1]);
+	BOOST_ASSERT(v5[2] == a[2]);
+	BOOST_ASSERT(v5[3] == a[3]);
+	BOOST_ASSERT(v5[4] == a[4]);
+
+	BOOST_ASSERT(v6[0] == a[0]);
+	BOOST_ASSERT(v6[1] == a[1]);
+	BOOST_ASSERT(v6[2] == a[2]);
+	BOOST_ASSERT(v6[3] == a[3]);
+	BOOST_ASSERT(v6[4] == a[4]);
+	BOOST_ASSERT(v6[5] == a[5]);
+
+	BOOST_ASSERT(v7[0] == a[0]);
+	BOOST_ASSERT(v7[1] == a[1]);
+	BOOST_ASSERT(v7[2] == a[2]);
+	BOOST_ASSERT(v7[3] == a[3]);
+	BOOST_ASSERT(v7[4] == a[4]);
+	BOOST_ASSERT(v7[5] == a[5]);
+	BOOST_ASSERT(v7[6] == a[6]);
+
+	BOOST_ASSERT(v8[0] == a[0]);
+	BOOST_ASSERT(v8[1] == a[1]);
+	BOOST_ASSERT(v8[2] == a[2]);
+	BOOST_ASSERT(v8[3] == a[3]);
+	BOOST_ASSERT(v8[4] == a[4]);
+	BOOST_ASSERT(v8[5] == a[5]);
+	BOOST_ASSERT(v8[6] == a[6]);
+	BOOST_ASSERT(v8[7] == a[7]);
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_element)
+{
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_vector_element<int>();
+		test_math_vector_element<float>();
+		test_math_vector_element<double>();
+	}
+}
+
+template <typename T>
+void test_math_vector_make(void)
+{
+	static const unsigned N = 8;
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+	}
+
+	auto v1 = eagine::math::vector<T, 1>::make(a[0]);
+	auto v2 = eagine::math::vector<T, 2>::make(a[0], a[1]);
+	auto v3 = eagine::math::vector<T, 3>::make(a[0], a[1], a[2]);
+	auto v4 = eagine::math::vector<T, 4>::make(a[0], a[1], a[2], a[3]);
+	auto v5 = eagine::math::vector<T, 5>::make(a[0], a[1], a[2], a[3], a[4]);
+	auto v6 = eagine::math::vector<T, 6>::make(a[0], a[1], a[2], a[3], a[4], a[5]);
+	auto v7 = eagine::math::vector<T, 7>::make(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
+	auto v8 = eagine::math::vector<T, 8>::make(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+
+	BOOST_ASSERT(v1[0] == a[0]);
+
+	BOOST_ASSERT(v2[0] == a[0]);
+	BOOST_ASSERT(v2[1] == a[1]);
+
+	BOOST_ASSERT(v3[0] == a[0]);
+	BOOST_ASSERT(v3[1] == a[1]);
+	BOOST_ASSERT(v3[2] == a[2]);
+
+	BOOST_ASSERT(v4[0] == a[0]);
+	BOOST_ASSERT(v4[1] == a[1]);
+	BOOST_ASSERT(v4[2] == a[2]);
+	BOOST_ASSERT(v4[3] == a[3]);
+
+	BOOST_ASSERT(v5[0] == a[0]);
+	BOOST_ASSERT(v5[1] == a[1]);
+	BOOST_ASSERT(v5[2] == a[2]);
+	BOOST_ASSERT(v5[3] == a[3]);
+	BOOST_ASSERT(v5[4] == a[4]);
+
+	BOOST_ASSERT(v6[0] == a[0]);
+	BOOST_ASSERT(v6[1] == a[1]);
+	BOOST_ASSERT(v6[2] == a[2]);
+	BOOST_ASSERT(v6[3] == a[3]);
+	BOOST_ASSERT(v6[4] == a[4]);
+	BOOST_ASSERT(v6[5] == a[5]);
+
+	BOOST_ASSERT(v7[0] == a[0]);
+	BOOST_ASSERT(v7[1] == a[1]);
+	BOOST_ASSERT(v7[2] == a[2]);
+	BOOST_ASSERT(v7[3] == a[3]);
+	BOOST_ASSERT(v7[4] == a[4]);
+	BOOST_ASSERT(v7[5] == a[5]);
+	BOOST_ASSERT(v7[6] == a[6]);
+
+	BOOST_ASSERT(v8[0] == a[0]);
+	BOOST_ASSERT(v8[1] == a[1]);
+	BOOST_ASSERT(v8[2] == a[2]);
+	BOOST_ASSERT(v8[3] == a[3]);
+	BOOST_ASSERT(v8[4] == a[4]);
+	BOOST_ASSERT(v8[5] == a[5]);
+	BOOST_ASSERT(v8[6] == a[6]);
+	BOOST_ASSERT(v8[7] == a[7]);
+}
+
+
 BOOST_AUTO_TEST_CASE(math_vector_make)
 {
-	auto vi1 = eagine::math::vector<int, 1>::make(1);
-	auto vi2 = eagine::math::vector<int, 2>::make(1, 2);
-	auto vi3 = eagine::math::vector<int, 3>::make(1, 2, 3);
-	auto vi4 = eagine::math::vector<int, 4>::make(1, 2, 3, 4);
-	auto vi5 = eagine::math::vector<int, 5>::make(1, 2, 3, 4, 5);
-	auto vi6 = eagine::math::vector<int, 6>::make(1, 2, 3, 4, 5, 6);
-	auto vi7 = eagine::math::vector<int, 7>::make(1, 2, 3, 4, 5, 6, 7);
-	auto vi8 = eagine::math::vector<int, 8>::make(1, 2, 3, 4, 5, 6, 7, 8);
-
-	auto vf1 = eagine::math::vector<float, 1>::make(1.f);
-	auto vf2 = eagine::math::vector<float, 2>::make(1.f, 2.f);
-	auto vf3 = eagine::math::vector<float, 3>::make(1.f, 2.f, 3.f);
-	auto vf4 = eagine::math::vector<float, 4>::make(1.f, 2.f, 3.f, 4.f);
-	auto vf5 = eagine::math::vector<float, 5>::make(1.f, 2.f, 3.f, 4.f, 5.f);
-	auto vf6 = eagine::math::vector<float, 6>::make(1.f, 2.f, 3.f, 4.f, 5.f, 6.f);
-	auto vf7 = eagine::math::vector<float, 7>::make(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f);
-	auto vf8 = eagine::math::vector<float, 8>::make(1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f);
-
-	auto vd1 = eagine::math::vector<double, 1>::make(1);
-	auto vd2 = eagine::math::vector<double, 2>::make(1, 2);
-	auto vd3 = eagine::math::vector<double, 3>::make(1, 2, 3);
-	auto vd4 = eagine::math::vector<double, 4>::make(1, 2, 3, 4);
-	auto vd5 = eagine::math::vector<double, 5>::make(1, 2, 3, 4, 5);
-	auto vd6 = eagine::math::vector<double, 6>::make(1, 2, 3, 4, 5, 6);
-	auto vd7 = eagine::math::vector<double, 7>::make(1, 2, 3, 4, 5, 6, 7);
-	auto vd8 = eagine::math::vector<double, 8>::make(1, 2, 3, 4, 5, 6, 7, 8);
-
-	(void)vi1; (void)vi2; (void)vi3; (void)vi4; (void)vi5; (void)vi6; (void)vi7; (void)vi8;
-	(void)vf1; (void)vf2; (void)vf3; (void)vf4; (void)vf5; (void)vf6; (void)vf7; (void)vf8;
-	(void)vd1; (void)vd2; (void)vd3; (void)vd4; (void)vd5; (void)vd6; (void)vd7; (void)vd8;
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_vector_make<int>();
+		test_math_vector_make<float>();
+		test_math_vector_make<double>();
+	}
 }
 
 BOOST_AUTO_TEST_CASE(math_vector_from1)
@@ -279,6 +413,915 @@ BOOST_AUTO_TEST_CASE(math_vector_from2)
 	(void)vd1; (void)vd2; (void)vd3; (void)vd4; (void)vd5; (void)vd6; (void)vd7; (void)vd8;
 }
 
-// TODO
+#define EAGINE_TEST_RAND_INT(N) \
+	(unsigned( \
+		__TIMESTAMP__[__TIMESTAMP__[18+__LINE__%6]%24]^ \
+		__TIMESTAMP__[12+__FILE__[__LINE__%10]%12]+ \
+		__FILE__[(__TIMESTAMP__[23]+__LINE__)%10]+ \
+		__LINE__ \
+	) % N)
+
+template <typename T, unsigned ... I>
+void test_math_vector_from3_T(void)
+{
+	static const unsigned M = sizeof...(I);
+	unsigned j[M] = {I...};
+
+	static const unsigned N = 8;
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+	}
+
+	eagine::math::vector<T, 8> v = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]}};
+
+	auto u = eagine::math::vector<T, M>::template from<I...>(v);
+
+	for(unsigned i=0; i<M; ++i)
+	{
+		BOOST_ASSERT(u[i] == v[j[i]]);
+	}
+}
+
+template <typename T>
+void test_math_vector_from3(void)
+{
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_T<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_from3)
+{
+	test_math_vector_from3<int>();
+	test_math_vector_from3<float>();
+	test_math_vector_from3<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_from4_T(void)
+{
+	for(unsigned k=0; k<1000; ++k)
+	{
+		T a[N];
+		for(unsigned i=0; i<N; ++i)
+		{
+			a[i] = std::rand() / T(3);
+		}
+
+		auto v = eagine::math::vector<T, N>::from(a, N);
+
+		for(unsigned i=0; i<N; ++i)
+		{
+			BOOST_ASSERT(v[i] == a[i]);
+		}
+	}
+}
+
+template <typename T>
+void test_math_vector_from4(void)
+{
+	test_math_vector_from4_T<T, 1>();
+	test_math_vector_from4_T<T, 2>();
+	test_math_vector_from4_T<T, 3>();
+	test_math_vector_from4_T<T, 4>();
+	test_math_vector_from4_T<T, 5>();
+	test_math_vector_from4_T<T, 6>();
+	test_math_vector_from4_T<T, 7>();
+	test_math_vector_from4_T<T, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_from4)
+{
+	test_math_vector_from4<int>();
+	test_math_vector_from4<float>();
+	test_math_vector_from4<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_get_T(void)
+{
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		BOOST_ASSERT(get(va, i) == va[i]);
+	}
+}
+
+template <typename T>
+void test_math_vector_get(void)
+{
+	test_math_vector_get_T<T, 1>();
+	test_math_vector_get_T<T, 2>();
+	test_math_vector_get_T<T, 3>();
+	test_math_vector_get_T<T, 4>();
+	test_math_vector_get_T<T, 5>();
+	test_math_vector_get_T<T, 6>();
+	test_math_vector_get_T<T, 7>();
+	test_math_vector_get_T<T, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_get)
+{
+	for(unsigned i=0; i<100; ++i)
+	{
+		test_math_vector_get<int>();
+		test_math_vector_get<float>();
+		test_math_vector_get<double>();
+	}
+}
+
+template <typename T, unsigned N>
+void test_math_vector_set_T(void)
+{
+	eagine::math::vector<T, N> va;
+
+	for(unsigned k=0; k<10; ++k)
+	{
+		for(unsigned i=0; i<N; ++i)
+		{
+			T a = std::rand() / T(3);
+
+			set(va, i, a);
+			BOOST_ASSERT(get(va, i) == a);
+		}
+	}
+}
+
+template <typename T>
+void test_math_vector_set(void)
+{
+	test_math_vector_set_T<T, 1>();
+	test_math_vector_set_T<T, 2>();
+	test_math_vector_set_T<T, 3>();
+	test_math_vector_set_T<T, 4>();
+	test_math_vector_set_T<T, 5>();
+	test_math_vector_set_T<T, 6>();
+	test_math_vector_set_T<T, 7>();
+	test_math_vector_set_T<T, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_set)
+{
+	for(unsigned i=0; i<100; ++i)
+	{
+		test_math_vector_set<int>();
+		test_math_vector_set<float>();
+		test_math_vector_set<double>();
+	}
+}
+
+template <typename T, unsigned N>
+void test_math_vector_zero_T(void)
+{
+	auto v = eagine::math::vector<T, N>::zero();
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		BOOST_ASSERT(v[i] == T(0));
+	}
+}
+
+template <typename T>
+void test_math_vector_zero(void)
+{
+	test_math_vector_zero_T<T, 1>();
+	test_math_vector_zero_T<T, 2>();
+	test_math_vector_zero_T<T, 3>();
+	test_math_vector_zero_T<T, 4>();
+	test_math_vector_zero_T<T, 5>();
+	test_math_vector_zero_T<T, 6>();
+	test_math_vector_zero_T<T, 7>();
+	test_math_vector_zero_T<T, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_zero)
+{
+	test_math_vector_zero<int>();
+	test_math_vector_zero<float>();
+	test_math_vector_zero<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_fill_T(void)
+{
+	T a = std::rand() / T(3);
+
+	auto v = eagine::math::vector<T, N>::fill(a);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		BOOST_ASSERT(v[i] == a);
+	}
+}
+
+template <typename T>
+void test_math_vector_fill(void)
+{
+	test_math_vector_fill_T<T, 1>();
+	test_math_vector_fill_T<T, 2>();
+	test_math_vector_fill_T<T, 3>();
+	test_math_vector_fill_T<T, 4>();
+	test_math_vector_fill_T<T, 5>();
+	test_math_vector_fill_T<T, 6>();
+	test_math_vector_fill_T<T, 7>();
+	test_math_vector_fill_T<T, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_fill)
+{
+	for(unsigned i=0; i<100; ++i)
+	{
+		test_math_vector_fill<int>();
+		test_math_vector_fill<float>();
+		test_math_vector_fill<double>();
+	}
+}
+
+template <typename T, unsigned I, unsigned N>
+void test_math_vector_axis_I_T(void)
+{
+	T a = std::rand() / T(3);
+
+	auto v = eagine::math::vector<T, N>::template axis<I>(a);
+	auto u = eagine::math::vector<T, N>::template axis<I>();
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		BOOST_ASSERT(v[i] == ((i==I)?a:T(0)));
+		BOOST_ASSERT(u[i] == ((i==I)?T(1):T(0)));
+	}
+}
+
+template <typename T>
+void test_math_vector_axis_I(void)
+{
+	test_math_vector_axis_I_T<T, 0, 1>();
+
+	test_math_vector_axis_I_T<T, 0, 2>();
+	test_math_vector_axis_I_T<T, 1, 2>();
+
+	test_math_vector_axis_I_T<T, 0, 3>();
+	test_math_vector_axis_I_T<T, 1, 3>();
+	test_math_vector_axis_I_T<T, 2, 3>();
+
+	test_math_vector_axis_I_T<T, 0, 4>();
+	test_math_vector_axis_I_T<T, 1, 4>();
+	test_math_vector_axis_I_T<T, 2, 4>();
+	test_math_vector_axis_I_T<T, 3, 4>();
+
+	test_math_vector_axis_I_T<T, 0, 5>();
+	test_math_vector_axis_I_T<T, 1, 5>();
+	test_math_vector_axis_I_T<T, 2, 5>();
+	test_math_vector_axis_I_T<T, 3, 5>();
+	test_math_vector_axis_I_T<T, 4, 5>();
+
+	test_math_vector_axis_I_T<T, 0, 6>();
+	test_math_vector_axis_I_T<T, 1, 6>();
+	test_math_vector_axis_I_T<T, 2, 6>();
+	test_math_vector_axis_I_T<T, 3, 6>();
+	test_math_vector_axis_I_T<T, 4, 6>();
+	test_math_vector_axis_I_T<T, 5, 6>();
+
+	test_math_vector_axis_I_T<T, 0, 7>();
+	test_math_vector_axis_I_T<T, 1, 7>();
+	test_math_vector_axis_I_T<T, 2, 7>();
+	test_math_vector_axis_I_T<T, 3, 7>();
+	test_math_vector_axis_I_T<T, 4, 7>();
+	test_math_vector_axis_I_T<T, 5, 7>();
+	test_math_vector_axis_I_T<T, 6, 7>();
+
+	test_math_vector_axis_I_T<T, 0, 8>();
+	test_math_vector_axis_I_T<T, 1, 8>();
+	test_math_vector_axis_I_T<T, 2, 8>();
+	test_math_vector_axis_I_T<T, 3, 8>();
+	test_math_vector_axis_I_T<T, 4, 8>();
+	test_math_vector_axis_I_T<T, 5, 8>();
+	test_math_vector_axis_I_T<T, 6, 8>();
+	test_math_vector_axis_I_T<T, 7, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_axis)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_axis_I<int>();
+		test_math_vector_axis_I<float>();
+		test_math_vector_axis_I<double>();
+	}
+}
+
+template <typename T, unsigned N>
+void test_math_vector_equal_T(void)
+{
+	T a[N], b[N];
+
+	bool eq = std::rand() % 10 == 1;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+		b[i] = std::rand() / T(3);
+		if(eq) b[i] = a[i];
+	}
+
+	eq = true;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		eq &= a[i] == b[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	BOOST_ASSERT((va == vb) == eq);
+	BOOST_ASSERT((vb == va) == eq);
+}
+
+template <typename T>
+void test_math_vector_equal(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_equal_T<T, 1>();
+		test_math_vector_equal_T<T, 2>();
+		test_math_vector_equal_T<T, 3>();
+		test_math_vector_equal_T<T, 4>();
+		test_math_vector_equal_T<T, 5>();
+		test_math_vector_equal_T<T, 6>();
+		test_math_vector_equal_T<T, 7>();
+		test_math_vector_equal_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_equal)
+{
+	test_math_vector_equal<int>();
+	test_math_vector_equal<float>();
+	test_math_vector_equal<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_noteq_T(void)
+{
+	T a[N], b[N];
+
+	bool eq = std::rand() % 10 == 1;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+		b[i] = std::rand() / T(3);
+		if(eq) b[i] = a[i];
+	}
+
+	eq = true;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		eq &= a[i] == b[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	BOOST_ASSERT((va != vb) == !eq);
+	BOOST_ASSERT((vb != va) == !eq);
+}
+
+template <typename T>
+void test_math_vector_noteq(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_noteq_T<T, 1>();
+		test_math_vector_noteq_T<T, 2>();
+		test_math_vector_noteq_T<T, 3>();
+		test_math_vector_noteq_T<T, 4>();
+		test_math_vector_noteq_T<T, 5>();
+		test_math_vector_noteq_T<T, 6>();
+		test_math_vector_noteq_T<T, 7>();
+		test_math_vector_noteq_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_noteq)
+{
+	test_math_vector_noteq<int>();
+	test_math_vector_noteq<float>();
+	test_math_vector_noteq<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_add_T(void)
+{
+	T a[N], b[N], c[N], d[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+		b[i] = std::rand() / T(3);
+		c[i] = a[i] + b[i];
+		d[i] = b[i] + a[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+	auto vc = eagine::math::vector<T, N>::from(c, N);
+	auto vd = eagine::math::vector<T, N>::from(d, N);
+
+	BOOST_ASSERT(test_math_vector_close(va + vb, vc));
+	BOOST_ASSERT(test_math_vector_close(va + vb, vd));
+	BOOST_ASSERT(test_math_vector_close(vb + va, vc));
+	BOOST_ASSERT(test_math_vector_close(vb + va, vd));
+}
+
+template <typename T>
+void test_math_vector_add(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_add_T<T, 1>();
+		test_math_vector_add_T<T, 2>();
+		test_math_vector_add_T<T, 3>();
+		test_math_vector_add_T<T, 4>();
+		test_math_vector_add_T<T, 5>();
+		test_math_vector_add_T<T, 6>();
+		test_math_vector_add_T<T, 7>();
+		test_math_vector_add_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_add)
+{
+	test_math_vector_add<int>();
+	test_math_vector_add<float>();
+	test_math_vector_add<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_sub_T(void)
+{
+	T a[N], b[N], c[N], d[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+		b[i] = std::rand() / T(3);
+		c[i] = a[i] - b[i];
+		d[i] = b[i] - a[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+	auto vc = eagine::math::vector<T, N>::from(c, N);
+	auto vd = eagine::math::vector<T, N>::from(d, N);
+
+	BOOST_ASSERT(test_math_vector_close(va - vb, vc));
+	BOOST_ASSERT(test_math_vector_close(vb - va, vd));
+}
+
+template <typename T>
+void test_math_vector_sub(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_sub_T<T, 1>();
+		test_math_vector_sub_T<T, 2>();
+		test_math_vector_sub_T<T, 3>();
+		test_math_vector_sub_T<T, 4>();
+		test_math_vector_sub_T<T, 5>();
+		test_math_vector_sub_T<T, 6>();
+		test_math_vector_sub_T<T, 7>();
+		test_math_vector_sub_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_sub)
+{
+	test_math_vector_sub<int>();
+	test_math_vector_sub<float>();
+	test_math_vector_sub<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_mul_T(void)
+{
+	T a[N], b[N], c[N], d[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() % 100000;
+		b[i] = std::rand() % 100000;
+		c[i] = a[i] * b[i];
+		d[i] = b[i] * a[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+	auto vc = eagine::math::vector<T, N>::from(c, N);
+	auto vd = eagine::math::vector<T, N>::from(d, N);
+
+	BOOST_ASSERT(test_math_vector_close(va * vb, vc));
+	BOOST_ASSERT(test_math_vector_close(va * vb, vd));
+	BOOST_ASSERT(test_math_vector_close(vb * va, vc));
+	BOOST_ASSERT(test_math_vector_close(vb * va, vd));
+}
+
+template <typename T>
+void test_math_vector_mul(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_mul_T<T, 1>();
+		test_math_vector_mul_T<T, 2>();
+		test_math_vector_mul_T<T, 3>();
+		test_math_vector_mul_T<T, 4>();
+		test_math_vector_mul_T<T, 5>();
+		test_math_vector_mul_T<T, 6>();
+		test_math_vector_mul_T<T, 7>();
+		test_math_vector_mul_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_mul)
+{
+	test_math_vector_mul<int>();
+	test_math_vector_mul<float>();
+	test_math_vector_mul<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_mulc_T(void)
+{
+	T a[N], b[N], c = std::rand() % 10000;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() % 100000;
+		b[i] = a[i] * c;
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	BOOST_ASSERT(test_math_vector_close(va * c, vb));
+	BOOST_ASSERT(test_math_vector_close(c * va, vb));
+}
+
+template <typename T>
+void test_math_vector_mulc(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_mulc_T<T, 1>();
+		test_math_vector_mulc_T<T, 2>();
+		test_math_vector_mulc_T<T, 3>();
+		test_math_vector_mulc_T<T, 4>();
+		test_math_vector_mulc_T<T, 5>();
+		test_math_vector_mulc_T<T, 6>();
+		test_math_vector_mulc_T<T, 7>();
+		test_math_vector_mulc_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_mulc)
+{
+	test_math_vector_mulc<int>();
+	test_math_vector_mulc<float>();
+	test_math_vector_mulc<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_div_T(void)
+{
+	T a[N], b[N], c[N], d[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = 1 + std::rand() / T(2);
+		b[i] = 1 + std::rand() / T(2);
+		c[i] = a[i] / b[i];
+		d[i] = b[i] / a[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+	auto vc = eagine::math::vector<T, N>::from(c, N);
+	auto vd = eagine::math::vector<T, N>::from(d, N);
+
+	BOOST_ASSERT(test_math_vector_close(va / vb, vc));
+	BOOST_ASSERT(test_math_vector_close(vb / va, vd));
+}
+
+template <typename T>
+void test_math_vector_div(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_div_T<T, 1>();
+		test_math_vector_div_T<T, 2>();
+		test_math_vector_div_T<T, 3>();
+		test_math_vector_div_T<T, 4>();
+		test_math_vector_div_T<T, 5>();
+		test_math_vector_div_T<T, 6>();
+		test_math_vector_div_T<T, 7>();
+		test_math_vector_div_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_div)
+{
+	test_math_vector_div<int>();
+	test_math_vector_div<float>();
+	test_math_vector_div<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_divc_T(void)
+{
+	T a[N], b[N], c = 1 + std::rand() / T(2);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = 1 + std::rand() / T(2);
+		b[i] = a[i] / c;
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	BOOST_ASSERT(test_math_vector_close(va / c, vb));
+}
+
+template <typename T>
+void test_math_vector_divc(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_divc_T<T, 1>();
+		test_math_vector_divc_T<T, 2>();
+		test_math_vector_divc_T<T, 3>();
+		test_math_vector_divc_T<T, 4>();
+		test_math_vector_divc_T<T, 5>();
+		test_math_vector_divc_T<T, 6>();
+		test_math_vector_divc_T<T, 7>();
+		test_math_vector_divc_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_divc)
+{
+	test_math_vector_divc<int>();
+	test_math_vector_divc<float>();
+	test_math_vector_divc<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_hsum_T(void)
+{
+	T a[N];
+
+	T s = T(0);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(N);
+
+		s += a[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vs = hsum(va);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		BOOST_ASSERT(test_math_close(vs[i], s));
+	}
+}
+
+template <typename T>
+void test_math_vector_hsum(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_hsum_T<T, 1>();
+		test_math_vector_hsum_T<T, 2>();
+		test_math_vector_hsum_T<T, 3>();
+		test_math_vector_hsum_T<T, 4>();
+		test_math_vector_hsum_T<T, 5>();
+		test_math_vector_hsum_T<T, 6>();
+		test_math_vector_hsum_T<T, 7>();
+		test_math_vector_hsum_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_hsum)
+{
+	test_math_vector_hsum<int>();
+	test_math_vector_hsum<float>();
+	test_math_vector_hsum<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_dot_T(void)
+{
+	T a[N], b[N];
+
+	T d = T(0);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(N);
+		b[i] = std::rand() / T(N);
+
+		d += a[i]*b[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	BOOST_ASSERT(test_math_close(dot(va, vb), d));
+}
+
+template <typename T>
+void test_math_vector_dot(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_dot_T<T, 1>();
+		test_math_vector_dot_T<T, 2>();
+		test_math_vector_dot_T<T, 3>();
+		test_math_vector_dot_T<T, 4>();
+		test_math_vector_dot_T<T, 5>();
+		test_math_vector_dot_T<T, 6>();
+		test_math_vector_dot_T<T, 7>();
+		test_math_vector_dot_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_dot)
+{
+	test_math_vector_dot<int>();
+	test_math_vector_dot<float>();
+	test_math_vector_dot<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_length_T(void)
+{
+	T a[N];
+
+	T l = T(0);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(N);
+
+		l += a[i]*a[i];
+	}
+
+	l = std::sqrt(l);
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+
+	BOOST_ASSERT(test_math_close(length(va), l));
+	BOOST_ASSERT(test_math_close(magnitude(va), l));
+}
+
+template <typename T>
+void test_math_vector_length(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_length_T<T, 1>();
+		test_math_vector_length_T<T, 2>();
+		test_math_vector_length_T<T, 3>();
+		test_math_vector_length_T<T, 4>();
+		test_math_vector_length_T<T, 5>();
+		test_math_vector_length_T<T, 6>();
+		test_math_vector_length_T<T, 7>();
+		test_math_vector_length_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_length)
+{
+	test_math_vector_length<int>();
+	test_math_vector_length<float>();
+	test_math_vector_length<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_normalized_T(void)
+{
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(N*N);
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+
+	BOOST_ASSERT(test_math_close(length(normalized(va)), T(1)));
+}
+
+template <typename T>
+void test_math_vector_normalized(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_normalized_T<T, 1>();
+		test_math_vector_normalized_T<T, 2>();
+		test_math_vector_normalized_T<T, 3>();
+		test_math_vector_normalized_T<T, 4>();
+		test_math_vector_normalized_T<T, 5>();
+		test_math_vector_normalized_T<T, 6>();
+		test_math_vector_normalized_T<T, 7>();
+		test_math_vector_normalized_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_normalized)
+{
+	test_math_vector_normalized<float>();
+	test_math_vector_normalized<double>();
+}
 
 BOOST_AUTO_TEST_SUITE_END()

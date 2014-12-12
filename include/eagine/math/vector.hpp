@@ -12,6 +12,7 @@
 
 #include <eagine/vect/fill.hpp>
 #include <eagine/vect/axis.hpp>
+#include <eagine/vect/from.hpp>
 #include <eagine/vect/hsum.hpp>
 #include <eagine/vect/compare.hpp>
 #include <eagine/meta/min_max.hpp>
@@ -63,30 +64,37 @@ struct vector
 		return vector{{T(v._v[I])...}};
 	}
 
+	template <typename P>
+	static inline
+	vector from(const P* dt, std::size_t sz)
+	{
+		return vector{vect::from<T,N>::apply(dt, sz)};
+	}
+
 	static inline
 	vector zero(void)
 	{
-		return {vect::fill<T,N>::apply(T(0))};
+		return vector{vect::fill<T,N>::apply(T(0))};
 	}
 
 	static inline
 	vector fill(T v)
 	{
-		return {vect::fill<T,N>::apply(v)};
+		return vector{vect::fill<T,N>::apply(v)};
 	}
 
 	template <unsigned I>
 	static inline
 	vector axis(void)
 	{
-		return {vect::axis<T,N,I>::apply(T(1))};
+		return vector{vect::axis<T,N,I>::apply(T(1))};
 	}
 
 	template <unsigned I>
 	static inline
 	vector axis(T v)
 	{
-		return {vect::axis<T,N,I>::apply(v)};
+		return vector{vect::axis<T,N,I>::apply(v)};
 	}
 
 	inline
@@ -99,58 +107,64 @@ struct vector
 	friend constexpr
 	vector operator + (_cpT a, _cpT b)
 	{
-		return {a._v+b._v};
+		return vector{a._v+b._v};
 	}
 
 	friend constexpr
 	vector operator - (_cpT a, _cpT b)
 	{
-		return {a._v-b._v};
+		return vector{a._v-b._v};
 	}
 
 	friend constexpr
 	vector operator * (_cpT a, _cpT b)
 	{
-		return {a._v*b._v};
+		return vector{a._v*b._v};
+	}
+
+	friend constexpr
+	vector operator * (T c, _cpT a)
+	{
+		return vector{a._v*vect::fill<T, N>::apply(c)};
 	}
 
 	friend constexpr
 	vector operator * (_cpT a, T c)
 	{
-		return {a._v*vect::fill<T, N>::apply(c)};
+		return vector{a._v*vect::fill<T, N>::apply(c)};
 	}
 
 	friend constexpr
 	vector operator / (_cpT a, _cpT b)
 	{
-		return {a._v/b._v};
+		return vector{a._v/b._v};
 	}
 
 	friend constexpr
 	vector operator / (_cpT a, T c)
 	{
-		return {a._v/vect::fill<T, N>::apply(c)};
+		return vector{a._v/vect::fill<T, N>::apply(c)};
 	}
 
 	friend
 	bool operator == (_cpT a, _cpT b)
 	noexcept
 	{
-		return vect::equal<T,N>::apply(a, b);
+		return vect::equal<T,N>::apply(a._v, b._v);
 	}
 
 	friend
 	bool operator != (_cpT a, _cpT b)
 	noexcept
 	{
-		return !vect::equal<T,N>::apply(a, b);
+		return !vect::equal<T,N>::apply(a._v, b._v);
 	}
 
 	friend
-	constexpr vector hsum(_cpT a, _cpT b)
+	constexpr vector hsum(_cpT a)
 	noexcept
 	{
-		return {vect::hsum<T, N>::apply(a._v * b._v)};
+		return vector{vect::hsum<T, N>::apply(a._v)};
 	}
 
 	friend constexpr
@@ -213,8 +227,28 @@ T get(const vector<T,N>& v, unsigned i)
 	return v._v[i];
 }
 
+// set(vector, v)
+template <unsigned I, typename T, unsigned N>
+static inline
+typename meta::enable_if<(I<N)>::type
+set(vector<T,N>& v, T e)
+{
+	v._v[I] = e;
+}
+
+// set(vector, v) run-time
+template <typename T, unsigned N>
+static inline
+void
+set(vector<T,N>& v, unsigned i, T e)
+{
+	v._v[i] = e;
+}
+
+// shuffle_mask
 using vect::shuffle_mask;
 
+// shuffle
 template <int ... I, typename T, unsigned N>
 static inline
 typename meta::enable_if<
@@ -229,6 +263,7 @@ shuffle(
 	return {vect::shuffle<T, N>::apply(v._v, m)};
 }
 
+// shuffle
 template <int ... I, typename T, unsigned N>
 static inline
 typename meta::enable_if<
@@ -244,6 +279,7 @@ shuffle(
 	return {vect::shuffle2<T, N>::apply(v1._v, v2._v, m)};
 }
 
+// cross
 template <typename T>
 static inline
 vector<T, 3>
