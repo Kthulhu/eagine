@@ -341,6 +341,26 @@ BackInsertionSequence& split_into(
 	return dest;
 }
 
+// split_into
+template <typename BackInsertionSequence>
+inline
+BackInsertionSequence&
+split_into(
+	BackInsertionSequence& dest,
+	const cstrref& str,
+	const cstrref& delim
+)
+{
+	return split_into<BackInsertionSequence>(
+		dest, str, delim,
+		[](const cstrref& sr) ->
+		typename BackInsertionSequence::value_type
+		{
+			return typename BackInsertionSequence::value_type(sr);
+		}
+	);
+}
+
 // split
 template <typename BackInsertionSequence, typename Transform>
 inline

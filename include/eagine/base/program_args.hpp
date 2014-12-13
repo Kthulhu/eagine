@@ -20,10 +20,22 @@ namespace base {
 class program_args
 {
 private:
-	const std::size_t _argc;
+	std::size_t _argc;
 	const char** _argv;
 public:
-	program_args(int argc, const char* argv[])
+	program_args(void)
+	noexcept
+	 : _argc(0)
+	 , _argv(nullptr)
+	{ }
+
+	program_args(int argc, char** argv)
+	noexcept
+	 : _argc(argc<0?0:argc)
+	 , _argv((const char**)argv)
+	{ }
+
+	program_args(int argc, const char** argv)
 	noexcept
 	 : _argc(argc<0?0:argc)
 	 , _argv(argv)

@@ -614,6 +614,11 @@ public:
 		return string_type(_ptr, _len, alloc);
 	}
 
+	std::string std_str(void) const
+	{
+		return std::string(_ptr, _len);
+	}
+
 	explicit
 	operator string_type(void) const
 	{
