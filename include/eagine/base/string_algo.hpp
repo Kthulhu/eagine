@@ -420,6 +420,24 @@ String join(
 	return std::move(join_into(result, seq, delim));
 }
 
+// concat_into
+template <typename String, typename ForwardSequence>
+String& concat_into(
+	String& dest,
+	const ForwardSequence& seq
+)
+{
+	return join_into(dest, seq, cstrref());
+}
+
+// concat
+template <typename String, typename ForwardSequence>
+String concat(const ForwardSequence& seq)
+{
+	String result;
+	return std::move(concat_into(result, seq));
+}
+
 } // namespace base
 } // namespace eagine
 
