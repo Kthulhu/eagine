@@ -56,6 +56,18 @@ public:
 	{
 		return cstrref(_exe_name_str());
 	}
+
+	static
+	std::string exepath(void);
+
+	static
+	string exepath(const allocator<char>& alloc);
+
+	static
+	std::string cwd(void);
+
+	static
+	string cwd(const allocator<char>& alloc);
 };
 
 } // namespace base

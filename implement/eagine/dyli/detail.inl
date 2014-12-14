@@ -21,7 +21,7 @@ EAGINE_LIB_FUNC
 void required_lib_n_a(void)
 {
 	throw dyli::not_loaded(base::translate(
-		"Required dynamic library is not loaded"
+		"Required dynamic library is not loaded."
 	).str());
 }
 //------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ EAGINE_LIB_FUNC
 void required_res_n_a(void)
 {
 	throw dyli::not_loaded(base::translate(
-		"Required dynamically loaded resource is not available "
+		"Required dynamically loaded resource is not available."
 	).str());
 }
 //------------------------------------------------------------------------------

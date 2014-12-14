@@ -164,6 +164,38 @@ noexcept
 	return 0;
 }
 
+// rfind_pos
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2>::value,
+	std::size_t
+>::type
+rfind_pos(const Str1& str, const Str2& target)
+noexcept
+{
+	if(!str.empty() && !target.empty())
+	{
+		const std::size_t ls = str.size();
+		const std::size_t lt = target.size();
+
+		if(ls >= lt)
+		{
+			std::size_t p = ls-lt;
+
+			while(p > 0)
+			{
+				if(slice(str, p, lt) == target)
+				{
+					return p;
+				}
+				--p;
+			}
+		}
+	}
+	return 0;
+}
+
 // contains
 template <typename Str1, typename Str2>
 inline
@@ -237,6 +269,19 @@ slice_before(const Str1& str, const Str2& target)
 noexcept
 {
 	return slice(str, 0, find_pos(str, target));
+}
+
+// slice_before_last
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
+>::type
+slice_before_last(const Str1& str, const Str2& target)
+noexcept
+{
+	return slice(str, 0, rfind_pos(str, target));
 }
 
 // slice_after
