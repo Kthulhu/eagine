@@ -192,6 +192,7 @@ noexcept
 				--p;
 			}
 		}
+		return ls;
 	}
 	return 0;
 }
@@ -281,7 +282,8 @@ typename meta::enable_if<
 slice_before_last(const Str1& str, const Str2& target)
 noexcept
 {
-	return slice(str, 0, rfind_pos(str, target));
+	std::size_t p = rfind_pos(str, target);
+	return slice(str, 0, p<str.size()?p:0);
 }
 
 // slice_after
@@ -302,6 +304,24 @@ noexcept
 	return slice(str, pos);
 }
 
+// slice_after_last
+template <typename Str1, typename Str2>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2>::value,
+	typename string_view<Str1>::type
+>::type
+slice_after_last(const Str1& str, const Str2& target)
+noexcept
+{
+	std::size_t pos = rfind_pos(str, target);
+	if(pos < str.size())
+	{
+		pos += target.size();
+	}
+	return slice(str, pos);
+}
+
 // slice_between
 template <typename Str1, typename Str2, typename Str3>
 inline
@@ -314,6 +334,27 @@ noexcept
 {
 	std::size_t bpos = find_pos(str, bgn);
 	std::size_t epos = find_pos(slice(str, bpos+bgn.size()), end);
+
+	return slice(str, bpos+bgn.size(), epos);
+}
+
+// slice_inside
+template <typename Str1, typename Str2, typename Str3>
+inline
+typename meta::enable_if<
+	are_compatible_string_views<Str1, Str2, Str3>::value,
+	typename string_view<Str1>::type
+>::type
+slice_inside(const Str1& str, const Str2& bgn, const Str3& end)
+noexcept
+{
+	std::size_t bpos = find_pos(str, bgn);
+	std::size_t epos =rfind_pos(str, end);
+
+	if(epos >= bgn.size())
+	{
+		epos -= bgn.size();
+	}
 
 	return slice(str, bpos+bgn.size(), epos);
 }
