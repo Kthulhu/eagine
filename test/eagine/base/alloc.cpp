@@ -354,6 +354,13 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_5)
 BOOST_AUTO_TEST_CASE(base_alloc_map_1)
 {
 	eagine::base::allocator<void> a;
+	eagine::base::allocator<
+		std::pair<
+			std::shared_ptr<std::pair<char, long>>,
+			std::vector<int, eagine::base::allocator<int>>
+		>
+	> ma(a);
+	std::less<std::shared_ptr<std::pair<char, long>>> l;
 
 	std::map<
 		std::shared_ptr<std::pair<char, long>>,
@@ -365,7 +372,7 @@ BOOST_AUTO_TEST_CASE(base_alloc_map_1)
 				std::vector<int, eagine::base::allocator<int>>
 			>
 		>
-	> m(a);
+	> m(l, ma);
 
 	const unsigned n = 1000+std::rand()%1000;
 

@@ -703,6 +703,21 @@ public:
 	{
 		return(a._sba != b._sba);
 	}
+
+	template <class U, class ... A>
+	static inline
+	void construct(U* p, A&& ... a)
+	{
+		::new((void*)p) U(std::forward<A>(a)...);
+	}
+
+	template <typename U>
+	static inline
+	void destroy(U* p)
+	noexcept(noexcept(p->~U()))
+	{
+		return p->~U();
+	}
 };
 
 } // namespace base

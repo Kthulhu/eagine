@@ -44,11 +44,7 @@ dynamic_library::dynamic_library(void)
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 dynamic_library::dynamic_library(cstrref module_name)
- : _handle(_check_and_open(
-	module_name.null_terminated()?
-	module_name.data():
-	module_name.str().c_str()
-))
+ : _handle(_check_and_open(c_str(module_name)))
 { }
 //------------------------------------------------------------------------------
 // dynamic_library::~dynamic_library
@@ -66,12 +62,7 @@ noexcept
 //------------------------------------------------------------------------------
 void* dynamic_library::symbol(cstrref symbol_name)
 {
-	void* result = ::dlsym(
-		_handle,
-		symbol_name.null_terminated()?
-		symbol_name.data():
-		symbol_name.str().c_str()
-	);
+	void* result = ::dlsym(_handle, c_str(symbol_name));
 
 	const char* error_message = ::dlerror();
 	if(error_message)

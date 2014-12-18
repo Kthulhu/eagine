@@ -723,6 +723,40 @@ noexcept
 	return *this;
 }
 
+// c_str
+class c_str
+{
+private:
+	cstrref _sr;
+	string _tmp;
+public:
+	c_str(const cstrref& sr)
+	 : _sr(sr)
+	{ }
+
+	const char* get(const allocator<char>& alloc)
+	{
+		if(_sr.null_terminated())
+		{
+			return _sr.data();
+		}
+		else if(_tmp.empty())
+		{
+			_tmp.assign(_sr.str(alloc));
+		}
+		return _tmp.c_str();
+	}
+
+	const char* get(void)
+	{
+		return get(allocator<char>());
+	}
+
+	operator const char* (void)
+	{
+		return get();
+	}
+};
 
 // detail
 namespace detail {

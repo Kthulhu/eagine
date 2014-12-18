@@ -36,9 +36,8 @@ guid::guid(void)
 EAGINE_LIB_FUNC
 guid::guid(const cstrref& str)
  : ::boost::uuids::uuid( ::boost::uuids::string_generator()(
-	str.null_terminated()?
-	str.data():
-	str.str().c_str()
+	str.begin(),
+	str.end()
 ))
 { }
 //------------------------------------------------------------------------------

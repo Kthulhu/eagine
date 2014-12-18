@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(base_format_str)
 {
 	using namespace eagine::base;
 	format f(text_message("a message"));
-	string s = f.str();
+	std::string s = f.str();
 }
 
 BOOST_AUTO_TEST_CASE(base_format_ostream)

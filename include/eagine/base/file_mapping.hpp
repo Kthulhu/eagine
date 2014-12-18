@@ -48,12 +48,7 @@ public:
 	template <typename Access>
 	file_mapping(cstrref path, Access access)
 	 : _bmode(_get_mode(access))
-	 , _bfile_map(
-		path.null_terminated()?
-		path.data():
-		path.str().c_str(),
-		 _bmode
-	)
+	 , _bfile_map(c_str(path), _bmode)
 	{ }
 
 	file_mapping(file_mapping&&) = default;
