@@ -14,9 +14,12 @@
 #include <eagine/vect/axis.hpp>
 #include <eagine/vect/from.hpp>
 #include <eagine/vect/hsum.hpp>
+#include <eagine/vect/cast.hpp>
 #include <eagine/vect/compare.hpp>
+#include <eagine/vect/array_ref.hpp>
 #include <eagine/meta/min_max.hpp>
 #include <eagine/math/angle.hpp>
+#include <eagine/base/memory_range.hpp>
 #include <cmath>
 
 namespace eagine {
@@ -27,7 +30,10 @@ struct vector
 {
 	typedef vector type;
 
+	typedef T value_type;
+
 	typedef typename vect::data<T, N>::type _vT;
+	typedef _vT data_type;
 
 	typedef const vector& _cpT;
 
@@ -57,7 +63,34 @@ struct vector
 		return vector{{T(std::forward<P>(p))...}};
 	}
 
-	template <unsigned ... I, typename P, unsigned M>
+	template <
+		typename P,
+		unsigned M,
+		typename = typename meta::enable_if<
+			(!meta::is_same<T, P>::value || (N != M))
+		>::type
+	>
+	static constexpr inline 
+	vector from(const vector<P, M>& v, T d = T(0))
+	{
+		return vector{vect::cast<P, M, T, N>::apply(v._v, d)};
+	}
+
+	template <typename P, unsigned M>
+	static constexpr inline 
+	vector from(const vector<P, M>& v, const vector<T, N-M>& u)
+	{
+		return vector{vect::cast<P, M, T, N>::apply(v._v, u._v)};
+	}
+
+	template <
+		unsigned ... I,
+		typename P,
+		unsigned M,
+		typename = typename meta::enable_if<
+			(sizeof...(I) == N)
+		>::type
+	>
 	static constexpr inline
 	vector from(const vector<P, M>& v)
 	{
@@ -95,6 +128,12 @@ struct vector
 	vector axis(T v)
 	{
 		return vector{vect::axis<T,N,I>::apply(v)};
+	}
+
+	static constexpr inline
+	unsigned dimension(void)
+	{
+		return N;
 	}
 
 	inline
@@ -292,6 +331,37 @@ cross(const vector<T, 3>& a, const vector<T, 3>& b)
 		_sh::template apply<2,0,1>(a._v)*
 		_sh::template apply<1,2,0>(b._v)
 	};
+}
+
+// vector_data_ref
+template <typename Vector>
+class vector_data_ref;
+
+// vector_data_ref<vector>
+template <typename T, unsigned N>
+class vector_data_ref<vector<T, N>>
+{
+private:
+	vect::array_ref<T, N> _ar;
+public:
+	vector_data_ref(const vector<T, N>& v)
+	noexcept
+	 : _ar(v._v)
+	{ }
+
+	base::typed_memory_range<const T> range(void) const
+	noexcept
+	{
+		return base::typed_memory_range<const T>(_ar.data(), N);
+	}
+};
+
+// data
+template <typename T, unsigned N>
+static inline 
+vector_data_ref<vector<T, N>> data(const vector<T, N>& v)
+{
+	return v;
 }
 
 } // namespace math

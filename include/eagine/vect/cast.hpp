@@ -19,14 +19,6 @@ namespace vect {
 template <typename DF, typename DT>
 struct data_caster;
 
-template <typename DF, typename DT>
-static constexpr inline
-typename DT::type data_cast(typename param<DF>::type v)
-noexcept
-{
-	return data_caster<DF, DT>::apply(v, 0);
-}
-
 template <typename T, unsigned N>
 struct data_caster<data<T, N>, data<T, N>>
 {
@@ -52,7 +44,7 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 		meta::integer_sequence<unsigned, D...>
 	) noexcept
 	{
-		return {TT(v[I])..., d[D]...};
+		return {TT(v[I])..., TT(d[D])...};
 	}
 
 	template <unsigned ... I>
@@ -70,7 +62,10 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 
 	static constexpr inline
 	typename data<TT, NT>::type
-	apply(typename param<data<TF, NF>>::type v, TT d)
+	apply(
+		typename param<data<TF, NF>>::type v,
+		typename param<data<TT, (NT>NF)?NT-NF:0>>::type d
+	)
 	noexcept
 	{
 		typedef typename meta::make_integer_sequence<
@@ -81,9 +76,22 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 			unsigned,
 			(NT>NF)?NT-NF:0
 		>::type ds;
-		return _cast(v, fill<TT,(NT>NF)?NT-NF:0>::apply(d), is(), ds());
+		return _cast(v, d, is(), ds());
+	}
+
+	static constexpr inline
+	typename data<TT, NT>::type
+	apply(typename param<data<TF, NF>>::type v, TT d)
+	noexcept
+	{
+		return apply(v, fill<TT, (NT>NF)?NT-NF:0>::apply(d));
 	}
 };
+
+template <typename TF, unsigned NF, typename TT, unsigned NT>
+struct cast
+ : data_caster<data<TF, NF>, data<TT, NT>>
+{ };
 
 } // namespace vect
 } // namespace eagine
