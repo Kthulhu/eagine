@@ -6,3 +6,4 @@ cmake_minimum_required(VERSION 2.8)
 
 eagine_exec_test(angle)
 eagine_exec_test(vector)
+eagine_exec_test(tvec)
