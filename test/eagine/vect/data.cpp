@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/data.hpp>
+#include <eagine/vect/sdiv.hpp>
 #include <cstdlib>
 
 #include "common.hpp"
@@ -460,10 +461,8 @@ void test_vect_data_divide(void)
 			b[i] = 1 + std::rand() % 10000;
 		}
 
-		typename eagine::vect::data<T, N>::type vNa =
-			eagine::vect::default_init<T, N>::apply();
-		typename eagine::vect::data<T, N>::type vNb =
-			eagine::vect::default_init<T, N>::apply();
+		typename eagine::vect::data<T, N>::type vNa;
+		typename eagine::vect::data<T, N>::type vNb;
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -471,8 +470,10 @@ void test_vect_data_divide(void)
 			vNb[i] = b[i];
 		}
 
-		typename eagine::vect::data<T, N>::type vNc = vNa / vNb;
-		typename eagine::vect::data<T, N>::type vNd = vNb / vNa;
+		typename eagine::vect::data<T, N>::type vNc =
+			eagine::vect::sdiv<T, N>::apply(vNa, vNb);
+		typename eagine::vect::data<T, N>::type vNd =
+			eagine::vect::sdiv<T, N>::apply(vNb, vNa);
 
 		for(unsigned i=0; i<N; ++i)
 		{

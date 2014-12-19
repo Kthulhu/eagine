@@ -14,6 +14,7 @@
 #include <eagine/vect/axis.hpp>
 #include <eagine/vect/from.hpp>
 #include <eagine/vect/hsum.hpp>
+#include <eagine/vect/sdiv.hpp>
 #include <eagine/vect/cast.hpp>
 #include <eagine/vect/compare.hpp>
 #include <eagine/vect/array_ref.hpp>
@@ -145,44 +146,54 @@ struct vector
 
 	friend constexpr
 	vector operator + (_cpT a, _cpT b)
+	noexcept
 	{
 		return vector{a._v+b._v};
 	}
 
 	friend constexpr
 	vector operator - (_cpT a, _cpT b)
+	noexcept
 	{
 		return vector{a._v-b._v};
 	}
 
 	friend constexpr
 	vector operator * (_cpT a, _cpT b)
+	noexcept
 	{
 		return vector{a._v*b._v};
 	}
 
 	friend constexpr
 	vector operator * (T c, _cpT a)
+	noexcept
 	{
 		return vector{a._v*vect::fill<T, N>::apply(c)};
 	}
 
 	friend constexpr
 	vector operator * (_cpT a, T c)
+	noexcept
 	{
 		return vector{a._v*vect::fill<T, N>::apply(c)};
 	}
 
 	friend constexpr
 	vector operator / (_cpT a, _cpT b)
+	noexcept
 	{
-		return vector{a._v/b._v};
+		return vector{vect::sdiv<T, N>::apply(a._v, b._v)};
 	}
 
 	friend constexpr
 	vector operator / (_cpT a, T c)
+	noexcept
 	{
-		return vector{a._v/vect::fill<T, N>::apply(c)};
+		return vector{vect::sdiv<T, N>::apply(
+			a._v,
+			vect::fill<T, N>::apply(c)
+		)};
 	}
 
 	friend

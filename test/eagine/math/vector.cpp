@@ -413,9 +413,9 @@ BOOST_AUTO_TEST_CASE(math_vector_from2)
 }
 
 #define EAGINE_TEST_RAND_INT(N) \
-	(unsigned( \
+	(unsigned(( \
 		__TIMESTAMP__[__TIMESTAMP__[18+__LINE__%6]%24]^ \
-		__TIMESTAMP__[12+__FILE__[__LINE__%10]%12]+ \
+		__TIMESTAMP__[12+__FILE__[__LINE__%10]%12])+ \
 		__FILE__[(__TIMESTAMP__[23]+__LINE__)%10]+ \
 		__LINE__ \
 	) % N)
