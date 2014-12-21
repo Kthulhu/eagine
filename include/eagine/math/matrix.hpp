@@ -66,6 +66,7 @@ struct reordered_matrix<matrix<T,R,C,RM>>
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 unsigned rows(const matrix<T,R,C,RM>&)
+noexcept
 {
 	return R;
 }
@@ -74,6 +75,7 @@ unsigned rows(const matrix<T,R,C,RM>&)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 unsigned columns(const matrix<T,R,C,RM>&)
+noexcept
 {
 	return C;
 }
@@ -82,6 +84,7 @@ unsigned columns(const matrix<T,R,C,RM>&)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 bool row_major(const matrix<T,R,C,RM>&)
+noexcept
 {
 	return RM;
 }
@@ -91,6 +94,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 bool
 operator == (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
+noexcept
 {
 	for(unsigned i=0;i<(RM?R:C); ++i)
 		if(!vect::equal<T, (RM?C:R)>::apply(a._v[i], b._v[i]))
@@ -103,6 +107,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 bool
 operator != (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
+noexcept
 {
 	for(unsigned i=0;i<(RM?R:C); ++i)
 		if(!vect::equal<T, (RM?C:R)>::apply(a._v[i], b._v[i]))
@@ -118,7 +123,7 @@ matrix<T,4,4,DstRM> transpose_tpl_hlp(
 	const typename vect::data<T, 4>::type& q1,
 	const typename vect::data<T, 4>::type& q2,
 	const typename vect::data<T, 4>::type& q3
-)
+) noexcept
 {
 	return {{
 		vect::shuffle2<T,4>::template apply<0,2,4,6>(q0, q2),
@@ -132,6 +137,7 @@ matrix<T,4,4,DstRM> transpose_tpl_hlp(
 template <bool DstRM, bool SrcRM, typename T>
 static inline
 matrix<T,4,4,DstRM> transpose_tpl(const matrix<T,4,4,SrcRM>& m)
+noexcept
 {
 	return transpose_tpl_hlp<DstRM, T>(
 		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[0], m._v[1]),
@@ -145,6 +151,7 @@ matrix<T,4,4,DstRM> transpose_tpl(const matrix<T,4,4,SrcRM>& m)
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 matrix<T,R,C,RM> transpose(const matrix<T,R,C,RM>& m)
+noexcept
 {
 	return transpose_tpl<RM, RM, T>(m);
 }
@@ -153,6 +160,7 @@ matrix<T,R,C,RM> transpose(const matrix<T,R,C,RM>& m)
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 matrix<T,R,C,!RM> reorder(const matrix<T,R,C,RM>& m)
+noexcept
 {
 	return transpose_tpl<!RM, RM, T>(m);
 }
@@ -162,6 +170,7 @@ template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
 static constexpr inline
 typename meta::enable_if<(I<R && J<C), T>::type
 get(const matrix<T,R,C,true>& m)
+noexcept
 {
 	return m._v[I][J];
 }
@@ -171,6 +180,7 @@ template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
 static constexpr inline
 typename meta::enable_if<(I<R && J<C), T>::type
 get(const matrix<T,R,C,false>& m)
+noexcept
 {
 	return m._v[J][I];
 }
@@ -179,6 +189,7 @@ get(const matrix<T,R,C,false>& m)
 template <typename T, unsigned R, unsigned C>
 static constexpr inline
 T get(const matrix<T,R,C,true>& m, unsigned i, unsigned j)
+noexcept
 {
 	return m._v[i][j];
 }
@@ -187,6 +198,7 @@ T get(const matrix<T,R,C,true>& m, unsigned i, unsigned j)
 template <typename T, unsigned R, unsigned C>
 static constexpr inline
 T get(const matrix<T,R,C,false>& m, unsigned i, unsigned j)
+noexcept
 {
 	return m._v[j][i];
 }
@@ -196,6 +208,7 @@ template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
 static inline
 typename meta::enable_if<(I<R && J<C), void>::type
 set(matrix<T,R,C,true>& m, const T& v)
+noexcept
 {
 	m._v[I][J] = v;
 }
@@ -205,6 +218,7 @@ template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
 static inline
 typename meta::enable_if<(I<R && J<C), void>::type
 set(matrix<T,R,C,false>& m, const T& v)
+noexcept
 {
 	m._v[J][I] = v;
 }
@@ -213,6 +227,7 @@ set(matrix<T,R,C,false>& m, const T& v)
 template <typename T, unsigned R, unsigned C>
 static inline
 void set(matrix<T,R,C,true>& m, unsigned i, unsigned j, const T& v)
+noexcept
 {
 	m._v[i][j] = v;
 }
@@ -221,6 +236,7 @@ void set(matrix<T,R,C,true>& m, unsigned i, unsigned j, const T& v)
 template <typename T, unsigned R, unsigned C>
 static inline
 void set(matrix<T,R,C,false>& m, unsigned i, unsigned j, const T& v)
+noexcept
 {
 	m._v[j][i] = v;
 }
@@ -230,6 +246,7 @@ template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 typename meta::enable_if<(I<(RM?R:C)), vector<T, (RM?C:R)>>::type
 major_vector(const matrix<T,R,C,RM>& m)
+noexcept
 {
 	return {m._v[I]};
 }
@@ -239,6 +256,7 @@ template <unsigned I, typename T, bool RM>
 static constexpr inline
 typename meta::enable_if<(I<4), vector<T, 4>>::type
 minor_vector(const matrix<T,4,4,RM>& m)
+noexcept
 {
 	return {vect::shuffle2<T,4>::template apply<0,1,4,5>(
 		vect::shuffle2<T,4>::template apply<0+I,4+I,-1,-1>(m._v[0], m._v[1]),
@@ -251,6 +269,7 @@ template <unsigned I, typename T, unsigned R, unsigned C>
 static constexpr inline
 vector<T, C>
 row(const matrix<T,R,C,true>& m)
+noexcept
 {
 	return major_vector<I>(m);
 }
@@ -260,6 +279,7 @@ template <unsigned I, typename T, unsigned R, unsigned C>
 static constexpr inline
 vector<T, R>
 row(const matrix<T,R,C,false>& m)
+noexcept
 {
 	return minor_vector<I>(m);
 }
@@ -271,7 +291,7 @@ vector<T, RM?C:R> row_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, 0u>,
 	unsigned i
-)
+) noexcept
 {
 	assert(i == 0);
 	return row<0>(m);
@@ -284,7 +304,7 @@ vector<T, RM?C:R> row_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, I>,
 	unsigned i
-)
+) noexcept
 {
 	if(I == i) return row<I>(m);
 	return row_hlp(m, meta::integral_constant<unsigned, I-1>(), i);
@@ -295,6 +315,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 vector<T, RM?C:R>
 row(const matrix<T,R,C,RM>& m, unsigned i)
+noexcept
 {
 	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
 	return row_hlp(m, I(), i);
@@ -305,6 +326,7 @@ template <unsigned I, typename T, unsigned R, unsigned C>
 static constexpr inline
 vector<T, R>
 column(const matrix<T,R,C,false>& m)
+noexcept
 {
 	return major_vector<I>(m);
 }
@@ -314,6 +336,7 @@ template <unsigned I, typename T, unsigned R, unsigned C>
 static constexpr inline
 vector<T, R>
 column(const matrix<T,R,C,true>& m)
+noexcept
 {
 	return minor_vector<I>(m);
 }
@@ -325,7 +348,7 @@ vector<T, RM?R:C> col_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, 0u>,
 	unsigned i
-)
+) noexcept
 {
 	assert(i == 0);
 	return column<0>(m);
@@ -338,7 +361,7 @@ vector<T, RM?R:C> col_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, I>,
 	unsigned i
-)
+) noexcept
 {
 	if(I == i) return column<I>(m);
 	return col_hlp(m, meta::integral_constant<unsigned, I-1>(), i);
@@ -349,6 +372,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 vector<T, RM?R:C>
 column(const matrix<T,R,C,RM>& m, unsigned i)
+noexcept
 {
 	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
 	return col_hlp(m, I(), i);
@@ -379,7 +403,7 @@ _multiply_hlp2(
 	meta::integer_sequence<unsigned, J...>,
 	const matrix<T, M, K, true>& m1,
 	const matrix<T, K, N,false>& m2
-)
+) noexcept
 {
 	return {dot(row<I>(m1), column<J>(m2))...};
 }
@@ -399,7 +423,7 @@ _multiply_hlp(
 	meta::integer_sequence<unsigned, I...>,
 	const matrix<T, M, K, RM>& m1,
 	const matrix<T, K, N,!RM>& m2
-)
+) noexcept
 {
 	typedef typename meta::make_integer_sequence<
 		unsigned, N
@@ -424,7 +448,7 @@ static constexpr inline
 matrix<T, M, N, RM> multiply(
 	const matrix<T, M, K, RM>& m1,
 	const matrix<T, K, N,!RM>& m2
-)
+) noexcept
 {
 	typedef typename meta::make_integer_sequence<
 		unsigned, M
@@ -438,7 +462,7 @@ static constexpr inline
 matrix<T, M, N, RM> multiply(
 	const matrix<T, M, K, RM>& m1,
 	const matrix<T, K, N, RM>& m2
-)
+) noexcept
 {
 	return multiply(m1, reorder(m2));
 }
@@ -449,7 +473,7 @@ static constexpr inline
 matrix<T, M, N, RM1> operator * (
 	const matrix<T, M, K, RM1>& m1,
 	const matrix<T, K, N, RM2>& m2
-)
+) noexcept
 {
 	return multiply(m1, m2);
 }
@@ -467,7 +491,7 @@ _multiply_hlp(
 	meta::integer_sequence<unsigned, I...>,
 	const matrix<T, R, C, true>& m,
 	const vector<T, C>& v
-)
+) noexcept
 {
 	return {{dot(row<I>(m), v)...}};
 }
@@ -490,7 +514,7 @@ static constexpr inline
 vector<T, R> multiply(
 	const matrix<T, R, C, true>& m,
 	const vector<T, C>& v
-)
+) noexcept
 {
 	typedef typename meta::make_integer_sequence<
 		unsigned, R
@@ -504,7 +528,7 @@ static constexpr inline
 vector<T, R> operator * (
 	const matrix<T, R, C, true>& m,
 	const vector<T, C>& v
-)
+) noexcept
 {
 	return multiply(m, v);
 }
@@ -551,6 +575,7 @@ typename meta::enable_if<
 	is_row_major<typename constructed_matrix<MC>::type>::value == RM,
 	typename constructed_matrix<MC>::type
 >::type construct_matrix(const MC& c)
+noexcept
 {
 	return c;
 }
@@ -565,6 +590,7 @@ typename meta::enable_if<
 		typename constructed_matrix<MC>::type
 	>::type
 >::type construct_matrix(const MC& c)
+noexcept
 {
 	return reorder_mat_ctr(c);
 }
@@ -581,6 +607,7 @@ typename meta::enable_if<
 	>::value,
 	typename constructed_matrix<MC1>::type
 >::type operator * (const MC1& c1, const MC2& c2)
+noexcept
 {
 	return multiply(
 		construct_matrix< true>(c1),
@@ -599,6 +626,7 @@ typename meta::enable_if<
 	>::value,
 	matrix<T,R,C,RM>
 >::type operator * (const matrix<T,R,C,RM>& m, const MC2& c2)
+noexcept
 {
 	return multiply(m, construct_matrix<!RM>(c2));
 }
@@ -617,6 +645,7 @@ typename meta::enable_if<
 		M2
 	>::type
 >::type operator * (const MC1& c1, const M2& m2)
+noexcept
 {
 	return multiply(typename constructed_matrix<MC1>::type(c1), m2);
 }
@@ -636,13 +665,17 @@ template <typename T, unsigned R, unsigned C, bool RM>
 struct identity<matrix<T,R,C,RM>>
 {
 	template <unsigned ... I>
-	static constexpr inline matrix<T,R,C,RM>
+	static constexpr inline
+	matrix<T,R,C,RM>
 	_identity(meta::integer_sequence<unsigned, I...>)
+	noexcept
 	{
 		return {{vect::axis<T, C, I>::apply(1)...}};
 	}
 
-	constexpr inline operator matrix<T,R,C,RM> (void) const
+	constexpr inline
+	operator matrix<T,R,C,RM> (void) const
+	noexcept
 	{
 		typedef typename meta::make_integer_sequence<
 			unsigned, R
@@ -655,6 +688,7 @@ struct identity<matrix<T,R,C,RM>>
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 identity<matrix<T,R,C,RM>> operator * (identity<matrix<T,R,C,RM>> i, T)
+noexcept
 {
 	return i;
 }
@@ -663,6 +697,7 @@ identity<matrix<T,R,C,RM>> operator * (identity<matrix<T,R,C,RM>> i, T)
 template <typename M>
 static constexpr inline
 identity<M> operator * (identity<M> i, identity<M>)
+noexcept
 {
 	return i;
 }
@@ -671,7 +706,9 @@ identity<M> operator * (identity<M> i, identity<M>)
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 identity<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&) { return {}; }
+reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&)
+noexcept
+{ return {}; }
 
 // matrix_data_ref
 template <typename Matrix>
@@ -723,6 +760,7 @@ public:
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline 
 matrix_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>& m)
+noexcept
 {
 	return m;
 }

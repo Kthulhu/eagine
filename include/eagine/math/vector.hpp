@@ -48,6 +48,7 @@ struct vector
 	>
 	static constexpr inline
 	vector make(P&& p)
+	noexcept
 	{
 		return vector{{T(std::forward<P>(p))}};
 	}
@@ -60,6 +61,7 @@ struct vector
 	>
 	static constexpr inline
 	vector make(P&& ... p)
+	noexcept
 	{
 		return vector{{T(std::forward<P>(p))...}};
 	}
@@ -73,6 +75,7 @@ struct vector
 	>
 	static constexpr inline 
 	vector from(const vector<P, M>& v, T d = T(0))
+	noexcept
 	{
 		return vector{vect::cast<P, M, T, N>::apply(v._v, d)};
 	}
@@ -80,6 +83,7 @@ struct vector
 	template <typename P, unsigned M>
 	static constexpr inline 
 	vector from(const vector<P, M>& v, const vector<T, N-M>& u)
+	noexcept
 	{
 		return vector{vect::cast<P, M, T, N>::apply(v._v, u._v)};
 	}
@@ -94,6 +98,7 @@ struct vector
 	>
 	static constexpr inline
 	vector from(const vector<P, M>& v)
+	noexcept
 	{
 		return vector{{T(v._v[I])...}};
 	}
@@ -101,18 +106,21 @@ struct vector
 	template <typename P>
 	static inline
 	vector from(const P* dt, std::size_t sz)
+	noexcept
 	{
 		return vector{vect::from<T,N>::apply(dt, sz)};
 	}
 
 	static inline
 	vector zero(void)
+	noexcept
 	{
 		return vector{vect::fill<T,N>::apply(T(0))};
 	}
 
 	static inline
 	vector fill(T v)
+	noexcept
 	{
 		return vector{vect::fill<T,N>::apply(v)};
 	}
@@ -120,6 +128,7 @@ struct vector
 	template <unsigned I>
 	static inline
 	vector axis(void)
+	noexcept
 	{
 		return vector{vect::axis<T,N,I>::apply(T(1))};
 	}
@@ -127,12 +136,14 @@ struct vector
 	template <unsigned I>
 	static inline
 	vector axis(T v)
+	noexcept
 	{
 		return vector{vect::axis<T,N,I>::apply(v)};
 	}
 
 	static constexpr inline
 	unsigned dimension(void)
+	noexcept
 	{
 		return N;
 	}
@@ -254,6 +265,7 @@ struct vector
 
 	friend constexpr
 	angle<T> angle_between(_cpT a, _cpT b)
+	noexcept
 	{
 		using std::acos;
 		return {T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
@@ -265,6 +277,7 @@ template <unsigned I, typename T, unsigned N>
 static constexpr inline
 typename meta::enable_if<(I<N), T>::type
 get(const vector<T,N>& v)
+noexcept
 {
 	return v._v[I];
 }
@@ -273,6 +286,7 @@ get(const vector<T,N>& v)
 template <typename T, unsigned N>
 static constexpr inline
 T get(const vector<T,N>& v, unsigned i)
+noexcept
 {
 	return v._v[i];
 }
@@ -282,6 +296,7 @@ template <unsigned I, typename T, unsigned N>
 static inline
 typename meta::enable_if<(I<N)>::type
 set(vector<T,N>& v, T e)
+noexcept
 {
 	v._v[I] = e;
 }
@@ -291,6 +306,7 @@ template <typename T, unsigned N>
 static inline
 void
 set(vector<T,N>& v, unsigned i, T e)
+noexcept
 {
 	v._v[i] = e;
 }
@@ -308,7 +324,7 @@ typename meta::enable_if<
 shuffle(
 	const vector<T, N>& v,
 	shuffle_mask<I...> m = shuffle_mask<I...>()
-)
+) noexcept
 {
 	return {vect::shuffle<T, N>::apply(v._v, m)};
 }
@@ -324,7 +340,7 @@ shuffle(
 	const vector<T, N>& v1,
 	const vector<T, N>& v2,
 	shuffle_mask<I...> m = shuffle_mask<I...>()
-)
+) noexcept
 {
 	return {vect::shuffle2<T, N>::apply(v1._v, v2._v, m)};
 }
@@ -334,6 +350,7 @@ template <typename T>
 static inline
 vector<T, 3>
 cross(const vector<T, 3>& a, const vector<T, 3>& b)
+noexcept
 {
 	typedef vect::shuffle<T, 3> _sh;
 	return {
@@ -383,6 +400,7 @@ public:
 template <typename T, unsigned N>
 static inline 
 vector_data_ref<vector<T, N>> data(const vector<T, N>& v)
+noexcept
 {
 	return v;
 }

@@ -25,6 +25,7 @@ struct reordered_matrix_constructor
 	operator typename reordered_matrix<
 		typename constructed_matrix<MC>::type
 	>::type (void) const
+	noexcept
 	{
 		typedef typename constructed_matrix<MC>::type M;
 		return reorder(M(_mc));
@@ -51,6 +52,7 @@ typename meta::enable_if<
 	reordered_matrix_constructor<MC>
 >::type
 operator * (const reordered_matrix_constructor<MC>& rmc, T t)
+noexcept
 {
 	return {rmc._mc*t};
 }
@@ -62,7 +64,7 @@ reordered_matrix_constructor<MC>
 operator + (
 	const reordered_matrix_constructor<MC>& rmc1,
 	const reordered_matrix_constructor<MC>& rmc2
-)
+) noexcept
 {
 	return {rmc1._mc + rmc2._mc};
 }
@@ -74,6 +76,7 @@ typename meta::enable_if<
 	is_matrix_constructor<MC>::value,
 	reordered_matrix_constructor<MC>
 >::type reorder_mat_ctr(const MC& mc)
+noexcept
 {
 	return {mc};
 }
@@ -95,16 +98,21 @@ struct translation<matrix<T,4,4, true>>
 	typedef typename vect::data<T, 3>::type _dT;
 	_dT _d;
 
-	constexpr translation(_dT d)
+	constexpr
+	translation(_dT d)
+	noexcept
 	 : _d{d}
 	{ }
 
-	constexpr translation(T dx, T dy, T dz)
+	constexpr
+	translation(T dx, T dy, T dz)
+	noexcept
 	 : _d{dx, dy, dz}
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	matrix<T,4,4, true> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4, true>{{
 			{ T(1), T(0), T(0),_d[0]},
@@ -112,6 +120,13 @@ struct translation<matrix<T,4,4, true>>
 			{ T(0), T(0), T(1),_d[2]},
 			{ T(0), T(0), T(0), T(1)}
 		}};
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -122,12 +137,15 @@ struct translation<matrix<T,4,4,false>>
 	typedef typename vect::data<T, 3>::type _dT;
 	_dT _d;
 
-	constexpr translation(T dx, T dy, T dz)
+	constexpr
+	translation(T dx, T dy, T dz)
+	noexcept
 	 : _d{dx, dy, dz}
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4,false> (void) const
+	matrix<T,4,4,false> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4,false>{{
 			{ T(1), T(0), T(0), T(0)},
@@ -136,6 +154,13 @@ struct translation<matrix<T,4,4,false>>
 			{_d[0],_d[1],_d[2], T(1)}
 		}};
 	}
+
+	constexpr inline
+	operator matrix<T,4,4,false> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
 };
 
 // translation * T
@@ -143,6 +168,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 translation<matrix<T,R,C,RM>>
 operator * (const translation<matrix<T,R,C,RM>>& c, T t)
+noexcept
 {
 	return {c._d*vect::fill<T,R-1>::apply(t)};
 }
@@ -154,7 +180,7 @@ translation<matrix<T,R,C,RM>>
 operator + (
 	const translation<matrix<T,R,C,RM>>& c1,
 	const translation<matrix<T,R,C,RM>>& c2
-)
+) noexcept
 {
 	return {c1._d+c2._d};
 }
@@ -164,6 +190,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 translation<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const translation<matrix<T,R,C,RM>>& t)
+noexcept
 {
 	return {t._d};
 }
@@ -178,17 +205,22 @@ struct translation_I<matrix<T,4,4, true>, I>
 {
 	T _d;
 
-	constexpr inline T v(unsigned i) const
+	constexpr inline
+	T v(unsigned i) const
+	noexcept
 	{
 		return (i == I)?_d:T(0);
 	}
 
-	constexpr translation_I(T d)
+	constexpr
+	translation_I(T d)
+	noexcept
 	 : _d(d)
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	matrix<T,4,4, true> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4, true>{{
 			{T(1),T(0),T(0),v(0)},
@@ -196,6 +228,13 @@ struct translation_I<matrix<T,4,4, true>, I>
 			{T(0),T(0),T(1),v(2)},
 			{T(0),T(0),T(0),T(1)}
 		}};
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -205,17 +244,22 @@ struct translation_I<matrix<T,4,4,false>, I>
 {
 	T _d;
 
-	constexpr inline T v(unsigned i) const
+	constexpr inline
+	T v(unsigned i) const
+	noexcept
 	{
 		return (i == I)?_d:T(0);
 	}
 
-	constexpr translation_I(T d)
+	constexpr
+	translation_I(T d)
+	noexcept
 	 : _d(d)
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4,false> (void) const
+	matrix<T,4,4,false> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4,false>{{
 			{T(1),T(0),T(0),T(0)},
@@ -224,6 +268,13 @@ struct translation_I<matrix<T,4,4,false>, I>
 			{v(0),v(1),v(2),T(1)}
 		}};
 	}
+
+	constexpr inline
+	operator matrix<T,4,4,false> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
 };
 
 // translation_I * T
@@ -231,6 +282,7 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 translation_I<matrix<T,R,C,RM>, I>
 operator * (const translation_I<matrix<T,R,C,RM>, I>& c, T t)
+noexcept
 {
 	return {c._d*t};
 }
@@ -242,7 +294,7 @@ translation_I<matrix<T,R,C,RM>, I>
 operator + (
 	const translation_I<matrix<T,R,C,RM>, I>& c1,
 	const translation_I<matrix<T,R,C,RM>, I>& c2
-)
+) noexcept
 {
 	return {c1._d+c2._d};
 }
@@ -252,6 +304,7 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 translation_I<matrix<T,R,C,!RM>, I>
 reorder_mat_ctr(const translation_I<matrix<T,R,C,RM>, I>& t)
+noexcept
 {
 	return {t._d};
 }
@@ -302,7 +355,9 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 {
 	T _a;
 
-	constexpr rotation_I(angle<T> a)
+	constexpr
+	rotation_I(angle<T> a)
+	noexcept
 	 : _a(value(a))
 	{ }
 
@@ -310,8 +365,9 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	typedef meta::integral_constant<unsigned, 1> _y;
 	typedef meta::integral_constant<unsigned, 2> _z;
 
-	constexpr inline
-	matrix<T,4,4, RM> _make(T cx, T sx, _x) const
+	static constexpr inline
+	matrix<T,4,4, RM> _make(T cx, T sx, _x)
+	noexcept
 	{
 		return matrix<T,4,4, RM>{{
 			{T(1),T(0),T(0),T(0)},
@@ -321,8 +377,9 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 		}};
 	}
 
-	constexpr inline
-	matrix<T,4,4, RM> _make(T cx, T sx, _y) const
+	static constexpr inline
+	matrix<T,4,4, RM> _make(T cx, T sx, _y)
+	noexcept
 	{
 		return matrix<T,4,4, RM>{{
 			{  cx,T(0),  sx,T(0)},
@@ -332,8 +389,9 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 		}};
 	}
 
-	constexpr inline
-	matrix<T,4,4, RM> _make(T cx, T sx, _z) const
+	static constexpr inline
+	matrix<T,4,4, RM> _make(T cx, T sx, _z)
+	noexcept
 	{
 		return matrix<T,4,4, RM>{{
 			{  cx, -sx,T(0),T(0)},
@@ -344,12 +402,20 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, RM> (void) const
+	matrix<T,4,4, RM> operator()(void) const
+	noexcept
 	{
 		using std::cos;
 		using std::sin;
 		typedef meta::integral_constant<unsigned, I> _axis;
 		return _make(cos(_a), sin(_a)*(RM?1:-1), _axis());
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, RM> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -358,6 +424,7 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 rotation_I<matrix<T,R,C,!RM>, I>
 reorder_mat_ctr(const rotation_I<matrix<T,R,C,RM>, I>& r)
+noexcept
 {
 	return {r._a};
 }
@@ -409,16 +476,21 @@ struct scale<matrix<T,4,4,RM>>
 	typedef typename vect::data<T, 3>::type _dT;
 	_dT _s;
 
-	constexpr scale(_dT s)
+	constexpr
+	scale(_dT s)
+	noexcept
 	 : _s{s}
 	{ }
 
-	constexpr scale(T sx, T sy, T sz)
+	constexpr
+	scale(T sx, T sy, T sz)
+	noexcept
 	 : _s{sx, sy, sz}
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4, RM>{{
 			{_s[0], T(0), T(0), T(0)},
@@ -427,6 +499,13 @@ struct scale<matrix<T,4,4,RM>>
 			{ T(0), T(0), T(0), T(1)}
 		}};
 	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
 };
 
 // scale * T
@@ -434,6 +513,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 scale<matrix<T,R,C,RM>>
 operator * (const scale<matrix<T,R,C,RM>>& c, T t)
+noexcept
 {
 	return {c._s*vect::fill<T,(R>C?R:C)-1>::apply(t)};
 }
@@ -445,7 +525,7 @@ scale<matrix<T,R,C,RM>>
 operator + (
 	const scale<matrix<T,R,C,RM>>& c1,
 	const scale<matrix<T,R,C,RM>>& c2
-)
+) noexcept
 {
 	return {c1._s+c2._s};
 }
@@ -455,6 +535,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 scale<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const scale<matrix<T,R,C,RM>>& s)
+noexcept
 {
 	return {s._s};
 }
@@ -475,12 +556,15 @@ struct uniform_scale<matrix<T,4,4,RM>>
 {
 	T _s;
 
-	constexpr uniform_scale(T s)
+	constexpr
+	uniform_scale(T s)
+	noexcept
 	 : _s(s)
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4, RM>{{
 			{  _s,T(0),T(0),T(0)},
@@ -489,6 +573,13 @@ struct uniform_scale<matrix<T,4,4,RM>>
 			{T(0),T(0),T(0),T(1)}
 		}};
 	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
 };
 
 // uniform_scale * T
@@ -496,6 +587,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 uniform_scale<matrix<T,R,C,RM>>
 operator * (const uniform_scale<matrix<T,R,C,RM>>& c, T t)
+noexcept
 {
 	return {c._s*t};
 }
@@ -507,7 +599,7 @@ uniform_scale<matrix<T,R,C,RM>>
 operator + (
 	const uniform_scale<matrix<T,R,C,RM>>& c1,
 	const uniform_scale<matrix<T,R,C,RM>>& c2
-)
+) noexcept
 {
 	return {c1._s+c2._s};
 }
@@ -517,6 +609,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 uniform_scale<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const uniform_scale<matrix<T,R,C,RM>>& us)
+noexcept
 {
 	return {us._s};
 }
@@ -537,18 +630,22 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 {
 	T _r;
 
-	constexpr reflection_I(bool r = true)
+	constexpr
+	reflection_I(bool r = true)
+	noexcept
 	 : _r(r?-1:1)
 	{ }
 
 	constexpr inline
 	T v(unsigned i) const
+	noexcept
 	{
 		return (I == i)?_r:T(1);
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4, RM>{{
 			{v(0),T(0),T(0),T(0)},
@@ -557,6 +654,13 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 			{T(0),T(0),T(0),T(1)}
 		}};
 	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
 };
 
 // reflection_I * T
@@ -564,6 +668,7 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 reflection_I<matrix<T,R,C,RM>, I>
 operator * (const reflection_I<matrix<T,R,C,RM>, I>& c, T t)
+noexcept
 {
 	return {c._r*t};
 }
@@ -575,7 +680,7 @@ reflection_I<matrix<T,R,C,RM>, I>
 operator + (
 	const reflection_I<matrix<T,R,C,RM>, I>& c1,
 	const reflection_I<matrix<T,R,C,RM>, I>& c2
-)
+) noexcept
 {
 	return {c1._r+c2._r};
 }
@@ -585,6 +690,7 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 reflection_I<matrix<T,R,C,!RM>, I>
 reorder_mat_ctr(const reflection_I<matrix<T,R,C,RM>, I>& r)
+noexcept
 {
 	return {r._r};
 }
@@ -636,16 +742,21 @@ struct shear<matrix<T,4,4, true>>
 	typedef typename vect::data<T, 3>::type _dT;
 	_dT _s;
 
-	constexpr shear(_dT s)
+	constexpr
+	shear(_dT s)
+	noexcept
 	 : _s{s}
 	{ }
 
-	constexpr shear(T sx, T sy, T sz)
-	 : _s{sx, sy, sz}
+	constexpr
+	shear(T sx, T sy, T sz)
+	noexcept
+	 : _s{{sx, sy, sz}}
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	matrix<T,4,4, true> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4, true>{{
 			{ T(1),_s[0],_s[0], T(0)},
@@ -653,6 +764,13 @@ struct shear<matrix<T,4,4, true>>
 			{_s[2],_s[2], T(1), T(0)},
 			{ T(0), T(0), T(0), T(1)}
 		}};
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, true> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -663,16 +781,21 @@ struct shear<matrix<T,4,4,false>>
 	typedef typename vect::data<T, 3>::type _dT;
 	_dT _s;
 
-	constexpr shear(_dT s)
+	constexpr
+	shear(_dT s)
+	noexcept
 	 : _s{s}
 	{ }
 
-	constexpr shear(T sx, T sy, T sz)
+	constexpr
+	shear(T sx, T sy, T sz)
+	noexcept
 	 : _s{sx, sy, sz}
 	{ }
 
 	constexpr inline
-	operator matrix<T,4,4,false> (void) const
+	matrix<T,4,4,false> operator()(void) const
+	noexcept
 	{
 		return matrix<T,4,4,false>{{
 			{ T(1),_s[1],_s[2], T(0)},
@@ -681,6 +804,13 @@ struct shear<matrix<T,4,4,false>>
 			{ T(0), T(0), T(0), T(1)}
 		}};
 	}
+
+	constexpr inline
+	operator matrix<T,4,4,false> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
 };
 
 // shear * T
@@ -688,6 +818,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 shear<matrix<T,R,C,RM>>
 operator * (const shear<matrix<T,R,C,RM>>& c, T t)
+noexcept
 {
 	return {c._s*vect::fill<T, (R>C?R:C)-1>::apply(t)};
 }
@@ -699,7 +830,7 @@ shear<matrix<T,R,C,RM>>
 operator + (
 	const shear<matrix<T,R,C,RM>>& c1,
 	const shear<matrix<T,R,C,RM>>& c2
-)
+) noexcept
 {
 	return {c1._s+c2._s};
 }
@@ -709,6 +840,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 shear<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const shear<matrix<T,R,C,RM>>& s)
+noexcept
 {
 	return {s._s};
 }
@@ -730,7 +862,9 @@ struct ortho<matrix<T,4,4,RM>>
 	typedef typename vect::data<T, 6>::type _dT;
 	_dT _s;
 
-	constexpr ortho(const _dT& s)
+	constexpr
+	ortho(const _dT& s)
+	noexcept
 	 : _s(s)
 	{ }
 
@@ -741,7 +875,8 @@ struct ortho<matrix<T,4,4,RM>>
 		T y_top,
 		T z_near,
 		T z_far
-	): _s{x_left, x_right, y_bottom, y_top, z_near, z_far}
+	) noexcept
+	 : _s{{x_left, x_right, y_bottom, y_top, z_near, z_far}}
 	{ }
 
 	constexpr inline T _x_left(void) const { return _s[0]; }
@@ -751,38 +886,51 @@ struct ortho<matrix<T,4,4,RM>>
 	constexpr inline T _z_near(void) const { return _s[4]; }
 	constexpr inline T _z_far(void) const { return _s[5]; }
 
-	constexpr inline T _m00(void) const
+	constexpr inline
+	T _m00(void) const
+	noexcept
 	{
 		return T(2) / (_x_right() - _x_left());
 	}
 
-	constexpr inline T _m11(void) const
+	constexpr inline
+	T _m11(void) const
+	noexcept
 	{
 		return T(2) / (_y_top() - _y_bottom());
 	}
 
-	constexpr inline T _m22(void) const
+	constexpr inline
+	T _m22(void) const
+	noexcept
 	{
 		return -T(2) / (_z_far() - _z_near());
 	}
 
-	constexpr inline T _m30(void) const
+	constexpr inline
+	T _m30(void) const
+	noexcept
 	{
 		return -(_x_right() + _x_left()) / (_x_right() - _x_left());
 	}
 
-	constexpr inline T _m31(void) const
+	constexpr inline
+	T _m31(void) const
+	noexcept
 	{
 		return -(_y_top() + _y_bottom()) / (_y_top() - _y_bottom());
 	}
 
-	constexpr inline T _m32(void) const
+	constexpr inline
+	T _m32(void) const
+	noexcept
 	{
 		return -(_z_far() + _z_near()) / (_z_far() - _z_near());
 	}
 
 	constexpr inline
 	matrix<T,4,4, true> _make(meta::true_type) const
+	noexcept
 	{
 		return matrix<T,4,4, true>{{
 			{_m00(),   T(0),   T(0), _m30()},
@@ -794,6 +942,7 @@ struct ortho<matrix<T,4,4,RM>>
 
 	constexpr inline
 	matrix<T,4,4,false> _make(meta::false_type) const
+	noexcept
 	{
 		return matrix<T,4,4,false>{{
 			{_m00(),   T(0),   T(0),   T(0)},
@@ -804,9 +953,17 @@ struct ortho<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, RM> (void) const
+	matrix<T,4,4, RM> operator()(void) const
+	noexcept
 	{
 		return _make(meta::integral_constant<bool, RM>());
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, RM> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -815,6 +972,7 @@ template <typename T, bool RM>
 static constexpr inline
 ortho<matrix<T,4,4,RM>>
 operator * (const ortho<matrix<T,4,4,RM>>& c, T t)
+noexcept
 {
 	return {c._s * vect::fill<T,6>::apply(t)};
 }
@@ -826,7 +984,7 @@ ortho<matrix<T,4,4,RM>>
 operator + (
 	const ortho<matrix<T,4,4,RM>>& c1,
 	const ortho<matrix<T,4,4,RM>>& c2
-)
+) noexcept
 {
 	return {c1._s + c2._s};
 }
@@ -836,6 +994,7 @@ template <typename T, bool RM>
 static constexpr inline
 ortho<matrix<T,4,4,!RM>>
 reorder_mat_ctr(const ortho<matrix<T,4,4,RM>>& c)
+noexcept
 {
 	return {c._s};
 }
@@ -857,26 +1016,53 @@ struct perspective<matrix<T,4,4,RM>>
 	typedef typename vect::data<T, 6>::type _dT;
 	_dT _s;
 
-	constexpr perspective(const _dT& s)
+	constexpr
+	perspective(const _dT& s)
+	noexcept
 	 : _s(s)
 	{ }
 
-	constexpr perspective(
+	constexpr
+	perspective(
 		T x_left,
 		T x_right,
 		T y_bottom,
 		T y_top,
 		T z_near,
 		T z_far
-	): _s{x_left, x_right, y_bottom, y_top, z_near, z_far}
+	) noexcept
+	 : _s{x_left, x_right, y_bottom, y_top, z_near, z_far}
 	{ }
 
-	constexpr inline T _x_left(void) const { return _s[0]; }
-	constexpr inline T _x_right(void) const { return _s[1]; }
-	constexpr inline T _y_bottom(void) const { return _s[2]; }
-	constexpr inline T _y_top(void) const { return _s[3]; }
-	constexpr inline T _z_near(void) const { return _s[4]; }
-	constexpr inline T _z_far(void) const { return _s[5]; }
+	constexpr inline
+	T _x_left(void) const
+	noexcept
+	{ return _s[0]; }
+
+	constexpr inline
+	T _x_right(void) const
+	noexcept
+	{ return _s[1]; }
+
+	constexpr inline
+	T _y_bottom(void) const
+	noexcept
+	{ return _s[2]; }
+
+	constexpr inline
+	T _y_top(void) const
+	noexcept
+	{ return _s[3]; }
+
+	constexpr inline
+	T _z_near(void) const
+	noexcept
+	{ return _s[4]; }
+
+	constexpr inline
+	T _z_far(void) const
+	noexcept
+	{ return _s[5]; }
 
 	static inline
 	perspective x(
@@ -884,7 +1070,7 @@ struct perspective<matrix<T,4,4,RM>>
 		T aspect,
 		T z_near,
 		T z_far
-	)
+	) noexcept
 	{
 		assert(aspect > T(0));
 		assert(xfov > angle<T>(0));
@@ -911,7 +1097,7 @@ struct perspective<matrix<T,4,4,RM>>
 		T aspect,
 		T z_near,
 		T z_far
-	)
+	) noexcept
 	{
 		assert(aspect > T(0));
 		assert(yfov > angle<T>(0));
@@ -932,43 +1118,58 @@ struct perspective<matrix<T,4,4,RM>>
 		);
 	}
 
-	constexpr inline T _m00(void) const
+	constexpr inline
+	T _m00(void) const
+	noexcept
 	{
 		return (T(2) * _z_near()) / (_x_right() - _x_left());
 	}
 
-	constexpr inline T _m11(void) const
+	constexpr inline
+	T _m11(void) const
+	noexcept
 	{
 		return (T(2) * _z_near()) / (_y_top() - _y_bottom());
 	}
 
-	constexpr inline T _m22(void) const
+	constexpr inline
+	T _m22(void) const
+	noexcept
 	{
 		return -(_z_far() + _z_near()) / (_z_far() - _z_near());
 	}
 
-	constexpr inline T _m20(void) const
+	constexpr inline
+	T _m20(void) const
+	noexcept
 	{
 		return (_x_right() + _x_left()) / (_x_right() - _x_left());
 	}
 
-	constexpr inline T _m21(void) const
+	constexpr inline
+	T _m21(void) const
+	noexcept
 	{
 		return (_y_top() + _y_bottom()) / (_y_top() - _y_bottom());
 	}
 
-	constexpr inline T _m23(void) const
+	constexpr inline
+	T _m23(void) const
+	noexcept
 	{
 		return -T(1);
 	}
 
-	constexpr inline T _m32(void) const
+	constexpr inline
+	T _m32(void) const
+	noexcept
 	{
 		return -(T(2) * _z_far() * _z_near()) / (_z_far() - _z_near());
 	}
 
 	constexpr inline
 	matrix<T,4,4, true> _make(meta::true_type) const
+	noexcept
 	{
 		return matrix<T,4,4, true>{{
 			{_m00(),   T(0), _m20(),   T(0)},
@@ -980,6 +1181,7 @@ struct perspective<matrix<T,4,4,RM>>
 
 	constexpr inline
 	matrix<T,4,4,false> _make(meta::false_type) const
+	noexcept
 	{
 		return matrix<T,4,4,false>{{
 			{_m00(),   T(0),   T(0),   T(0)},
@@ -990,9 +1192,17 @@ struct perspective<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
 	{
 		return _make(meta::integral_constant<bool, RM>());
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -1001,6 +1211,7 @@ template <typename T, bool RM>
 static constexpr inline
 perspective<matrix<T,4,4,RM>>
 operator * (const perspective<matrix<T,4,4,RM>>& c, T t)
+noexcept
 {
 	return {c._s * vect::fill<T,6>::apply(t)};
 }
@@ -1012,7 +1223,7 @@ perspective<matrix<T,4,4,RM>>
 operator + (
 	const perspective<matrix<T,4,4,RM>>& c1,
 	const perspective<matrix<T,4,4,RM>>& c2
-)
+) noexcept
 {
 	return {c1._s + c2._s};
 }
@@ -1022,6 +1233,7 @@ template <typename T, bool RM>
 static constexpr inline
 perspective<matrix<T,4,4,!RM>>
 reorder_mat_ctr(const perspective<matrix<T,4,4,RM>>& c)
+noexcept
 {
 	return {c._s};
 }
@@ -1044,6 +1256,7 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	_dT _s;
 
 	constexpr screen_stretch(const _dT& s)
+	noexcept
 	 : _s(s)
 	{ }
 
@@ -1052,36 +1265,61 @@ struct screen_stretch<matrix<T,4,4,RM>>
 		T x_right,
 		T y_bottom,
 		T y_top
-	): _s{x_left, x_right, y_bottom, y_top}
+	) noexcept
+	 : _s{x_left, x_right, y_bottom, y_top}
 	{ }
 
-	constexpr inline T _x_left(void) const { return _s[0]; }
-	constexpr inline T _x_right(void) const { return _s[1]; }
-	constexpr inline T _y_bottom(void) const { return _s[2]; }
-	constexpr inline T _y_top(void) const { return _s[3]; }
+	constexpr inline
+	T _x_left(void) const
+	noexcept
+	{ return _s[0]; }
 
-	constexpr inline T _m00(void) const
+	constexpr inline
+	T _x_right(void) const
+	noexcept
+	{ return _s[1]; }
+
+	constexpr inline
+	T _y_bottom(void) const
+	noexcept
+	{ return _s[2]; }
+
+	constexpr inline
+	T _y_top(void) const
+	noexcept
+	{ return _s[3]; }
+
+	constexpr inline
+	T _m00(void) const
+	noexcept
 	{
 		return T(2) / (_x_right() - _x_left());
 	}
 
-	constexpr inline T _m11(void) const
+	constexpr inline
+	T _m11(void) const
+	noexcept
 	{
 		return T(2) / (_y_top() - _y_bottom());
 	}
 
-	constexpr inline T _m30(void) const
+	constexpr inline
+	T _m30(void) const
+	noexcept
 	{
 		return -(_x_right() + _x_left()) / (_x_right() - _x_left());
 	}
 
-	constexpr inline T _m31(void) const
+	constexpr inline
+	T _m31(void) const
+	noexcept
 	{
 		return -(_y_top() + _y_bottom()) / (_y_top() - _y_bottom());
 	}
 
 	constexpr inline
 	matrix<T,4,4, true> _make(meta::true_type) const
+	noexcept
 	{
 		return matrix<T,4,4, true>{{
 			{_m00(),   T(0),   T(0), _m30()},
@@ -1093,6 +1331,7 @@ struct screen_stretch<matrix<T,4,4,RM>>
 
 	constexpr inline
 	matrix<T,4,4,false> _make(meta::false_type) const
+	noexcept
 	{
 		return matrix<T,4,4,false>{{
 			{_m00(),   T(0),   T(0),   T(0)},
@@ -1103,9 +1342,17 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
 	{
 		return _make(meta::integral_constant<bool, RM>());
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
@@ -1114,6 +1361,7 @@ template <typename T, bool RM>
 static constexpr inline
 screen_stretch<matrix<T,4,4,RM>>
 operator * (const screen_stretch<matrix<T,4,4,RM>>& c, T t)
+noexcept
 {
 	return {c._s * vect::fill<T,4>::apply(t)};
 }
@@ -1125,7 +1373,7 @@ screen_stretch<matrix<T,4,4,RM>>
 operator + (
 	const screen_stretch<matrix<T,4,4,RM>>& c1,
 	const screen_stretch<matrix<T,4,4,RM>>& c2
-)
+) noexcept
 {
 	return {c1._s * c2._s};
 }
@@ -1135,6 +1383,7 @@ template <typename T, bool RM>
 static constexpr inline
 screen_stretch<matrix<T,4,4,!RM>>
 reorder_mat_ctr(const screen_stretch<matrix<T,4,4,RM>>& c)
+noexcept
 {
 	return {c._s};
 }
