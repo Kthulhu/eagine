@@ -49,7 +49,7 @@ vector<byte> load_stream_data(istream& input)
 EAGINE_LIB_FUNC
 vector<byte> load_file_data(const cstrref& fs_path)
 {
-	ifstream input(c_str(fs_path));
+	ifstream input(c_str(fs_path).get());
 	try { return load_stream_data(input); }
 	catch(...)
 	{

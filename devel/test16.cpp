@@ -32,7 +32,7 @@ int main(void)
 
 	std::cout << eagine::meta::c_str<info<area>::name>::value << std::endl;
 
-	quantity<turn> at = {1};
+	quantity<turn> at{1};
 	quantity<radian> ar = at;
 	quantity<degree> ad = at;
 	quantity<gradian> ag = ad;
@@ -45,7 +45,7 @@ int main(void)
 	eagine_PRINT(ag);
 	eagine_PRINT(ap);
 
-	quantity<minute> tm = {2};
+	quantity<minute> tm{2};
 	quantity<second> ts = tm;
 	quantity<hour> th = tm;
 
@@ -56,12 +56,12 @@ int main(void)
 	eagine_PRINT(aq/th);
 	eagine_PRINT(at/tm);
 
-	quantity<millimeter> lmm = {1000};
-	quantity<unit<length>> lm = {1};
+	quantity<millimeter> lmm{1000};
+	quantity<unit<length>> lm{1};
 	quantity<kilometer> lkm = lm;
-	quantity<unit<mass>> mkg = {1};
+	quantity<unit<mass>> mkg{1};
 
-	quantity<ampere> eca = {1};
+	quantity<ampere> eca{1};
 
 	eagine_PRINT(eca);
 	eagine_PRINT(lm);
@@ -90,6 +90,10 @@ int main(void)
 
 	eagine_PRINT(z);
 	eagine_PRINT(w);
+
+	double bla = (lmm/lkm);
+
+	std::cout << double(lmm/lmm) << std::endl;
 
 	return 0;
 }

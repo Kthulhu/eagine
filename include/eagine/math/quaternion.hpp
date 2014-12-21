@@ -147,7 +147,8 @@ struct quaternion
 	friend constexpr angle<T> angle_between(_cpT a, _cpT b)
 	{
 		using std::acos;
-		return {acos(vect::hsum<T, 4>::apply(a._v * b._v)[0])};
+		return angle<T>
+			{acos(vect::hsum<T, 4>::apply(a._v * b._v)[0])};
 	}
 };
 

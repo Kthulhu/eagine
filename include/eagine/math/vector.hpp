@@ -268,7 +268,8 @@ struct vector
 	noexcept
 	{
 		using std::acos;
-		return {T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
+		return angle<T>
+			{T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
 	}
 };
 

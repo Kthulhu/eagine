@@ -147,7 +147,7 @@ struct dim_sub;
 
 template <>
 struct dim_sub<nil_t, nil_t>
- : nil_t
+ : dimless
 { };
 
 template <typename H, typename T>
