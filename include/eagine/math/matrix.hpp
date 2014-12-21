@@ -673,6 +673,60 @@ static constexpr inline
 identity<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&) { return {}; }
 
+// matrix_data_ref
+template <typename Matrix>
+class matrix_data_ref;
+
+// matrix_data_ref<matrix>
+template <typename T, unsigned R, unsigned C, bool RM>
+class matrix_data_ref<matrix<T, R, C, RM>>
+{
+private:
+	T _v[R*C];
+public:
+	matrix_data_ref(const matrix<T, R, C, RM>& m)
+	noexcept
+	{
+		for(unsigned a=0; a<(RM?R:C); ++a)
+		for(unsigned b=0; b<(RM?C:R); ++b)
+		{
+			_v[a*(RM?C:R)+b] = m._v[a][b];
+		}
+	}
+
+	const T* addr(void) const
+	noexcept
+	{
+		return _v;
+	}
+
+	std::size_t size(void) const
+	noexcept
+	{
+		return R*C;
+	}
+
+	bool row_major(void) const
+	noexcept
+	{
+		return RM;
+	}
+
+	base::typed_memory_range<const T> range(void) const
+	noexcept
+	{
+		return base::typed_memory_range<const T>(addr(), size());
+	}
+};
+
+// data
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline 
+matrix_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>& m)
+{
+	return m;
+}
+
 } // namespace math
 } // namespace eagine
 

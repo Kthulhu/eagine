@@ -360,10 +360,22 @@ public:
 	 : _ar(v._v)
 	{ }
 
+	const T* addr(void) const
+	noexcept
+	{
+		return _ar.data();
+	}
+
+	std::size_t size(void) const
+	noexcept
+	{
+		return N;
+	}
+
 	base::typed_memory_range<const T> range(void) const
 	noexcept
 	{
-		return base::typed_memory_range<const T>(_ar.data(), N);
+		return base::typed_memory_range<const T>(addr(), size());
 	}
 };
 

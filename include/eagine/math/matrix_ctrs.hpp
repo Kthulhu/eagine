@@ -106,7 +106,7 @@ struct translation<matrix<T,4,4, true>>
 	constexpr inline
 	operator matrix<T,4,4, true> (void) const
 	{
-		return {{
+		return matrix<T,4,4, true>{{
 			{ T(1), T(0), T(0),_d[0]},
 			{ T(0), T(1), T(0),_d[1]},
 			{ T(0), T(0), T(1),_d[2]},
@@ -129,7 +129,7 @@ struct translation<matrix<T,4,4,false>>
 	constexpr inline
 	operator matrix<T,4,4,false> (void) const
 	{
-		return {{
+		return matrix<T,4,4,false>{{
 			{ T(1), T(0), T(0), T(0)},
 			{ T(0), T(1), T(0), T(0)},
 			{ T(0), T(0), T(1), T(0)},
@@ -190,7 +190,7 @@ struct translation_I<matrix<T,4,4, true>, I>
 	constexpr inline
 	operator matrix<T,4,4, true> (void) const
 	{
-		return {{
+		return matrix<T,4,4, true>{{
 			{T(1),T(0),T(0),v(0)},
 			{T(0),T(1),T(0),v(1)},
 			{T(0),T(0),T(1),v(2)},
@@ -217,7 +217,7 @@ struct translation_I<matrix<T,4,4,false>, I>
 	constexpr inline
 	operator matrix<T,4,4,false> (void) const
 	{
-		return {{
+		return matrix<T,4,4,false>{{
 			{T(1),T(0),T(0),T(0)},
 			{T(0),T(1),T(0),T(0)},
 			{T(0),T(0),T(1),T(0)},
@@ -313,7 +313,7 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	constexpr inline
 	matrix<T,4,4, RM> _make(T cx, T sx, _x) const
 	{
-		return {{
+		return matrix<T,4,4, RM>{{
 			{T(1),T(0),T(0),T(0)},
 			{T(0),  cx, -sx,T(0)},
 			{T(0),  sx,  cx,T(0)},
@@ -324,7 +324,7 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	constexpr inline
 	matrix<T,4,4, RM> _make(T cx, T sx, _y) const
 	{
-		return {{
+		return matrix<T,4,4, RM>{{
 			{  cx,T(0),  sx,T(0)},
 			{T(0),T(1),T(0),T(0)},
 			{ -sx,T(0),  cx,T(0)},
@@ -335,7 +335,7 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	constexpr inline
 	matrix<T,4,4, RM> _make(T cx, T sx, _z) const
 	{
-		return {{
+		return matrix<T,4,4, RM>{{
 			{  cx, -sx,T(0),T(0)},
 			{  sx,  cx,T(0),T(0)},
 			{T(0),T(0),T(1),T(0)},
@@ -420,7 +420,7 @@ struct scale<matrix<T,4,4,RM>>
 	constexpr inline
 	operator matrix<T,4,4,RM> (void) const
 	{
-		return {{
+		return matrix<T,4,4, RM>{{
 			{_s[0], T(0), T(0), T(0)},
 			{ T(0),_s[1], T(0), T(0)},
 			{ T(0), T(0),_s[2], T(0)},
@@ -482,7 +482,7 @@ struct uniform_scale<matrix<T,4,4,RM>>
 	constexpr inline
 	operator matrix<T,4,4,RM> (void) const
 	{
-		return {{
+		return matrix<T,4,4, RM>{{
 			{  _s,T(0),T(0),T(0)},
 			{T(0),  _s,T(0),T(0)},
 			{T(0),T(0),  _s,T(0)},
@@ -550,7 +550,7 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 	constexpr inline
 	operator matrix<T,4,4,RM> (void) const
 	{
-		return {{
+		return matrix<T,4,4, RM>{{
 			{v(0),T(0),T(0),T(0)},
 			{T(0),v(1),T(0),T(0)},
 			{T(0),T(0),v(2),T(0)},
@@ -647,7 +647,7 @@ struct shear<matrix<T,4,4, true>>
 	constexpr inline
 	operator matrix<T,4,4, true> (void) const
 	{
-		return {{
+		return matrix<T,4,4, true>{{
 			{ T(1),_s[0],_s[0], T(0)},
 			{_s[1], T(1),_s[1], T(0)},
 			{_s[2],_s[2], T(1), T(0)},
@@ -674,7 +674,7 @@ struct shear<matrix<T,4,4,false>>
 	constexpr inline
 	operator matrix<T,4,4,false> (void) const
 	{
-		return {{
+		return matrix<T,4,4,false>{{
 			{ T(1),_s[1],_s[2], T(0)},
 			{_s[0], T(1),_s[2], T(0)},
 			{_s[0],_s[1], T(1), T(0)},
@@ -784,7 +784,7 @@ struct ortho<matrix<T,4,4,RM>>
 	constexpr inline
 	matrix<T,4,4, true> _make(meta::true_type) const
 	{
-		return {{
+		return matrix<T,4,4, true>{{
 			{_m00(),   T(0),   T(0), _m30()},
 			{  T(0), _m11(),   T(0), _m31()},
 			{  T(0),   T(0), _m22(), _m32()},
@@ -795,7 +795,7 @@ struct ortho<matrix<T,4,4,RM>>
 	constexpr inline
 	matrix<T,4,4,false> _make(meta::false_type) const
 	{
-		return {{
+		return matrix<T,4,4,false>{{
 			{_m00(),   T(0),   T(0),   T(0)},
 			{  T(0), _m11(),   T(0),   T(0)},
 			{  T(0),   T(0), _m22(),   T(0)},
@@ -970,7 +970,7 @@ struct perspective<matrix<T,4,4,RM>>
 	constexpr inline
 	matrix<T,4,4, true> _make(meta::true_type) const
 	{
-		return {{
+		return matrix<T,4,4, true>{{
 			{_m00(),   T(0), _m20(),   T(0)},
 			{  T(0), _m11(), _m21(),   T(0)},
 			{  T(0),   T(0), _m22(), _m32()},
@@ -981,7 +981,7 @@ struct perspective<matrix<T,4,4,RM>>
 	constexpr inline
 	matrix<T,4,4,false> _make(meta::false_type) const
 	{
-		return {{
+		return matrix<T,4,4,false>{{
 			{_m00(),   T(0),   T(0),   T(0)},
 			{  T(0), _m11(),   T(0),   T(0)},
 			{_m20(), _m21(), _m22(), _m23()},
@@ -1083,7 +1083,7 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	constexpr inline
 	matrix<T,4,4, true> _make(meta::true_type) const
 	{
-		return {{
+		return matrix<T,4,4, true>{{
 			{_m00(),   T(0),   T(0), _m30()},
 			{  T(0), _m11(),   T(0), _m31()},
 			{  T(0),   T(0),   T(1),   T(0)},
@@ -1094,7 +1094,7 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	constexpr inline
 	matrix<T,4,4,false> _make(meta::false_type) const
 	{
-		return {{
+		return matrix<T,4,4,false>{{
 			{_m00(),   T(0),   T(0),   T(0)},
 			{  T(0), _m11(),   T(0),   T(0)},
 			{  T(0),   T(0),   T(1),   T(0)},
