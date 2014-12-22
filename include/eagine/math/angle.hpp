@@ -23,25 +23,29 @@ using angle = unit::quantity<unit::radian, T>;
 template <typename T>
 inline auto asin(T v) -> angle<decltype(::std::asin(v))>
 {
-	return {::std::asin(v)};
+	return angle<decltype(::std::asin(v))>
+		{::std::asin(v)};
 }
 
 template <typename T>
 inline auto acos(T v) -> angle<decltype(::std::acos(v))>
 {
-	return {::std::acos(v)};
+	return angle<decltype(::std::acos(v))>
+		{::std::acos(v)};
 }
 
 template <typename T>
 inline auto atan(T v) -> angle<decltype(::std::atan(v))>
 {
-	return {::std::atan(v)};
+	return angle<decltype(::std::atan(v))>
+		{::std::atan(v)};
 }
 
 template <typename T>
 inline auto atan2(T y, T x) -> angle<decltype(::std::atan2(y, x))>
 {
-	return {::std::atan2(y, x)};
+	return angle<decltype(::std::atan2(y, x))>
+		{::std::atan2(y, x)};
 }
 
 template <typename T>
