@@ -66,7 +66,7 @@ struct hsum<T, 2>
 	}
 };
 
-#if (defined(__GNUC__) || defined(__clang__)) && __SSE__
+#if EAGINE_USE_SSE
 
 template <typename T>
 struct hsum<T, 3>

@@ -29,8 +29,8 @@ struct sdiv
 	}
 };
 
-#if defined(__clang__) && __SSE__
-#elif defined(__GNUC__) && __SSE__
+#if EAGINE_USE_SSE
+#if defined(__GNUC__) && !defined(__clang__)
 
 template <typename T>
 struct sdiv<T, 3>
@@ -46,6 +46,7 @@ struct sdiv<T, 3>
 	}
 };
 
+#endif
 #endif
 
 } // namespace vect

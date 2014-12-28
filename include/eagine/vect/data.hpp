@@ -11,7 +11,9 @@
 #define EAGINE_VECT_DATA_1308281038_HPP
 
 #include <eagine/meta/type_traits.hpp>
+#include <eagine/vect/config.hpp>
 #include <utility>
+#include <cstdint>
 
 namespace eagine {
 namespace vect {
@@ -150,7 +152,8 @@ struct _has_vec_data
  : meta::false_type
 { };
 
-#if defined(__clang__) && __SSE__
+#if EAGINE_USE_SSE
+#if defined(__clang__)
 
 template <>
 struct _vec_data<int, 1>
@@ -239,7 +242,7 @@ struct _has_vec_data<double, N>
  : meta::integral_constant<bool, (N>=1 && N<=4)>
 { };
 
-#elif defined(__GNUC__) && __SSE__
+#elif defined(__GNUC__)
 
 template <typename T, unsigned N>
 struct _gnuc_vec_data
@@ -283,6 +286,7 @@ struct _has_vec_data<double, N>
  : meta::integral_constant<bool, (N>=1 && N<=4)>
 { };
 
+#endif
 #endif
 
 template <typename T, unsigned N>

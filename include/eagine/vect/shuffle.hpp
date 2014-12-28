@@ -21,7 +21,7 @@ template <int ... I>
 struct shuffle_mask
 { };
 
-#if defined(__GNUC__) && __SSE__
+#if EAGINE_USE_SSE && defined(__GNUC__)
 template <typename T, unsigned N>
 struct mask : data<T, N>
 { };
@@ -61,9 +61,9 @@ struct shuffle
 	) noexcept
 	{
 		(void)m;
-#if defined(__clang__) && __SSE__
+#if EAGINE_USE_SSE && defined(__clang__)
 		return __builtin_shufflevector(v, v, I...);
-#elif defined(__GNUC__) && __SSE__
+#elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		return __builtin_shuffle(v, _mT{I...});
 #else
@@ -115,9 +115,9 @@ struct shuffle2
 	) noexcept
 	{
 		(void)m;
-#if defined(__clang__) && __SSE__
+#if EAGINE_USE_SSE && defined(__clang__)
 		return __builtin_shufflevector(v1,v2, I...);
-#elif defined(__GNUC__) && __SSE__
+#elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		if(N == 3)
 		{
