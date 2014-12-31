@@ -6,21 +6,39 @@ CXX ?= g++
 OPT = O2
 
 TIME ?= time
+GNUPLOT = gnuplot
 
 SOURCES = $(basename $(wildcard ./*.cpp))
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
+TIMES = $(addsuffix .time,$(BENCHMARKS))
+CHARTS = $(addprefix _out/,$(addsuffix -$(OPT).pdf,$(SOURCES)))
 
-local_OPTIONS = -std=c++1y -Wall -Werror -pedantic
+local_OPTIONS = -std=c++1y -Wall -pedantic
 local_INCLDIRS = -I../_build/include -I../include -I../implement -I../third_party/include
 local_CXXFLAGS = $(CXXFLAGS) $(local_OPTIONS) $(local_INCLDIRS)
 local_LDFLAGS = $(LDFLAGS) $(local_OPTIONS)
 
+all: charts
 .PHONY: all
-all: benchmarks
+.SECONDARY:
 
 benchmarks: $(BENCHMARKS)
 
-timing: benchmarks $(addsuffix .time,$(BENCHMARKS))
+timing: benchmarks $(TIMES)
+
+charts: timing $(CHARTS)
+
+_out _bld:
+	mkdir -p $@
+
+_out/%.pdf: _bld/%.gp _bld/%.gp.dat
+	$(GNUPLOT) $<
+
+_bld/%.gp: ./make.gp.py
+	./make.gp.py _bld/$* _out/$* > $@
+
+_bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time 
+	./make.gp.dat.py $^ > $@
 
 _out/%.time: _out/%
 	$(TIME) -f "%S:%U:%e" -o $@ $<
@@ -43,10 +61,7 @@ _bld/%-$(OPT)-NOSSE.o: %.cpp | _bld
 _bld/%-$(OPT)-SSE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $< -c -o $@
 
-_out _bld:
-	mkdir -p $@
-
-
 .PHONY: clean
 clean:
 	rm -rf _bld _out
+
