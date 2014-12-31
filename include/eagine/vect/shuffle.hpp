@@ -21,7 +21,7 @@ template <int ... I>
 struct shuffle_mask
 { };
 
-#if EAGINE_USE_SSE && defined(__GNUC__)
+#if EAGINE_USE_SSE && defined(__GNUC__) && !defined(__clang__)
 template <typename T, unsigned N>
 struct mask : data<T, N>
 { };
@@ -42,7 +42,7 @@ struct shuffle
 	typedef typename data_param<T, N>::type _dpT;
 
 	template <int ... I>
-	static inline
+	static constexpr inline
 	_dT _do_apply(
 		_dpT v,
 		shuffle_mask<I...>,
@@ -53,26 +53,29 @@ struct shuffle
 	}
 
 	template <int ... I>
-	static inline
+	static constexpr inline
 	_dT _do_apply(
 		_dpT v,
-		shuffle_mask<I...> m,
+		shuffle_mask<I...>,
 		meta::false_type
 	) noexcept
 	{
-		(void)m;
 #if EAGINE_USE_SSE && defined(__clang__)
 		return __builtin_shufflevector(v, v, I...);
 #elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		return __builtin_shuffle(v, _mT{I...});
 #else
-		return _do_apply(v, m, meta::true_type());
+		return _do_apply(
+			v,
+			shuffle_mask<I...>(),
+			meta::true_type()
+		);
 #endif
 	}
 
 	template <int ... I>
-	static inline
+	static constexpr inline
 	_dT apply(
 		_dpT v,
 		shuffle_mask<I...> m = {}
@@ -110,11 +113,10 @@ struct shuffle2
 	_dT _do_apply(
 		_dpT v1,
 		_dpT v2,
-		shuffle_mask<I...> m,
+		shuffle_mask<I...>,
 		meta::false_type
 	) noexcept
 	{
-		(void)m;
 #if EAGINE_USE_SSE && defined(__clang__)
 		return __builtin_shufflevector(v1,v2, I...);
 #elif EAGINE_USE_SSE && defined(__GNUC__)
@@ -128,7 +130,11 @@ struct shuffle2
 			return __builtin_shuffle(v1, v2, _mT{I...});
 		}
 #else
-		return _do_apply(v1, v2, m, meta::true_type());
+		return _do_apply(
+			v1, v2,
+			shuffle_mask<I...>(),
+			meta::true_type()
+		);
 #endif
 	}
 

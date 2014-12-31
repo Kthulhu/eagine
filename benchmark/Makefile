@@ -37,4 +37,4 @@ all: $(BENCHMARKS)
 
 .PHONY: clean
 clean:
-	rm -f $(BENCHMARKS) $(addsuffix .o, $(BENCHMARKS))
+	rm -f $(BENCHMARKS) *.o
