@@ -118,7 +118,14 @@ struct shuffle2
 	) noexcept
 	{
 #if EAGINE_USE_SSE && defined(__clang__)
-		return __builtin_shufflevector(v1,v2, I...);
+		if(N == 3)
+		{
+			return __builtin_shufflevector(v1,v2, I>=3?I+1:I...);
+		}
+		else
+		{
+			return __builtin_shufflevector(v1,v2, I...);
+		}
 #elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		if(N == 3)

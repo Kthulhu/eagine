@@ -5,14 +5,18 @@
 
 int main(int argc, const char** argv)
 {
+#ifndef EAGINE_BENCHMARK_BASELINE
+	static const unsigned N = 3;
+#endif
+
 	for(unsigned j=0; j!=10000; ++j)
 	for(unsigned i=0; i!=100000; ++i)
 	{
 #ifndef EAGINE_BENCHMARK_BASELINE
 		using namespace eagine::math;
-		vector<float, 3> u = vector<float, 3>::axis<0>(argc+i);
-		vector<float, 3> v = vector<float, 3>::axis<1>(argc+i);
-		vector<float, 3> w = cross(u, v);
+		vector<T, N> u = vector<T, N>::axis<0>(argc+i);
+		vector<T, N> v = vector<T, N>::axis<1>(argc+i);
+		vector<T, N> w = cross(u, v);
 
 		if(std::fabs(dot(u,w)) > 0.001f || std::fabs(dot(v,w)) > 0.001f)
 #else

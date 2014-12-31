@@ -5,8 +5,10 @@
 CXX ?= g++
 OPT = O2
 
+TIME ?= time
+
 SOURCES = $(basename $(wildcard ./*.cpp))
-BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, $(src)-$(OPT)-$(var)))
+BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
 
 local_OPTIONS = -std=c++1y -Wall -Werror -pedantic
 local_INCLDIRS = -I../_build/include -I../include -I../implement -I../third_party/include
@@ -14,27 +16,37 @@ local_CXXFLAGS = $(CXXFLAGS) $(local_OPTIONS) $(local_INCLDIRS)
 local_LDFLAGS = $(LDFLAGS) $(local_OPTIONS)
 
 .PHONY: all
-all: $(BENCHMARKS)
+all: benchmarks
 
-%-$(OPT)-BASELINE: %-$(OPT)-BASELINE.o
+benchmarks: $(BENCHMARKS)
+
+timing: benchmarks $(addsuffix .time,$(BENCHMARKS))
+
+_out/%.time: _out/%
+	$(TIME) -f "%S:%U:%e" -o $@ $<
+
+_out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o | _out
 	$(CXX) $(local_LDFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -o $@
 
-%-$(OPT)-NOSSE: %-$(OPT)-NOSSE.o
+_out/%-$(OPT)-NOSSE: _bld/%-$(OPT)-NOSSE.o | _out
 	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $< -o $@
 
-%-$(OPT)-SSE: %-$(OPT)-SSE.o
+_out/%-$(OPT)-SSE: _bld/%-$(OPT)-SSE.o | _out
 	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $< -o $@
 
-%-$(OPT)-BASELINE.o: %.cpp
+_bld/%-$(OPT)-BASELINE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -c -o $@
 
-%-$(OPT)-NOSSE.o: %.cpp
+_bld/%-$(OPT)-NOSSE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $< -c -o $@
 
-%-$(OPT)-SSE.o: %.cpp
+_bld/%-$(OPT)-SSE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $< -c -o $@
+
+_out _bld:
+	mkdir -p $@
 
 
 .PHONY: clean
 clean:
-	rm -f $(BENCHMARKS) *.o
+	rm -rf _bld _out

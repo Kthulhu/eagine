@@ -170,7 +170,7 @@ struct _vec_data<int, 2>
 template <>
 struct _vec_data<int, 3>
 {
-	typedef int type __attribute__ ((vector_size (3*__SIZEOF_INT__)));
+	typedef int type __attribute__ ((vector_size (4*__SIZEOF_INT__)));
 };
 
 template <>
@@ -199,7 +199,7 @@ struct _vec_data<float, 2>
 template <>
 struct _vec_data<float, 3>
 {
-	typedef float type __attribute__ ((vector_size (12)));
+	typedef float type __attribute__ ((vector_size (16)));
 };
 
 template <>
@@ -228,7 +228,7 @@ struct _vec_data<double, 2>
 template <>
 struct _vec_data<double, 3>
 {
-	typedef double type __attribute__ ((vector_size (24)));
+	typedef double type __attribute__ ((vector_size (32)));
 };
 
 template <>

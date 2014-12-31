@@ -30,7 +30,7 @@ struct sdiv
 };
 
 #if EAGINE_USE_SSE
-#if defined(__GNUC__) && !defined(__clang__)
+#if defined(__GNUC__) || defined(__clang__)
 
 template <typename T>
 struct sdiv<T, 3>
