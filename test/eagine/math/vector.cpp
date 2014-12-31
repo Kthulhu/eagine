@@ -1323,4 +1323,38 @@ BOOST_AUTO_TEST_CASE(math_vector_normalized)
 	test_math_vector_normalized<double>();
 }
 
+template <typename T>
+void test_math_vector_cross(void)
+{
+	unsigned n = 1000;
+
+	while(n)
+	{
+		T a[3], b[3];
+
+		for(unsigned i=0; i<3; ++i)
+		{
+			a[i] = std::rand() / T(RAND_MAX);
+			b[i] = std::rand() / T(RAND_MAX);
+		}
+
+		auto va = normalized(eagine::math::vector<T, 3>::from(a, 3));
+		auto vb = normalized(eagine::math::vector<T, 3>::from(b, 3));
+
+		if(std::fabs(dot(va, vb)) < T(0.5))
+		{
+			auto vc = cross(va, vb);
+			BOOST_ASSERT(test_math_close(dot(va, vc)+T(1), T(1)));
+			BOOST_ASSERT(test_math_close(dot(vb, vc)+T(1), T(1)));
+			--n;
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_cross)
+{
+	test_math_vector_cross<float>();
+	test_math_vector_cross<double>();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
