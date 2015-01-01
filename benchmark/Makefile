@@ -8,7 +8,8 @@ OPT = O2
 TIME ?= time
 GNUPLOT = gnuplot
 
-SOURCES = $(basename $(wildcard ./*.cpp))
+SOURCES = $(basename $(wildcard *.cpp))
+DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
 TIMES = $(addsuffix .time,$(BENCHMARKS))
 CHARTS = $(addprefix _out/,$(addsuffix -$(OPT).pdf,$(SOURCES)))
@@ -34,10 +35,10 @@ _out _bld:
 _out/%.pdf: _bld/%.gp _bld/%.gp.dat
 	$(GNUPLOT) $<
 
-_bld/%.gp: ./make.gp.py
+_bld/%.gp: ./make.gp.py | _bld
 	./make.gp.py _bld/$* _out/$* > $@
 
-_bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time 
+_bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
 	./make.gp.dat.py $^ > $@
 
 _out/%.time: _out/%
@@ -60,6 +61,13 @@ _bld/%-$(OPT)-NOSSE.o: %.cpp | _bld
 
 _bld/%-$(OPT)-SSE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $< -c -o $@
+
+_bld/%.d: %.cpp | _bld
+	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-BASELINE.o > $@
+	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-NOSSE.o >> $@
+	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-SSE.o >> $@
+
+sinclude $(DEPENDENCIES)
 
 .PHONY: clean
 clean:
