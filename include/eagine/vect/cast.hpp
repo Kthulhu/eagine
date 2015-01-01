@@ -44,7 +44,8 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 		meta::integer_sequence<unsigned, D...>
 	) noexcept
 	{
-		return {TT(v[I])..., TT(d[D])...};
+		return typename data<TT, NT>::type
+			{TT(v[I])..., TT(d[D])...};
 	}
 
 	template <unsigned ... I>
@@ -57,7 +58,8 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 		meta::integer_sequence<unsigned>
 	) noexcept
 	{
-		return {TT(v[I])...};
+		return typename data<TT, NT>::type
+			{TT(v[I])...};
 	}
 
 	static constexpr inline

@@ -1,13 +1,13 @@
-#  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+#  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
 #  Software License, Version 1.0. (See accompanying file
 #  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 enable_testing()
 include(CTest)
 
-function(add_eagine_test TEST_NAME TEST_LIBRARIES BUILD_ONLY)
+macro(add_eagine_test TEST_NAME SRC_NAME TEST_LIBRARIES BUILD_ONLY)
 
-	add_executable(${TEST_NAME} EXCLUDE_FROM_ALL ${TEST_NAME}.cpp)
+	add_executable(${TEST_NAME} EXCLUDE_FROM_ALL ${SRC_NAME}.cpp)
 	target_link_libraries(${TEST_NAME} ${TEST_LIBRARIES})
 	target_link_libraries(${TEST_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 	target_link_libraries(${TEST_NAME} ${EAGINE_THIRD_PARTY_LIBRARIES})
@@ -27,13 +27,35 @@ function(add_eagine_test TEST_NAME TEST_LIBRARIES BUILD_ONLY)
 			build-test-${TEST_NAME}
 		)
 	endif()
-endfunction()
+endmacro()
 
 function(eagine_build_test TEST_NAME)
-	add_eagine_test("${TEST_NAME}" "${ARGN}" TRUE)
+	add_eagine_test("${TEST_NAME}" "${TEST_NAME}" "${ARGN}" TRUE)
 endfunction()
 
 function(eagine_exec_test TEST_NAME)
-	add_eagine_test("${TEST_NAME}" "${ARGN}" FALSE)
+	add_eagine_test("${TEST_NAME}" "${TEST_NAME}" "${ARGN}" FALSE)
 endfunction()
 
+function(eagine_exec_test_sse TEST_NAME)
+	add_eagine_test("${TEST_NAME}-sse" "${TEST_NAME}" "${ARGN}" FALSE)
+	set_target_properties(
+		"${TEST_NAME}-sse"
+		PROPERTIES COMPILE_FLAGS
+		"-DEAGINE_USE_SSE=1"
+	)
+	set_target_properties(
+		"${TEST_NAME}-sse"
+		PROPERTIES COMPILE_FLAGS
+		"-msse"
+	)
+endfunction()
+
+function(eagine_exec_test_nosse TEST_NAME)
+	add_eagine_test("${TEST_NAME}-nosse" "${TEST_NAME}" "${ARGN}" FALSE)
+	set_target_properties(
+		"${TEST_NAME}-nosse"
+		PROPERTIES COMPILE_FLAGS
+		"-DEAGINE_USE_SSE=0"
+	)
+endfunction()

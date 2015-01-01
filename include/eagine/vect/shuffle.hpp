@@ -94,12 +94,13 @@ struct shuffle2
 	typedef typename data<T, N>::type _dT;
 	typedef typename data_param<T, N>::type _dpT;
 
-	template <int ... I>
+	template <unsigned M, int ... I>
 	static inline
 	_dT _do_apply(
 		_dpT v1,
 		_dpT v2,
 		shuffle_mask<I...>,
+		meta::integral_constant<unsigned, M>,
 		meta::true_type
 	) noexcept
 	{
@@ -108,38 +109,51 @@ struct shuffle2
 		};
 	}
 
+	template <unsigned M, int ... I>
+	static inline
+	_dT _do_apply(
+		_dpT v1,
+		_dpT v2,
+		shuffle_mask<I...>,
+		meta::integral_constant<unsigned, M>,
+		meta::false_type
+	) noexcept
+	{
+#if EAGINE_USE_SSE && defined(__clang__)
+		return __builtin_shufflevector(v1,v2, I...);
+#elif EAGINE_USE_SSE && defined(__GNUC__)
+		typedef typename mask<T, N>::type _mT;
+		return __builtin_shuffle(v1, v2, _mT{I...});
+#else
+		return _do_apply(
+			v1, v2,
+			shuffle_mask<I...>(),
+			meta::integral_constant<unsigned, M>(),
+			meta::true_type()
+		);
+#endif
+	}
+
 	template <int ... I>
 	static inline
 	_dT _do_apply(
 		_dpT v1,
 		_dpT v2,
 		shuffle_mask<I...>,
+		meta::integral_constant<unsigned, 3>,
 		meta::false_type
 	) noexcept
 	{
 #if EAGINE_USE_SSE && defined(__clang__)
-		if(N == 3)
-		{
-			return __builtin_shufflevector(v1,v2, I>=3?I+1:I...);
-		}
-		else
-		{
-			return __builtin_shufflevector(v1,v2, I...);
-		}
+		return __builtin_shufflevector(v1,v2, I>=3?I+1:I...);
 #elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
-		if(N == 3)
-		{
-			return __builtin_shuffle(v1, v2, _mT{(I>=3?I+1:I)...});
-		}
-		else
-		{
-			return __builtin_shuffle(v1, v2, _mT{I...});
-		}
+		return __builtin_shuffle(v1, v2, _mT{(I>=3?I+1:I)...});
 #else
 		return _do_apply(
 			v1, v2,
 			shuffle_mask<I...>(),
+			meta::integral_constant<unsigned, 3>(),
 			meta::true_type()
 		);
 #endif
@@ -155,6 +169,7 @@ struct shuffle2
 	{
 		return _do_apply(
 			v1, v2, m,
+			meta::integral_constant<unsigned, N>(),
 			typename meta::is_same<_dT, _ary_data<T, N>>::type()
 		);
 	}
