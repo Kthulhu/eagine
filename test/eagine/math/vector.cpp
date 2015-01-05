@@ -1357,4 +1357,45 @@ BOOST_AUTO_TEST_CASE(math_vector_cross)
 	test_math_vector_cross<double>();
 }
 
+template <typename T, unsigned N>
+void test_math_vector_angle_between_T(void)
+{
+	T a[N], b[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(N*N);
+		b[i] = std::rand() / T(N*N);
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	BOOST_ASSERT(test_math_close(
+		value(angle_between(va, vb)),
+		T(std::acos(dot(normalized(va), normalized(vb))))
+	));
+}
+
+template <typename T>
+void test_math_vector_angle_between(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_angle_between_T<T, 2>();
+		test_math_vector_angle_between_T<T, 3>();
+		test_math_vector_angle_between_T<T, 4>();
+		test_math_vector_angle_between_T<T, 5>();
+		test_math_vector_angle_between_T<T, 6>();
+		test_math_vector_angle_between_T<T, 7>();
+		test_math_vector_angle_between_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_angle_between)
+{
+	test_math_vector_angle_between<float>();
+	test_math_vector_angle_between<double>();
+}
+
 BOOST_AUTO_TEST_SUITE_END()

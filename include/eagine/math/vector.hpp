@@ -1,7 +1,7 @@
 /**
  *  @file eagine/math/vector.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -264,12 +264,21 @@ struct vector
 	}
 
 	friend constexpr
-	angle<T> angle_between(_cpT a, _cpT b)
+	angle<T> angle_between_normalized(_cpT a, _cpT b)
 	noexcept
 	{
 		using std::acos;
 		return angle<T>
 			{T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
+	}
+
+	friend constexpr
+	angle<T> angle_between(_cpT a, _cpT b)
+	{
+		return angle_between_normalized(
+			normalized(a),
+			normalized(b)
+		);
 	}
 };
 
