@@ -102,6 +102,20 @@ struct from<T, 4>
 	}
 };
 
+template <typename T>
+struct from<T, 8>
+{
+	static
+	typename data<T, 8>::type
+	apply(const T* d, unsigned n)
+	noexcept
+	{
+		assert(8 <= n);
+		return typename data<T, 8>::type
+			{d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7]};
+	}
+};
+
 } // namespace vect
 } // namespace eagine
 

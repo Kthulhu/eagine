@@ -96,6 +96,19 @@ struct fill<T, 4>
 	}
 };
 
+template <typename T>
+struct fill<T, 8>
+{
+	static constexpr
+	typename data<T, 8>::type
+	apply(T v)
+	noexcept
+	{
+		return typename data<T, 8>::type
+			{v,v,v,v,v,v,v,v};
+	}
+};
+
 } // namespace vect
 } // namespace eagine
 

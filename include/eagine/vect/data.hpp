@@ -208,9 +208,15 @@ struct _vec_data<float, 4>
 	typedef float type __attribute__ ((vector_size (16)));
 };
 
+template <>
+struct _vec_data<float, 8>
+{
+	typedef float type __attribute__ ((vector_size (32)));
+};
+
 template <unsigned N>
 struct _has_vec_data<float, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+ : meta::integral_constant<bool, (N>=1 && N<=4) || N==8>
 { };
 
 template <>
@@ -266,9 +272,17 @@ template <typename T>
 struct _vec_data<T,4> : _gnuc_vec_data<T,4>
 { };
 
+template <>
+struct _vec_data<int32_t,8> : _gnuc_vec_data<int32_t,8>
+{ };
+
+template <>
+struct _vec_data<float,8> : _gnuc_vec_data<float,8>
+{ };
+
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+ : meta::integral_constant<bool, (N>=1 && N<=4) || N==8>
 { };
 
 template <unsigned N>
@@ -278,7 +292,7 @@ struct _has_vec_data<int64_t, N>
 
 template <unsigned N>
 struct _has_vec_data<float, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+ : meta::integral_constant<bool, (N>=1 && N<=4) || N==8>
 { };
 
 template <unsigned N>

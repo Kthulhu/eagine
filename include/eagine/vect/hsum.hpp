@@ -74,7 +74,7 @@ struct hsum<T, 3>
 	typedef typename data<T, 3>::type _dT;
 	typedef typename data_param<T, 3>::type _dpT;
 	typedef shuffle<T, 3> _sh;
-	
+
 	static constexpr inline
 	_dT _hlp(_dpT t, _dpT v)
 	noexcept
@@ -96,7 +96,7 @@ struct hsum<T, 4>
 	typedef typename data<T, 4>::type _dT;
 	typedef typename data_param<T, 4>::type _dpT;
 	typedef shuffle<T, 4> _sh;
-	
+
 	static constexpr inline
 	_dT _hlp(_dpT v)
 	noexcept
@@ -109,6 +109,42 @@ struct hsum<T, 4>
 	noexcept
 	{
 		return _hlp(v + _sh::template apply<1,0,3,2>(v));
+	}
+};
+
+template <typename T>
+struct hsum<T, 8>
+{
+	typedef typename data<T, 8>::type _dT;
+	typedef typename data_param<T, 8>::type _dpT;
+	typedef shuffle<T, 8> _sh;
+
+	static constexpr inline
+	_dT _hlp_1(_dpT v)
+	noexcept
+	{
+		return v + _sh::template apply<1,0,3,2,5,4,7,6>(v);
+	}
+
+	static constexpr inline
+	_dT _hlp_2(_dpT v)
+	noexcept
+	{
+		return v + _sh::template apply<2,3,0,1,6,7,4,5>(v);
+	}
+
+	static constexpr inline
+	_dT _hlp_3(_dpT v)
+	noexcept
+	{
+		return v + _sh::template apply<4,5,6,7,0,1,2,3>(v);
+	}
+	
+	static constexpr inline
+	_dT apply(_dpT v)
+	noexcept
+	{
+		return _hlp_3(_hlp_2(_hlp_1(v)));
 	}
 };
 #endif
