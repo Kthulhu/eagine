@@ -156,39 +156,50 @@ struct _has_vec_data
 #if defined(__clang__)
 
 template <>
-struct _vec_data<int, 1>
+struct _vec_data<int32_t, 2>
 {
-	typedef int type __attribute__ ((vector_size (1*__SIZEOF_INT__)));
+	typedef int32_t type __attribute__ ((vector_size ( 8)));
 };
 
 template <>
-struct _vec_data<int, 2>
+struct _vec_data<int32_t, 3>
 {
-	typedef int type __attribute__ ((vector_size (2*__SIZEOF_INT__)));
+	typedef int32_t type __attribute__ ((vector_size (16)));
 };
 
 template <>
-struct _vec_data<int, 3>
+struct _vec_data<int32_t, 4>
 {
-	typedef int type __attribute__ ((vector_size (4*__SIZEOF_INT__)));
-};
-
-template <>
-struct _vec_data<int, 4>
-{
-	typedef int type __attribute__ ((vector_size (4*__SIZEOF_INT__)));
+	typedef int32_t type __attribute__ ((vector_size (16)));
 };
 
 template <unsigned N>
-struct _has_vec_data<int, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+struct _has_vec_data<int32_t, N>
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
 
 template <>
-struct _vec_data<float, 1>
+struct _vec_data<int64_t, 2>
 {
-	typedef float type __attribute__ ((vector_size ( 4)));
+	typedef int64_t type __attribute__ ((vector_size (16)));
 };
+
+template <>
+struct _vec_data<int64_t, 3>
+{
+	typedef int64_t type __attribute__ ((vector_size (32)));
+};
+
+template <>
+struct _vec_data<int64_t, 4>
+{
+	typedef int64_t type __attribute__ ((vector_size (32)));
+};
+
+template <unsigned N>
+struct _has_vec_data<int64_t, N>
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
+{ };
 
 template <>
 struct _vec_data<float, 2>
@@ -208,22 +219,10 @@ struct _vec_data<float, 4>
 	typedef float type __attribute__ ((vector_size (16)));
 };
 
-template <>
-struct _vec_data<float, 8>
-{
-	typedef float type __attribute__ ((vector_size (32)));
-};
-
 template <unsigned N>
 struct _has_vec_data<float, N>
- : meta::integral_constant<bool, (N>=1 && N<=4) || N==8>
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
-
-template <>
-struct _vec_data<double, 1>
-{
-	typedef double type __attribute__ ((vector_size ( 8)));
-};
 
 template <>
 struct _vec_data<double, 2>
@@ -245,7 +244,7 @@ struct _vec_data<double, 4>
 
 template <unsigned N>
 struct _has_vec_data<double, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
 
 #elif defined(__GNUC__)
@@ -255,10 +254,6 @@ struct _gnuc_vec_data
 {
 	typedef T type __attribute__ ((vector_size (sizeof(T)*N)));
 };
-
-template <typename T>
-struct _vec_data<T,1> : _gnuc_vec_data<T,1>
-{ };
 
 template <typename T>
 struct _vec_data<T,2> : _gnuc_vec_data<T,2>
@@ -282,22 +277,22 @@ struct _vec_data<float,8> : _gnuc_vec_data<float,8>
 
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
- : meta::integral_constant<bool, (N>=1 && N<=4) || N==8>
+ : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
 { };
 
 template <unsigned N>
 struct _has_vec_data<int64_t, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
 
 template <unsigned N>
 struct _has_vec_data<float, N>
- : meta::integral_constant<bool, (N>=1 && N<=4) || N==8>
+ : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
 { };
 
 template <unsigned N>
 struct _has_vec_data<double, N>
- : meta::integral_constant<bool, (N>=1 && N<=4)>
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
 
 #endif

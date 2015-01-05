@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
+# Software License, Version 1.0. (See accompanying file
+# LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 import sys, os
 
 print('reset')
@@ -13,5 +16,4 @@ print('set grid')
 print('set boxwidth 0.9 relative')
 print('set style fill transparent solid 0.7 border lt -1')
 
-#print('plot "%s.gp.dat" using 2:xticlabels(1) smooth freq with boxes lc rgb"white" notitle, '' using 3 smooth freq with boxes lc rgb"gray" notitle' % sys.argv[1])
 print('plot "%s.gp.dat" using 2 notitle, \'\' using 3:xticlabels(1) notitle' % sys.argv[1])

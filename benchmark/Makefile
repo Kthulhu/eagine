@@ -1,4 +1,4 @@
-# Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+# Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
 # Software License, Version 1.0. (See accompanying file
 # LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
@@ -42,7 +42,7 @@ _bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
 	./make.gp.dat.py $^ > $@
 
 _out/%.time: _out/%
-	$(TIME) -f "%S:%U:%e" -o $@ $<
+	$(TIME) -f "%x:%S:%U:%e" -o $@ $<
 
 _out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o | _out
 	$(CXX) $(local_LDFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -o $@
