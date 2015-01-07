@@ -4,6 +4,6 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 typedef float T;
-#define EAGINE_BM_N 4
-#include "math_vector_dot.ipp"
+#define EAGINE_BM_N 3
+#include "math_vector_distance.ipp"
 
