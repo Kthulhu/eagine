@@ -12,7 +12,9 @@ SOURCES = $(basename $(wildcard *.cpp))
 DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
 TIMES = $(addsuffix .time,$(BENCHMARKS))
-CHARTS = $(addprefix _out/,$(addsuffix -$(OPT).pdf,$(SOURCES)))
+CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES)))
+
+OUT_DIRS = _pdf _out _bld
 
 local_OPTIONS = -std=c++1y -Wall -pedantic
 local_INCLDIRS = -I../_build/include -I../include -I../implement -I../third_party/include
@@ -29,19 +31,19 @@ timing: benchmarks $(TIMES)
 
 charts: timing $(CHARTS)
 
-_out _bld:
+$(OUT_DIRS):
 	mkdir -p $@
 
-_out/%.pdf: _bld/%.gp _bld/%.gp.dat
+_pdf/%.pdf: _bld/%.gp _bld/%.gp.dat | _pdf
 	$(GNUPLOT) $<
 
 _bld/%.gp: ./make.gp.py | _bld
-	./make.gp.py _bld/$* _out/$* > $@
+	./make.gp.py _bld/$* _pdf/$* > $@
 
 _bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
 	./make.gp.dat.py $^ > $@
 
-_out/%.time: _out/%
+_out/%.time: _out/% | _out
 	$(TIME) -f "%x:%S:%U:%e" -o $@ $<
 
 _out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o | _out
@@ -71,5 +73,5 @@ sinclude $(DEPENDENCIES)
 
 .PHONY: clean
 clean:
-	rm -rf _bld _out
+	rm -rf $(OUT_DIRS)
 
