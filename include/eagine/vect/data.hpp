@@ -267,6 +267,7 @@ template <typename T>
 struct _vec_data<T,4> : _gnuc_vec_data<T,4>
 { };
 
+#if __AVX__
 template <>
 struct _vec_data<int32_t,8> : _gnuc_vec_data<int32_t,8>
 { };
@@ -274,10 +275,24 @@ struct _vec_data<int32_t,8> : _gnuc_vec_data<int32_t,8>
 template <>
 struct _vec_data<float,8> : _gnuc_vec_data<float,8>
 { };
+#endif // __AVX__
 
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
+#if __AVX__
  : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
+#else
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
+#endif
+{ };
+
+template <unsigned N>
+struct _has_vec_data<float, N>
+#if __AVX__
+ : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
+#else
+ : meta::integral_constant<bool, (N>=2 && N<=4)>
+#endif
 { };
 
 template <unsigned N>
@@ -285,15 +300,12 @@ struct _has_vec_data<int64_t, N>
  : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
 
-template <unsigned N>
-struct _has_vec_data<float, N>
- : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
-{ };
-
+#if __AVX__
 template <unsigned N>
 struct _has_vec_data<double, N>
  : meta::integral_constant<bool, (N>=2 && N<=4)>
 { };
+#endif // __AVX__
 
 #endif
 #endif

@@ -1,7 +1,7 @@
 /**
  *  @file eagine/vect/shuffle.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -61,7 +61,7 @@ struct shuffle
 	) noexcept
 	{
 #if EAGINE_USE_SSE && defined(__clang__)
-		return __builtin_shufflevector(v, v, I...);
+		return _dT(__builtin_shufflevector(v, v, I...));
 #elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		return __builtin_shuffle(v, _mT{I...});
@@ -120,7 +120,7 @@ struct shuffle2
 	) noexcept
 	{
 #if EAGINE_USE_SSE && defined(__clang__)
-		return __builtin_shufflevector(v1,v2, I...);
+		return _dT(__builtin_shufflevector(v1,v2, I...));
 #elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		return __builtin_shuffle(v1, v2, _mT{I...});
@@ -145,7 +145,7 @@ struct shuffle2
 	) noexcept
 	{
 #if EAGINE_USE_SSE && defined(__clang__)
-		return __builtin_shufflevector(v1,v2, I>=3?I+1:I...);
+		return _dT(__builtin_shufflevector(v1,v2, I>=3?I+1:I...));
 #elif EAGINE_USE_SSE && defined(__GNUC__)
 		typedef typename mask<T, N>::type _mT;
 		return __builtin_shuffle(v1, v2, _mT{(I>=3?I+1:I)...});

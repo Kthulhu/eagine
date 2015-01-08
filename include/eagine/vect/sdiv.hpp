@@ -39,10 +39,22 @@ struct sdiv<T, 3>
 	typedef typename data_param<T, 3>::type _dpT;
 
 	static constexpr inline
+	_dT _hlp(_dpT a, _dpT b, meta::true_type)
+	{
+		return a/_dT{b[0], b[1], b[2], T(1)};
+	}
+
+	static constexpr inline
+	_dT _hlp(_dpT a, _dpT b, meta::false_type)
+	{
+		return a/b;
+	}
+
+	static constexpr inline
 	_dT apply(_dpT a, _dpT b)
 	noexcept
 	{
-		return a/_dT{b[0], b[1], b[2], T(1)};
+		return _hlp(a, b, typename _has_vec_data<T, 3>::type());
 	}
 };
 
