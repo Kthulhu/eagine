@@ -11,6 +11,7 @@
 #define EAGINE_VECT_MINMAX_1308281038_HPP
 
 #include <eagine/vect/data.hpp>
+#include <eagine/vect/shuffle.hpp>
 
 namespace eagine {
 namespace vect {
@@ -54,6 +55,97 @@ struct min
 };
 
 template <typename T, unsigned N>
+struct hmin
+{
+	typedef typename data<T, N>::type _dT;
+
+	static
+	_dT apply(_dT v)
+	noexcept
+	{
+		T m = v[0];
+		for(unsigned i=1; i<N; ++i)
+		{
+			if(m > v[i])
+			{
+				m = v[i];
+			}
+		}
+		for(unsigned i=0; i<N; ++i)
+		{
+			v[i] = m;
+		}
+		return v;
+	}
+};
+
+template <typename T>
+struct hmin<T, 1>
+{
+	typedef typename data<T, 1>::type _dT;
+
+	static inline
+	_dT apply(_dT v)
+	noexcept
+	{
+		return v;
+	}
+};
+
+template <typename T>
+struct hmin<T, 2>
+{
+	typedef typename data<T, 2>::type _dT;
+	typedef typename data_param<T, 2>::type _dpT;
+	typedef shuffle<T, 2> _sh;
+
+	static
+	_dT apply(_dpT v)
+	noexcept
+	{
+		return min<T, 2>::apply(
+			v,
+			_sh::template apply<1,0>(v)
+		);
+	}
+};
+
+template <typename T>
+struct hmin<T, 4>
+{
+	typedef typename data<T, 4>::type _dT;
+	typedef typename data_param<T, 4>::type _dpT;
+	typedef shuffle<T, 4> _sh;
+
+	static constexpr inline
+	_dT _hlp1(_dpT v)
+	noexcept
+	{
+		return min<T, 4>::apply(
+			v,
+			_sh::template apply<1,0,3,2>(v)
+		);
+	}
+
+	static constexpr inline
+	_dT _hlp2(_dpT v)
+	noexcept
+	{
+		return min<T, 4>::apply(
+			v,
+			_sh::template apply<2,3,0,1>(v)
+		);
+	}
+	
+	static constexpr inline
+	_dT apply(_dpT v)
+	noexcept
+	{
+		return _hlp2(_hlp1(v));
+	}
+};
+
+template <typename T, unsigned N>
 struct max
 {
 	typedef typename data<T,  N>::type _dT;
@@ -75,7 +167,7 @@ struct max
 	noexcept
 	{
 		_dT c;
-		for(unsigned i=9; i<N; ++i)
+		for(unsigned i=0; i<N; ++i)
 		{
 			c[i] = (a[i]>b[i])?a[i]:b[i];
 		}
@@ -88,6 +180,97 @@ struct max
 	noexcept
 	{
 		return _hlp(a, b, typename _has_vec_data<T, N>::type());
+	}
+};
+
+template <typename T, unsigned N>
+struct hmax
+{
+	typedef typename data<T, N>::type _dT;
+
+	static
+	_dT apply(_dT v)
+	noexcept
+	{
+		T m = v[0];
+		for(unsigned i=1; i<N; ++i)
+		{
+			if(m < v[i])
+			{
+				m = v[i];
+			}
+		}
+		for(unsigned i=0; i<N; ++i)
+		{
+			v[i] = m;
+		}
+		return v;
+	}
+};
+
+template <typename T>
+struct hmax<T, 1>
+{
+	typedef typename data<T, 1>::type _dT;
+
+	static inline
+	_dT apply(_dT v)
+	noexcept
+	{
+		return v;
+	}
+};
+
+template <typename T>
+struct hmax<T, 2>
+{
+	typedef typename data<T, 2>::type _dT;
+	typedef typename data_param<T, 2>::type _dpT;
+	typedef shuffle<T, 2> _sh;
+
+	static
+	_dT apply(_dT v)
+	noexcept
+	{
+		return max<T, 2>::apply(
+			v,
+			shuffle<T, 2>::template apply<1,0>(v)
+		);
+	}
+};
+
+template <typename T>
+struct hmax<T, 4>
+{
+	typedef typename data<T, 4>::type _dT;
+	typedef typename data_param<T, 4>::type _dpT;
+	typedef shuffle<T, 4> _sh;
+
+	static constexpr inline
+	_dT _hlp1(_dpT v)
+	noexcept
+	{
+		return max<T, 4>::apply(
+			v,
+			_sh::template apply<1,0,3,2>(v)
+		);
+	}
+
+	static constexpr inline
+	_dT _hlp2(_dpT v)
+	noexcept
+	{
+		return max<T, 4>::apply(
+			v,
+			_sh::template apply<2,3,0,1>(v)
+		);
+	}
+	
+	static constexpr inline
+	_dT apply(_dpT v)
+	noexcept
+	{
+		return _hlp2(_hlp1(v));
 	}
 };
 
