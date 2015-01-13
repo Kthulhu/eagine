@@ -2,7 +2,7 @@
  *  @file eagine/ecs/manager.inl
  *  @brief Implementation of E/C manager
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -136,10 +136,10 @@ _apply_on_base_stg(
 
 	if(p_storage != _storages.end())
 	{
-		auto& b_storage = *p_storage;
-		if(b_storage)
+		auto& bs_storage = *p_storage;
+		if(bs_storage)
 		{
-			return func(b_storage);
+			return func(bs_storage);
 		}
 	}
 	detail::mgr_handle_cmp_not_reg(get_name());
@@ -164,11 +164,11 @@ _apply_on_cmp_stg(
 		{
 			typedef component_storage<Entity, Component> cs_t;
 
-			cs_t* storage = dynamic_cast<cs_t*>(b_storage.get());
+			cs_t* ct_storage = dynamic_cast<cs_t*>(b_storage.get());
 
-			assert(storage);
+			assert(ct_storage);
 
-			return func(storage);
+			return func(ct_storage);
 		},
 		get_component_uid<Component>(),
 		_cmp_name_getter<Component>()
@@ -290,9 +290,9 @@ _do_add(const Entity& ent, Component&& component)
 {
 	return _apply_on_cmp_stg<Component>(
 		false,
-		[&ent, &component](auto& storage) -> auto
+		[&ent, &component](auto& c_storage) -> auto
 		{
-			storage->store(std::move(component), ent);
+			c_storage->store(std::move(component), ent);
 			return true;
 		}
 	);
@@ -374,9 +374,9 @@ _call_for_single(const Func& func, const Entity& ent)
 {
 	return _apply_on_cmp_stg<Component>(
 		false,
-		[&func, &ent](auto& storage) -> auto
+		[&func, &ent](auto& c_storage) -> auto
 		{
-			return storage->for_single(func, ent);
+			return c_storage->for_single(func, ent);
 		}
 	);
 }
@@ -391,9 +391,31 @@ _call_for_each(const Func& func)
 {
 	_apply_on_cmp_stg<Component>(
 		false,
-		[&func](auto& storage) -> auto
+		[&func](auto& c_storage) -> auto
 		{
-			storage->for_each(func);
+			c_storage->for_each(func);
+			return true;
+		}
+	);
+}
+//------------------------------------------------------------------------------
+// manager::_call_pl_for_each
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component, typename Func>
+inline void
+manager<Entity>::
+_call_pl_for_each(
+	const Func& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	_apply_on_cmp_stg<Component>(
+		false,
+		[&func,&prlzr,&param](auto& c_storage) -> auto
+		{
+			c_storage->for_each(func, prlzr,param);
 			return true;
 		}
 	);

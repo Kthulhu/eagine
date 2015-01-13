@@ -18,6 +18,12 @@
 namespace eagine {
 namespace base {
 
+struct execution_params
+{
+	unsigned thread_count = 2;
+	unsigned invocations = 0;
+};
+
 class parallelizer;
 
 class parallel_execution
@@ -28,7 +34,10 @@ private:
 
 	vector<future<void>> _evts;
 
-	parallel_execution(const functor_ref<bool(unsigned)>&, unsigned);
+	parallel_execution(
+		const functor_ref<bool(unsigned)>&,
+		execution_params&
+	);
 
 	friend class parallelizer;
 public:
@@ -52,15 +61,19 @@ class parallelizer
 {
 public:
 	parallel_execution
-	execute(const functor_ref<bool(unsigned)>& kernel, unsigned n) const
+	execute(
+		const functor_ref<bool(unsigned)>& kernel,
+		execution_params& params
+	) const
 	{
-		return parallel_execution(kernel, n);
+		return parallel_execution(kernel, params);
 	}
 
 	parallel_execution
 	execute(const functor_ref<bool(unsigned)>& kernel) const
 	{
-		return parallel_execution(kernel, 5); // TODO
+		execution_params params;
+		return parallel_execution(kernel, params);
 	}
 };
 

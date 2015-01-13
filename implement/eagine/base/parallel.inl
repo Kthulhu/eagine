@@ -16,7 +16,7 @@ EAGINE_LIB_FUNC
 parallel_execution::
 parallel_execution(
 	const functor_ref<bool(unsigned)>& func,
-	unsigned nparallel
+	execution_params& params
 ): _id(0)
  , _func(func)
 {
@@ -30,9 +30,9 @@ parallel_execution(
 			}
 		};
 
-	_evts.reserve(nparallel);
+	_evts.reserve(params.thread_count);
 
-	for(unsigned i=0; i<nparallel; ++i)
+	for(unsigned i=0; i<params.thread_count; ++i)
 	{
 		_evts.push_back(async(launch::async, func_wrap));
 	}

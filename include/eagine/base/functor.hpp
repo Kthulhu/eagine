@@ -2,7 +2,7 @@
  *  @file eagine/base/functor.hpp
  *  @brief Polymorphic functor wrapper.
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -46,6 +46,15 @@ private:
 	noexcept
 	{
 		return _data == _invptr();
+	}
+
+	template <typename C>
+	static
+	RV _cls_fn_call_op(void* that, P...p)
+	{
+		assert(that);
+		C& obj = *((C*)that);
+		return obj(std::forward<P>(p)...);
 	}
 public:
 	functor_ref(void)
@@ -101,6 +110,14 @@ public:
 		assert(_data != nullptr);
 		assert(_data != _invptr());
 	}
+
+	template <typename C>
+	explicit
+	functor_ref(C& obj)
+	noexcept
+	 : _data((void*)&obj)
+	 , _func((_func_t)(&_cls_fn_call_op<C>))
+	{ }
 
 	bool callable(void) const
 	noexcept

@@ -2,7 +2,7 @@
  *  @file eagine/ecs/storage.hpp
  *  @brief Component storage interface
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -14,6 +14,7 @@
 #include <eagine/ecs/storage_capability.hpp>
 #include <eagine/base/access_type.hpp>
 #include <eagine/base/functor.hpp>
+#include <eagine/base/parallel.hpp>
 
 namespace eagine {
 namespace ecs {
@@ -193,6 +194,30 @@ struct component_storage
 			void(const Entity&, Component&)
 		>& func
 	) = 0;
+
+	// requires can_fetch
+	virtual void parallel_for_each(
+		const base::functor_ref<
+			void(const Entity&, const Component&)
+		>& kernel,
+		base::parallelizer&,
+		base::execution_params&
+	)
+	{
+		for_each(kernel);
+	}
+
+	// requires can_modify
+	virtual void parallel_for_each(
+		const base::functor_ref<
+			void(const Entity&, Component&)
+		>& kernel,
+		base::parallelizer&,
+		base::execution_params&
+	)
+	{
+		for_each(kernel);
+	}
 };
 
 } // namespace ecs

@@ -2,7 +2,7 @@
  *  @file eagine/ecs/storage/normal.inl
  *  @brief Implementation of normal_component_storage
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -537,6 +537,58 @@ for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 		func(ent, *cptr);
 	};
 	this->_index.for_each(adaptor);
+}
+//------------------------------------------------------------------------------
+// normal_component_storage::parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+normal_component_storage<Entity, Component>::
+parallel_for_each(
+	const base::functor_ref<
+		void(const Entity&, const Component&)
+	>& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	auto adaptor = [this, &func](
+		const Entity& ent,
+		std::size_t spos
+	) -> void
+	{
+		const Component* cptr = this->_store.read(spos);
+		assert(cptr);
+		func(ent, *cptr);
+	};
+	this->_index.parallel_for_each(adaptor, prlzr, param);
+}
+//------------------------------------------------------------------------------
+// normal_component_storage::parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+normal_component_storage<Entity, Component>::
+parallel_for_each(
+	const base::functor_ref<
+		void(const Entity&, Component&)
+	>& func,
+	base::parallelizer& prlzr,
+	base::execution_params& params
+)
+{
+	auto adaptor = [this, &func](
+		const Entity& ent,
+		std::size_t spos
+	) -> void
+	{
+		Component* cptr = this->_store.write(spos);
+		assert(cptr);
+		func(ent, *cptr);
+	};
+	this->_index.parallel_for_each(adaptor, prlzr, params);
 }
 //------------------------------------------------------------------------------
 } // namespace ecs

@@ -2,7 +2,7 @@
  *  @file eagine/ecs/manager.hpp
  *  @brief Entity/Component manager
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -15,6 +15,7 @@
 #include <eagine/ecs/storage.hpp>
 #include <eagine/base/memory.hpp>
 #include <eagine/base/type_name.hpp>
+#include <eagine/base/parallel.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <cassert>
 
@@ -135,6 +136,13 @@ private:
 
 	template <typename C, typename Func>
 	void _call_for_each(const Func&);
+
+	template <typename C, typename Func>
+	void _call_pl_for_each(
+		const Func&,
+		base::parallelizer&,
+		base::execution_params&
+	);
 
 	template <typename T, typename C>
 	T _do_get(T C::*, const Entity&, T);
@@ -322,6 +330,28 @@ public:
 	)
 	{
 		_call_for_each<C>(func);
+		return *this;
+	}
+
+	template <typename C>
+	manager& parallel_for_each(
+		const base::functor_ref<void(const Entity&, const C&)>& func,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	)
+	{
+		_call_pl_for_each<C>(func, prlzr, param);
+		return *this;
+	}
+
+	template <typename C>
+	manager& parallel_for_each(
+		const base::functor_ref<void(const Entity&, C&)>& func,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	)
+	{
+		_call_pl_for_each<C>(func, prlzr, param);
 		return *this;
 	}
 
