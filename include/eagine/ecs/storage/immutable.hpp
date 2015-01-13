@@ -2,7 +2,7 @@
  *  @file eagine/ecs/storage/immutable.hpp
  *  @brief Basic in-memory immutable component storage
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -173,6 +173,22 @@ public:
 		const base::functor_ref<
 			void(const Entity&, Component&)
 		>& func
+	) override;
+
+	void parallel_for_each(
+		const base::functor_ref<
+			void(const Entity&, const Component&)
+		>& kernel,
+		base::parallelizer&,
+		base::execution_params&
+	) override;
+
+	void parallel_for_each(
+		const base::functor_ref<
+			void(const Entity&, Component&)
+		>& kernel,
+		base::parallelizer&,
+		base::execution_params&
 	) override;
 };
 

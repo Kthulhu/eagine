@@ -21,7 +21,7 @@ namespace base {
 struct execution_params
 {
 	unsigned thread_count = 2;
-	unsigned invocations = 0;
+	std::size_t invocations = 0;
 };
 
 class parallelizer;
@@ -29,13 +29,13 @@ class parallelizer;
 class parallel_execution
 {
 private:
-	atomic<unsigned> _id;
-	functor_ref<bool(unsigned)> _func;
+	atomic<std::size_t> _id;
+	functor_ref<bool(std::size_t)> _kern;
 
 	vector<future<void>> _evts;
 
 	parallel_execution(
-		const functor_ref<bool(unsigned)>&,
+		const functor_ref<bool(std::size_t)>&,
 		execution_params&
 	);
 
@@ -43,8 +43,8 @@ private:
 public:
 	parallel_execution(parallel_execution&& tmp)
 	noexcept
-	 : _id(unsigned(tmp._id))
-	 , _func(std::move(tmp._func))
+	 : _id(tmp._id.load())
+	 , _kern(std::move(tmp._kern))
 	 , _evts(std::move(tmp._evts))
 	{ }
 
@@ -62,7 +62,7 @@ class parallelizer
 public:
 	parallel_execution
 	execute(
-		const functor_ref<bool(unsigned)>& kernel,
+		const functor_ref<bool(std::size_t)>& kernel,
 		execution_params& params
 	) const
 	{
@@ -70,7 +70,7 @@ public:
 	}
 
 	parallel_execution
-	execute(const functor_ref<bool(unsigned)>& kernel) const
+	execute(const functor_ref<bool(std::size_t)>& kernel) const
 	{
 		execution_params params;
 		return parallel_execution(kernel, params);

@@ -15,18 +15,18 @@ namespace base {
 EAGINE_LIB_FUNC
 parallel_execution::
 parallel_execution(
-	const functor_ref<bool(unsigned)>& func,
+	const functor_ref<bool(std::size_t)>& kern,
 	execution_params& params
 ): _id(0)
- , _func(func)
+ , _kern(kern)
 {
-	auto func_wrap =
+	auto kern_wrap =
 		[=](void)
 		{
 			while(true)
 			{
-				unsigned id = _id++;
-				if(!_func(id)) break;
+				std::size_t id = _id++;
+				if(!_kern(id)) break;
 			}
 		};
 
@@ -34,7 +34,7 @@ parallel_execution(
 
 	for(unsigned i=0; i<params.thread_count; ++i)
 	{
-		_evts.push_back(async(launch::async, func_wrap));
+		_evts.push_back(async(launch::async, kern_wrap));
 	}
 }
 //------------------------------------------------------------------------------

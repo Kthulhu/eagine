@@ -2,7 +2,7 @@
  *  @file eagine/ecs/storage/immutable.inl
  *  @brief Implementation of immutable_component_storage
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -503,6 +503,52 @@ immutable_component_storage<Entity, Component>::
 for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 {
 	assert(!"for_each with non const components is not supported!");
+}
+//------------------------------------------------------------------------------
+// immutable_component_storage::parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+immutable_component_storage<Entity, Component>::
+parallel_for_each(
+	const base::functor_ref<
+		void(const Entity&, const Component&)
+	>& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	auto adaptor = [this, &func](
+		const Entity& ent,
+		std::size_t spos
+	) -> void
+	{
+		const Component* cptr =
+			static_cast<const Component*>(
+				this->_component_data.offs(spos)
+			);
+		assert(cptr);
+		func(ent, *cptr);
+	};
+	this->_index.parallel_for_each(adaptor, prlzr, param);
+}
+//------------------------------------------------------------------------------
+// immutable_component_storage::parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+immutable_component_storage<Entity, Component>::
+parallel_for_each(
+	const base::functor_ref<
+		void(const Entity&, Component&)
+	>& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	assert(!"parallel_for_each with non const components is not supported!");
 }
 //------------------------------------------------------------------------------
 } // namespace ecs

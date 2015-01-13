@@ -415,7 +415,7 @@ _call_pl_for_each(
 		false,
 		[&func,&prlzr,&param](auto& c_storage) -> auto
 		{
-			c_storage->for_each(func, prlzr,param);
+			c_storage->parallel_for_each(func, prlzr, param);
 			return true;
 		}
 	);

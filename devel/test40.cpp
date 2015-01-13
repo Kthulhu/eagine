@@ -22,8 +22,8 @@ int main(void)
 
 	std::cout << "start" << std::endl;
 
-	functor<bool(unsigned)> func(
-		[](unsigned i) -> bool
+	functor<bool(std::size_t)> func(
+		[](std::size_t i) -> bool
 		{
 			assert(fib(25+i%17)>0);
 			return i<1000;

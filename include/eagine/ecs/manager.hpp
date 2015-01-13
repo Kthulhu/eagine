@@ -17,6 +17,7 @@
 #include <eagine/base/type_name.hpp>
 #include <eagine/base/parallel.hpp>
 #include <eagine/meta/type_traits.hpp>
+#include <utility>
 #include <cassert>
 
 namespace eagine {
@@ -163,6 +164,20 @@ public:
 			storage,
 			get_component_uid<Component>(),
 			_cmp_name_getter<Component>()
+		);
+	}
+
+	template <
+		template <class, class> class Storage,
+		typename Component,
+		typename ... P
+	>
+	void register_component_storage(P&& ... p)
+	{
+		register_component_type<Component>(
+			base::make_shared<Storage<Entity, Component>>(
+				std::forward<P>(p)...
+			)
 		);
 	}
 

@@ -56,6 +56,15 @@ private:
 		C& obj = *((C*)that);
 		return obj(std::forward<P>(p)...);
 	}
+
+	template <typename C>
+	static
+	RV _cls_fn_call_op_c(void* that, P...p)
+	{
+		assert(that);
+		const C& obj = *((const C*)that);
+		return obj(std::forward<P>(p)...);
+	}
 public:
 	functor_ref(void)
 	noexcept
@@ -117,6 +126,14 @@ public:
 	noexcept
 	 : _data((void*)&obj)
 	 , _func((_func_t)(&_cls_fn_call_op<C>))
+	{ }
+
+	template <typename C>
+	explicit
+	functor_ref(const C& obj)
+	noexcept
+	 : _data((void*)&obj)
+	 , _func((_func_t)(&_cls_fn_call_op_c<C>))
 	{ }
 
 	bool callable(void) const

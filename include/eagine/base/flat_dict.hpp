@@ -77,6 +77,29 @@ public:
 		}
 	}
 
+	template <typename Func>
+	void parallel_for_each(
+		Func func,
+		parallelizer& prlzr,
+		execution_params& param
+	) const
+	{
+		auto adapt_func =
+			[this, &func](std::size_t i) -> bool
+			{
+				if(i < size())
+				{
+					func(*(_bkeys+i), *(_bvals+i));
+				}
+				return (i+1) < size();
+			};
+
+		functor_ref<bool(std::size_t)> wrap_func(adapt_func);
+
+		param.invocations = size();
+		prlzr.execute(wrap_func, param).wait();
+	}
+
 	const Key& key_at(std::size_t pos) const
 	{
 		assert(pos < size());
@@ -223,16 +246,16 @@ public:
 	) const
 	{
 		auto adapt_func =
-			[this, &func](unsigned i) -> bool
+			[this, &func](std::size_t i) -> bool
 			{
 				if(i < size())
 				{
 					func(_keys[i], _vals[i]);
 				}
-				return (i+1) >= size();
+				return (i+1) < size();
 			};
 
-		functor_ref<bool(unsigned)> wrap_func(adapt_func);
+		functor_ref<bool(std::size_t)> wrap_func(adapt_func);
 
 		param.invocations = size();
 		prlzr.execute(wrap_func, param).wait();
