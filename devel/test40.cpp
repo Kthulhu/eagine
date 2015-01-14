@@ -20,22 +20,41 @@ int main(void)
 
 	parallelizer pzr;
 
-	std::cout << "start" << std::endl;
 
-	functor<bool(std::size_t)> func(
-		[](std::size_t i) -> bool
-		{
-			assert(fib(25+i%17)>0);
-			return i<1000;
-		}
-	);
+	{
+		std::cout << "start" << std::endl;
+		functor<bool(std::size_t)> func(
+			[](std::size_t i) -> bool
+			{
+				assert(fib(25+i%17)>0);
+				return i<1000;
+			}
+		);
 
-	execution_params para;
-	para._thread_count = 4;
-	auto exec = pzr.execute(func, para);
-	std::cout << "running" << std::endl;
-	exec.wait();
-	std::cout << "done" << std::endl;
+		execution_params para;
+		para._thread_count = 4;
+		auto exec = pzr.execute_stateful(func, para);
+		std::cout << "running" << std::endl;
+		exec.wait();
+		std::cout << "done" << std::endl;
+	}
+	{
+		std::cout << "start" << std::endl;
+		functor<bool(std::size_t)> func(
+			[](std::size_t i) -> bool
+			{
+				assert(fib(25+i%17)>0);
+				return i<1000;
+			}
+		);
+
+		execution_params para;
+		para._thread_count = 4;
+		auto exec = pzr.execute(func, para);
+		std::cout << "running" << std::endl;
+		exec.wait();
+		std::cout << "done" << std::endl;
+	}
 
 	return 0;
 }

@@ -194,13 +194,15 @@ private:
 		 : _func(std::move(func))
 		{ }
 
-		static RV _free_func(Func* func, P ... p)
+		static
+		RV _free_func(Func* func, P ... p)
 		{
 			assert(func != nullptr);
 			return (*func)(std::forward<P>(p)...);
 		}
 
-		void* impl_ptr(void) noexcept
+		void* impl_ptr(void)
+		noexcept
 		{
 			return (void*)(&_func);
 		}
@@ -223,11 +225,17 @@ private:
 	{ };
 public:
 	functor(void) = default;
+	functor(const functor&) = default;
+	functor(functor&&) = default;
+
+	functor& operator = (const functor&) = default;
+	functor& operator = (functor&&) = default;
 
 	template <typename Func>
 	functor(Func&& func)
-	 : _store(make_shared<_wrap<typename _fix<Func>::type>>(std::move(func)))
-	 , _impl(_store->impl_ptr())
+	 : _store(make_shared<_wrap<typename _fix<Func>::type>>(
+		std::forward<Func>(func))
+	), _impl(_store->impl_ptr())
 	 , _func(_store->func_ptr())
 	{ }
 
@@ -242,7 +250,7 @@ public:
 				template rebind<
 					_wrap<typename _fix<Func>::type>
 				>::other(alloc),
-			std::move(func)
+			std::forward<Func>(func)
 		)
 	), _impl(_store->impl_ptr())
 	 , _func(_store->func_ptr())

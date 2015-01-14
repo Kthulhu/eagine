@@ -14,6 +14,7 @@
 #include <eagine/base/future.hpp>
 #include <eagine/base/atomic.hpp>
 #include <eagine/base/vector.hpp>
+#include <eagine/base/alloc.hpp>
 
 namespace eagine {
 namespace base {
@@ -32,9 +33,10 @@ protected:
 	atomic<std::size_t> _id;
 	vector<future<void>> _evts;
 
-	base_parallel_execution(void)
+	base_parallel_execution(const allocator<void>& alloc)
 	noexcept
 	 : _id(0u)
+	 , _evts(allocator<future<void>>(alloc))
 	{ }
 
 	base_parallel_execution(base_parallel_execution&& tmp)
@@ -60,7 +62,8 @@ private:
 
 	parallel_execution(
 		const functor_ref<bool(std::size_t)>&,
-		execution_params&
+		execution_params&,
+		const allocator<void>&
 	);
 
 	friend class parallelizer;
@@ -76,7 +79,8 @@ private:
 
 	stateful_parallel_execution(
 		vector<functor<bool(std::size_t)>>&&,
-		execution_params&
+		execution_params&,
+		const allocator<void>&
 	);
 
 	friend class parallelizer;
@@ -88,7 +92,7 @@ public:
 class parallelizer
 {
 private:
-	//TODO allocator
+	allocator<void> _alloc;
 
 	static
 	execution_params& _prepare_params(execution_params& param)
@@ -97,6 +101,12 @@ private:
 		return param;
 	}
 public:
+	parallelizer(void) = default;
+
+	parallelizer(const allocator<void>& alloc)
+	 : _alloc(alloc)
+	{ }
+
 	parallel_execution
 	execute(
 		const functor_ref<bool(std::size_t)>& kernel,
@@ -105,7 +115,8 @@ public:
 	{
 		return parallel_execution(
 			kernel,
-			_prepare_params(params)
+			_prepare_params(params),
+			_alloc
 		);
 	}
 
@@ -115,7 +126,38 @@ public:
 		execution_params params;
 		return parallel_execution(
 			kernel,
-			_prepare_params(params)
+			_prepare_params(params),
+			_alloc
+		);
+	}
+
+	template <typename Kernel>
+	stateful_parallel_execution
+	execute_stateful(
+		const Kernel& kernel,
+		execution_params& params
+	) const
+	{
+		_prepare_params(params);
+
+		vector<functor<bool(std::size_t)>> kernels((
+			allocator<functor<bool(std::size_t)>>(_alloc)
+		));
+		kernels.reserve(params._thread_count);
+
+		for(unsigned i=0; i<params._thread_count; ++i)
+		{
+			kernels.emplace_back(
+				std::allocator_arg,
+				_alloc,
+				Kernel(kernel)
+			);
+		}
+
+		return stateful_parallel_execution(
+			std::move(kernels),
+			params,
+			_alloc
 		);
 	}
 };

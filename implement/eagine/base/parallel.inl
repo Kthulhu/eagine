@@ -33,8 +33,10 @@ EAGINE_LIB_FUNC
 parallel_execution::
 parallel_execution(
 	const functor_ref<bool(std::size_t)>& kern,
-	execution_params& params
-): _kern(kern)
+	execution_params& params,
+	const allocator<void>& alloc
+): base_parallel_execution(alloc)
+ , _kern(kern)
 {
 	auto kern_wrap =
 		[this](void)
@@ -60,8 +62,10 @@ EAGINE_LIB_FUNC
 stateful_parallel_execution::
 stateful_parallel_execution(
 	vector<functor<bool(std::size_t)>>&& knls,
-	execution_params&
-): _knls(knls)
+	execution_params&,
+	const allocator<void>& alloc
+): base_parallel_execution(alloc)
+ , _knls(knls)
 {
 	_evts.reserve(_knls.size());
 
