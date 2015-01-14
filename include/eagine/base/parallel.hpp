@@ -20,35 +20,30 @@ namespace base {
 
 struct execution_params
 {
-	unsigned thread_count = 2;
+	unsigned _thread_count = 2;
 	std::size_t invocations = 0;
 };
 
 class parallelizer;
 
-class parallel_execution
+class base_parallel_execution
 {
-private:
+protected:
 	atomic<std::size_t> _id;
-	functor_ref<bool(std::size_t)> _kern;
-
 	vector<future<void>> _evts;
 
-	parallel_execution(
-		const functor_ref<bool(std::size_t)>&,
-		execution_params&
-	);
-
-	friend class parallelizer;
-public:
-	parallel_execution(parallel_execution&& tmp)
+	base_parallel_execution(void)
 	noexcept
-	 : _id(tmp._id.load())
-	 , _kern(std::move(tmp._kern))
-	 , _evts(std::move(tmp._evts))
+	 : _id(0u)
 	{ }
 
-	~parallel_execution(void)
+	base_parallel_execution(base_parallel_execution&& tmp)
+	noexcept
+	 : _id(tmp._id.load())
+	 , _evts(std::move(tmp._evts))
+	{ }
+public:
+	~base_parallel_execution(void)
 	noexcept
 	{
 		wait();
@@ -57,8 +52,50 @@ public:
 	void wait(void);
 };
 
+class parallel_execution
+ : public base_parallel_execution
+{
+private:
+	functor_ref<bool(std::size_t)> _kern;
+
+	parallel_execution(
+		const functor_ref<bool(std::size_t)>&,
+		execution_params&
+	);
+
+	friend class parallelizer;
+public:
+	parallel_execution(parallel_execution&&) = default;
+};
+
+class stateful_parallel_execution
+ : public base_parallel_execution
+{
+private:
+	vector<functor<bool(std::size_t)>> _knls;
+
+	stateful_parallel_execution(
+		vector<functor<bool(std::size_t)>>&&,
+		execution_params&
+	);
+
+	friend class parallelizer;
+public:
+	stateful_parallel_execution(stateful_parallel_execution&&) = default;
+
+};
+
 class parallelizer
 {
+private:
+	//TODO allocator
+
+	static
+	execution_params& _prepare_params(execution_params& param)
+	{
+		// TODO
+		return param;
+	}
 public:
 	parallel_execution
 	execute(
@@ -66,14 +103,20 @@ public:
 		execution_params& params
 	) const
 	{
-		return parallel_execution(kernel, params);
+		return parallel_execution(
+			kernel,
+			_prepare_params(params)
+		);
 	}
 
 	parallel_execution
 	execute(const functor_ref<bool(std::size_t)>& kernel) const
 	{
 		execution_params params;
-		return parallel_execution(kernel, params);
+		return parallel_execution(
+			kernel,
+			_prepare_params(params)
+		);
 	}
 };
 

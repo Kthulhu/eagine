@@ -31,7 +31,7 @@ int main(void)
 	);
 
 	execution_params para;
-	para.thread_count = 4;
+	para._thread_count = 4;
 	auto exec = pzr.execute(func, para);
 	std::cout << "running" << std::endl;
 	exec.wait();

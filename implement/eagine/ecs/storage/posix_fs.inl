@@ -2,11 +2,12 @@
  *  @file eagine/ecs/posix_fs_storage.inl
  *  @brief Implementation posix_fs_component_storage
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/eagine_config.hpp>
+#include <eagine/ecs/entity.hpp>
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/format.hpp>
@@ -801,6 +802,64 @@ posix_fs_component_storage<Entity, Component>::
 for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 {
 	_for_each(func, meta::false_type());
+}
+//------------------------------------------------------------------------------
+// posix_fs_component_storage::_parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+template <typename Func, typename IsConst>
+inline
+void
+posix_fs_component_storage<Entity, Component>::
+_parallel_for_each(
+	const Func& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param,
+	IsConst
+)
+{
+/*	TODO
+	posix_fs_storage_iterator<Entity> iter(*this);
+	while(!iter.done())
+	{
+		_for_single(func, iter.current(), &iter, ic);
+		iter.next();
+	}
+*/
+}
+//------------------------------------------------------------------------------
+// posix_fs_component_storage::parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+posix_fs_component_storage<Entity, Component>::
+parallel_for_each(
+	const base::functor_ref<
+		void(const Entity&, const Component&)
+	>& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	_parallel_for_each(func, prlzr, param, meta::true_type());
+}
+//------------------------------------------------------------------------------
+// posix_fs_component_storage::parallel_for_each
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+posix_fs_component_storage<Entity, Component>::
+parallel_for_each(
+	const base::functor_ref<
+		void(const Entity&, Component&)
+	>& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	_parallel_for_each(func, prlzr, param, meta::false_type());
 }
 //------------------------------------------------------------------------------
 } // namespace ecs

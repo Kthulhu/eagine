@@ -8,6 +8,7 @@
 #include <eagine/ecs/manager.hpp>
 #include <eagine/ecs/storage/normal.hpp>
 #include <eagine/ecs/storage/immutable.hpp>
+#include <eagine/ecs/storage/posix_fs.hpp>
 //------------------
 #include <eagine/base/guid.hpp>
 #include <eagine/base/error.hpp>
@@ -55,13 +56,18 @@ int main(void)
 
 		base::parallelizer p;
 		base::execution_params ep;
-		ep.thread_count = 4;
+		ep._thread_count = 4;
 
 		manager<unsigned> m;
 
 		m.register_component_storage<normal_component_storage, cmp_1>();
-
 		assert(m.knows_component_type<cmp_1>());
+
+		std::size_t dmy[6] = {0u, 0u, 0u};
+		base::const_memory_block blk(dmy, sizeof(dmy));
+
+		m.register_component_storage<immutable_component_storage, cmp_2>(blk);
+		assert(m.knows_component_type<cmp_2>());
 
 		for(unsigned i=0; i<100000; ++i)
 		{
@@ -82,9 +88,6 @@ int main(void)
 		);
 
 		std::cout << unsigned(n) << std::endl;
-
-		std::cout << sizeof(unsigned) << std::endl;
-		std::cout << sizeof(std::size_t) << std::endl;
 
 		return 0;
 	}

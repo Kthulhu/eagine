@@ -10,39 +10,11 @@
 namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
-// parallel_execution::parallel_execution
-//------------------------------------------------------------------------------
-EAGINE_LIB_FUNC
-parallel_execution::
-parallel_execution(
-	const functor_ref<bool(std::size_t)>& kern,
-	execution_params& params
-): _id(0)
- , _kern(kern)
-{
-	auto kern_wrap =
-		[=](void)
-		{
-			while(true)
-			{
-				std::size_t id = _id++;
-				if(!_kern(id)) break;
-			}
-		};
-
-	_evts.reserve(params.thread_count);
-
-	for(unsigned i=0; i<params.thread_count; ++i)
-	{
-		_evts.push_back(async(launch::async, kern_wrap));
-	}
-}
-//------------------------------------------------------------------------------
-// parallel_execution::wait
+// base_parallel_execution::wait
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
 void
-parallel_execution::
+base_parallel_execution::
 wait(void)
 {
 	if(!_evts.empty())
@@ -52,6 +24,59 @@ wait(void)
 			finished.wait();
 		}
 		_evts.clear();
+	}
+}
+//------------------------------------------------------------------------------
+// parallel_execution::parallel_execution
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+parallel_execution::
+parallel_execution(
+	const functor_ref<bool(std::size_t)>& kern,
+	execution_params& params
+): _kern(kern)
+{
+	auto kern_wrap =
+		[this](void)
+		{
+			while(true)
+			{
+				std::size_t id = _id++;
+				if(!_kern(id)) break;
+			}
+		};
+
+	_evts.reserve(params._thread_count);
+
+	for(unsigned i=0; i<params._thread_count; ++i)
+	{
+		_evts.push_back(async(launch::async, kern_wrap));
+	}
+}
+//------------------------------------------------------------------------------
+// stateful_parallel_execution::stateful_parallel_execution
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+stateful_parallel_execution::
+stateful_parallel_execution(
+	vector<functor<bool(std::size_t)>>&& knls,
+	execution_params&
+): _knls(knls)
+{
+	_evts.reserve(_knls.size());
+
+	for(auto& kern : _knls)
+	{
+		auto kern_wrap =
+			[this,&kern](void)
+			{
+				while(true)
+				{
+					std::size_t id = _id++;
+					if(!kern(id)) break;
+				}
+			};
+		_evts.push_back(async(launch::async, kern_wrap));
 	}
 }
 //------------------------------------------------------------------------------

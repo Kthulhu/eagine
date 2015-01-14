@@ -2,7 +2,7 @@
  *  @file eagine/ecs/storage/posix_fs.hpp
  *  @brief Storages based on files stored in a POSIX filesystem
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -137,8 +137,7 @@ public:
 	posix_fs_component_storage(
 		base::string&& prefix,
 		const base::shared_ptr<posix_fs_component_io<Component>>& cmp_io
-	)
-	 : posix_fs_base_storage<Entity>(std::move(prefix))
+	): posix_fs_base_storage<Entity>(std::move(prefix))
 	 , _cmp_io(cmp_io)
 	{
 		assert(_cmp_io);
@@ -204,6 +203,30 @@ public:
 		const base::functor_ref<
 			void(const Entity&, Component&)
 		>& func
+	) override;
+
+	template <typename Func, typename IsConst>
+	void _parallel_for_each(
+		const Func&,
+		base::parallelizer&,
+		base::execution_params&,
+		IsConst
+	);
+
+	void parallel_for_each(
+		const base::functor_ref<
+			void(const Entity&, const Component&)
+		>& kernel,
+		base::parallelizer&,
+		base::execution_params&
+	) override;
+
+	void parallel_for_each(
+		const base::functor_ref<
+			void(const Entity&, Component&)
+		>& kernel,
+		base::parallelizer&,
+		base::execution_params&
 	) override;
 };
 
