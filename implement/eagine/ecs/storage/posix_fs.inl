@@ -13,6 +13,7 @@
 #include <eagine/base/format.hpp>
 #include <eagine/base/locale.hpp>
 #include <eagine/base/error.hpp>
+#include <sys/stat.h>
 #include <cerrno>
 #endif
 
@@ -27,7 +28,7 @@ namespace detail {
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-void posix_fs_stg_handle_opendir_fail(int ec, const base::cstrref& path)
+void posix_fs_stg_handle_scandir_fail(int ec, const base::cstrref& path)
 {
 	assert(path.null_terminated());
 
@@ -35,13 +36,13 @@ void posix_fs_stg_handle_opendir_fail(int ec, const base::cstrref& path)
 	throw system_error(std::error_code(ec, std::system_category()), (
 		format(translate(
 			"POSIX filesystem component storage failed "
-			"to open directory '{1}'."
+			"to scan directory '{1}'."
 		)) % path.data()
 	).str());
 }
 //------------------------------------------------------------------------------
 EAGINE_LIB_FUNC
-void posix_fs_stg_handle_readdir_fail(int ec, const base::cstrref& path)
+void posix_fs_stg_handle_stat_fail(int ec, const base::cstrref& path)
 {
 	assert(path.null_terminated());
 
@@ -49,7 +50,7 @@ void posix_fs_stg_handle_readdir_fail(int ec, const base::cstrref& path)
 	throw system_error(std::error_code(ec, std::system_category()), (
 		format(translate(
 			"POSIX filesystem component storage failed "
-			"to read directory '{1}'."
+			"to stat directory entry '{1}'."
 		)) % path.data()
 	).str());
 }
@@ -210,9 +211,8 @@ void posix_fs_stg_do_swap(const base::cstrref& p1, const base::cstrref& p2)
 //------------------------------------------------------------------------------
 #else
 //------------------------------------------------------------------------------
-void posix_fs_stg_handle_opendir_fail(int ec, const base::cstrref& path);
-void posix_fs_stg_handle_readdir_fail(int ec, const base::cstrref& path);
-void posix_fs_stg_handle_readdir_fail(int ec);
+void posix_fs_stg_handle_scandir_fail(int ec, const base::cstrref& path);
+void posix_fs_stg_handle_stat_fail(int ec, const base::cstrref& path);
 void posix_fs_stg_handle_store_fail(const base::string& s);
 void posix_fs_stg_handle_fetch_fail(const base::string& s);
 void posix_fs_stg_handle_swap_fail(const base::string& f, const base::string& t);
@@ -233,85 +233,162 @@ inline
 posix_fs_storage_iterator<Entity>::
 posix_fs_storage_iterator(posix_fs_base_storage<Entity>& storage)
  : _storage(storage)
- , _dir(::opendir(_storage._prefix.c_str()), ::closedir)
- , _cur_de(nullptr)
-{
-	if(!bool(_dir))
-	{
-		detail::posix_fs_stg_handle_opendir_fail(
-			errno,
-			_storage._prefix
-		);
-	}
-	
-	advance();
-	skip();
-}
+ , _de_pos(0)
+ , _de_count(-1)
+ , _de_list(nullptr)
+{ }
 //------------------------------------------------------------------------------
-// posix_fs_storage_iterator::get
+// posix_fs_storage_iterator::posix_fs_storage_iterator
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
-base::cstrref
 posix_fs_storage_iterator<Entity>::
-get_name(void)
+posix_fs_storage_iterator(posix_fs_storage_iterator&& tmp)
+ : _storage(tmp._storage)
+ , _de_pos(tmp._de_pos)
+ , _de_count(tmp._de_count)
+ , _de_list(tmp._de_list)
+{
+	tmp._de_count = -1;
+	tmp._de_list = nullptr;
+}
+//------------------------------------------------------------------------------
+// posix_fs_storage_iterator::~posix_fs_storage_iterator
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+posix_fs_storage_iterator<Entity>::
+~posix_fs_storage_iterator(void)
+{
+	if(_de_list)
+	{
+		for(int i=0; i<_de_count; ++i)
+		{
+			::free((void*)_de_list[i]);
+		}
+		::free((void*)_de_list);
+	}
+}
+//------------------------------------------------------------------------------
+// _posix_fs_storage_iterator_get_name
+//------------------------------------------------------------------------------
+static inline
+base::cstrref
+_posix_fs_storage_iterator_get_name(const ::dirent* de)
 {
 #ifdef _DIRENT_HAVE_D_NAMLEN
-	return base::cstrref(
-		_pdirent()->d_name,
-		_pdirent()->d_namlen
-	);
+	return base::cstrref(de->d_name, de->d_namlen);
 #else
-	return base::cstrref(_pdirent()->d_name);
+	return base::cstrref(de->d_name);
 #endif
 }
 //------------------------------------------------------------------------------
-// posix_fs_storage_iterator::advance
+// _posix_fs_storage_iterator_filter
+//------------------------------------------------------------------------------
+template <typename Entity>
+static inline
+int
+_posix_fs_storage_iterator_filter(const ::dirent* de)
+{
+#ifdef _DIRENT_HAVE_D_TYPE
+	if((de->d_type != DT_REG) && (de->d_type != DT_LNK))
+	{
+		return 0;
+	}
+#endif
+	return entity_traits<Entity>::is_valid_string(
+		_posix_fs_storage_iterator_get_name(de)
+	)?1:0;
+}
+//------------------------------------------------------------------------------
+// _posix_fs_storage_iterator_compare
+//------------------------------------------------------------------------------
+template <typename Entity>
+static inline
+int
+_posix_fs_storage_iterator_compare(const ::dirent** a, const ::dirent** b)
+{
+	Entity ea(entity_traits<Entity>::from_string(
+		_posix_fs_storage_iterator_get_name(*a)
+	));
+	Entity eb(entity_traits<Entity>::from_string(
+		_posix_fs_storage_iterator_get_name(*b)
+	));
+
+	if(ea == eb) return 0;
+	if(ea < eb) return -1;
+	return 1;
+}
+//------------------------------------------------------------------------------
+// posix_fs_storage_iterator::_init
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
 void
 posix_fs_storage_iterator<Entity>::
-advance(void)
+_init(bool force_rewind)
 {
-	if(::readdir_r(_dir.get(), _pdirent(), &_cur_de) != 0)
+	if(_de_count < 0)
 	{
-		detail::posix_fs_stg_handle_readdir_fail(
-			errno,
-			_storage._prefix
+		_de_count = ::scandir(
+			_storage._prefix.c_str(),
+			&_de_list,
+			&_posix_fs_storage_iterator_filter<Entity>,
+			&_posix_fs_storage_iterator_compare<Entity>
 		);
+		if(_de_count < 0)
+		{
+			detail::posix_fs_stg_handle_scandir_fail(
+				errno,
+				_storage._prefix
+			);
+			force_rewind = false;
+		}
+		else
+		{
+			force_rewind = true;
+		}
+	}
+	if(force_rewind)
+	{
+		_de_pos = 0;
+		_skip();
 	}
 }
 //------------------------------------------------------------------------------
-// posix_fs_storage_iterator::skip
+// posix_fs_storage_iterator::_skip
 //------------------------------------------------------------------------------
 template <typename Entity>
 inline
 void
 posix_fs_storage_iterator<Entity>::
-skip(void)
+_skip(void)
 {
-	assert(_dir);
-	while(_cur_de)
+	while(_de_pos < _de_count)
 	{
-#ifdef _DIRENT_HAVE_D_TYPE
-		if(_cur_de->d_type == DT_REG)
+		auto path =
+			_storage._prefix+
+			_posix_fs_storage_iterator_get_name(_de_list[_de_pos]);
+
+		struct ::stat fs;
+
+		if(::stat(base::c_str(path), &fs) != 0)
 		{
-			if(entity_traits<Entity>::is_valid_string(
-				base::cstrref(_cur_de->d_name)
-			))
-			{
-				_ent = entity_traits<Entity>::
-					from_string(_cur_de->d_name);
-				break;
-			}
+			detail::posix_fs_stg_handle_stat_fail(
+				errno,
+				path
+			);
 		}
-		// TODO symlinks
-#else
-		// TODO lstat
-		static_assert(false, "dirent::d_type is required!");
-#endif
-		advance();
+
+		if(S_ISREG(fs.st_mode)) break;
+
+		++_de_pos;
+	}
+	if(_de_pos < _de_count)
+	{
+		_ent = entity_traits<Entity>::from_string(
+			_posix_fs_storage_iterator_get_name(_de_list[_de_pos])
+		);
 	}
 }
 //------------------------------------------------------------------------------
@@ -323,9 +400,8 @@ void
 posix_fs_storage_iterator<Entity>::
 reset(void)
 {
-	assert(_dir);
-	::rewinddir(_dir.get());
-	
+	_init(true);
+	assert(_de_list != nullptr);
 }
 //------------------------------------------------------------------------------
 // posix_fs_storage_iterator::done
@@ -336,7 +412,8 @@ bool
 posix_fs_storage_iterator<Entity>::
 done(void)
 {
-	return _cur_de == nullptr;
+	_init();
+	return _de_pos >= _de_count;
 }
 //------------------------------------------------------------------------------
 // posix_fs_storage_iterator::next
@@ -347,9 +424,10 @@ void
 posix_fs_storage_iterator<Entity>::
 next(void)
 {
+	_init();
 	assert(!done());
-	advance();
-	skip();
+	++_de_pos;
+	_skip();
 }
 //------------------------------------------------------------------------------
 // posix_fs_storage_iterator::current
@@ -360,6 +438,7 @@ const Entity&
 posix_fs_storage_iterator<Entity>::
 current(void)
 {
+	_init();
 	assert(!done());
 	return _ent;
 }
@@ -804,17 +883,17 @@ for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 	_for_each(func, meta::false_type());
 }
 //------------------------------------------------------------------------------
-// posix_fs_component_storage_pfe_adaptor
+// _posix_fs_component_storage_pfe_adaptor
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component, typename Func, typename IsConst>
-struct posix_fs_component_storage_pfe_adaptor
+struct _posix_fs_component_storage_pfe_adaptor
 {
 	posix_fs_component_storage<Entity, Component>& _storage;
 	posix_fs_storage_iterator<Entity> _iter;
 	Func _func;
 	std::size_t _prev;
 
-	posix_fs_component_storage_pfe_adaptor(
+	_posix_fs_component_storage_pfe_adaptor(
 		posix_fs_component_storage<Entity, Component>& storage,
 		const Func& func
 	): _storage(storage)
@@ -823,8 +902,8 @@ struct posix_fs_component_storage_pfe_adaptor
 	 , _prev(0)
 	{ }
 
-	posix_fs_component_storage_pfe_adaptor(
-		const posix_fs_component_storage_pfe_adaptor& that
+	_posix_fs_component_storage_pfe_adaptor(
+		const _posix_fs_component_storage_pfe_adaptor& that
 	): _storage(that._storage)
 	 , _iter(_storage)
 	 , _func(that._func)
@@ -866,7 +945,7 @@ _parallel_for_each(
 	IsConst
 )
 {
-	posix_fs_component_storage_pfe_adaptor<
+	_posix_fs_component_storage_pfe_adaptor<
 		Entity,
 		Component,
 		Func,

@@ -7,6 +7,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/eagine_config.hpp>
+#include <eagine/base/array.hpp>
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/format.hpp>
@@ -51,6 +52,37 @@ void mgr_handle_cmp_not_reg(const base::string&);
 #endif
 //------------------------------------------------------------------------------
 } // namespace detail
+//------------------------------------------------------------------------------
+// manager::_find_storage
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component>
+component_storage<Entity, Component>&
+manager<Entity>::
+_find_storage(void)
+{
+	auto p_storage = _storages.find(get_component_uid<Component>());
+
+	typedef component_storage<Entity, Component> cs_t;
+	cs_t* ct_storage = nullptr;
+
+	if(p_storage != _storages.end())
+	{
+		auto& b_storage = *p_storage;
+		if(b_storage)
+		{
+			ct_storage = dynamic_cast<cs_t*>(b_storage.get());
+			assert(ct_storage);
+		}
+	}
+	if(!ct_storage)
+	{
+		base::string(*get_name)(void) = _cmp_name_getter<Component>();
+		detail::mgr_handle_cmp_not_reg(get_name());
+		assert(!"Logic error!");
+	}
+	return *ct_storage;
+}
 //------------------------------------------------------------------------------
 // manager::_do_reg_cmp_type
 //------------------------------------------------------------------------------
@@ -165,7 +197,6 @@ _apply_on_cmp_stg(
 			typedef component_storage<Entity, Component> cs_t;
 
 			cs_t* ct_storage = dynamic_cast<cs_t*>(b_storage.get());
-
 			assert(ct_storage);
 
 			return func(ct_storage);
@@ -397,6 +428,246 @@ _call_for_each(const Func& func)
 			return true;
 		}
 	);
+}
+//------------------------------------------------------------------------------
+// _manager_for_each_m_helper
+//------------------------------------------------------------------------------
+// TODO
+template <typename Entity, typename ... Component>
+class _manager_for_each_m_helper
+{
+private:
+	template <typename C>
+	struct _bare_c : meta::remove_const<
+		typename meta::remove_reference<C>::type
+	>{ };
+
+	template <typename ... C>
+	struct _list
+	{ };
+
+	static const std::size_t N = sizeof ... (Component);
+	static_assert(N >= 1, "At least 2 components are required.");
+
+	base::array<base_storage<Entity>*, N> _storages;
+
+	base::array<storage_iterator<Entity>*, N> _iterators;
+
+	base::array<storage_capabilities, N> _capabilities;
+
+	template <typename Func, typename ... Cr>
+	inline
+	void _apply(
+		const Func& func,
+		std::size_t,
+		const Entity& e,
+		_list<>,
+		Cr&...cr
+	)
+	{
+		func(e, cr...);
+	}
+
+	template <
+		typename Func,
+		typename C,
+		typename ... Ct,
+		typename ... Cr
+	>
+	inline
+	void _apply(
+		const Func& func,
+		std::size_t i,
+		const Entity& e,
+		_list<C, Ct...>,
+		Cr& ... cr
+	)
+	{
+		typedef component_storage<
+			Entity,
+			typename _bare_c<C>::type
+		> cs_t;
+
+		cs_t* ct_storage = dynamic_cast<cs_t*>(_storages[i]);
+		assert(ct_storage);
+
+		storage_iterator<Entity>* iter = _iterators[i];
+		storage_capabilities caps = _capabilities[i];
+		bool is_const = meta::is_const<C>();
+
+		assert(iter->current() == e);
+
+		if(!is_const)
+		{
+			assert(caps & storage_capability::modify);
+		}
+
+		if(caps & storage_capability::point_to)
+		{
+			C* pc = ct_storage->access(
+				typename base::access<C&>::type(),
+				e,
+				iter
+			);
+			_apply(func, i+1, e, _list<Ct...>(), cr..., *pc);
+		}
+		else if(caps & storage_capability::fetch)
+		{
+			typename _bare_c<C>::type c;
+			ct_storage->fetch(c, e, iter);
+			_apply(func, i+1, e, _list<Ct...>(), cr..., c);
+
+			if(!is_const)
+			{
+				assert(caps & storage_capability::store);
+				ct_storage->store(std::move(c), e, iter);
+			}
+		}
+		else
+		{
+			assert(!"Storage does not support requested operation!");
+		}
+	}
+public:
+	_manager_for_each_m_helper(
+		component_storage<
+			Entity,
+			typename _bare_c<Component>::type
+		>& ... storage
+	): _storages{{static_cast<base_storage<Entity>*>(&storage)...}}
+	 , _iterators{{storage.new_iterator()...}}
+	 , _capabilities{{storage.capabilities()...}}
+	{
+		sync();
+	}
+
+	~_manager_for_each_m_helper(void)
+	{
+		for(std::size_t i=0; i<N; ++i)
+		{
+			_storages[i]->delete_iterator(_iterators[i]);
+		}
+	}
+
+	bool done(void) const
+	{
+		for(std::size_t i=0; i<N; ++i)
+		{
+			if(_iterators[i]->done())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void sync(void)
+	{
+		while(!_iterators[0]->done())
+		{
+			Entity ent = _iterators[0]->current();
+			Entity max = ent;
+
+			bool some_done = false;
+			for(std::size_t i=1; i<N; ++i)
+			{
+				if(_iterators[i]->done())
+				{
+					some_done = true;
+					break;
+				}
+
+				Entity tmp = _iterators[i]->current();
+				if(max < tmp)
+				{
+					max = tmp;
+				}
+			}
+
+			if(some_done)
+			{
+				break;
+			}
+
+			if(ent < max)
+			{
+				while(!_iterators[0]->done())
+				{
+					ent = _iterators[0]->current();
+					if(ent >= max)
+					{
+						break;
+					}
+					_iterators[0]->next();
+				}
+			}
+			for(std::size_t i=1; i<N; ++i)
+			{
+				while(!_iterators[i]->done())
+				{
+					Entity tmp = _iterators[i]->current();
+					if(tmp >= ent)
+					{
+						break;
+					}
+					_iterators[i]->next();
+				}
+			}
+
+			bool all_equal = true;
+			for(std::size_t i=1; i<N; ++i)
+			{
+				if(_iterators[i]->done())
+				{
+					all_equal = false;
+					break;
+				}
+
+				Entity tmp = _iterators[i]->current();
+				if(tmp != ent)
+				{
+					all_equal = false;
+					break;
+				}
+			}
+
+			if(all_equal)
+			{
+				break;
+			}
+		}
+	}
+
+	void next(void)
+	{
+		assert(!done());
+		_iterators[0]->next();
+		sync();
+	}
+
+	template <typename Func>
+	void apply(const Func& func)
+	{
+		_apply(func, 0, _iterators[0]->current(), _list<Component...>());
+	}
+};
+//------------------------------------------------------------------------------
+// manager::_call_for_each_m
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename ... Component, typename Func>
+inline void
+manager<Entity>::
+_call_for_each_m(const Func& func)
+{
+	_manager_for_each_m_helper<Entity, Component...> hlp(
+		_find_storage<typename _bare_c<Component>::type>()...
+	);
+	while(!hlp.done())
+	{
+		hlp.apply(func);
+		hlp.next();
+	}
 }
 //------------------------------------------------------------------------------
 // manager::_call_pl_for_each

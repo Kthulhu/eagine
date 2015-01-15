@@ -2,7 +2,7 @@
  *  @file eagine/base/string.hpp
  *  @brief UTF-8 encoded string and string references.
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -912,6 +912,22 @@ noexcept
 	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
 
 	return (scmp > 0) || ((scmp == 0) && (lcmp >= 0));
+}
+
+// operator + (S1, S2)
+template <typename S1, typename S2>
+inline
+typename meta::enable_if<
+	detail::are_bin_op_strings<S1, S2>::value,
+	basic_string<typename char_string_traits<S1>::value_type>
+>::type operator + (const S1& s1, const S2& s2)
+noexcept
+{
+	basic_string<typename char_string_traits<S1>::value_type> result;
+	result.reserve(s1.size() + s2.size());
+	result.append(s1.begin(), s1.end());
+	result.append(s2.begin(), s2.end());
+	return std::move(result);
 }
 
 // operator <<

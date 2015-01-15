@@ -11,6 +11,7 @@
 #include <eagine/ecs/storage/posix_fs.hpp>
 //------------------
 #include <eagine/base/io.hpp>
+#include <eagine/base/sstream.hpp>
 #include <eagine/base/guid.hpp>
 #include <eagine/base/error.hpp>
 //------------------
@@ -29,14 +30,23 @@ struct entity_traits<unsigned>
 
 	static inline
 	bool is_valid_string(const base::cstrref& s)
-	{
-		return std::atoi(base::c_str(s)) != 0;
+	{ 
+		for(char c : s)
+		{
+			if(!((c >= '0') && (c <= '9')))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	static inline
 	base::string to_string(unsigned u)
 	{
-		return base::string();
+		base::stringstream ss;
+		ss << u;
+		return ss.str();
 	}
 
 	static inline
@@ -55,6 +65,8 @@ struct cmp_1
 {
 	int i;
 
+	cmp_1(void) = default;
+
 	cmp_1(int x)
 	 : i(x)
 	{ }
@@ -64,6 +76,8 @@ struct cmp_2
  : eagine::ecs::component<cmp_2>
 {
 	double d;
+
+	cmp_2(void) = default;
 
 	cmp_2(double x)
 	 : d(x)
@@ -130,12 +144,12 @@ int main(void)
 		assert(m.knows_component_type<cmp_2>());
 
 		m.register_component_storage<posix_fs_component_storage, cmp_3>(
-			base::string("./tmp"),
+			base::string("./tmp/"),
 			base::make_shared<cmp_3_io>()
 		);
 		assert(m.knows_component_type<cmp_3>());
 
-		for(unsigned i=0; i<100000; ++i)
+		for(unsigned i=1; i<=1000; ++i)
 		{
 			m.add(i, cmp_1(i));
 		}
@@ -144,7 +158,7 @@ int main(void)
 
 		m.parallel_for_each(
 			base::functor_ref<void(const unsigned&, const cmp_1&)>(
-			[&n](const unsigned&, const cmp_1& c)
+			[&n](unsigned, const cmp_1& c)
 			{
 				if(fib(20+c.i % 10) % 2 == 0)
 				{
@@ -154,6 +168,26 @@ int main(void)
 		);
 
 		std::cout << unsigned(n) << std::endl;
+
+		m.for_each(
+			base::functor_ref<void(const unsigned&, const cmp_3&)>(
+				[](unsigned e, const cmp_3& c)
+				{
+					std::cout << e << "|" << c.s << std::endl;
+				}
+			)
+		);
+
+		std::cout << std::endl;
+
+		m.for_each(
+			base::functor_ref<void(const unsigned&, cmp_1&, const cmp_3&)>(
+				[](unsigned, cmp_1& c1, const cmp_3& c3)
+				{
+					std::cout << c1.i << "|" << c3.s << std::endl;
+				}
+			)
+		);
 
 		return 0;
 	}

@@ -59,6 +59,9 @@ private:
 		return &base::type_name<C>;
 	}
 
+	template <typename C>
+	component_storage<Entity, C>& _find_storage(void);
+
 	void _do_reg_cmp_type(
 		const base::shared_ptr<base_storage<Entity>>&,
 		component_uid_t,
@@ -137,6 +140,9 @@ private:
 
 	template <typename C, typename Func>
 	void _call_for_each(const Func&);
+
+	template <typename ... C, typename Func>
+	void _call_for_each_m(const Func&);
 
 	template <typename C, typename Func>
 	void _call_pl_for_each(
@@ -345,6 +351,18 @@ public:
 	)
 	{
 		_call_for_each<C>(func);
+		return *this;
+	}
+
+	template <typename ... C>
+	typename meta::enable_if<
+		(sizeof...(C) > 1),
+		manager&
+	>::type for_each(
+		const base::functor_ref<void(const Entity&, C&...)>& func
+	)
+	{
+		_call_for_each_m<C...>(func);
 		return *this;
 	}
 

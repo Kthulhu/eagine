@@ -51,31 +51,19 @@ class posix_fs_storage_iterator
 protected:
 	posix_fs_base_storage<Entity>& _storage;
 private:
-	base::unique_ptr<::DIR, int (*)(::DIR*)> _dir;
-	::dirent* _cur_de;
+	int _de_pos, _de_count;
+	::dirent **_de_list;
+
+	void _init(bool force_rewind = false);
+	void _skip(void);
 
 	Entity _ent;
-
-	typedef typename std::aligned_storage<
-		offsetof(::dirent, d_name)+NAME_MAX,
-		alignof(void*)
-	>::type _deas_t;
-
-	_deas_t _deas;
-
-	::dirent* _pdirent(void)
-	{
-		return (dirent*)(void*)(&_deas);
-	}
 public:
 	posix_fs_storage_iterator(posix_fs_base_storage<Entity>& storage);
 
-	posix_fs_storage_iterator(posix_fs_storage_iterator&&) = default;
+	posix_fs_storage_iterator(posix_fs_storage_iterator&&);
+	~posix_fs_storage_iterator(void);
 
-	base::cstrref get_name(void);
-
-	void advance(void);
-	void skip(void);
 	void reset(void) override;
 	bool done(void) override;
 	void next(void) override;
