@@ -10,6 +10,7 @@
 #include <eagine/ecs/storage/immutable.hpp>
 #include <eagine/ecs/storage/posix_fs.hpp>
 //------------------
+#include <eagine/base/io.hpp>
 #include <eagine/base/guid.hpp>
 #include <eagine/base/error.hpp>
 //------------------
@@ -17,6 +18,34 @@
 namespace eagine {
 namespace ecs {
 
+template <>
+struct entity_traits<unsigned>
+{
+	static constexpr inline
+	unsigned nil(void)
+	{
+		return 0;
+	}
+
+	static inline
+	bool is_valid_string(const base::cstrref& s)
+	{
+		return std::atoi(base::c_str(s)) != 0;
+	}
+
+	static inline
+	base::string to_string(unsigned u)
+	{
+		return base::string();
+	}
+
+	static inline
+	unsigned from_string(const base::cstrref& s)
+	{
+		return unsigned(std::atoi(base::c_str(s)));
+	}
+	
+};
 
 } // namespace ecs
 } // namespace eagine
@@ -39,6 +68,37 @@ struct cmp_2
 	cmp_2(double x)
 	 : d(x)
 	{ }
+};
+
+struct cmp_3
+ : eagine::ecs::component<cmp_3>
+{
+	std::string s;
+
+	cmp_3(void) = default;
+
+	cmp_3(std::string&& x)
+	 : s(std::move(x))
+	{ }
+};
+
+struct cmp_3_io
+ : public eagine::ecs::posix_fs_component_io<cmp_3>
+{
+	bool read(const eagine::base::cstrref& path, cmp_3& c)
+	override
+	{
+		auto fc = eagine::base::load_file_data(path);
+		c.s.assign((const char*)fc.data(), fc.size());
+		return true;
+	}
+
+	bool write(const eagine::base::cstrref& path, const cmp_3& c)
+	override
+	{
+		assert(!"Not implemented");
+		return false;
+	}
 };
 
 unsigned fib(unsigned i)
@@ -68,6 +128,12 @@ int main(void)
 
 		m.register_component_storage<immutable_component_storage, cmp_2>(blk);
 		assert(m.knows_component_type<cmp_2>());
+
+		m.register_component_storage<posix_fs_component_storage, cmp_3>(
+			base::string("./tmp"),
+			base::make_shared<cmp_3_io>()
+		);
+		assert(m.knows_component_type<cmp_3>());
 
 		for(unsigned i=0; i<100000; ++i)
 		{

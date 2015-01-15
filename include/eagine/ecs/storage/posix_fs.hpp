@@ -13,6 +13,7 @@
 
 #include <eagine/ecs/storage.hpp>
 #include <eagine/base/string.hpp>
+#include <eagine/base/memory.hpp>
 #include <eagine/meta/type_traits.hpp>
 
 #include <sys/types.h>
@@ -50,7 +51,7 @@ class posix_fs_storage_iterator
 protected:
 	posix_fs_base_storage<Entity>& _storage;
 private:
-	::DIR* _dir;
+	base::unique_ptr<::DIR, int (*)(::DIR*)> _dir;
 	::dirent* _cur_de;
 
 	Entity _ent;
@@ -68,6 +69,8 @@ private:
 	}
 public:
 	posix_fs_storage_iterator(posix_fs_base_storage<Entity>& storage);
+
+	posix_fs_storage_iterator(posix_fs_storage_iterator&&) = default;
 
 	base::cstrref get_name(void);
 

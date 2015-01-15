@@ -233,10 +233,10 @@ inline
 posix_fs_storage_iterator<Entity>::
 posix_fs_storage_iterator(posix_fs_base_storage<Entity>& storage)
  : _storage(storage)
- , _dir(::opendir(_storage._prefix.c_str()))
+ , _dir(::opendir(_storage._prefix.c_str()), ::closedir)
  , _cur_de(nullptr)
 {
-	if(!_dir)
+	if(!bool(_dir))
 	{
 		detail::posix_fs_stg_handle_opendir_fail(
 			errno,
@@ -274,7 +274,7 @@ void
 posix_fs_storage_iterator<Entity>::
 advance(void)
 {
-	if(::readdir_r(_dir, _pdirent(), &_cur_de) != 0)
+	if(::readdir_r(_dir.get(), _pdirent(), &_cur_de) != 0)
 	{
 		detail::posix_fs_stg_handle_readdir_fail(
 			errno,
@@ -324,7 +324,7 @@ posix_fs_storage_iterator<Entity>::
 reset(void)
 {
 	assert(_dir);
-	::rewinddir(_dir);
+	::rewinddir(_dir.get());
 	
 }
 //------------------------------------------------------------------------------
@@ -804,6 +804,54 @@ for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 	_for_each(func, meta::false_type());
 }
 //------------------------------------------------------------------------------
+// posix_fs_component_storage_pfe_adaptor
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component, typename Func, typename IsConst>
+struct posix_fs_component_storage_pfe_adaptor
+{
+	posix_fs_component_storage<Entity, Component>& _storage;
+	posix_fs_storage_iterator<Entity> _iter;
+	Func _func;
+	std::size_t _prev;
+
+	posix_fs_component_storage_pfe_adaptor(
+		posix_fs_component_storage<Entity, Component>& storage,
+		const Func& func
+	): _storage(storage)
+	 , _iter(_storage)
+	 , _func(func)
+	 , _prev(0)
+	{ }
+
+	posix_fs_component_storage_pfe_adaptor(
+		const posix_fs_component_storage_pfe_adaptor& that
+	): _storage(that._storage)
+	 , _iter(_storage)
+	 , _func(that._func)
+	 , _prev(that._prev)
+	{ }
+
+	bool operator()(std::size_t curr)
+	{
+		while(_prev < curr)
+		{
+			if(_iter.done())
+			{
+				return false;
+			}
+			_iter.next();
+			++_prev;
+		}
+		_storage._for_single(
+			_func,
+			_iter.current(),
+			&_iter,
+			IsConst()
+		);
+		return true;
+	}
+};
+//------------------------------------------------------------------------------
 // posix_fs_component_storage::_parallel_for_each
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>
@@ -818,14 +866,14 @@ _parallel_for_each(
 	IsConst
 )
 {
-/*	TODO
-	posix_fs_storage_iterator<Entity> iter(*this);
-	while(!iter.done())
-	{
-		_for_single(func, iter.current(), &iter, ic);
-		iter.next();
-	}
-*/
+	posix_fs_component_storage_pfe_adaptor<
+		Entity,
+		Component,
+		Func,
+		IsConst
+	> adaptor(*this, func);
+
+	prlzr.execute_stateful(adaptor, param).wait();
 }
 //------------------------------------------------------------------------------
 // posix_fs_component_storage::parallel_for_each
