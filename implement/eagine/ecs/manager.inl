@@ -430,118 +430,32 @@ _call_for_each(const Func& func)
 	);
 }
 //------------------------------------------------------------------------------
-// _manager_for_each_m_helper
+// _manager_for_each_m_hlp_base
 //------------------------------------------------------------------------------
 // TODO
-template <typename Entity, typename ... Component>
-class _manager_for_each_m_helper
+template <typename Entity, std::size_t N>
+class _manager_for_each_m_hlp_base
 {
 private:
-	template <typename C>
-	struct _bare_c : meta::remove_const<
-		typename meta::remove_reference<C>::type
-	>{ };
-
-	template <typename ... C>
-	struct _list
-	{ };
-
-	static const std::size_t N = sizeof ... (Component);
 	static_assert(N >= 1, "At least 2 components are required.");
-
+protected:
 	base::array<base_storage<Entity>*, N> _storages;
 
 	base::array<storage_iterator<Entity>*, N> _iterators;
 
 	base::array<storage_capabilities, N> _capabilities;
 
-	template <typename Func, typename ... Cr>
-	inline
-	void _apply(
-		const Func& func,
-		std::size_t,
-		const Entity& e,
-		_list<>,
-		Cr&...cr
-	)
-	{
-		func(e, cr...);
-	}
-
-	template <
-		typename Func,
-		typename C,
-		typename ... Ct,
-		typename ... Cr
-	>
-	inline
-	void _apply(
-		const Func& func,
-		std::size_t i,
-		const Entity& e,
-		_list<C, Ct...>,
-		Cr& ... cr
-	)
-	{
-		typedef component_storage<
-			Entity,
-			typename _bare_c<C>::type
-		> cs_t;
-
-		cs_t* ct_storage = dynamic_cast<cs_t*>(_storages[i]);
-		assert(ct_storage);
-
-		storage_iterator<Entity>* iter = _iterators[i];
-		storage_capabilities caps = _capabilities[i];
-		bool is_const = meta::is_const<C>();
-
-		assert(iter->current() == e);
-
-		if(!is_const)
-		{
-			assert(caps & storage_capability::modify);
-		}
-
-		if(caps & storage_capability::point_to)
-		{
-			C* pc = ct_storage->access(
-				typename base::access<C&>::type(),
-				e,
-				iter
-			);
-			_apply(func, i+1, e, _list<Ct...>(), cr..., *pc);
-		}
-		else if(caps & storage_capability::fetch)
-		{
-			typename _bare_c<C>::type c;
-			ct_storage->fetch(c, e, iter);
-			_apply(func, i+1, e, _list<Ct...>(), cr..., c);
-
-			if(!is_const)
-			{
-				assert(caps & storage_capability::store);
-				ct_storage->store(std::move(c), e, iter);
-			}
-		}
-		else
-		{
-			assert(!"Storage does not support requested operation!");
-		}
-	}
-public:
-	_manager_for_each_m_helper(
-		component_storage<
-			Entity,
-			typename _bare_c<Component>::type
-		>& ... storage
+	template <typename ... Storage>
+	_manager_for_each_m_hlp_base(
+		Storage& ... storage
 	): _storages{{static_cast<base_storage<Entity>*>(&storage)...}}
 	 , _iterators{{storage.new_iterator()...}}
 	 , _capabilities{{storage.capabilities()...}}
 	{
 		sync();
 	}
-
-	~_manager_for_each_m_helper(void)
+public:
+	~_manager_for_each_m_hlp_base(void)
 	{
 		for(std::size_t i=0; i<N; ++i)
 		{
@@ -644,11 +558,118 @@ public:
 		_iterators[0]->next();
 		sync();
 	}
+};
+//------------------------------------------------------------------------------
+// _manager_for_each_m_helper
+//------------------------------------------------------------------------------
+template <typename Entity, typename ... Component>
+class _manager_for_each_m_helper
+ : public _manager_for_each_m_hlp_base<Entity, sizeof ... (Component)>
+{
+private:
+	typedef _manager_for_each_m_hlp_base<
+		Entity,
+		sizeof ... (Component)
+	> _base;
+
+	template <typename C>
+	struct _bare_c : meta::remove_const<
+		typename meta::remove_reference<C>::type
+	>{ };
+
+	template <typename ... C>
+	struct _list { };
+
+	template <typename Func, typename ... Cr>
+	inline
+	void _apply(
+		const Func& func,
+		std::size_t,
+		const Entity& e,
+		_list<>,
+		Cr&...cr
+	)
+	{
+		func(e, cr...);
+	}
+
+	template <
+		typename Func,
+		typename C,
+		typename ... Ct,
+		typename ... Cr
+	>
+	inline
+	void _apply(
+		const Func& func,
+		std::size_t i,
+		const Entity& e,
+		_list<C, Ct...>,
+		Cr& ... cr
+	)
+	{
+		typedef component_storage<
+			Entity,
+			typename _bare_c<C>::type
+		> cs_t;
+
+		cs_t* ct_storage = dynamic_cast<cs_t*>(this->_storages[i]);
+		assert(ct_storage);
+
+		storage_iterator<Entity>* iter = this->_iterators[i];
+		storage_capabilities caps = this->_capabilities[i];
+		bool is_const = meta::is_const<C>();
+
+		assert(iter->current() == e);
+
+		if(!is_const)
+		{
+			assert(caps & storage_capability::modify);
+		}
+
+		if(caps & storage_capability::point_to)
+		{
+			C* pc = ct_storage->access(
+				typename base::access<C&>::type(),
+				e,
+				iter
+			);
+			_apply(func, i+1, e, _list<Ct...>(), cr..., *pc);
+		}
+		else if(caps & storage_capability::fetch)
+		{
+			typename _bare_c<C>::type c;
+			ct_storage->fetch(c, e, iter);
+			_apply(func, i+1, e, _list<Ct...>(), cr..., c);
+
+			if(!is_const)
+			{
+				assert(caps & storage_capability::store);
+				ct_storage->store(std::move(c), e, iter);
+			}
+		}
+		else
+		{
+			assert(!"Storage does not support requested operation!");
+		}
+	}
+public:
+	_manager_for_each_m_helper(
+		component_storage<
+			Entity,
+			typename _bare_c<Component>::type
+		>& ... storage
+	): _base(storage...)
+	{ }
 
 	template <typename Func>
 	void apply(const Func& func)
 	{
-		_apply(func, 0, _iterators[0]->current(), _list<Component...>());
+		_apply(
+			func, 0,
+			this->_iterators[0]->current(),
+			_list<Component...>()
+		);
 	}
 };
 //------------------------------------------------------------------------------
