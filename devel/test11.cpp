@@ -156,37 +156,32 @@ int main(void)
 
 		base::atomic<unsigned> n(0);
 
-		m.parallel_for_each(
-			base::functor_ref<void(const unsigned&, const cmp_1&)>(
+		m.parallel_for_each_with<const cmp_1>(
 			[&n](unsigned, const cmp_1& c)
 			{
 				if(fib(20+c.i % 10) % 2 == 0)
 				{
 					++n;
 				}
-			}), p, ep
+			}, p, ep
 		);
 
 		std::cout << unsigned(n) << std::endl;
 
-		m.for_each(
-			base::functor_ref<void(const unsigned&, const cmp_3&)>(
-				[](unsigned e, const cmp_3& c)
-				{
-					std::cout << e << "|" << c.s << std::endl;
-				}
-			)
+		m.for_each_with<const cmp_3>(
+			[](unsigned e, const cmp_3& c)
+			{
+				std::cout << e << "|" << c.s << std::endl;
+			}
 		);
 
 		std::cout << std::endl;
 
-		m.for_each(
-			base::functor_ref<void(const unsigned&, cmp_1&, const cmp_3&)>(
-				[](unsigned, cmp_1& c1, const cmp_3& c3)
-				{
-					std::cout << c1.i << "|" << c3.s << std::endl;
-				}
-			)
+		m.for_each_with<cmp_1, const cmp_3>(
+			[](unsigned, cmp_1& c1, const cmp_3& c3)
+			{
+				std::cout << c1.i << "|" << c3.s << std::endl;
+			}
 		);
 
 		return 0;

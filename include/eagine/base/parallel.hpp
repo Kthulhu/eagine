@@ -120,15 +120,26 @@ public:
 		);
 	}
 
+	template <typename Kernel>
+	parallel_execution
+	execute(
+		const Kernel& kernel,
+		execution_params& params
+	) const
+	{
+		return parallel_execution(
+			functor_ref<bool(std::size_t)>(kernel),
+			_prepare_params(params),
+			_alloc
+		);
+	}
+
+	template <typename Kernel>
 	parallel_execution
 	execute(const functor_ref<bool(std::size_t)>& kernel) const
 	{
 		execution_params params;
-		return parallel_execution(
-			kernel,
-			_prepare_params(params),
-			_alloc
-		);
+		return execute(kernel, params);
 	}
 
 	template <typename Kernel>
@@ -159,6 +170,14 @@ public:
 			params,
 			_alloc
 		);
+	}
+
+	template <typename Kernel>
+	stateful_parallel_execution
+	execute_stateful(const Kernel& kernel) const
+	{
+		execution_params params;
+		return execute_stateful(kernel, params);
 	}
 };
 

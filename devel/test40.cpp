@@ -39,13 +39,12 @@ int main(void)
 	}
 	{
 		std::cout << "start" << std::endl;
-		functor<bool(std::size_t)> func(
+		auto func =
 			[](std::size_t i) -> bool
 			{
 				assert(fib(25+i%17)>0);
 				return i<1000;
-			}
-		);
+			};
 
 		execution_params para;
 		para._thread_count = 4;

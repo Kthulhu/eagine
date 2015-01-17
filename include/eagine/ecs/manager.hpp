@@ -366,6 +366,14 @@ public:
 		return *this;
 	}
 
+	template <typename ... C, typename Func>
+	manager& for_each_with(const Func& func)
+	{
+		return for_each(
+			base::functor_ref<void(const Entity&, C&...)>(func)
+		);
+	}
+
 	template <typename C>
 	manager& parallel_for_each(
 		const base::functor_ref<void(const Entity&, const C&)>& func,
@@ -386,6 +394,20 @@ public:
 	{
 		_call_pl_for_each<C>(func, prlzr, param);
 		return *this;
+	}
+
+	template <typename ... C, typename Func>
+	manager& parallel_for_each_with(
+		const Func& func,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	)
+	{
+		return parallel_for_each(
+			base::functor_ref<void(const Entity&, C&...)>(func),
+			prlzr,
+			param
+		);
 	}
 
 	template <typename T, typename C>
