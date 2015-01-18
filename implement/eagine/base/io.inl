@@ -2,7 +2,7 @@
  *  @file eagine/base/io.inl
  *  @brief Implementation of input/output operations.
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -16,10 +16,11 @@
 namespace eagine {
 namespace base {
 //------------------------------------------------------------------------------
-// load_stream_data
+// _fetch_stream_data
 //------------------------------------------------------------------------------
-EAGINE_LIB_FUNC
-vector<byte> load_stream_data(istream& input)
+template <typename T>
+static inline
+void _fetch_stream_data(istream& input, vector<T>& buffer)
 {
 	if(!input.good())
 	{
@@ -33,14 +34,22 @@ vector<byte> load_stream_data(istream& input)
 	streampos end = input.tellg();
 	input.seekg(0, ios::beg);
 
-	vector<byte> buffer(end - begin, 0x00);
+	buffer.resize(end - begin, 0x00);
 	if(!input.read((char*)buffer.data(), buffer.size()).good())
 	{
 		throw runtime_error(translate(
 			"Failed to read data from input stream"
 		).str());
 	}
-
+}
+//------------------------------------------------------------------------------
+// load_stream_data
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+vector<byte> load_stream_data(istream& input)
+{
+	vector<byte> buffer;
+	_fetch_stream_data(input, buffer);
 	return std::move(buffer);
 }
 //------------------------------------------------------------------------------
@@ -55,6 +64,32 @@ vector<byte> load_file_data(const cstrref& fs_path)
 	{
 		throw_with_nested(runtime_error((
 			format(translate("Failed to load data from file '{1}'"))
+			% fs_path.str()
+		).str()));
+	}
+}
+//------------------------------------------------------------------------------
+// load_stream_text
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+vector<char> load_stream_text(istream& input)
+{
+	vector<char> buffer;
+	_fetch_stream_data(input, buffer);
+	return std::move(buffer);
+}
+//------------------------------------------------------------------------------
+// load_file_text
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+vector<char> load_file_text(const cstrref& fs_path)
+{
+	ifstream input(c_str(fs_path).get());
+	try { return load_stream_text(input); }
+	catch(...)
+	{
+		throw_with_nested(runtime_error((
+			format(translate("Failed to load text from file '{1}'"))
 			% fs_path.str()
 		).str()));
 	}

@@ -102,8 +102,8 @@ struct cmp_3_io
 	bool read(const eagine::base::cstrref& path, cmp_3& c)
 	override
 	{
-		auto fc = eagine::base::load_file_data(path);
-		c.s.assign((const char*)fc.data(), fc.size());
+		auto fc = eagine::base::load_file_text(path);
+		c.s.assign(fc.data(), fc.size());
 		return true;
 	}
 
