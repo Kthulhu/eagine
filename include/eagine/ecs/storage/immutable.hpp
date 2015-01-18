@@ -123,6 +123,12 @@ public:
 
 	void reserve(std::size_t count) override;
 
+	void remove_if(
+		const base::functor_ref<
+			bool(const Entity&, const Component&)
+		>& predicate
+	) override;
+
 	void store(
 		Component&& src,
 		const Entity& ent,

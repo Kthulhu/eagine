@@ -135,6 +135,9 @@ private:
 		base::string(*)(void)
 	);
 
+	template <typename C, typename Pred>
+	std::size_t _call_rem_if(const Pred&);
+
 	template <typename C, typename Func>
 	bool _call_for_single(const Func&, const Entity&);
 
@@ -313,6 +316,15 @@ public:
 			get_component_uid<C>(),
 			_cmp_name_getter<C>()
 		)...);
+		return *this;
+	}
+
+	template <typename C>
+	manager& remove_if(
+		const base::functor_ref<bool(const Entity&, const C&)>& pred
+	)
+	{
+		_call_rem_if<C>(pred);
 		return *this;
 	}
 

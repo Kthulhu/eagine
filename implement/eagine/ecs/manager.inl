@@ -192,7 +192,7 @@ _apply_on_cmp_stg(
 {
 	return _apply_on_base_stg(
 		fallback,
-		[&func](auto& b_storage) -> auto
+		[&func](auto& b_storage) -> Result
 		{
 			typedef component_storage<Entity, Component> cs_t;
 
@@ -219,7 +219,7 @@ _get_cmp_type_caps(
 {
 	return _apply_on_base_stg(
 		storage_capabilities(),
-		[](auto& b_storage) -> auto
+		[](auto& b_storage) -> storage_capabilities
 		{
 			return b_storage->capabilities();
 		},
@@ -240,7 +240,7 @@ _does_have(
 {
 	return _apply_on_base_stg(
 		false,
-		[&ent](auto& b_storage) -> auto
+		[&ent](auto& b_storage) -> bool
 		{
 			return b_storage->has(ent);
 		},
@@ -261,7 +261,7 @@ _is_hidn(
 {
 	return _apply_on_base_stg(
 		false,
-		[&ent](auto& b_storage) -> auto
+		[&ent](auto& b_storage) -> bool
 		{
 			return b_storage->hidden(ent);
 		},
@@ -282,7 +282,7 @@ _do_show(
 {
 	return _apply_on_base_stg(
 		false,
-		[&ent](auto& b_storage) -> auto
+		[&ent](auto& b_storage) -> bool
 		{
 			return b_storage->show(ent);
 		},
@@ -303,7 +303,7 @@ _do_hide(
 {
 	return _apply_on_base_stg(
 		false,
-		[&ent](auto& b_storage) -> auto
+		[&ent](auto& b_storage) -> bool
 		{
 			return b_storage->hide(ent);
 		},
@@ -321,7 +321,7 @@ _do_add(const Entity& ent, Component&& component)
 {
 	return _apply_on_cmp_stg<Component>(
 		false,
-		[&ent, &component](auto& c_storage) -> auto
+		[&ent, &component](auto& c_storage) -> bool
 		{
 			c_storage->store(std::move(component), ent);
 			return true;
@@ -343,7 +343,7 @@ _do_cpy(
 {
 	return _apply_on_base_stg(
 		false,
-		[&from, &to](auto& b_storage) -> auto
+		[&from, &to](auto& b_storage) -> bool
 		{
 			return b_storage->copy(to, from);
 		},
@@ -365,7 +365,7 @@ _do_swp(
 {
 	return _apply_on_base_stg(
 		false,
-		[&e1, &e2](auto& b_storage) -> auto
+		[&e1, &e2](auto& b_storage) -> bool
 		{
 			b_storage->swap(e1, e2);
 			return true;
@@ -387,11 +387,29 @@ _do_rem(
 {
 	return _apply_on_base_stg(
 		false,
-		[&ent](auto& b_storage) -> auto
+		[&ent](auto& b_storage) -> bool
 		{
 			return b_storage->remove(ent);
 		},
 		cid, get_name
+	);
+}
+//------------------------------------------------------------------------------
+// manager::_call_rem_if
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename Component, typename Pred>
+inline std::size_t
+manager<Entity>::
+_call_rem_if(const Pred& predicate)
+{
+	return _apply_on_cmp_stg<Component>(
+		false,
+		[&predicate](auto& c_storage) -> bool
+		{
+			c_storage->remove_if(predicate);
+			return true;
+		}
 	);
 }
 //------------------------------------------------------------------------------
@@ -405,7 +423,7 @@ _call_for_single(const Func& func, const Entity& ent)
 {
 	return _apply_on_cmp_stg<Component>(
 		false,
-		[&func, &ent](auto& c_storage) -> auto
+		[&func, &ent](auto& c_storage) -> bool
 		{
 			return c_storage->for_single(func, ent);
 		}
@@ -422,7 +440,7 @@ _call_for_each(const Func& func)
 {
 	_apply_on_cmp_stg<Component>(
 		false,
-		[&func](auto& c_storage) -> auto
+		[&func](auto& c_storage) -> bool
 		{
 			c_storage->for_each(func);
 			return true;
@@ -705,7 +723,7 @@ _call_pl_for_each(
 {
 	_apply_on_cmp_stg<Component>(
 		false,
-		[&func,&prlzr,&param](auto& c_storage) -> auto
+		[&func,&prlzr,&param](auto& c_storage) -> bool
 		{
 			c_storage->parallel_for_each(func, prlzr, param);
 			return true;

@@ -319,6 +319,21 @@ reserve(std::size_t)
 	assert(!"Reserve is not supported by this component storage!");
 }
 //------------------------------------------------------------------------------
+// immutable_component_storage::remove_if
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+immutable_component_storage<Entity, Component>::
+remove_if(
+	const base::functor_ref<
+		bool(const Entity&, const Component&)
+	>&
+)
+{
+	assert(!"Remove-if is not supported by this component storage!");
+}
+//------------------------------------------------------------------------------
 // immutable_component_storage::store
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>

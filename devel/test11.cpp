@@ -184,6 +184,21 @@ int main(void)
 			}
 		);
 
+		m.remove_if(
+			base::functor_ref<bool(const unsigned&, const cmp_1&)>(
+			[](unsigned, const cmp_1& c) -> bool
+			{
+				return c.i % 2 == 0;
+			})
+		);
+
+		m.for_each_with<cmp_1, const cmp_3>(
+			[](unsigned, cmp_1& c1, const cmp_3& c3)
+			{
+				std::cout << c1.i << "|" << c3.s << std::endl;
+			}
+		);
+
 		return 0;
 	}
 	catch(base::exception& error)

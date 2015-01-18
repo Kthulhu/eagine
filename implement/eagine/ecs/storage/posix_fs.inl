@@ -651,6 +651,34 @@ posix_fs_component_storage<Entity, Component>::
 reserve(std::size_t count)
 { }
 //------------------------------------------------------------------------------
+// posix_fs_component_storage::remove_if
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+posix_fs_component_storage<Entity, Component>::
+remove_if(
+	const base::functor_ref<
+		bool(const Entity&, const Component&)
+	>& predicate
+)
+{
+	posix_fs_storage_iterator<Entity> iter(*this);
+	while(!iter.done())
+	{
+		Entity ent = iter.current();
+		Component tmp;
+		if(this->fetch(tmp, ent, &iter))
+		{
+			if(predicate(ent, tmp))
+			{
+				this->remove(ent, &iter);
+			}
+		}
+		iter.next();
+	}
+}
+//------------------------------------------------------------------------------
 // posix_fs_component_storage::store
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>

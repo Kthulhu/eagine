@@ -296,6 +296,36 @@ reserve(std::size_t count)
 	this->_store.reserve(count);
 }
 //------------------------------------------------------------------------------
+// normal_component_storage::remove_if
+//------------------------------------------------------------------------------
+template <typename Entity, typename Component>
+inline
+void
+normal_component_storage<Entity, Component>::
+remove_if(
+	const base::functor_ref<
+		bool(const Entity&, const Component&)
+	>& predicate
+)
+{
+	auto adaptor = [this, &predicate](
+		const Entity& ent,
+		std::size_t spos
+	) -> bool
+	{
+		assert(spos != _nil_stor_pos());
+		const Component* cptr = this->_store.read(spos);
+		assert(cptr);
+		if(predicate(ent, *cptr))
+		{
+			this->_store.release(spos);
+			return true;
+		}
+		return false;
+	};
+	this->_index.remove_if(adaptor);
+}
+//------------------------------------------------------------------------------
 // normal_component_storage::store
 //------------------------------------------------------------------------------
 template <typename Entity, typename Component>

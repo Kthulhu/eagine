@@ -345,6 +345,21 @@ public:
 		return remove(_klb(key), key, old);
 	}
 
+	template <typename Pred>
+	void remove_if(Pred pred)
+	{
+		std::size_t i = 0;
+		while(i < size())
+		{
+			if(pred(_keys[i], _vals[i]))
+			{
+				_keys.erase(_keys.begin()+i);
+				_vals.erase(_vals.begin()+i);
+			}
+			else ++i;
+		}
+	}
+
 	void swap(const Key& k1, const Key& k2)
 	{
 		auto p1 = _klb(k1);

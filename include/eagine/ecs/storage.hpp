@@ -144,6 +144,16 @@ struct component_storage
 		return write(ent, pos);
 	}
 
+	// requires can_remove
+	// result indicates if the entity had component.
+	// failure to remove existing component is indicated
+	// by throwing.
+	virtual void remove_if(
+		const base::functor_ref<
+			bool(const Entity&, const Component&)
+		>& predicate
+	) = 0;
+
 	// requires can_store
 	// failure to store is indicated by throwing
 	virtual void store(
