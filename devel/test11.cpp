@@ -185,6 +185,8 @@ int main(void)
 			}
 		);
 
+		std::cout << std::endl;
+
 		m.remove_if(
 			base::functor_ref<bool(const unsigned&, const cmp_1&)>(
 			[](unsigned, const cmp_1& c) -> bool
@@ -199,6 +201,8 @@ int main(void)
 				std::cout << c1.i << "|" << c3.s << std::endl;
 			}
 		);
+
+		std::cout << std::endl;
 
 		m.parallel_for_each_with<const cmp_1, const cmp_3>(
 			[&n](unsigned, const cmp_1&, const cmp_3&)

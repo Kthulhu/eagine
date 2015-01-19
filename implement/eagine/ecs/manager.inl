@@ -811,7 +811,7 @@ _call_pl_for_each_m(
 			func,
 			_find_storage<typename _bare_c<Component>::type>()...
 		), param
-	);
+	).wait();
 }
 //------------------------------------------------------------------------------
 // manager::_do_get
