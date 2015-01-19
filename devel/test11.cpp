@@ -145,6 +145,7 @@ int main(void)
 
 		m.register_component_storage<posix_fs_component_storage, cmp_3>(
 			base::string("./tmp/"),
+			base::string(".txt"),
 			base::make_shared<cmp_3_io>()
 		);
 		assert(m.knows_component_type<cmp_3>());
@@ -198,6 +199,15 @@ int main(void)
 				std::cout << c1.i << "|" << c3.s << std::endl;
 			}
 		);
+
+		m.parallel_for_each_with<const cmp_1, const cmp_3>(
+			[&n](unsigned, const cmp_1&, const cmp_3&)
+			{
+				++n;
+			}, p, ep
+		);
+
+		std::cout << unsigned(n) << std::endl;
 
 		return 0;
 	}

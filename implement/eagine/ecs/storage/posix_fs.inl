@@ -7,6 +7,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/eagine_config.hpp>
+#include <eagine/base/string_algo.hpp>
 #include <eagine/ecs/entity.hpp>
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
@@ -253,6 +254,18 @@ posix_fs_storage_iterator(posix_fs_storage_iterator&& tmp)
 	tmp._de_list = nullptr;
 }
 //------------------------------------------------------------------------------
+// posix_fs_storage_iterator::posix_fs_storage_iterator
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+posix_fs_storage_iterator<Entity>::
+posix_fs_storage_iterator(const posix_fs_storage_iterator& that)
+ : _storage(that._storage)
+ , _de_pos(that._de_pos)
+ , _de_count(-1)
+ , _de_list(nullptr)
+{ }
+//------------------------------------------------------------------------------
 // posix_fs_storage_iterator::~posix_fs_storage_iterator
 //------------------------------------------------------------------------------
 template <typename Entity>
@@ -296,9 +309,7 @@ _posix_fs_storage_iterator_filter(const ::dirent* de)
 		return 0;
 	}
 #endif
-	return entity_traits<Entity>::is_valid_string(
-		_posix_fs_storage_iterator_get_name(de)
-	)?1:0;
+	return 1;
 }
 //------------------------------------------------------------------------------
 // _posix_fs_storage_iterator_compare
@@ -366,21 +377,29 @@ _skip(void)
 {
 	while(_de_pos < _de_count)
 	{
-		auto path =
-			_storage._prefix+
+		auto name = 
 			_posix_fs_storage_iterator_get_name(_de_list[_de_pos]);
 
-		struct ::stat fs;
+		auto path = _storage._prefix + name;
 
-		if(::stat(base::c_str(path), &fs) != 0)
+		if(base::ends_with(name, _storage._suffix))
 		{
-			detail::posix_fs_stg_handle_stat_fail(
-				errno,
-				path
-			);
-		}
+			if(entity_traits<Entity>::is_valid_string(
+				base::slice_before_last(name, _storage._suffix)
+			))
+			{
+				struct ::stat fs;
 
-		if(S_ISREG(fs.st_mode)) break;
+				if(::stat(base::c_str(path), &fs) != 0)
+				{
+					detail::posix_fs_stg_handle_stat_fail(
+						errno,
+						path
+					);
+				}
+				if(S_ISREG(fs.st_mode)) break;
+			}
+		}
 
 		++_de_pos;
 	}
@@ -401,7 +420,6 @@ posix_fs_storage_iterator<Entity>::
 reset(void)
 {
 	_init(true);
-	assert(_de_list != nullptr);
 }
 //------------------------------------------------------------------------------
 // posix_fs_storage_iterator::done
@@ -463,6 +481,18 @@ new_iterator(void)
 	}
 }
 //------------------------------------------------------------------------------
+// posix_fs_base_storage::clone_iterator
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+storage_iterator<Entity>*
+posix_fs_base_storage<Entity>::
+clone_iterator(storage_iterator<Entity>* iter)
+{
+	assert(dynamic_cast<_ns_iter_t*>(iter));
+	return new _ns_iter_t(*static_cast<_ns_iter_t*>(iter));
+}
+//------------------------------------------------------------------------------
 // posix_fs_base_storage::delete_iterator
 //------------------------------------------------------------------------------
 template <typename Entity>
@@ -488,7 +518,7 @@ posix_fs_base_storage<Entity>::
 _get_path(const Entity& ent) const
 {
 	// TODO custom allocator
-	return _prefix+entity_traits<Entity>::to_string(ent);
+	return _prefix+entity_traits<Entity>::to_string(ent)+_suffix;
 }
 //------------------------------------------------------------------------------
 // posix_fs_base_storage::_get_hdn_path
@@ -500,7 +530,7 @@ posix_fs_base_storage<Entity>::
 _get_hdn_path(const Entity& ent) const
 {
 	// TODO custom allocator
-	return _prefix+"."+entity_traits<Entity>::to_string(ent);
+	return _prefix+"."+entity_traits<Entity>::to_string(ent)+_suffix;
 }
 //------------------------------------------------------------------------------
 // posix_fs_base_storage::has

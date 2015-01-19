@@ -62,6 +62,7 @@ public:
 	posix_fs_storage_iterator(posix_fs_base_storage<Entity>& storage);
 
 	posix_fs_storage_iterator(posix_fs_storage_iterator&&);
+	posix_fs_storage_iterator(const posix_fs_storage_iterator&);
 	~posix_fs_storage_iterator(void);
 
 	void reset(void) override;
@@ -77,6 +78,7 @@ class posix_fs_base_storage
 {
 protected:
 	base::string _prefix;
+	base::string _suffix;
 
 	typedef posix_fs_storage_iterator<Entity> _ns_iter_t;
 	_ns_iter_t _iter;
@@ -93,13 +95,17 @@ protected:
 public:
 	typedef storage_iterator<Entity> iter_t;
 
-	posix_fs_base_storage(base::string&& prefix)
-	 : _prefix(std::move(prefix))
+	posix_fs_base_storage(
+		base::string&& prefix,
+		base::string&& suffix
+	): _prefix(std::move(prefix))
+	 , _suffix(std::move(suffix))
 	 , _iter(*this)
 	 , _iter_taken(false)
 	{ }
 
 	iter_t* new_iterator(void) override;
+	iter_t* clone_iterator(iter_t*) override;
 	void delete_iterator(iter_t* iter) override;
 
 	bool _has_file(const base::cstrref& path);
@@ -127,8 +133,9 @@ public:
 
 	posix_fs_component_storage(
 		base::string&& prefix,
+		base::string&& suffix,
 		const base::shared_ptr<posix_fs_component_io<Component>>& cmp_io
-	): posix_fs_base_storage<Entity>(std::move(prefix))
+	): posix_fs_base_storage<Entity>(std::move(prefix), std::move(suffix))
 	 , _cmp_io(cmp_io)
 	{
 		assert(_cmp_io);

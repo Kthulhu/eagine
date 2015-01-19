@@ -46,6 +46,8 @@ struct base_storage
 
 	virtual iter_t* new_iterator(void) = 0;
 
+	virtual iter_t* clone_iterator(iter_t*) = 0;
+
 	virtual void delete_iterator(iter_t*) = 0;
 
 	virtual bool has(const Entity& ent) = 0;

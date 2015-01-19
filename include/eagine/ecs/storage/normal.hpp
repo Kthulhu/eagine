@@ -70,6 +70,7 @@ public:
 	{ }
 
 	iter_t* new_iterator(void) override;
+	iter_t* clone_iterator(iter_t*) override;
 	void delete_iterator(iter_t* iter) override;
 
 	bool has(const Entity& ent) override;

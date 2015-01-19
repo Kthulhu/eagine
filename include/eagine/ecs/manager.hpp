@@ -154,6 +154,13 @@ private:
 		base::execution_params&
 	);
 
+	template <typename ... C, typename Func>
+	void _call_pl_for_each_m(
+		const Func&,
+		base::parallelizer&,
+		base::execution_params&
+	);
+
 	template <typename T, typename C>
 	T _do_get(T C::*, const Entity&, T);
 public:
@@ -405,6 +412,20 @@ public:
 	)
 	{
 		_call_pl_for_each<C>(func, prlzr, param);
+		return *this;
+	}
+
+	template <typename ... C>
+	typename meta::enable_if<
+		(sizeof...(C) > 1),
+		manager&
+	>::type parallel_for_each(
+		const base::functor_ref<void(const Entity&, C&...)>& func,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	)
+	{
+		_call_pl_for_each_m<C...>(func, prlzr, param);
 		return *this;
 	}
 

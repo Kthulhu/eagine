@@ -136,6 +136,18 @@ new_iterator(void)
 	}
 }
 //------------------------------------------------------------------------------
+// immutable_base_storage::clone_iterator
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+storage_iterator<Entity>*
+immutable_base_storage<Entity>::
+clone_iterator(storage_iterator<Entity>* iter)
+{
+	assert(dynamic_cast<_ns_iter_t*>(iter));
+	return new _ns_iter_t(*static_cast<_ns_iter_t*>(iter));
+}
+//------------------------------------------------------------------------------
 // immutable_base_storage::delete_iterator
 //------------------------------------------------------------------------------
 template <typename Entity>

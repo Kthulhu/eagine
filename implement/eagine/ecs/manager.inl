@@ -459,25 +459,52 @@ private:
 protected:
 	base::array<base_storage<Entity>*, N> _storages;
 
+	base::array<storage_capabilities, N> _capabilities;
+
 	base::array<storage_iterator<Entity>*, N> _iterators;
 
-	base::array<storage_capabilities, N> _capabilities;
 
 	template <typename ... Storage>
 	_manager_for_each_m_hlp_base(
 		Storage& ... storage
 	): _storages{{static_cast<base_storage<Entity>*>(&storage)...}}
-	 , _iterators{{storage.new_iterator()...}}
 	 , _capabilities{{storage.capabilities()...}}
+	 , _iterators{{storage.new_iterator()...}}
 	{
 		sync();
+	}
+
+	_manager_for_each_m_hlp_base(_manager_for_each_m_hlp_base&& that)
+	 : _storages(that._storages)
+	 , _capabilities(that._capabilities)
+	{
+		for(std::size_t i=0; i<N; ++i)
+		{
+			_iterators[i] = that._iterators[i];
+			that._iterators[i] = nullptr;
+		}
+	}
+
+	_manager_for_each_m_hlp_base(const _manager_for_each_m_hlp_base& that)
+	 : _storages(that._storages)
+	 , _capabilities(that._capabilities)
+	{
+		for(std::size_t i=0; i<N; ++i)
+		{
+			_iterators[i] = _storages[i]->clone_iterator(
+				that._iterators[i]
+			);
+		}
 	}
 public:
 	~_manager_for_each_m_hlp_base(void)
 	{
 		for(std::size_t i=0; i<N; ++i)
 		{
-			_storages[i]->delete_iterator(_iterators[i]);
+			if(_iterators[i])
+			{
+				_storages[i]->delete_iterator(_iterators[i]);
+			}
 		}
 	}
 
@@ -728,6 +755,62 @@ _call_pl_for_each(
 			c_storage->parallel_for_each(func, prlzr, param);
 			return true;
 		}
+	);
+}
+//------------------------------------------------------------------------------
+// _manager_pl_for_each_m_wrap
+//------------------------------------------------------------------------------
+template <typename Func, typename Entity, typename ... Component>
+class _manager_pl_for_each_m_wrap
+{
+private:
+	Func _func;
+	_manager_for_each_m_helper<Entity, Component...> _hlpr;
+	std::size_t _curr;
+public:
+	_manager_pl_for_each_m_wrap(const _manager_pl_for_each_m_wrap&) = default;
+	_manager_pl_for_each_m_wrap(_manager_pl_for_each_m_wrap&&) = default;
+
+	template <typename ... Storage>
+	_manager_pl_for_each_m_wrap(const Func& func, Storage& ... storage)
+	 : _func(func)
+	 , _hlpr(storage...)
+	 , _curr(0)
+	{ }
+
+	bool operator()(std::size_t next)
+	{
+		while(!_hlpr.done() && (_curr < next))
+		{
+			_hlpr.next();
+			++_curr;
+		}
+		if(!_hlpr.done())
+		{
+			_hlpr.apply(_func);
+			return true;
+		}
+		return false;
+	}
+};
+//------------------------------------------------------------------------------
+// manager::_call_pl_for_each_m
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename ... Component, typename Func>
+inline void
+manager<Entity>::
+_call_pl_for_each_m(
+	const Func& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	prlzr.execute_stateful(
+		_manager_pl_for_each_m_wrap<Func, Entity, Component...>(
+			func,
+			_find_storage<typename _bare_c<Component>::type>()...
+		), param
 	);
 }
 //------------------------------------------------------------------------------
