@@ -234,7 +234,7 @@ inline
 posix_fs_storage_iterator<Entity>::
 posix_fs_storage_iterator(posix_fs_base_storage<Entity>& storage)
  : _storage(storage)
- , _de_pos(0)
+ , _de_pos(-1)
  , _de_count(-1)
  , _de_list(nullptr)
 { }
@@ -249,7 +249,9 @@ posix_fs_storage_iterator(posix_fs_storage_iterator&& tmp)
  , _de_pos(tmp._de_pos)
  , _de_count(tmp._de_count)
  , _de_list(tmp._de_list)
+ , _ent(tmp._ent)
 {
+	tmp._de_pos = -1;
 	tmp._de_count = -1;
 	tmp._de_list = nullptr;
 }
@@ -264,6 +266,7 @@ posix_fs_storage_iterator(const posix_fs_storage_iterator& that)
  , _de_pos(that._de_pos)
  , _de_count(-1)
  , _de_list(nullptr)
+ , _ent(that._ent)
 { }
 //------------------------------------------------------------------------------
 // posix_fs_storage_iterator::~posix_fs_storage_iterator
@@ -355,7 +358,7 @@ _init(bool force_rewind)
 			);
 			force_rewind = false;
 		}
-		else
+		else if(_de_pos < 0)
 		{
 			force_rewind = true;
 		}
@@ -517,7 +520,6 @@ typename posix_fs_base_storage<Entity>::_path_str_t
 posix_fs_base_storage<Entity>::
 _get_path(const Entity& ent) const
 {
-	// TODO custom allocator
 	return _prefix+entity_traits<Entity>::to_string(ent)+_suffix;
 }
 //------------------------------------------------------------------------------
@@ -529,7 +531,6 @@ typename posix_fs_base_storage<Entity>::_path_str_t
 posix_fs_base_storage<Entity>::
 _get_hdn_path(const Entity& ent) const
 {
-	// TODO custom allocator
 	return _prefix+"."+entity_traits<Entity>::to_string(ent)+_suffix;
 }
 //------------------------------------------------------------------------------

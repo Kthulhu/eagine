@@ -450,7 +450,6 @@ _call_for_each(const Func& func)
 //------------------------------------------------------------------------------
 // _manager_for_each_m_hlp_base
 //------------------------------------------------------------------------------
-// TODO
 template <typename Entity, std::size_t N>
 class _manager_for_each_m_hlp_base
 {
@@ -706,6 +705,9 @@ public:
 		>& ... storage
 	): _base(storage...)
 	{ }
+
+	_manager_for_each_m_helper(const _manager_for_each_m_helper&) = default;
+	_manager_for_each_m_helper(_manager_for_each_m_helper&&) = default;
 
 	template <typename Func>
 	void apply(const Func& func)
