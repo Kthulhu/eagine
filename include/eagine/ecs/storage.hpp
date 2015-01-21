@@ -44,6 +44,56 @@ struct base_storage
 
 	virtual storage_capabilities capabilities(void) const = 0;
 
+	bool can_find(void) const
+	{
+		return bool(capabilities() & storage_capability::find);
+	}
+
+	bool can_hide(void) const
+	{
+		return bool(capabilities() & storage_capability::hide);
+	}
+
+	bool can_copy(void) const
+	{
+		return bool(capabilities() & storage_capability::copy);
+	}
+
+	bool can_swap(void) const
+	{
+		return bool(capabilities() & storage_capability::swap);
+	}
+
+	bool can_store(void) const
+	{
+		return bool(capabilities() & storage_capability::store);
+	}
+
+	bool can_fetch(void) const
+	{
+		return bool(capabilities() & storage_capability::fetch);
+	}
+
+	bool can_modify(void) const
+	{
+		return bool(capabilities() & storage_capability::modify);
+	}
+
+	bool can_remove(void) const
+	{
+		return bool(capabilities() & storage_capability::remove);
+	}
+
+	bool can_reserve(void) const
+	{
+		return bool(capabilities() & storage_capability::reserve);
+	}
+
+	bool can_point_to(void) const
+	{
+		return bool(capabilities() & storage_capability::point_to);
+	}
+
 	virtual iter_t* new_iterator(void) = 0;
 
 	virtual iter_t* clone_iterator(iter_t*) = 0;

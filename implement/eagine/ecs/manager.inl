@@ -1144,6 +1144,61 @@ _do_get(T C::* mvp, const Entity& ent, T res)
 	return res;
 }
 //------------------------------------------------------------------------------
+// manager::forget
+//------------------------------------------------------------------------------
+template <typename Entity>
+void
+manager<Entity>::
+forget(const Entity& ent)
+{
+	for(auto& storage : _storages)
+	{
+		if(storage != nullptr)
+		{
+			if(storage->can_remove())
+			{
+				storage->remove(ent);
+			}
+		}
+	}
+}
+//------------------------------------------------------------------------------
+// manager::parallel_forget
+//------------------------------------------------------------------------------
+template <typename Entity>
+void
+manager<Entity>::
+parallel_forget(
+	const Entity& ent,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	auto func =
+		[this,ent](std::size_t i) -> bool
+		{
+			if(i<_storages.size())
+			{
+				if(_storages[i] != nullptr)
+				{
+					if(_storages[i]->can_remove())
+					{
+						_storages[i]->remove(ent);
+					}
+				}
+				return true;
+			}
+			return false;
+		};
+
+	param.invocations = _storages.size();
+
+	prlzr.execute(
+		base::functor_ref<bool(std::size_t)>(func),
+		param
+	).wait();
+}
+//------------------------------------------------------------------------------
 } // namespace ecs
 } // namespace eagine
 

@@ -240,6 +240,14 @@ public:
 		).is_set(cap);
 	}
 
+	void forget(const Entity& ent);
+
+	void parallel_forget(
+		const Entity& ent,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	);
+
 	template <typename C>
 	bool has(const Entity& ent)
 	{

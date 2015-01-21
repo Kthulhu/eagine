@@ -234,6 +234,8 @@ int main(void)
 
 		n = 0;
 
+		m.parallel_forget(999, p, ep);
+
 		m.parallel_for_each_with_opt<const cmp_1, const cmp_3>(
 			[&n](unsigned, const cmp_1* c1, const cmp_3* c3)
 			{
