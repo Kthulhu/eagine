@@ -469,9 +469,7 @@ protected:
 	): _storages{{static_cast<base_storage<Entity>*>(&storage)...}}
 	 , _capabilities{{storage.capabilities()...}}
 	 , _iterators{{storage.new_iterator()...}}
-	{
-		sync();
-	}
+	{ }
 
 	_manager_for_each_m_hlp_base(_manager_for_each_m_hlp_base&& that)
 	 : _storages(that._storages)
@@ -495,31 +493,64 @@ protected:
 			);
 		}
 	}
-public:
-	~_manager_for_each_m_hlp_base(void)
+
+	std::size_t _find_min(void)
 	{
-		for(std::size_t i=0; i<N; ++i)
+		Entity min;
+		std::size_t imin, i=0;
+		while(i < N)
 		{
-			if(_iterators[i])
+			if(!_iterators[i]->done())
 			{
-				_storages[i]->delete_iterator(_iterators[i]);
+				min = _iterators[i]->current();
+				imin = i;
+				break;
 			}
+			++i;
 		}
+
+		if(i == N)
+		{
+			return N;
+		}
+
+		while(i < N)
+		{
+			if(!_iterators[i]->done())
+			{
+				Entity tmp = _iterators[i]->current();
+				if(min > tmp)
+				{
+					min = tmp;
+					imin = i;
+				}
+			}
+			++i;
+		}
+		return imin;
 	}
 
-	bool done(void) const
+	std::size_t _find_next(std::size_t imin)
 	{
+		assert(imin < N);
+
+		Entity ent = _iterators[imin]->current();
+
 		for(std::size_t i=0; i<N; ++i)
 		{
-			if(_iterators[i]->done())
+			if(!_iterators[i]->done())
 			{
-				return true;
+				Entity tmp = _iterators[i]->current();
+				if(tmp == ent)
+				{
+					_iterators[i]->next();
+				}
 			}
 		}
-		return false;
+		return _find_min();
 	}
 
-	void sync(void)
+	void _sync(void)
 	{
 		while(!_iterators[0]->done())
 		{
@@ -596,22 +627,259 @@ public:
 		}
 	}
 
-	void next(void)
+	static
+	void _handle_unsupported_storage_op(void)
+	noexcept
 	{
-		assert(!done());
-		_iterators[0]->next();
-		sync();
+		assert(!"Storage does not support requested operation!");
+	}
+public:
+	~_manager_for_each_m_hlp_base(void)
+	{
+		for(std::size_t i=0; i<N; ++i)
+		{
+			if(_iterators[i])
+			{
+				_storages[i]->delete_iterator(_iterators[i]);
+			}
+		}
 	}
 };
 //------------------------------------------------------------------------------
-// _manager_for_each_m_helper
+// _manager_for_each_m_p_hlp_base
+//------------------------------------------------------------------------------
+template <typename Entity, std::size_t N>
+class _manager_for_each_m_p_hlp_base
+ : public _manager_for_each_m_hlp_base<Entity, N>
+{
+protected:
+	typedef _manager_for_each_m_hlp_base<Entity, N> _base;
+	std::size_t _imin;
+
+	template <typename ... Storage>
+	_manager_for_each_m_p_hlp_base(
+		Storage& ... storage
+	): _base(storage...)
+	 , _imin(_base::_find_min())
+	{ }
+
+	Entity _current(void)
+	{
+		assert(_imin < N);
+		assert(!this->_iterators[_imin]->done());
+		return this->_iterators[_imin]->current();
+	}
+public:
+	bool done(void) const
+	{
+		return _imin >= N;
+	}
+
+	void next(void)
+	{
+		assert(!done());
+		_imin = this->_find_next(_imin);
+	}
+};
+//------------------------------------------------------------------------------
+// _manager_for_each_m_p_helper
 //------------------------------------------------------------------------------
 template <typename Entity, typename ... Component>
-class _manager_for_each_m_helper
- : public _manager_for_each_m_hlp_base<Entity, sizeof ... (Component)>
+class _manager_for_each_m_p_helper
+ : public _manager_for_each_m_p_hlp_base<Entity, sizeof ... (Component)>
 {
 private:
-	typedef _manager_for_each_m_hlp_base<
+	typedef _manager_for_each_m_p_hlp_base<
+		Entity,
+		sizeof ... (Component)
+	> _base;
+
+	template <typename C>
+	struct _bare_c : meta::remove_const<
+		typename meta::remove_reference<C>::type
+	>{ };
+
+	template <typename ... C>
+	struct _list { };
+
+	template <typename Func, typename ... Cp>
+	inline
+	void _apply(
+		const Func& func,
+		std::size_t,
+		const Entity& e,
+		_list<>,
+		Cp*...cp
+	)
+	{
+		func(e, cp...);
+	}
+
+	template <
+		typename Func,
+		typename C,
+		typename ... Ct,
+		typename ... Cp
+	>
+	inline
+	void _apply(
+		const Func& func,
+		std::size_t i,
+		const Entity& e,
+		_list<C, Ct...>,
+		Cp* ... cp
+	)
+	{
+		typedef component_storage<
+			Entity,
+			typename _bare_c<C>::type
+		> cs_t;
+
+		cs_t* ct_storage = dynamic_cast<cs_t*>(this->_storages[i]);
+		assert(ct_storage);
+
+		storage_iterator<Entity>* iter = this->_iterators[i];
+
+		if(!iter->done() && (iter->current() == e))
+		{
+			storage_capabilities caps = this->_capabilities[i];
+
+			bool is_const = meta::is_const<C>();
+			if(!is_const)
+			{
+				assert(caps & storage_capability::modify);
+			}
+
+			if(caps & storage_capability::point_to)
+			{
+				C* pc = ct_storage->access(
+					typename base::access<C&>::type(),
+					e,
+					iter
+				);
+				_apply(func, i+1, e, _list<Ct...>(), cp..., pc);
+			}
+			else if(caps & storage_capability::fetch)
+			{
+				typename _bare_c<C>::type c;
+				C* pc = &c;
+				ct_storage->fetch(c, e, iter);
+				_apply(func, i+1, e, _list<Ct...>(), cp..., pc);
+
+				if(!is_const)
+				{
+					assert(caps&storage_capability::store);
+					ct_storage->store(std::move(c), e,iter);
+				}
+			}
+			else
+			{
+				this->_handle_unsupported_storage_op();
+			}
+		}
+		else
+		{
+			_apply(func, i+1, e, _list<Ct...>(), cp..., (C*)0);
+		}
+	}
+public:
+	_manager_for_each_m_p_helper(
+		component_storage<
+			Entity,
+			typename _bare_c<Component>::type
+		>& ... storage
+	): _base(storage...)
+	{ }
+
+	_manager_for_each_m_p_helper(
+		const _manager_for_each_m_p_helper&
+	) = default;
+
+	_manager_for_each_m_p_helper(
+		_manager_for_each_m_p_helper&&
+	) = default;
+
+	template <typename Func>
+	void apply(const Func& func)
+	{
+		_apply(
+			func, 0,
+			this->_current(),
+			_list<Component...>()
+		);
+	}
+};
+//------------------------------------------------------------------------------
+// manager::_call_for_each_m_p
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename ... Component, typename Func>
+inline void
+manager<Entity>::
+_call_for_each_m_p(const Func& func)
+{
+	_manager_for_each_m_p_helper<Entity, Component...> hlp(
+		_find_storage<typename _bare_c<Component>::type>()...
+	);
+	while(!hlp.done())
+	{
+		hlp.apply(func);
+		hlp.next();
+	}
+}
+//------------------------------------------------------------------------------
+// _manager_for_each_m_r_hlp_base
+//------------------------------------------------------------------------------
+template <typename Entity, std::size_t N>
+class _manager_for_each_m_r_hlp_base
+ : public _manager_for_each_m_hlp_base<Entity, N>
+{
+protected:
+	typedef _manager_for_each_m_hlp_base<Entity, N> _base;
+
+	using _base::_sync;
+
+	template <typename ... Storage>
+	_manager_for_each_m_r_hlp_base(
+		Storage& ... storage
+	): _base(storage...)
+	{
+		_sync();
+	}
+
+	Entity _current(void)
+	{
+		return this->_iterators[0]->current();
+	}
+public:
+	bool done(void) const
+	{
+		for(std::size_t i=0; i<N; ++i)
+		{
+			if(this->_iterators[i]->done())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void next(void)
+	{
+		assert(!done());
+		this->_iterators[0]->next();
+		_sync();
+	}
+};
+//------------------------------------------------------------------------------
+// _manager_for_each_m_r_helper
+//------------------------------------------------------------------------------
+template <typename Entity, typename ... Component>
+class _manager_for_each_m_r_helper
+ : public _manager_for_each_m_r_hlp_base<Entity, sizeof ... (Component)>
+{
+private:
+	typedef _manager_for_each_m_r_hlp_base<
 		Entity,
 		sizeof ... (Component)
 	> _base;
@@ -694,11 +962,11 @@ private:
 		}
 		else
 		{
-			assert(!"Storage does not support requested operation!");
+			this->_handle_unsupported_storage_op();
 		}
 	}
 public:
-	_manager_for_each_m_helper(
+	_manager_for_each_m_r_helper(
 		component_storage<
 			Entity,
 			typename _bare_c<Component>::type
@@ -706,29 +974,34 @@ public:
 	): _base(storage...)
 	{ }
 
-	_manager_for_each_m_helper(const _manager_for_each_m_helper&) = default;
-	_manager_for_each_m_helper(_manager_for_each_m_helper&&) = default;
+	_manager_for_each_m_r_helper(
+		const _manager_for_each_m_r_helper&
+	) = default;
+
+	_manager_for_each_m_r_helper(
+		_manager_for_each_m_r_helper&&
+	) = default;
 
 	template <typename Func>
 	void apply(const Func& func)
 	{
 		_apply(
 			func, 0,
-			this->_iterators[0]->current(),
+			this->_current(),
 			_list<Component...>()
 		);
 	}
 };
 //------------------------------------------------------------------------------
-// manager::_call_for_each_m
+// manager::_call_for_each_m_r
 //------------------------------------------------------------------------------
 template <typename Entity>
 template <typename ... Component, typename Func>
 inline void
 manager<Entity>::
-_call_for_each_m(const Func& func)
+_call_for_each_m_r(const Func& func)
 {
-	_manager_for_each_m_helper<Entity, Component...> hlp(
+	_manager_for_each_m_r_helper<Entity, Component...> hlp(
 		_find_storage<typename _bare_c<Component>::type>()...
 	);
 	while(!hlp.done())
@@ -762,15 +1035,20 @@ _call_pl_for_each(
 //------------------------------------------------------------------------------
 // _manager_pl_for_each_m_wrap
 //------------------------------------------------------------------------------
-template <typename Func, typename Entity, typename ... Component>
+template <
+	typename Func,
+	template <class, class...> class Helper,
+	typename Entity,
+	typename ... Component
+>
 class _manager_pl_for_each_m_wrap
 {
 private:
 	Func _func;
-	_manager_for_each_m_helper<Entity, Component...> _hlpr;
+	Helper<Entity, Component...> _hlpr;
 	std::size_t _curr;
 public:
-	_manager_pl_for_each_m_wrap(const _manager_pl_for_each_m_wrap&) = default;
+	_manager_pl_for_each_m_wrap(const _manager_pl_for_each_m_wrap&)=default; 
 	_manager_pl_for_each_m_wrap(_manager_pl_for_each_m_wrap&&) = default;
 
 	template <typename ... Storage>
@@ -796,20 +1074,50 @@ public:
 	}
 };
 //------------------------------------------------------------------------------
-// manager::_call_pl_for_each_m
+// manager::_call_pl_for_each_m_p
 //------------------------------------------------------------------------------
 template <typename Entity>
 template <typename ... Component, typename Func>
 inline void
 manager<Entity>::
-_call_pl_for_each_m(
+_call_pl_for_each_m_p(
 	const Func& func,
 	base::parallelizer& prlzr,
 	base::execution_params& param
 )
 {
 	prlzr.execute_stateful(
-		_manager_pl_for_each_m_wrap<Func, Entity, Component...>(
+		_manager_pl_for_each_m_wrap<
+			Func,
+			_manager_for_each_m_p_helper,
+			Entity,
+			Component...
+		>(
+			func,
+			_find_storage<typename _bare_c<Component>::type>()...
+		), param
+	).wait();
+}
+//------------------------------------------------------------------------------
+// manager::_call_pl_for_each_m_r
+//------------------------------------------------------------------------------
+template <typename Entity>
+template <typename ... Component, typename Func>
+inline void
+manager<Entity>::
+_call_pl_for_each_m_r(
+	const Func& func,
+	base::parallelizer& prlzr,
+	base::execution_params& param
+)
+{
+	prlzr.execute_stateful(
+		_manager_pl_for_each_m_wrap<
+			Func,
+			_manager_for_each_m_r_helper,
+			Entity,
+			Component...
+		>(
 			func,
 			_find_storage<typename _bare_c<Component>::type>()...
 		), param

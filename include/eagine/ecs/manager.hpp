@@ -145,7 +145,10 @@ private:
 	void _call_for_each(const Func&);
 
 	template <typename ... C, typename Func>
-	void _call_for_each_m(const Func&);
+	void _call_for_each_m_p(const Func&);
+
+	template <typename ... C, typename Func>
+	void _call_for_each_m_r(const Func&);
 
 	template <typename C, typename Func>
 	void _call_pl_for_each(
@@ -155,7 +158,14 @@ private:
 	);
 
 	template <typename ... C, typename Func>
-	void _call_pl_for_each_m(
+	void _call_pl_for_each_m_p(
+		const Func&,
+		base::parallelizer&,
+		base::execution_params&
+	);
+
+	template <typename ... C, typename Func>
+	void _call_pl_for_each_m_r(
 		const Func&,
 		base::parallelizer&,
 		base::execution_params&
@@ -381,7 +391,19 @@ public:
 		const base::functor_ref<void(const Entity&, C&...)>& func
 	)
 	{
-		_call_for_each_m<C...>(func);
+		_call_for_each_m_r<C...>(func);
+		return *this;
+	}
+
+	template <typename ... C>
+	typename meta::enable_if<
+		(sizeof...(C) > 1),
+		manager&
+	>::type for_each(
+		const base::functor_ref<void(const Entity&, C*...)>& func
+	)
+	{
+		_call_for_each_m_p<C...>(func);
 		return *this;
 	}
 
@@ -390,6 +412,14 @@ public:
 	{
 		return for_each(
 			base::functor_ref<void(const Entity&, C&...)>(func)
+		);
+	}
+
+	template <typename ... C, typename Func>
+	manager& for_each_with_opt(const Func& func)
+	{
+		return for_each(
+			base::functor_ref<void(const Entity&, C*...)>(func)
 		);
 	}
 
@@ -425,7 +455,21 @@ public:
 		base::execution_params& param
 	)
 	{
-		_call_pl_for_each_m<C...>(func, prlzr, param);
+		_call_pl_for_each_m_r<C...>(func, prlzr, param);
+		return *this;
+	}
+
+	template <typename ... C>
+	typename meta::enable_if<
+		(sizeof...(C) > 1),
+		manager&
+	>::type parallel_for_each(
+		const base::functor_ref<void(const Entity&, C*...)>& func,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	)
+	{
+		_call_pl_for_each_m_p<C...>(func, prlzr, param);
 		return *this;
 	}
 
@@ -438,6 +482,20 @@ public:
 	{
 		return parallel_for_each(
 			base::functor_ref<void(const Entity&, C&...)>(func),
+			prlzr,
+			param
+		);
+	}
+
+	template <typename ... C, typename Func>
+	manager& parallel_for_each_with_opt(
+		const Func& func,
+		base::parallelizer& prlzr,
+		base::execution_params& param
+	)
+	{
+		return parallel_for_each(
+			base::functor_ref<void(const Entity&, C*...)>(func),
 			prlzr,
 			param
 		);

@@ -204,10 +204,43 @@ int main(void)
 
 		std::cout << std::endl;
 
+		m.for_each_with_opt<const cmp_1, const cmp_3>(
+			[](unsigned, const cmp_1* c1, const cmp_3* c3)
+			{
+				if(c1) std::cout << c1->i;
+				else std::cout << "-";
+
+				std::cout << "|";
+
+				if(c3) std::cout << c3->s;
+				else std::cout << "-";
+
+				std::cout << std::endl;
+			}
+		);
+
+		std::cout << std::endl;
+
+		n = 0;
+
 		m.parallel_for_each_with<const cmp_1, const cmp_3>(
 			[&n](unsigned, const cmp_1&, const cmp_3&)
 			{
 				++n;
+			}, p, ep
+		);
+
+		std::cout << unsigned(n) << std::endl;
+
+		n = 0;
+
+		m.parallel_for_each_with_opt<const cmp_1, const cmp_3>(
+			[&n](unsigned, const cmp_1* c1, const cmp_3* c3)
+			{
+				if(c1 || c3)
+				{
+					++n;
+				}
 			}, p, ep
 		);
 
