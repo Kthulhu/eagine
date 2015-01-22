@@ -747,10 +747,10 @@ private:
 			bool is_const = meta::is_const<C>();
 			if(!is_const)
 			{
-				assert(caps & storage_capability::modify);
+				assert(caps.can_modify());
 			}
 
-			if(caps & storage_capability::point_to)
+			if(caps.can_point_to())
 			{
 				C* pc = ct_storage->access(
 					typename base::access<C&>::type(),
@@ -759,7 +759,7 @@ private:
 				);
 				_apply(func, i+1, e, _list<Ct...>(), cp..., pc);
 			}
-			else if(caps & storage_capability::fetch)
+			else if(caps.can_fetch())
 			{
 				typename _bare_c<C>::type c;
 				C* pc = &c;
@@ -768,7 +768,7 @@ private:
 
 				if(!is_const)
 				{
-					assert(caps&storage_capability::store);
+					assert(caps.can_store());
 					ct_storage->store(std::move(c), e,iter);
 				}
 			}
@@ -936,10 +936,10 @@ private:
 
 		if(!is_const)
 		{
-			assert(caps & storage_capability::modify);
+			assert(caps.can_modify());
 		}
 
-		if(caps & storage_capability::point_to)
+		if(caps.can_point_to())
 		{
 			C* pc = ct_storage->access(
 				typename base::access<C&>::type(),
@@ -948,7 +948,7 @@ private:
 			);
 			_apply(func, i+1, e, _list<Ct...>(), cr..., *pc);
 		}
-		else if(caps & storage_capability::fetch)
+		else if(caps.can_fetch())
 		{
 			typename _bare_c<C>::type c;
 			ct_storage->fetch(c, e, iter);
@@ -956,7 +956,7 @@ private:
 
 			if(!is_const)
 			{
-				assert(caps & storage_capability::store);
+				assert(caps.can_store());
 				ct_storage->store(std::move(c), e, iter);
 			}
 		}
@@ -1155,7 +1155,7 @@ forget(const Entity& ent)
 	{
 		if(storage != nullptr)
 		{
-			if(storage->can_remove())
+			if(storage->caps().can_remove())
 			{
 				storage->remove(ent);
 			}
@@ -1181,7 +1181,7 @@ parallel_forget(
 			{
 				if(_storages[i] != nullptr)
 				{
-					if(_storages[i]->can_remove())
+					if(_storages[i]->caps().can_remove())
 					{
 						_storages[i]->remove(ent);
 					}

@@ -2,7 +2,7 @@
  *  @file eagine/ecs/storage_capability.hpp
  *  @brief Component storage capabilities
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -34,8 +34,69 @@ enum class storage_capability : unsigned short
 // storage_cap
 typedef storage_capability storage_cap;
 
-// storage_traits
-typedef base::bitfield<storage_capability> storage_capabilities;
+// storage_capabilities
+struct storage_capabilities
+ : base::bitfield<storage_capability> 
+{
+	typedef base::bitfield<storage_capability> _base;
+	using _base::bitfield;
+
+	storage_capabilities(void) = default;
+
+	storage_capabilities(_base base)
+	 : _base(base)
+	{ }
+
+	bool can_find(void) const
+	{
+		return is_set(storage_capability::find);
+	}
+
+	bool can_hide(void) const
+	{
+		return is_set(storage_capability::hide);
+	}
+
+	bool can_copy(void) const
+	{
+		return is_set(storage_capability::copy);
+	}
+
+	bool can_swap(void) const
+	{
+		return is_set(storage_capability::swap);
+	}
+
+	bool can_store(void) const
+	{
+		return is_set(storage_capability::store);
+	}
+
+	bool can_fetch(void) const
+	{
+		return is_set(storage_capability::fetch);
+	}
+
+	bool can_modify(void) const
+	{
+		return is_set(storage_capability::modify);
+	}
+
+	bool can_remove(void) const
+	{
+		return is_set(storage_capability::remove);
+	}
+
+	bool can_reserve(void) const
+	{
+		return is_set(storage_capability::reserve);
+	}
+
+	bool can_point_to(void) const
+	{
+		return is_set(storage_capability::point_to);
+	}
+};
 
 // storage_capability | storage_capability
 static constexpr inline
