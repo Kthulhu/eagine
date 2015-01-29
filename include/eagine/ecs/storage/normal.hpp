@@ -69,6 +69,9 @@ public:
 	 , _iter_taken(false)
 	{ }
 
+	storage_optimizer* get_optimizer(void) override;
+	void return_optimizer(storage_optimizer*) override;
+
 	iter_t* new_iterator(void) override;
 	iter_t* clone_iterator(iter_t*) override;
 	void delete_iterator(iter_t* iter) override;

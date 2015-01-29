@@ -79,6 +79,29 @@ current(void)
 	return _storage._index.key_at(_pos);
 }
 //------------------------------------------------------------------------------
+// normal_base_storage::get_optimizer
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+storage_optimizer*
+normal_base_storage<Entity>::
+get_optimizer(void)
+{
+	// TODO
+	return nullptr;
+}
+//------------------------------------------------------------------------------
+// normal_base_storage::return_optimizer
+//------------------------------------------------------------------------------
+template <typename Entity>
+inline
+void
+normal_base_storage<Entity>::
+return_optimizer(storage_optimizer*)
+{
+	// TODO
+}
+//------------------------------------------------------------------------------
 // normal_base_storage::new_iterator
 //------------------------------------------------------------------------------
 template <typename Entity>

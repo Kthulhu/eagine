@@ -34,6 +34,16 @@ struct storage_iterator
 	virtual const Entity& current(void) = 0;
 };
 
+struct storage_optimizer
+{
+	virtual ~storage_optimizer(void){ }
+
+	// update method doing one short optimization step.
+	// return value indicates if the optimization
+	// should continue true = it should, false = it's finished
+	virtual bool update(void) = 0;
+};
+
 // base_storage
 template <typename Entity>
 struct base_storage
@@ -48,6 +58,17 @@ struct base_storage
 	{
 		return capabilities();
 	}
+
+	// may return nullptr if optimization is not implemented
+	// or currently not available or possible.
+	// the resulting pointer must not be deleted and
+	// should be returned by return_optimizer
+	virtual storage_optimizer* get_optimizer(void)
+	{
+		return nullptr;
+	}
+
+	virtual void return_optimizer(storage_optimizer*) { }
 
 	virtual iter_t* new_iterator(void) = 0;
 
