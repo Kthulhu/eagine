@@ -5,7 +5,11 @@
 cmake_minimum_required(VERSION 2.8)
 
 eagine_exec_test(angle)
+
 eagine_exec_test_sse(vector)
 eagine_exec_test_nosse(vector)
 eagine_exec_test_sse(tvec)
 eagine_exec_test_nosse(tvec)
+
+eagine_exec_test_sse(matrix)
+eagine_exec_test_nosse(matrix)
