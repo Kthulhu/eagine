@@ -383,4 +383,227 @@ BOOST_AUTO_TEST_CASE(math_matrix_init_ctr1)
 	test_math_matrix_init_ctr_cm<double>();
 }
 
+template <typename T, bool RM>
+void test_math_matrix_copy_ctr(void)
+{
+	eagine::math::matrix<T, 1, 1, RM> m11a;
+	eagine::math::matrix<T, 1, 2, RM> m12a;
+	eagine::math::matrix<T, 1, 3, RM> m13a;
+	eagine::math::matrix<T, 1, 4, RM> m14a;
+	eagine::math::matrix<T, 1, 5, RM> m15a;
+
+	eagine::math::matrix<T, 1, 1, RM> m11b(m11a);
+	eagine::math::matrix<T, 1, 2, RM> m12b(m12a);
+	eagine::math::matrix<T, 1, 3, RM> m13b(m13a);
+	eagine::math::matrix<T, 1, 4, RM> m14b(m14a);
+	eagine::math::matrix<T, 1, 5, RM> m15b(m15a);
+
+	(void)m11b; (void)m12b; (void)m13b; (void)m14b; (void)m15b;
+
+	eagine::math::matrix<T, 2, 1, RM> m21a;
+	eagine::math::matrix<T, 2, 2, RM> m22a;
+	eagine::math::matrix<T, 2, 3, RM> m23a;
+	eagine::math::matrix<T, 2, 4, RM> m24a;
+	eagine::math::matrix<T, 2, 5, RM> m25a;
+
+	eagine::math::matrix<T, 2, 1, RM> m21b(m21a);
+	eagine::math::matrix<T, 2, 2, RM> m22b(m22a);
+	eagine::math::matrix<T, 2, 3, RM> m23b(m23a);
+	eagine::math::matrix<T, 2, 4, RM> m24b(m24a);
+	eagine::math::matrix<T, 2, 5, RM> m25b(m25a);
+
+	(void)m21b; (void)m22b; (void)m23b; (void)m24b; (void)m25b;
+
+	eagine::math::matrix<T, 3, 1, RM> m31a;
+	eagine::math::matrix<T, 3, 2, RM> m32a;
+	eagine::math::matrix<T, 3, 3, RM> m33a;
+	eagine::math::matrix<T, 3, 4, RM> m34a;
+	eagine::math::matrix<T, 3, 5, RM> m35a;
+
+	eagine::math::matrix<T, 3, 1, RM> m31b(m31a);
+	eagine::math::matrix<T, 3, 2, RM> m32b(m32a);
+	eagine::math::matrix<T, 3, 3, RM> m33b(m33a);
+	eagine::math::matrix<T, 3, 4, RM> m34b(m34a);
+	eagine::math::matrix<T, 3, 5, RM> m35b(m35a);
+
+	(void)m31b; (void)m32b; (void)m33b; (void)m34b; (void)m35b;
+
+	eagine::math::matrix<T, 4, 1, RM> m41a;
+	eagine::math::matrix<T, 4, 2, RM> m42a;
+	eagine::math::matrix<T, 4, 3, RM> m43a;
+	eagine::math::matrix<T, 4, 4, RM> m44a;
+	eagine::math::matrix<T, 4, 5, RM> m45a;
+
+	eagine::math::matrix<T, 4, 1, RM> m41b(m41a);
+	eagine::math::matrix<T, 4, 2, RM> m42b(m42a);
+	eagine::math::matrix<T, 4, 3, RM> m43b(m43a);
+	eagine::math::matrix<T, 4, 4, RM> m44b(m44a);
+	eagine::math::matrix<T, 4, 5, RM> m45b(m45a);
+
+	(void)m41b; (void)m42b; (void)m43b; (void)m44b; (void)m45b;
+
+	eagine::math::matrix<T, 5, 1, RM> m51a;
+	eagine::math::matrix<T, 5, 2, RM> m52a;
+	eagine::math::matrix<T, 5, 3, RM> m53a;
+	eagine::math::matrix<T, 5, 4, RM> m54a;
+	eagine::math::matrix<T, 5, 5, RM> m55a;
+
+	eagine::math::matrix<T, 5, 1, RM> m51b(m51a);
+	eagine::math::matrix<T, 5, 2, RM> m52b(m52a);
+	eagine::math::matrix<T, 5, 3, RM> m53b(m53a);
+	eagine::math::matrix<T, 5, 4, RM> m54b(m54a);
+	eagine::math::matrix<T, 5, 5, RM> m55b(m55a);
+
+	(void)m51b; (void)m52b; (void)m53b; (void)m54b; (void)m55b;
+
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_copy_ctr)
+{
+	test_math_matrix_copy_ctr<float, true>();
+	test_math_matrix_copy_ctr<float,false>();
+	test_math_matrix_copy_ctr<double, true>();
+	test_math_matrix_copy_ctr<double,false>();
+}
+
+template <typename T, bool RM>
+void test_math_matrix_from_data(void)
+{
+	T d11[1*1] = {1};
+	auto m11 = eagine::math::matrix<T, 1, 1, true>::from(d11, 1*1);
+	T d12[1*2] = {1,2};
+	auto m12 = eagine::math::matrix<T, 1, 2, true>::from(d12, 1*2);
+	T d13[1*3] = {1,2,3};
+	auto m13 = eagine::math::matrix<T, 1, 3, true>::from(d13, 1*3);
+	T d14[1*4] = {1,2,3,4};
+	auto m14 = eagine::math::matrix<T, 1, 4, true>::from(d14, 1*4);
+	T d15[1*5] = {1,2,3,4,5};
+	auto m15 = eagine::math::matrix<T, 1, 5, true>::from(d15, 1*5);
+
+	(void)m11; (void)m12; (void)m13; (void)m14; (void)m15;
+
+	T d21[2*1] = {1,2};
+	auto m21 = eagine::math::matrix<T, 2, 1, true>::from(d21, 2*1);
+	T d22[2*2] = {1,2,2,3};
+	auto m22 = eagine::math::matrix<T, 2, 2, true>::from(d22, 2*2);
+	T d23[2*3] = {1,2,3,2,3,4};
+	auto m23 = eagine::math::matrix<T, 2, 3, true>::from(d23, 2*3);
+	T d24[2*4] = {1,2,3,4,2,3,4,5};
+	auto m24 = eagine::math::matrix<T, 2, 4, true>::from(d24, 2*4);
+	T d25[2*5] = {1,2,3,4,5,2,3,4,5,6};
+	auto m25 = eagine::math::matrix<T, 2, 5, true>::from(d25, 2*5);
+
+	(void)m21; (void)m22; (void)m23; (void)m24; (void)m25;
+
+	T d31[3*1] = {1,2,3};
+	auto m31 = eagine::math::matrix<T, 3, 1, true>::from(d31, 3*1);
+	T d32[3*2] = {1,2,2,3,3,4};
+	auto m32 = eagine::math::matrix<T, 3, 2, true>::from(d32, 3*2);
+	T d33[3*3] = {1,2,3,2,3,4,3,4,5};
+	auto m33 = eagine::math::matrix<T, 3, 3, true>::from(d33, 3*3);
+	T d34[3*4] = {1,2,3,4,2,3,4,5,3,4,5,6};
+	auto m34 = eagine::math::matrix<T, 3, 4, true>::from(d34, 3*4);
+	T d35[3*5] = {1,2,3,4,5,2,3,4,5,6,3,4,5,6,7};
+	auto m35 = eagine::math::matrix<T, 3, 5, true>::from(d35, 3*5);
+
+	(void)m31; (void)m32; (void)m33; (void)m34; (void)m35;
+
+	T d41[4*1] = {1,2,3,4};
+	auto m41 = eagine::math::matrix<T, 4, 1, true>::from(d41, 4*1);
+	T d42[4*2] = {1,2,2,3,3,4,4,5};
+	auto m42 = eagine::math::matrix<T, 4, 2, true>::from(d42, 4*2);
+	T d43[4*3] = {1,2,3,2,3,4,3,4,5,4,5,6};
+	auto m43 = eagine::math::matrix<T, 4, 3, true>::from(d43, 4*3);
+	T d44[4*4] = {1,2,3,4,2,3,4,5,3,4,5,6,4,5,6,7};
+	auto m44 = eagine::math::matrix<T, 4, 4, true>::from(d44, 4*4);
+	T d45[4*5] = {1,2,3,4,5,2,3,4,5,6,3,4,5,6,7,4,5,6,7,8};
+	auto m45 = eagine::math::matrix<T, 4, 5, true>::from(d45, 4*5);
+
+	(void)m41; (void)m42; (void)m43; (void)m44; (void)m45;
+
+	T d51[4*1] = {1,2,3,4};
+	auto m51 = eagine::math::matrix<T, 5, 1, true>::from(d51, 5*1);
+	T d52[5*2] = {1,2,2,3,3,4,4,5};
+	auto m52 = eagine::math::matrix<T, 5, 2, true>::from(d52, 5*2);
+	T d53[5*3] = {1,2,3,2,3,4,3,4,5,4,5,6};
+	auto m53 = eagine::math::matrix<T, 5, 3, true>::from(d53, 5*3);
+	T d54[5*4] = {1,2,3,4,2,3,4,5,3,4,5,6,4,5,6,7};
+	auto m54 = eagine::math::matrix<T, 5, 4, true>::from(d54, 5*4);
+	T d55[5*5] = {1,2,3,4,5,2,3,4,5,6,3,4,5,6,7,4,5,6,7,8};
+	auto m55 = eagine::math::matrix<T, 5, 5, true>::from(d55, 5*5);
+
+	(void)m51; (void)m52; (void)m53; (void)m54; (void)m55;
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_from_data)
+{
+	test_math_matrix_from_data<float, true>();
+	test_math_matrix_from_data<float,false>();
+	test_math_matrix_from_data<double, true>();
+	test_math_matrix_from_data<double,false>();
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_elements(void)
+{
+	T d[R*C];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d[k] = std::rand() / T(3);
+	}
+
+	eagine::math::matrix<T,R,C,RM> m =
+		eagine::math::matrix<T,R,C,RM>::from(d, R*C);
+
+	for(unsigned i=0; i<R; ++i)
+	for(unsigned j=0; j<C; ++j)
+	{
+		BOOST_ASSERT(test_math_close(m[RM?i:j][RM?j:i], d[(RM?i:j)*(RM?C:R)+(RM?j:i)]));
+	}
+}
+
+template <typename T, bool RM>
+void test_math_matrix_elements_TRM(void)
+{
+	test_math_matrix_elements<T, 1, 1, RM>();
+	test_math_matrix_elements<T, 1, 2, RM>();
+	test_math_matrix_elements<T, 1, 3, RM>();
+	test_math_matrix_elements<T, 1, 4, RM>();
+	test_math_matrix_elements<T, 1, 5, RM>();
+
+	test_math_matrix_elements<T, 2, 1, RM>();
+	test_math_matrix_elements<T, 2, 2, RM>();
+	test_math_matrix_elements<T, 2, 3, RM>();
+	test_math_matrix_elements<T, 2, 4, RM>();
+	test_math_matrix_elements<T, 2, 5, RM>();
+
+	test_math_matrix_elements<T, 3, 1, RM>();
+	test_math_matrix_elements<T, 3, 2, RM>();
+	test_math_matrix_elements<T, 3, 3, RM>();
+	test_math_matrix_elements<T, 3, 4, RM>();
+	test_math_matrix_elements<T, 3, 5, RM>();
+
+	test_math_matrix_elements<T, 4, 1, RM>();
+	test_math_matrix_elements<T, 4, 2, RM>();
+	test_math_matrix_elements<T, 4, 3, RM>();
+	test_math_matrix_elements<T, 4, 4, RM>();
+	test_math_matrix_elements<T, 4, 5, RM>();
+
+	test_math_matrix_elements<T, 5, 1, RM>();
+	test_math_matrix_elements<T, 5, 2, RM>();
+	test_math_matrix_elements<T, 5, 3, RM>();
+	test_math_matrix_elements<T, 5, 4, RM>();
+	test_math_matrix_elements<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_elements)
+{
+	test_math_matrix_elements_TRM<float, true>();
+	test_math_matrix_elements_TRM<float,false>();
+	test_math_matrix_elements_TRM<double, true>();
+	test_math_matrix_elements_TRM<double,false>();
+
+}
+
 BOOST_AUTO_TEST_SUITE_END()

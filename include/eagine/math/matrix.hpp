@@ -1,7 +1,7 @@
 /**
  *  @file eagine/math/matrix.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -18,30 +18,49 @@
 namespace eagine {
 namespace math {
 
-// matrix
-template <typename T, unsigned R, unsigned C, bool RowMajor>
-struct matrix;
-
-// matrix Row-Major
-template <typename T, unsigned R, unsigned C>
-struct matrix<T,R,C,true>
+// matrix Row-Major/Column-Major
+template <typename T, unsigned R, unsigned C, bool RM>
+struct matrix
 {
 	typedef matrix type;
 
-	typedef typename vect::data<T, C>::type _vT;
+	typedef typename vect::data<T, RM?C:R>::type _vT;
 
-	_vT _v[R];
-};
+	_vT _v[RM?R:C];
 
-// matrix Column-Major
-template <typename T, unsigned R, unsigned C>
-struct matrix<T,R,C,false>
-{
-	typedef matrix type;
+	template <typename P, unsigned ... I>
+	static inline
+	matrix _from_hlp(
+		const P* dt,
+		std::size_t sz,
+		meta::integer_sequence<unsigned, I...>
+	) noexcept
+	{
+		return matrix{{
+			vect::from<T, RM?C:R>::apply(
+				dt+I*(RM?C:R),
+				sz-I*(RM?C:R)
+			)...
+		}};
+	}
 
-	typedef typename vect::data<T, R>::type _vT;
+	template <typename P>
+	static inline
+	matrix from(const P* dt, std::size_t sz)
+	noexcept
+	{
+		return _from_hlp(
+			dt, sz,
+			meta::make_integer_sequence<unsigned, RM?R:C>()
+		);
+	}
 
-	_vT _v[C];
+	inline
+	const vector<T, RM?C:R> operator [] (unsigned i) const
+	noexcept
+	{
+		return vector<T, RM?C:R>{_v[i]};
+	}
 };
 
 template <typename X>
