@@ -11,5 +11,5 @@ eagine_exec_test_nosse(vector)
 eagine_exec_test_sse(tvec)
 eagine_exec_test_nosse(tvec)
 
-eagine_exec_test_sse(matrix)
-eagine_exec_test_nosse(matrix)
+eagine_exec_test_sse(matrix1)
+eagine_exec_test_nosse(matrix1)

@@ -1,5 +1,5 @@
 /**
- *  .file test/eagine/math/matrix.cpp
+ *  .file test/eagine/math/matrix1.cpp
  *
  *  .author Matus Chochlik
  *
@@ -8,7 +8,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE eagine_math_matrix
+#define BOOST_TEST_MODULE eagine_math_matrix1
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/matrix.hpp>
@@ -16,7 +16,7 @@
 #include <cmath>
 #include "common.hpp"
 
-BOOST_AUTO_TEST_SUITE(math_matrix)
+BOOST_AUTO_TEST_SUITE(math_matrix1)
 
 template <typename T, unsigned R, unsigned C, bool RM>
 bool test_math_matrix_close(
@@ -543,8 +543,471 @@ BOOST_AUTO_TEST_CASE(math_matrix_from_data)
 	test_math_matrix_from_data<double,false>();
 }
 
+template <typename T, bool RM>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<bool, RM>
+)
+{
+	return eagine::math::matrix<T,1,1,RM>{{
+		{d[0]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,1,2,true>{{
+		{d[0],d[1]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,1,2,false>{{
+		{d[0]},
+		{d[1]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,1,3,true>{{
+		{d[0],d[1],d[2]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,1,3,false>{{
+		{d[0]},
+		{d[1]},
+		{d[2]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,1,4,true>{{
+		{d[0],d[1],d[2],d[3]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,1,4,false>{{
+		{d[0]},
+		{d[1]},
+		{d[2]},
+		{d[3]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,1,5,true>{{
+		{d[0],d[1],d[2],d[3],d[4]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,1,5,false>{{
+		{d[0]},
+		{d[1]},
+		{d[2]},
+		{d[3]},
+		{d[4]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,2,1,true>{{
+		{d[0]},
+		{d[1]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,2,1,false>{{
+		{d[0],d[1]}
+	}};
+}
+
+template <typename T, bool RM>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, RM>
+)
+{
+	return eagine::math::matrix<T,2,2,RM>{{
+		{d[0],d[1]},
+		{d[2],d[3]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,2,3,true>{{
+		{d[0],d[1],d[2]},
+		{d[3],d[4],d[5]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,2,3,false>{{
+		{d[0],d[1]},
+		{d[2],d[3]},
+		{d[4],d[5]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,2,4,true>{{
+		{d[0],d[1],d[2],d[3]},
+		{d[4],d[5],d[6],d[7]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,2,4,false>{{
+		{d[0],d[1]},
+		{d[2],d[3]},
+		{d[4],d[5]},
+		{d[6],d[7]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,2,5,true>{{
+		{d[0],d[1],d[2],d[3],d[4]},
+		{d[5],d[6],d[7],d[8],d[9]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,2,5,false>{{
+		{d[0],d[1]},
+		{d[2],d[3]},
+		{d[4],d[5]},
+		{d[6],d[7]},
+		{d[8],d[9]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,3,1,true>{{
+		{d[0]},
+		{d[1]},
+		{d[2]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 1>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,3,1,false>{{
+		{d[0],d[1],d[2]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,3,2,true>{{
+		{d[0],d[1]},
+		{d[2],d[3]},
+		{d[4],d[5]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::matrix<T,3,2,false>{{
+		{d[0],d[1],d[2]},
+		{d[3],d[4],d[5]}
+	}};
+}
+
+template <typename T, bool RM>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, RM>
+)
+{
+	return eagine::math::matrix<T,3,3,RM>{{
+		{d[0],d[1],d[2]},
+		{d[3],d[4],d[5]},
+		{d[6],d[7],d[8]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,3,4,true>{{
+		{d[ 0],d[ 1],d[ 2],d[ 3]},
+		{d[ 4],d[ 5],d[ 6],d[ 7]},
+		{d[ 8],d[ 9],d[10],d[11]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,3,4,false>{{
+		{d[ 0],d[ 1],d[ 2]},
+		{d[ 3],d[ 4],d[ 5]},
+		{d[ 6],d[ 7],d[ 8]},
+		{d[ 9],d[10],d[11]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::matrix<T,3,5,true>{{
+		{d[ 0],d[ 1],d[ 2],d[ 3],d[ 4]},
+		{d[ 5],d[ 6],d[ 7],d[ 8],d[ 9]},
+		{d[10],d[11],d[12],d[13],d[14]}
+	}};
+}
+
+template <typename T>
+auto test_make_math_matrix(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, false>
+)
+{
+	return eagine::math::matrix<T,3,5,false>{{
+		{d[ 0],d[ 1],d[ 2]},
+		{d[ 3],d[ 4],d[ 5]},
+		{d[ 6],d[ 7],d[ 8]},
+		{d[ 9],d[10],d[11]},
+		{d[12],d[13],d[14]}
+	}};
+}
+
 template <typename T, unsigned R, unsigned C, bool RM>
-void test_math_matrix_elements(void)
+void test_math_matrix_elements_1(void)
+{
+	T d[R*C];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d[k] = std::rand() / T(3);
+	}
+
+	eagine::math::matrix<T,R,C,RM> m = test_make_math_matrix(
+		d,
+		eagine::meta::integral_constant<unsigned, R>(),
+		eagine::meta::integral_constant<unsigned, C>(),
+		eagine::meta::integral_constant<bool, RM>()
+	);
+
+	for(unsigned i=0; i<R; ++i)
+	for(unsigned j=0; j<C; ++j)
+	{
+		BOOST_ASSERT(test_math_close(m[RM?i:j][RM?j:i], d[(RM?i:j)*(RM?C:R)+(RM?j:i)]));
+	}
+}
+
+template <typename T, bool RM>
+void test_math_matrix_elements_TRM_1(void)
+{
+	test_math_matrix_elements_1<T, 1, 1, RM>();
+	test_math_matrix_elements_1<T, 1, 2, RM>();
+	test_math_matrix_elements_1<T, 1, 3, RM>();
+	test_math_matrix_elements_1<T, 1, 4, RM>();
+	test_math_matrix_elements_1<T, 1, 5, RM>();
+
+	test_math_matrix_elements_1<T, 2, 1, RM>();
+	test_math_matrix_elements_1<T, 2, 2, RM>();
+	test_math_matrix_elements_1<T, 2, 3, RM>();
+	test_math_matrix_elements_1<T, 2, 4, RM>();
+	test_math_matrix_elements_1<T, 2, 5, RM>();
+
+	test_math_matrix_elements_1<T, 3, 1, RM>();
+	test_math_matrix_elements_1<T, 3, 2, RM>();
+	test_math_matrix_elements_1<T, 3, 3, RM>();
+	test_math_matrix_elements_1<T, 3, 4, RM>();
+	test_math_matrix_elements_1<T, 3, 5, RM>();
+/*
+	test_math_matrix_elements_1<T, 4, 1, RM>();
+	test_math_matrix_elements_1<T, 4, 2, RM>();
+	test_math_matrix_elements_1<T, 4, 3, RM>();
+	test_math_matrix_elements_1<T, 4, 4, RM>();
+	test_math_matrix_elements_1<T, 4, 5, RM>();
+
+	test_math_matrix_elements_1<T, 5, 1, RM>();
+	test_math_matrix_elements_1<T, 5, 2, RM>();
+	test_math_matrix_elements_1<T, 5, 3, RM>();
+	test_math_matrix_elements_1<T, 5, 4, RM>();
+	test_math_matrix_elements_1<T, 5, 5, RM>();
+*/
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_elements_1)
+{
+	for(int i=0; i<100; ++i)
+	{
+		test_math_matrix_elements_TRM_1<float, true>();
+		test_math_matrix_elements_TRM_1<float,false>();
+		test_math_matrix_elements_TRM_1<double, true>();
+		test_math_matrix_elements_TRM_1<double,false>();
+	}
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_elements_2(void)
 {
 	T d[R*C];
 
@@ -564,46 +1027,48 @@ void test_math_matrix_elements(void)
 }
 
 template <typename T, bool RM>
-void test_math_matrix_elements_TRM(void)
+void test_math_matrix_elements_TRM_2(void)
 {
-	test_math_matrix_elements<T, 1, 1, RM>();
-	test_math_matrix_elements<T, 1, 2, RM>();
-	test_math_matrix_elements<T, 1, 3, RM>();
-	test_math_matrix_elements<T, 1, 4, RM>();
-	test_math_matrix_elements<T, 1, 5, RM>();
+	test_math_matrix_elements_2<T, 1, 1, RM>();
+	test_math_matrix_elements_2<T, 1, 2, RM>();
+	test_math_matrix_elements_2<T, 1, 3, RM>();
+	test_math_matrix_elements_2<T, 1, 4, RM>();
+	test_math_matrix_elements_2<T, 1, 5, RM>();
 
-	test_math_matrix_elements<T, 2, 1, RM>();
-	test_math_matrix_elements<T, 2, 2, RM>();
-	test_math_matrix_elements<T, 2, 3, RM>();
-	test_math_matrix_elements<T, 2, 4, RM>();
-	test_math_matrix_elements<T, 2, 5, RM>();
+	test_math_matrix_elements_2<T, 2, 1, RM>();
+	test_math_matrix_elements_2<T, 2, 2, RM>();
+	test_math_matrix_elements_2<T, 2, 3, RM>();
+	test_math_matrix_elements_2<T, 2, 4, RM>();
+	test_math_matrix_elements_2<T, 2, 5, RM>();
 
-	test_math_matrix_elements<T, 3, 1, RM>();
-	test_math_matrix_elements<T, 3, 2, RM>();
-	test_math_matrix_elements<T, 3, 3, RM>();
-	test_math_matrix_elements<T, 3, 4, RM>();
-	test_math_matrix_elements<T, 3, 5, RM>();
+	test_math_matrix_elements_2<T, 3, 1, RM>();
+	test_math_matrix_elements_2<T, 3, 2, RM>();
+	test_math_matrix_elements_2<T, 3, 3, RM>();
+	test_math_matrix_elements_2<T, 3, 4, RM>();
+	test_math_matrix_elements_2<T, 3, 5, RM>();
 
-	test_math_matrix_elements<T, 4, 1, RM>();
-	test_math_matrix_elements<T, 4, 2, RM>();
-	test_math_matrix_elements<T, 4, 3, RM>();
-	test_math_matrix_elements<T, 4, 4, RM>();
-	test_math_matrix_elements<T, 4, 5, RM>();
+	test_math_matrix_elements_2<T, 4, 1, RM>();
+	test_math_matrix_elements_2<T, 4, 2, RM>();
+	test_math_matrix_elements_2<T, 4, 3, RM>();
+	test_math_matrix_elements_2<T, 4, 4, RM>();
+	test_math_matrix_elements_2<T, 4, 5, RM>();
 
-	test_math_matrix_elements<T, 5, 1, RM>();
-	test_math_matrix_elements<T, 5, 2, RM>();
-	test_math_matrix_elements<T, 5, 3, RM>();
-	test_math_matrix_elements<T, 5, 4, RM>();
-	test_math_matrix_elements<T, 5, 5, RM>();
+	test_math_matrix_elements_2<T, 5, 1, RM>();
+	test_math_matrix_elements_2<T, 5, 2, RM>();
+	test_math_matrix_elements_2<T, 5, 3, RM>();
+	test_math_matrix_elements_2<T, 5, 4, RM>();
+	test_math_matrix_elements_2<T, 5, 5, RM>();
 }
 
-BOOST_AUTO_TEST_CASE(math_matrix_elements)
+BOOST_AUTO_TEST_CASE(math_matrix_elements_2)
 {
-	test_math_matrix_elements_TRM<float, true>();
-	test_math_matrix_elements_TRM<float,false>();
-	test_math_matrix_elements_TRM<double, true>();
-	test_math_matrix_elements_TRM<double,false>();
-
+	for(int i=0; i<100; ++i)
+	{
+		test_math_matrix_elements_TRM_2<float, true>();
+		test_math_matrix_elements_TRM_2<float,false>();
+		test_math_matrix_elements_TRM_2<double, true>();
+		test_math_matrix_elements_TRM_2<double,false>();
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()
