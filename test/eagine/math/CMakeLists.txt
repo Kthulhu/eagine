@@ -13,3 +13,5 @@ eagine_exec_test_nosse(tvec)
 
 eagine_exec_test_sse(matrix1)
 eagine_exec_test_nosse(matrix1)
+eagine_exec_test_sse(matrix2)
+eagine_exec_test_nosse(matrix2)

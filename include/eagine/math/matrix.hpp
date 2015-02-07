@@ -424,7 +424,8 @@ _multiply_hlp2(
 	const matrix<T, K, N,false>& m2
 ) noexcept
 {
-	return {dot(row<I>(m1), column<J>(m2))...};
+	return typename vect::data<T, N>::type
+		{dot(row<I>(m1), column<J>(m2))...};
 }
 
 // multiply hlp

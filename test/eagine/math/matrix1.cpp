@@ -1370,15 +1370,14 @@ void test_math_matrix_equal(void)
 		eagine::meta::integral_constant<unsigned, C>(),
 		eagine::meta::integral_constant<bool, RM>()
 	);
+	eagine::math::matrix<T,R,C,RM> m3(m1);
 
 	BOOST_ASSERT(m1 == m2);
-
-	for(unsigned i=0; i<R; ++i)
-	for(unsigned j=0; j<C; ++j)
-	{
-		BOOST_ASSERT(test_math_close(m1[RM?i:j][RM?j:i], d[(RM?i:j)*(RM?C:R)+(RM?j:i)]));
-		BOOST_ASSERT(test_math_close(m2[RM?i:j][RM?j:i], d[(RM?i:j)*(RM?C:R)+(RM?j:i)]));
-	}
+	BOOST_ASSERT(m2 == m1);
+	BOOST_ASSERT(m1 == m3);
+	BOOST_ASSERT(m3 == m1);
+	BOOST_ASSERT(m2 == m3);
+	BOOST_ASSERT(m3 == m2);
 }
 
 template <typename T, bool RM>
