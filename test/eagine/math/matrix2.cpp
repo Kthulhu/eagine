@@ -18,6 +18,162 @@
 
 BOOST_AUTO_TEST_SUITE(math_matrix2)
 
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_rows_TRC(void)
+{
+	eagine::math::matrix<T,R,C,RM> m;
+
+	using eagine::math::rows;
+
+	BOOST_ASSERT(rows(m) == R);
+}
+
+template <typename T, bool RM>
+void test_math_matrix_rows(void)
+{
+	test_math_matrix_rows_TRC<T, 1, 1, RM>();
+	test_math_matrix_rows_TRC<T, 1, 2, RM>();
+	test_math_matrix_rows_TRC<T, 1, 3, RM>();
+	test_math_matrix_rows_TRC<T, 1, 4, RM>();
+	test_math_matrix_rows_TRC<T, 1, 5, RM>();
+
+	test_math_matrix_rows_TRC<T, 2, 1, RM>();
+	test_math_matrix_rows_TRC<T, 2, 2, RM>();
+	test_math_matrix_rows_TRC<T, 2, 3, RM>();
+	test_math_matrix_rows_TRC<T, 2, 4, RM>();
+	test_math_matrix_rows_TRC<T, 2, 5, RM>();
+
+	test_math_matrix_rows_TRC<T, 3, 1, RM>();
+	test_math_matrix_rows_TRC<T, 3, 2, RM>();
+	test_math_matrix_rows_TRC<T, 3, 3, RM>();
+	test_math_matrix_rows_TRC<T, 3, 4, RM>();
+	test_math_matrix_rows_TRC<T, 3, 5, RM>();
+
+	test_math_matrix_rows_TRC<T, 4, 1, RM>();
+	test_math_matrix_rows_TRC<T, 4, 2, RM>();
+	test_math_matrix_rows_TRC<T, 4, 3, RM>();
+	test_math_matrix_rows_TRC<T, 4, 4, RM>();
+	test_math_matrix_rows_TRC<T, 4, 5, RM>();
+
+	test_math_matrix_rows_TRC<T, 5, 1, RM>();
+	test_math_matrix_rows_TRC<T, 5, 2, RM>();
+	test_math_matrix_rows_TRC<T, 5, 3, RM>();
+	test_math_matrix_rows_TRC<T, 5, 4, RM>();
+	test_math_matrix_rows_TRC<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_rows)
+{
+	test_math_matrix_rows<float, true>();
+	test_math_matrix_rows<float,false>();
+	test_math_matrix_rows<double, true>();
+	test_math_matrix_rows<double,false>();
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_cols_TRC(void)
+{
+	eagine::math::matrix<T,R,C,RM> m;
+
+	using eagine::math::columns;
+
+	BOOST_ASSERT(columns(m) == C);
+}
+
+template <typename T, bool RM>
+void test_math_matrix_cols(void)
+{
+	test_math_matrix_cols_TRC<T, 1, 1, RM>();
+	test_math_matrix_cols_TRC<T, 1, 2, RM>();
+	test_math_matrix_cols_TRC<T, 1, 3, RM>();
+	test_math_matrix_cols_TRC<T, 1, 4, RM>();
+	test_math_matrix_cols_TRC<T, 1, 5, RM>();
+
+	test_math_matrix_cols_TRC<T, 2, 1, RM>();
+	test_math_matrix_cols_TRC<T, 2, 2, RM>();
+	test_math_matrix_cols_TRC<T, 2, 3, RM>();
+	test_math_matrix_cols_TRC<T, 2, 4, RM>();
+	test_math_matrix_cols_TRC<T, 2, 5, RM>();
+
+	test_math_matrix_cols_TRC<T, 3, 1, RM>();
+	test_math_matrix_cols_TRC<T, 3, 2, RM>();
+	test_math_matrix_cols_TRC<T, 3, 3, RM>();
+	test_math_matrix_cols_TRC<T, 3, 4, RM>();
+	test_math_matrix_cols_TRC<T, 3, 5, RM>();
+
+	test_math_matrix_cols_TRC<T, 4, 1, RM>();
+	test_math_matrix_cols_TRC<T, 4, 2, RM>();
+	test_math_matrix_cols_TRC<T, 4, 3, RM>();
+	test_math_matrix_cols_TRC<T, 4, 4, RM>();
+	test_math_matrix_cols_TRC<T, 4, 5, RM>();
+
+	test_math_matrix_cols_TRC<T, 5, 1, RM>();
+	test_math_matrix_cols_TRC<T, 5, 2, RM>();
+	test_math_matrix_cols_TRC<T, 5, 3, RM>();
+	test_math_matrix_cols_TRC<T, 5, 4, RM>();
+	test_math_matrix_cols_TRC<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_cols)
+{
+	test_math_matrix_cols<float, true>();
+	test_math_matrix_cols<float,false>();
+	test_math_matrix_cols<double, true>();
+	test_math_matrix_cols<double,false>();
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_row_major_TRC(void)
+{
+	eagine::math::matrix<T,R,C,RM> m;
+
+	using eagine::math::row_major;
+
+	BOOST_ASSERT(row_major(m) == RM);
+}
+
+template <typename T, bool RM>
+void test_math_matrix_row_major(void)
+{
+	test_math_matrix_row_major_TRC<T, 1, 1, RM>();
+	test_math_matrix_row_major_TRC<T, 1, 2, RM>();
+	test_math_matrix_row_major_TRC<T, 1, 3, RM>();
+	test_math_matrix_row_major_TRC<T, 1, 4, RM>();
+	test_math_matrix_row_major_TRC<T, 1, 5, RM>();
+
+	test_math_matrix_row_major_TRC<T, 2, 1, RM>();
+	test_math_matrix_row_major_TRC<T, 2, 2, RM>();
+	test_math_matrix_row_major_TRC<T, 2, 3, RM>();
+	test_math_matrix_row_major_TRC<T, 2, 4, RM>();
+	test_math_matrix_row_major_TRC<T, 2, 5, RM>();
+
+	test_math_matrix_row_major_TRC<T, 3, 1, RM>();
+	test_math_matrix_row_major_TRC<T, 3, 2, RM>();
+	test_math_matrix_row_major_TRC<T, 3, 3, RM>();
+	test_math_matrix_row_major_TRC<T, 3, 4, RM>();
+	test_math_matrix_row_major_TRC<T, 3, 5, RM>();
+
+	test_math_matrix_row_major_TRC<T, 4, 1, RM>();
+	test_math_matrix_row_major_TRC<T, 4, 2, RM>();
+	test_math_matrix_row_major_TRC<T, 4, 3, RM>();
+	test_math_matrix_row_major_TRC<T, 4, 4, RM>();
+	test_math_matrix_row_major_TRC<T, 4, 5, RM>();
+
+	test_math_matrix_row_major_TRC<T, 5, 1, RM>();
+	test_math_matrix_row_major_TRC<T, 5, 2, RM>();
+	test_math_matrix_row_major_TRC<T, 5, 3, RM>();
+	test_math_matrix_row_major_TRC<T, 5, 4, RM>();
+	test_math_matrix_row_major_TRC<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_row_major)
+{
+	test_math_matrix_row_major<float, true>();
+	test_math_matrix_row_major<float,false>();
+	test_math_matrix_row_major<double, true>();
+	test_math_matrix_row_major<double,false>();
+}
+
 template <typename T, unsigned P, unsigned Q, unsigned R>
 void test_math_matrix_multiply_TPQR(void)
 {
