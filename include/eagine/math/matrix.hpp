@@ -116,8 +116,12 @@ operator == (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
 noexcept
 {
 	for(unsigned i=0;i<(RM?R:C); ++i)
+	{
 		if(!vect::equal<T, (RM?C:R)>::apply(a._v[i], b._v[i]))
+		{
 			return false;
+		}
+	}
 	return true;
 }
 
@@ -129,59 +133,13 @@ operator != (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
 noexcept
 {
 	for(unsigned i=0;i<(RM?R:C); ++i)
+	{
 		if(!vect::equal<T, (RM?C:R)>::apply(a._v[i], b._v[i]))
+		{
 			return true;
+		}
+	}
 	return false;
-}
-
-// transpose_tpl helper 4x4 matrix
-template <bool DstRM, typename T>
-static constexpr inline
-matrix<T,4,4,DstRM> transpose_tpl_hlp(
-	const typename vect::data<T, 4>::type& q0,
-	const typename vect::data<T, 4>::type& q1,
-	const typename vect::data<T, 4>::type& q2,
-	const typename vect::data<T, 4>::type& q3
-) noexcept
-{
-	return {{
-		vect::shuffle2<T,4>::template apply<0,2,4,6>(q0, q2),
-		vect::shuffle2<T,4>::template apply<1,3,5,7>(q0, q2),
-		vect::shuffle2<T,4>::template apply<0,2,4,6>(q1, q3),
-		vect::shuffle2<T,4>::template apply<1,3,5,7>(q1, q3)
-	}};
-}
-
-// transpose_tpl 4x4 matrix
-template <bool DstRM, bool SrcRM, typename T>
-static inline
-matrix<T,4,4,DstRM> transpose_tpl(const matrix<T,4,4,SrcRM>& m)
-noexcept
-{
-	return transpose_tpl_hlp<DstRM, T>(
-		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[0], m._v[1]),
-		vect::shuffle2<T,4>::template apply<2,3,6,7>(m._v[0], m._v[1]),
-		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[2], m._v[3]),
-		vect::shuffle2<T,4>::template apply<2,3,6,7>(m._v[2], m._v[3])
-	);
-}
-
-// transpose
-template <typename T, unsigned R, unsigned C, bool RM>
-static inline
-matrix<T,R,C,RM> transpose(const matrix<T,R,C,RM>& m)
-noexcept
-{
-	return transpose_tpl<RM, RM, T>(m);
-}
-
-// reorder
-template <typename T, unsigned R, unsigned C, bool RM>
-static inline
-matrix<T,R,C,!RM> reorder(const matrix<T,R,C,RM>& m)
-noexcept
-{
-	return transpose_tpl<!RM, RM, T>(m);
 }
 
 // get (Row-major)
@@ -260,6 +218,75 @@ noexcept
 	m._v[j][i] = v;
 }
 
+// transpose_tpl helper 4x4 matrix
+template <bool DstRM, typename T>
+static constexpr inline
+matrix<T,4,4,DstRM> transpose_tpl_hlp(
+	const typename vect::data<T, 4>::type& q0,
+	const typename vect::data<T, 4>::type& q1,
+	const typename vect::data<T, 4>::type& q2,
+	const typename vect::data<T, 4>::type& q3
+) noexcept
+{
+	return matrix<T,4,4,DstRM>{{
+		vect::shuffle2<T,4>::template apply<0,2,4,6>(q0, q2),
+		vect::shuffle2<T,4>::template apply<1,3,5,7>(q0, q2),
+		vect::shuffle2<T,4>::template apply<0,2,4,6>(q1, q3),
+		vect::shuffle2<T,4>::template apply<1,3,5,7>(q1, q3)
+	}};
+}
+
+// transpose_tpl 4x4 matrix
+template <bool DstRM, bool SrcRM, typename T>
+static inline
+matrix<T,4,4,DstRM> transpose_tpl(const matrix<T,4,4,SrcRM>& m)
+noexcept
+{
+	return transpose_tpl_hlp<DstRM, T>(
+		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[0], m._v[1]),
+		vect::shuffle2<T,4>::template apply<2,3,6,7>(m._v[0], m._v[1]),
+		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[2], m._v[3]),
+		vect::shuffle2<T,4>::template apply<2,3,6,7>(m._v[2], m._v[3])
+	);
+}
+
+// transpose_tpl matrix
+template <bool DstRM, bool SrcRM, typename T, unsigned R, unsigned C>
+static inline
+matrix<T,(DstRM!=SrcRM?R:C),(DstRM!=SrcRM?C:R),DstRM>
+transpose_tpl(const matrix<T,R,C,SrcRM>& m)
+noexcept
+{
+	static const bool S = (DstRM != SrcRM);
+	matrix<T,(S?R:C),(S?C:R),DstRM> r;
+
+	for(unsigned i=0; i<R; ++i)
+	for(unsigned j=0; j<C; ++j)
+	{
+		set(r, S?i:j, S?j:i, get(m,i,j));
+	}
+
+	return r;
+}
+
+// transpose
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline
+matrix<T,C,R,RM> transpose(const matrix<T,R,C,RM>& m)
+noexcept
+{
+	return transpose_tpl<RM, RM, T>(m);
+}
+
+// reorder
+template <typename T, unsigned R, unsigned C, bool RM>
+static inline
+matrix<T,R,C,!RM> reorder(const matrix<T,R,C,RM>& m)
+noexcept
+{
+	return transpose_tpl<!RM, RM, T>(m);
+}
+
 // major_vector
 template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
@@ -270,9 +297,19 @@ noexcept
 	return {m._v[I]};
 }
 
+// minor_vector
+template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
+static inline
+typename meta::enable_if<(I<(RM?C:R)), vector<T, (RM?R:C)>>::type
+minor_vector(const matrix<T,R,C,RM>& m)
+noexcept
+{
+	return major_vector<I>(reorder(m));
+}
+
 // minor_vector mat4x4
 template <unsigned I, typename T, bool RM>
-static constexpr inline
+static inline
 typename meta::enable_if<(I<4), vector<T, 4>>::type
 minor_vector(const matrix<T,4,4,RM>& m)
 noexcept
@@ -295,8 +332,8 @@ noexcept
 
 // row (Column-Major)
 template <unsigned I, typename T, unsigned R, unsigned C>
-static constexpr inline
-vector<T, R>
+static inline
+vector<T, C>
 row(const matrix<T,R,C,false>& m)
 noexcept
 {
@@ -306,7 +343,7 @@ noexcept
 // row_hlp
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline
-vector<T, RM?C:R> row_hlp(
+vector<T, C> row_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, 0u>,
 	unsigned i
@@ -319,7 +356,7 @@ vector<T, RM?C:R> row_hlp(
 // row_hlp
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static inline
-vector<T, RM?C:R> row_hlp(
+vector<T, C> row_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, I>,
 	unsigned i
@@ -332,11 +369,11 @@ vector<T, RM?C:R> row_hlp(
 // row - run-time
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline
-vector<T, RM?C:R>
+vector<T, C>
 row(const matrix<T,R,C,RM>& m, unsigned i)
 noexcept
 {
-	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
+	typedef meta::integral_constant<unsigned, R-1> I;
 	return row_hlp(m, I(), i);
 }
 
@@ -352,7 +389,7 @@ noexcept
 
 // column (Row-Major)
 template <unsigned I, typename T, unsigned R, unsigned C>
-static constexpr inline
+static inline
 vector<T, R>
 column(const matrix<T,R,C,true>& m)
 noexcept
@@ -363,7 +400,7 @@ noexcept
 // col_hlp
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline
-vector<T, RM?R:C> col_hlp(
+vector<T, R> col_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, 0u>,
 	unsigned i
@@ -376,7 +413,7 @@ vector<T, RM?R:C> col_hlp(
 // col_hlp
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static inline
-vector<T, RM?R:C> col_hlp(
+vector<T, R> col_hlp(
 	const matrix<T,R,C,RM>& m,
 	meta::integral_constant<unsigned, I>,
 	unsigned i
@@ -389,11 +426,11 @@ vector<T, RM?R:C> col_hlp(
 // column - run-time
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline
-vector<T, RM?R:C>
+vector<T, R>
 column(const matrix<T,R,C,RM>& m, unsigned i)
 noexcept
 {
-	typedef meta::integral_constant<unsigned, (RM?R:C)-1> I;
+	typedef meta::integral_constant<unsigned, C-1> I;
 	return col_hlp(m, I(), i);
 }
 
@@ -739,6 +776,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 class matrix_data_ref<matrix<T, R, C, RM>>
 {
 private:
+	// TODO reinterpret cast if possible
 	T _v[R*C];
 public:
 	matrix_data_ref(const matrix<T, R, C, RM>& m)
