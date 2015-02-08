@@ -18,6 +18,75 @@
 
 BOOST_AUTO_TEST_SUITE(math_matrix3)
 
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_data_TRC(void)
+{
+	T d[R*C];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d[k] = std::rand() / T(3);
+	}
+
+	auto m = eagine::math::matrix<T,R,C,RM>::from(d, R*C);
+
+	using eagine::math::data;
+
+	auto dr = data(m);
+
+	BOOST_ASSERT(dr.size() == R*C);
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		BOOST_ASSERT(dr.addr()[k] == d[k]);
+	}
+}
+
+template <typename T, bool RM>
+void test_math_matrix_data(void)
+{
+	test_math_matrix_data_TRC<T, 1, 1, RM>();
+	test_math_matrix_data_TRC<T, 1, 2, RM>();
+	test_math_matrix_data_TRC<T, 1, 3, RM>();
+	test_math_matrix_data_TRC<T, 1, 4, RM>();
+	test_math_matrix_data_TRC<T, 1, 5, RM>();
+
+	test_math_matrix_data_TRC<T, 2, 1, RM>();
+	test_math_matrix_data_TRC<T, 2, 2, RM>();
+	test_math_matrix_data_TRC<T, 2, 3, RM>();
+	test_math_matrix_data_TRC<T, 2, 4, RM>();
+	test_math_matrix_data_TRC<T, 2, 5, RM>();
+
+	test_math_matrix_data_TRC<T, 3, 1, RM>();
+	test_math_matrix_data_TRC<T, 3, 2, RM>();
+	test_math_matrix_data_TRC<T, 3, 3, RM>();
+	test_math_matrix_data_TRC<T, 3, 4, RM>();
+	test_math_matrix_data_TRC<T, 3, 5, RM>();
+
+	test_math_matrix_data_TRC<T, 4, 1, RM>();
+	test_math_matrix_data_TRC<T, 4, 2, RM>();
+	test_math_matrix_data_TRC<T, 4, 3, RM>();
+	test_math_matrix_data_TRC<T, 4, 4, RM>();
+	test_math_matrix_data_TRC<T, 4, 5, RM>();
+
+	test_math_matrix_data_TRC<T, 5, 1, RM>();
+	test_math_matrix_data_TRC<T, 5, 2, RM>();
+	test_math_matrix_data_TRC<T, 5, 3, RM>();
+	test_math_matrix_data_TRC<T, 5, 4, RM>();
+	test_math_matrix_data_TRC<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_data)
+{
+	for(unsigned k=0; k<100; ++k)
+	{
+		test_math_matrix_data<float, true>();
+		test_math_matrix_data<float,false>();
+		test_math_matrix_data<double, true>();
+		test_math_matrix_data<double,false>();
+	}
+}
+
 template <typename T, unsigned P, unsigned Q, unsigned R>
 void test_math_matrix_multiply_TPQR(void)
 {

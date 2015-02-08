@@ -1425,4 +1425,75 @@ BOOST_AUTO_TEST_CASE(math_matrix_equal)
 	}
 }
 
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_compare(void)
+{
+	T d1[R*C];
+	T d2[R*C];
+
+	bool gen_eq = std::rand() % 23 == 0;
+	bool all_eq = true;
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d1[k] = std::rand() / T(3);
+		d2[k] = gen_eq?d1[k]:std::rand() / T(3);
+
+		all_eq &= (d1[k] == d2[k]);
+	}
+
+	eagine::math::matrix<T,R,C,RM> m1 =
+		eagine::math::matrix<T,R,C,RM>::from(d1, R*C);
+	eagine::math::matrix<T,R,C,RM> m2 =
+		eagine::math::matrix<T,R,C,RM>::from(d2, R*C);
+
+	BOOST_ASSERT((m1 == m2) ==  all_eq);
+	BOOST_ASSERT((m1 != m2) == !all_eq);
+}
+
+template <typename T, bool RM>
+void test_math_matrix_compare_TRM(void)
+{
+	test_math_matrix_compare<T, 1, 1, RM>();
+	test_math_matrix_compare<T, 1, 2, RM>();
+	test_math_matrix_compare<T, 1, 3, RM>();
+	test_math_matrix_compare<T, 1, 4, RM>();
+	test_math_matrix_compare<T, 1, 5, RM>();
+
+	test_math_matrix_compare<T, 2, 1, RM>();
+	test_math_matrix_compare<T, 2, 2, RM>();
+	test_math_matrix_compare<T, 2, 3, RM>();
+	test_math_matrix_compare<T, 2, 4, RM>();
+	test_math_matrix_compare<T, 2, 5, RM>();
+
+	test_math_matrix_compare<T, 3, 1, RM>();
+	test_math_matrix_compare<T, 3, 2, RM>();
+	test_math_matrix_compare<T, 3, 3, RM>();
+	test_math_matrix_compare<T, 3, 4, RM>();
+	test_math_matrix_compare<T, 3, 5, RM>();
+
+	test_math_matrix_compare<T, 4, 1, RM>();
+	test_math_matrix_compare<T, 4, 2, RM>();
+	test_math_matrix_compare<T, 4, 3, RM>();
+	test_math_matrix_compare<T, 4, 4, RM>();
+	test_math_matrix_compare<T, 4, 5, RM>();
+
+	test_math_matrix_compare<T, 5, 1, RM>();
+	test_math_matrix_compare<T, 5, 2, RM>();
+	test_math_matrix_compare<T, 5, 3, RM>();
+	test_math_matrix_compare<T, 5, 4, RM>();
+	test_math_matrix_compare<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_compare)
+{
+	for(int i=0; i<100; ++i)
+	{
+		test_math_matrix_compare_TRM<float, true>();
+		test_math_matrix_compare_TRM<float,false>();
+		test_math_matrix_compare_TRM<double, true>();
+		test_math_matrix_compare_TRM<double,false>();
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -776,10 +776,28 @@ template <typename T, unsigned R, unsigned C, bool RM>
 class matrix_data_ref<matrix<T, R, C, RM>>
 {
 private:
-	// TODO reinterpret cast if possible
-	T _v[R*C];
-public:
-	matrix_data_ref(const matrix<T, R, C, RM>& m)
+	typedef meta::integral_constant<
+		bool,
+		sizeof(T[R*C]) == sizeof(typename matrix<T,R,C,RM>::_vT)
+	> _alias;
+
+	typedef typename meta::conditional<
+		_alias::value,
+		const T*,
+		T [R*C]
+	>::type _vT;
+
+	_vT _v;
+
+	template <typename Matrix>
+	void _init(const Matrix& m, meta::true_type)
+	noexcept
+	{
+		_v = reinterpret_cast<_vT>(&m._v);
+	}
+
+	template <typename Matrix>
+	void _init(const Matrix& m, meta::false_type)
 	noexcept
 	{
 		for(unsigned a=0; a<(RM?R:C); ++a)
@@ -787,6 +805,12 @@ public:
 		{
 			_v[a*(RM?C:R)+b] = m._v[a][b];
 		}
+	}
+public:
+	matrix_data_ref(const matrix<T,R,C,RM>& m)
+	noexcept
+	{
+		_init(m, _alias());
 	}
 
 	const T* addr(void) const
