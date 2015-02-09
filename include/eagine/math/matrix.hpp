@@ -524,6 +524,31 @@ matrix<T, M, N, RM> multiply(
 	return multiply(m1, reorder(m2));
 }
 
+// trivial_multiply MxM
+template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+static inline
+matrix<T, M, N, RM1> trivial_multiply(
+	const matrix<T, M, K, RM1>& m1,
+	const matrix<T, K, N, RM2>& m2
+) noexcept
+{
+	matrix<T, M, N, RM1> m3;
+
+	for(unsigned i=0; i<M; ++i)
+	for(unsigned j=0; j<N; ++j)
+	{
+		T s = T(0);
+
+		for(unsigned k=0; k<K; ++k)
+		{
+			s += get(m1,i,k)*get(m2,k,j);
+		}
+
+		set(m3, i, j, s);
+	}
+	return m3;
+}
+
 // M * M
 template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
 static constexpr inline

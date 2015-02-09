@@ -107,6 +107,7 @@ void test_math_matrix_multiply_TPQR(void)
 	auto m2 = eagine::math::matrix<T,Q,R,false>::from(d2, Q*R);
 
 	eagine::math::matrix<T,P,R,true> m3 = m1*m2;
+	eagine::math::matrix<T,P,R,true> m4 = trivial_multiply(m1, m2);
 
 	for(unsigned i=0; i<P; ++i)
 	for(unsigned j=0; j<R; ++j)
@@ -118,6 +119,7 @@ void test_math_matrix_multiply_TPQR(void)
 			s += m1[i][k]*m2[j][k];
 		}
 		BOOST_ASSERT(test_math_close(m3[i][j], s));
+		BOOST_ASSERT(test_math_close(m4[i][j], s));
 	}
 }
 
