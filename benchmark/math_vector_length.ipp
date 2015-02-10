@@ -7,6 +7,7 @@
 #include <eagine/math/vector.hpp>
 #endif
 #include <cmath>
+#include "fake_use.hpp"
 
 int main(int argc, const char** argv)
 {
@@ -26,13 +27,11 @@ int main(int argc, const char** argv)
 		using namespace eagine::math;
 		vector<T, N> u = vector<T, N>::from(a, N);
 
-		if(length(u) < T(0))
+		T l = length(u); 
+		fake_use(&l);
 #else
-		if(a[(i+1)%N] < T(0))
+		fake_use(a, &i);
 #endif
-		{
-			return 1;
-		}
 	}
 
 	return 0;

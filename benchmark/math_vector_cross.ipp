@@ -2,6 +2,7 @@
 #include <eagine/math/vector.hpp>
 #endif
 #include <cmath>
+#include "fake_use.hpp"
 
 int main(int argc, const char** argv)
 {
@@ -18,13 +19,11 @@ int main(int argc, const char** argv)
 		vector<T, N> v = vector<T, N>::axis<1>(argc+i);
 		vector<T, N> w = cross(u, v);
 
-		if(std::fabs(dot(u,w)) > 0.001f || std::fabs(dot(v,w)) > 0.001f)
+		T r = std::fabs(dot(u,w))+std::fabs(dot(v,w));
 #else
-		if(std::fabs(argc+i) < 0.001f || std::fabs(argc+j) < 0.001f)
+		T r = std::fabs(argc+i)+std::fabs(argc+j);
 #endif
-		{
-			return 1;
-		}
+		fake_use(&r);
 	}
 
 	return 0;

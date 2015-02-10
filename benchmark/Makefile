@@ -46,14 +46,14 @@ _bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
 _out/%.time: _out/% | _out
 	$(TIME) -f "%x:%S:%U:%e" -o $@ $<
 
-_out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o | _out
-	$(CXX) $(local_LDFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -o $@
+_out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o _bld/fake_use.o | _out
+	$(CXX) $(local_LDFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $^ -o $@
 
-_out/%-$(OPT)-NOSSE: _bld/%-$(OPT)-NOSSE.o | _out
-	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $< -o $@
+_out/%-$(OPT)-NOSSE: _bld/%-$(OPT)-NOSSE.o _bld/fake_use.o | _out
+	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $^ -o $@
 
-_out/%-$(OPT)-SSE: _bld/%-$(OPT)-SSE.o | _out
-	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $< -o $@
+_out/%-$(OPT)-SSE: _bld/%-$(OPT)-SSE.o _bld/fake_use.o | _out
+	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $^ -o $@
 
 _bld/%-$(OPT)-BASELINE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -c -o $@
@@ -63,6 +63,9 @@ _bld/%-$(OPT)-NOSSE.o: %.cpp | _bld
 
 _bld/%-$(OPT)-SSE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=1 -$(OPT) $< -c -o $@
+
+_bld/fake_use.o: fake_use.cxx | _bld
+	$(CXX) $(local_CXXFLAGS) $< -c -o $@
 
 _bld/%.d: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-BASELINE.o > $@

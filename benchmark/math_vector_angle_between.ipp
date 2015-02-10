@@ -6,6 +6,7 @@
 #ifndef EAGINE_BENCHMARK_BASELINE
 #include <eagine/math/vector.hpp>
 #endif
+#include "fake_use.hpp"
 
 int main(int argc, const char** argv)
 {
@@ -21,13 +22,11 @@ int main(int argc, const char** argv)
 		vector<T, N> u = vector<T, N>::fill(argc);
 		vector<T, N> v = vector<T, N>::axis<0>(i);
 
-		if(value(angle_between(u, v)) > T(2))
+		T a = value(angle_between(u, v));
 #else
-		if(T(0.01) > T(argc+i))
+		T a(argc+i);
 #endif
-		{
-			return 1;
-		}
+		fake_use(&a);
 	}
 
 	return 0;

@@ -4,27 +4,42 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #ifndef EAGINE_BENCHMARK_BASELINE
-#include <eagine/math/vector.hpp>
+#include <eagine/math/matrix.hpp>
 #endif
 #include "fake_use.hpp"
 
 int main(int argc, const char** argv)
 {
-#ifndef EAGINE_BENCHMARK_BASELINE
+	static const unsigned M = EAGINE_BM_M;
 	static const unsigned N = EAGINE_BM_N;
-#endif
+
+	T data[M*N];
+
+	for(unsigned k=0; k<M*N; ++k)
+	{
+		data[k] = T(k);
+	}
 
 	for(unsigned j=0; j!=100000; ++j)
 	for(unsigned i=0; i!=100000; ++i)
 	{
+		data[0] = T(j+1);
 #ifndef EAGINE_BENCHMARK_BASELINE
 		using namespace eagine::math;
-		vector<T, N> u = vector<T, N>::fill(argc+i);
-		vector<T, N> s = hsum(u);
 
-		fake_use(&s);
+		auto m1 = matrix<T,M,N, true>::from(data, M*N);
+		auto m2 = matrix<T,M,N,false>::from(data, M*N);
+
+# if EAGINE_USE_SSE
+		matrix<T,M,N, true> m3 = multiply(m1, m2);
+# else
+		matrix<T,M,N, true> m3 = trivial_multiply(m1, m2);
+# endif
+
+		fake_use(&m3);
 #else
-		fake_use(&i, &j);
+		fake_use(data);
+
 #endif
 	}
 

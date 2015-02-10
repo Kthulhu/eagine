@@ -7,6 +7,7 @@
 #include <eagine/math/vector.hpp>
 #endif
 #include <cmath>
+#include "fake_use.hpp"
 
 int main(int argc, const char** argv)
 {
@@ -28,13 +29,11 @@ int main(int argc, const char** argv)
 		vector<T, N> u = vector<T, N>::from(a, N);
 		vector<T, N> v = vector<T, N>::from(b, N);
 
-		if(distance(u, v) < T(0))
+		T d = distance(u, v);
+		fake_use(&d);
 #else
-		if(a[(i+1)%N] < T(0) && b[(j+1)%N] < T(0))
+		fake_use(a, b);
 #endif
-		{
-			return 1;
-		}
 	}
 
 	return 0;
