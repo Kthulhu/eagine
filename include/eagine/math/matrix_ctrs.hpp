@@ -540,6 +540,112 @@ noexcept
 	return {s._s};
 }
 
+// scale_I
+template <typename X, unsigned I>
+struct scale_I;
+
+// scale along the I-th axis matrix 4x4
+template <typename T, unsigned I, bool RM>
+struct scale_I<matrix<T,4,4,RM>, I>
+{
+	T _s;
+
+	constexpr inline
+	T v(unsigned i) const
+	noexcept
+	{
+		return (i == I)?_s:T(1);
+	}
+
+	constexpr
+	scale_I(T s)
+	noexcept
+	 : _s(s)
+	{ }
+
+	constexpr inline
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
+	{
+		return matrix<T,4,4,RM>{{
+			{v(0),T(0),T(0),T(0)},
+			{T(0),v(1),T(0),T(0)},
+			{T(0),T(0),v(2),T(0)},
+			{T(0),T(0),T(0),T(1)}
+		}};
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
+};
+
+// scale_I * T
+template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+static constexpr inline
+scale_I<matrix<T,R,C,RM>, I>
+operator * (const scale_I<matrix<T,R,C,RM>, I>& c, T t)
+noexcept
+{
+	return {c._s*t};
+}
+
+// scale_I + scale_I
+template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+static constexpr inline
+scale_I<matrix<T,R,C,RM>, I>
+operator + (
+	const scale_I<matrix<T,R,C,RM>, I>& c1,
+	const scale_I<matrix<T,R,C,RM>, I>& c2
+) noexcept
+{
+	return {c1._s+c2._s};
+}
+
+// reorder_mat_ctr(scale_I)
+template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+static constexpr inline
+scale_I<matrix<T,R,C,!RM>, I>
+reorder_mat_ctr(const scale_I<matrix<T,R,C,RM>, I>& t)
+noexcept
+{
+	return {t._s};
+}
+
+// scale x
+template <typename M>
+using scale_x = scale_I<M, 0>;
+
+// is_matrix_constructor<scale_x>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<scale_x<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// scale y
+template <typename M>
+using scale_y = scale_I<M, 1>;
+
+// is_matrix_constructor<scale_y>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<scale_y<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// scale z
+template <typename M>
+using scale_z = scale_I<M, 2>;
+
+// is_matrix_constructor<scale_z>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<scale_z<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+
 // uniform_scale
 template <typename X>
 struct uniform_scale;

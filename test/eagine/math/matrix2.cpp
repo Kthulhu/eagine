@@ -310,6 +310,75 @@ BOOST_AUTO_TEST_CASE(math_matrix_reorder)
 	}
 }
 
+template <typename T, unsigned M, unsigned N, bool RM>
+void test_math_matrix_transpose_TRC(void)
+{
+	T d[M*N];
+
+	for(unsigned k=0; k<M*N; ++k)
+	{
+		d[k] = std::rand() / T(3);
+	}
+
+	auto m1 = eagine::math::matrix<T,M,N,RM>::from(d, M*N);
+
+	using eagine::math::transpose;
+	eagine::math::matrix<T,N,M,RM> m2 = transpose(m1);
+
+	for(unsigned i=0; i<M; ++i)
+	{
+		for(unsigned j=0; j<N; ++j)
+		{
+			BOOST_ASSERT(get(m1,i,j) == get(m2,j,i));
+		}
+	}
+}
+
+template <typename T, bool RM>
+void test_math_matrix_transpose(void)
+{
+	test_math_matrix_transpose_TRC<T, 1, 1, RM>();
+	test_math_matrix_transpose_TRC<T, 1, 2, RM>();
+	test_math_matrix_transpose_TRC<T, 1, 3, RM>();
+	test_math_matrix_transpose_TRC<T, 1, 4, RM>();
+	test_math_matrix_transpose_TRC<T, 1, 5, RM>();
+
+	test_math_matrix_transpose_TRC<T, 2, 1, RM>();
+	test_math_matrix_transpose_TRC<T, 2, 2, RM>();
+	test_math_matrix_transpose_TRC<T, 2, 3, RM>();
+	test_math_matrix_transpose_TRC<T, 2, 4, RM>();
+	test_math_matrix_transpose_TRC<T, 2, 5, RM>();
+
+	test_math_matrix_transpose_TRC<T, 3, 1, RM>();
+	test_math_matrix_transpose_TRC<T, 3, 2, RM>();
+	test_math_matrix_transpose_TRC<T, 3, 3, RM>();
+	test_math_matrix_transpose_TRC<T, 3, 4, RM>();
+	test_math_matrix_transpose_TRC<T, 3, 5, RM>();
+
+	test_math_matrix_transpose_TRC<T, 4, 1, RM>();
+	test_math_matrix_transpose_TRC<T, 4, 2, RM>();
+	test_math_matrix_transpose_TRC<T, 4, 3, RM>();
+	test_math_matrix_transpose_TRC<T, 4, 4, RM>();
+	test_math_matrix_transpose_TRC<T, 4, 5, RM>();
+
+	test_math_matrix_transpose_TRC<T, 5, 1, RM>();
+	test_math_matrix_transpose_TRC<T, 5, 2, RM>();
+	test_math_matrix_transpose_TRC<T, 5, 3, RM>();
+	test_math_matrix_transpose_TRC<T, 5, 4, RM>();
+	test_math_matrix_transpose_TRC<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_transpose)
+{
+	for(unsigned k=0; k<100; ++k)
+	{
+		test_math_matrix_transpose<float, true>();
+		test_math_matrix_transpose<float,false>();
+		test_math_matrix_transpose<double, true>();
+		test_math_matrix_transpose<double,false>();
+	}
+}
+
 template <typename T, unsigned R, unsigned C, bool RM>
 void test_math_matrix_row_TRC(void)
 {

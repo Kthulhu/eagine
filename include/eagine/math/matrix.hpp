@@ -485,7 +485,8 @@ _multiply_hlp(
 	typedef typename meta::make_integer_sequence<
 		unsigned, N
 	>::type is;
-	return {{_multiply_hlp2<I>(is(), m1, m2)...}};
+	return matrix<T, M, N, RM>
+		{{_multiply_hlp2<I>(is(), m1, m2)...}};
 }
 
 // multipliable_matrices
@@ -756,13 +757,20 @@ struct identity<matrix<T,R,C,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,R,C,RM> (void) const
+	matrix<T,R,C,RM> operator()(void) const
 	noexcept
 	{
 		typedef typename meta::make_integer_sequence<
 			unsigned, R
 		>::type _riS;
 		return _identity(_riS());
+	}
+
+	constexpr inline
+	operator matrix<T,R,C,RM> (void) const
+	noexcept
+	{
+		return (*this)();
 	}
 };
 
