@@ -3,7 +3,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -21,7 +21,7 @@ bool test_math_close(float a, float b, std::false_type)
 	using namespace boost::test_tools;
 	return check_is_close(
 		a, b,
-		percent_tolerance_t<float>(0.1),
+		percent_tolerance_t<float>(0.1f),
 		FPC_STRONG
 	);
 }
