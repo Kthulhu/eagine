@@ -576,7 +576,8 @@ _multiply_hlp(
 	const vector<T, C>& v
 ) noexcept
 {
-	return {{dot(row<I>(m), v)...}};
+	return vector<T, R>
+		{{dot(row<I>(m), v)...}};
 }
 
 // multipliable_matrices MxV
@@ -731,6 +732,34 @@ typename meta::enable_if<
 noexcept
 {
 	return multiply(typename constructed_matrix<MC1>::type(c1), m2);
+}
+
+// matrix_constructor * matrix
+template <typename MC1, typename M2>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<MC1>::value &&
+	multipliable_matrices<
+		typename reordered_matrix<
+			typename constructed_matrix<MC1>::type
+		>::type,
+		M2
+	>::value,
+	typename multiplication_result<
+		typename reordered_matrix<
+			typename constructed_matrix<MC1>::type
+		>::type,
+		M2
+	>::type
+>::type operator * (const MC1& c1, const M2& m2)
+noexcept
+{
+	return multiply(
+		typename reordered_matrix<
+			typename constructed_matrix<MC1>::type
+		>::type(reorder_mat_ctr(c1)),
+		m2
+	);
 }
 
 // identity

@@ -61,7 +61,7 @@ noexcept
 template <typename MC>
 static constexpr inline
 reordered_matrix_constructor<MC>
-operator + (
+operator * (
 	const reordered_matrix_constructor<MC>& rmc1,
 	const reordered_matrix_constructor<MC>& rmc2
 ) noexcept
@@ -101,7 +101,7 @@ struct translation<matrix<T,4,4, true>>
 	constexpr
 	translation(_dT d)
 	noexcept
-	 : _d{d}
+	 : _d(d)
 	{ }
 
 	constexpr
@@ -136,6 +136,12 @@ struct translation<matrix<T,4,4,false>>
 {
 	typedef typename vect::data<T, 3>::type _dT;
 	_dT _d;
+
+	constexpr
+	translation(_dT d)
+	noexcept
+	 : _d(d)
+	{ }
 
 	constexpr
 	translation(T dx, T dy, T dz)
@@ -177,7 +183,7 @@ noexcept
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 translation<matrix<T,R,C,RM>>
-operator + (
+operator * (
 	const translation<matrix<T,R,C,RM>>& c1,
 	const translation<matrix<T,R,C,RM>>& c2
 ) noexcept
@@ -287,11 +293,11 @@ noexcept
 	return {c._d*t};
 }
 
-// translation_I + translation_I
+// translation_I * translation_I
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 translation_I<matrix<T,R,C,RM>, I>
-operator + (
+operator * (
 	const translation_I<matrix<T,R,C,RM>, I>& c1,
 	const translation_I<matrix<T,R,C,RM>, I>& c2
 ) noexcept
@@ -419,6 +425,18 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	}
 };
 
+// rotation_I * rotation_I
+template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+static constexpr inline
+rotation_I<matrix<T,R,C,RM>, I>
+operator * (
+	const rotation_I<matrix<T,R,C,RM>, I>& c1,
+	const rotation_I<matrix<T,R,C,RM>, I>& c2
+) noexcept
+{
+	return {angle<T>{c1._a+c2._a}};
+}
+
 // reorder_mat_ctr(rotation_I)
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
@@ -426,7 +444,7 @@ rotation_I<matrix<T,R,C,!RM>, I>
 reorder_mat_ctr(const rotation_I<matrix<T,R,C,RM>, I>& r)
 noexcept
 {
-	return {r._a};
+	return {angle<T>{r._a}};
 }
 
 // rotation x
@@ -479,7 +497,7 @@ struct scale<matrix<T,4,4,RM>>
 	constexpr
 	scale(_dT s)
 	noexcept
-	 : _s{s}
+	 : _s(s)
 	{ }
 
 	constexpr
@@ -522,12 +540,12 @@ noexcept
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 scale<matrix<T,R,C,RM>>
-operator + (
+operator * (
 	const scale<matrix<T,R,C,RM>>& c1,
 	const scale<matrix<T,R,C,RM>>& c2
 ) noexcept
 {
-	return {c1._s+c2._s};
+	return {c1._s*c2._s};
 }
 
 // reorder_mat_ctr(scale)
@@ -597,12 +615,12 @@ noexcept
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 scale_I<matrix<T,R,C,RM>, I>
-operator + (
+operator * (
 	const scale_I<matrix<T,R,C,RM>, I>& c1,
 	const scale_I<matrix<T,R,C,RM>, I>& c2
 ) noexcept
 {
-	return {c1._s+c2._s};
+	return {c1._s*c2._s};
 }
 
 // reorder_mat_ctr(scale_I)
@@ -702,12 +720,12 @@ noexcept
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 uniform_scale<matrix<T,R,C,RM>>
-operator + (
+operator * (
 	const uniform_scale<matrix<T,R,C,RM>>& c1,
 	const uniform_scale<matrix<T,R,C,RM>>& c2
 ) noexcept
 {
-	return {c1._s+c2._s};
+	return {c1._s*c2._s};
 }
 
 // reorder_mat_ctr(uniform_scale)
@@ -769,26 +787,16 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 	}
 };
 
-// reflection_I * T
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
-static constexpr inline
-reflection_I<matrix<T,R,C,RM>, I>
-operator * (const reflection_I<matrix<T,R,C,RM>, I>& c, T t)
-noexcept
-{
-	return {c._r*t};
-}
-
 // reflection_I + reflection_I
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static constexpr inline
 reflection_I<matrix<T,R,C,RM>, I>
-operator + (
+operator * (
 	const reflection_I<matrix<T,R,C,RM>, I>& c1,
 	const reflection_I<matrix<T,R,C,RM>, I>& c2
 ) noexcept
 {
-	return {c1._r+c2._r};
+	return {c1._r!=c2._r};
 }
 
 // reorder_mat_ctr(reflection_I)
@@ -798,7 +806,7 @@ reflection_I<matrix<T,R,C,!RM>, I>
 reorder_mat_ctr(const reflection_I<matrix<T,R,C,RM>, I>& r)
 noexcept
 {
-	return {r._r};
+	return {r._r<T(0)};
 }
 
 // reflection x
@@ -851,13 +859,13 @@ struct shear<matrix<T,4,4, true>>
 	constexpr
 	shear(_dT s)
 	noexcept
-	 : _s{s}
+	 : _s(s)
 	{ }
 
 	constexpr
 	shear(T sx, T sy, T sz)
 	noexcept
-	 : _s{{sx, sy, sz}}
+	 : _s{sx, sy, sz}
 	{ }
 
 	constexpr inline
@@ -890,7 +898,7 @@ struct shear<matrix<T,4,4,false>>
 	constexpr
 	shear(_dT s)
 	noexcept
-	 : _s{s}
+	 : _s(s)
 	{ }
 
 	constexpr
@@ -933,7 +941,7 @@ noexcept
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
 shear<matrix<T,R,C,RM>>
-operator + (
+operator * (
 	const shear<matrix<T,R,C,RM>>& c1,
 	const shear<matrix<T,R,C,RM>>& c2
 ) noexcept
@@ -1081,18 +1089,6 @@ operator * (const ortho<matrix<T,4,4,RM>>& c, T t)
 noexcept
 {
 	return {c._s * vect::fill<T,6>::apply(t)};
-}
-
-// ortho + ortho
-template <typename T, bool RM>
-static constexpr inline
-ortho<matrix<T,4,4,RM>>
-operator + (
-	const ortho<matrix<T,4,4,RM>>& c1,
-	const ortho<matrix<T,4,4,RM>>& c2
-) noexcept
-{
-	return {c1._s + c2._s};
 }
 
 // reorder_mat_ctr(ortho)
@@ -1322,18 +1318,6 @@ noexcept
 	return {c._s * vect::fill<T,6>::apply(t)};
 }
 
-// perspective + perspective
-template <typename T, bool RM>
-static constexpr inline
-perspective<matrix<T,4,4,RM>>
-operator + (
-	const perspective<matrix<T,4,4,RM>>& c1,
-	const perspective<matrix<T,4,4,RM>>& c2
-) noexcept
-{
-	return {c1._s + c2._s};
-}
-
 // reorder_mat_ctr(perspective)
 template <typename T, bool RM>
 static constexpr inline
@@ -1470,18 +1454,6 @@ operator * (const screen_stretch<matrix<T,4,4,RM>>& c, T t)
 noexcept
 {
 	return {c._s * vect::fill<T,4>::apply(t)};
-}
-
-// screen_stretch + screen_stretch
-template <typename T, bool RM>
-static constexpr inline
-screen_stretch<matrix<T,4,4,RM>>
-operator + (
-	const screen_stretch<matrix<T,4,4,RM>>& c1,
-	const screen_stretch<matrix<T,4,4,RM>>& c2
-) noexcept
-{
-	return {c1._s * c2._s};
 }
 
 // reorder_mat_ctr(screen_stretch)
