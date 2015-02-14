@@ -927,16 +927,6 @@ struct shear<matrix<T,4,4,false>>
 	}
 };
 
-// shear * T
-template <typename T, unsigned R, unsigned C, bool RM>
-static constexpr inline
-shear<matrix<T,R,C,RM>>
-operator * (const shear<matrix<T,R,C,RM>>& c, T t)
-noexcept
-{
-	return {c._s*vect::fill<T, (R>C?R:C)-1>::apply(t)};
-}
-
 // shear * shear 
 template <typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
@@ -990,7 +980,7 @@ struct ortho<matrix<T,4,4,RM>>
 		T z_near,
 		T z_far
 	) noexcept
-	 : _s{{x_left, x_right, y_bottom, y_top, z_near, z_far}}
+	 : _s{x_left, x_right, y_bottom, y_top, z_near, z_far}
 	{ }
 
 	constexpr inline T _x_left(void) const { return _s[0]; }
@@ -1080,16 +1070,6 @@ struct ortho<matrix<T,4,4,RM>>
 		return (*this)();
 	}
 };
-
-// ortho * T
-template <typename T, bool RM>
-static constexpr inline
-ortho<matrix<T,4,4,RM>>
-operator * (const ortho<matrix<T,4,4,RM>>& c, T t)
-noexcept
-{
-	return {c._s * vect::fill<T,6>::apply(t)};
-}
 
 // reorder_mat_ctr(ortho)
 template <typename T, bool RM>
@@ -1308,16 +1288,6 @@ struct perspective<matrix<T,4,4,RM>>
 	}
 };
 
-// perspective * T
-template <typename T, bool RM>
-static constexpr inline
-perspective<matrix<T,4,4,RM>>
-operator * (const perspective<matrix<T,4,4,RM>>& c, T t)
-noexcept
-{
-	return {c._s * vect::fill<T,6>::apply(t)};
-}
-
 // reorder_mat_ctr(perspective)
 template <typename T, bool RM>
 static constexpr inline
@@ -1445,16 +1415,6 @@ struct screen_stretch<matrix<T,4,4,RM>>
 		return (*this)();
 	}
 };
-
-// screen_stretch * T
-template <typename T, bool RM>
-static constexpr inline
-screen_stretch<matrix<T,4,4,RM>>
-operator * (const screen_stretch<matrix<T,4,4,RM>>& c, T t)
-noexcept
-{
-	return {c._s * vect::fill<T,4>::apply(t)};
-}
 
 // reorder_mat_ctr(screen_stretch)
 template <typename T, bool RM>
