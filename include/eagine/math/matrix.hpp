@@ -450,15 +450,16 @@ template <
 	unsigned ... J,
 	typename T,
 	unsigned M,
+	unsigned K,
 	unsigned N,
-	unsigned K
+	bool RM
 >
 static constexpr inline
 typename vect::data<T, N>::type
 _multiply_hlp2(
 	meta::integer_sequence<unsigned, J...>,
-	const matrix<T, M, K, true>& m1,
-	const matrix<T, K, N,false>& m2
+	const matrix<T, M, K, RM>& m1,
+	const matrix<T, K, N,!RM>& m2
 ) noexcept
 {
 	return typename vect::data<T, N>::type
@@ -617,6 +618,17 @@ vector<T, R> operator * (
 	return multiply(m, v);
 }
 
+// M * V
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+vector<T, R> operator * (
+	const matrix<T, R, C,false>& m,
+	const vector<T, C>& v
+) noexcept
+{
+	return multiply(reorder(m), v);
+}
+
 
 // is_matrix_constructor trait
 template <typename X>
@@ -694,8 +706,16 @@ typename meta::enable_if<
 noexcept
 {
 	return multiply(
-		construct_matrix< true>(c1),
-		construct_matrix<false>(c2)
+		construct_matrix<
+			is_row_major<
+				typename constructed_matrix<MC1>::type
+			>::value
+		>(c1),
+		construct_matrix<
+			!is_row_major<
+				typename constructed_matrix<MC1>::type
+			>::value
+		>(c2)
 	);
 }
 
