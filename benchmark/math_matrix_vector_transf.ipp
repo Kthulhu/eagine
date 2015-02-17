@@ -11,7 +11,7 @@
 int main(int argc, const char** argv)
 {
 	for(unsigned j=0; j!=10000; ++j)
-	for(unsigned i=0; i!=10000; ++i)
+	for(unsigned i=0; i!=100000; ++i)
 	{
 #ifndef EAGINE_BENCHMARK_BASELINE
 		static const unsigned M = EAGINE_BM_M;

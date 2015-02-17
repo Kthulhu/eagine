@@ -802,7 +802,7 @@ struct identity<matrix<T,R,C,RM>>
 	_identity(meta::integer_sequence<unsigned, I...>)
 	noexcept
 	{
-		return {{vect::axis<T, C, I>::apply(1)...}};
+		return {{vect::axis<T, RM?C:R, I>::apply(1)...}};
 	}
 
 	constexpr inline
@@ -810,7 +810,7 @@ struct identity<matrix<T,R,C,RM>>
 	noexcept
 	{
 		typedef typename meta::make_integer_sequence<
-			unsigned, R
+			unsigned, RM?R:C
 		>::type _riS;
 		return _identity(_riS());
 	}

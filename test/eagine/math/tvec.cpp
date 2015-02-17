@@ -3,7 +3,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -21,14 +21,14 @@ BOOST_AUTO_TEST_SUITE(math_tvec)
 template <typename T>
 void test_math_tvec_default_ctr(void)
 {
-	eagine::math::tvec<float, 2> v2;
-	eagine::math::tvec<float, 3> v3;
-	eagine::math::tvec<float, 4> v4;
-	eagine::math::tvec<float, 5> v5;
-	eagine::math::tvec<float, 6> v6;
-	eagine::math::tvec<float, 7> v7;
-	eagine::math::tvec<float, 8> v8;
-	eagine::math::tvec<float, 9> v9;
+	eagine::math::tvec<T, 2> v2;
+	eagine::math::tvec<T, 3> v3;
+	eagine::math::tvec<T, 4> v4;
+	eagine::math::tvec<T, 5> v5;
+	eagine::math::tvec<T, 6> v6;
+	eagine::math::tvec<T, 7> v7;
+	eagine::math::tvec<T, 8> v8;
+	eagine::math::tvec<T, 9> v9;
 
 	(void)v2; (void)v3; (void)v4; (void)v5;
 	(void)v6; (void)v7; (void)v8; (void)v9;
@@ -44,23 +44,23 @@ BOOST_AUTO_TEST_CASE(math_tvec_default_ctr)
 template <typename T>
 void test_math_tvec_copy_ctr(void)
 {
-	eagine::math::tvec<float, 2> v2a;
-	eagine::math::tvec<float, 3> v3a;
-	eagine::math::tvec<float, 4> v4a;
-	eagine::math::tvec<float, 5> v5a;
-	eagine::math::tvec<float, 6> v6a;
-	eagine::math::tvec<float, 7> v7a;
-	eagine::math::tvec<float, 8> v8a;
-	eagine::math::tvec<float, 9> v9a;
+	eagine::math::tvec<T, 2> v2a;
+	eagine::math::tvec<T, 3> v3a;
+	eagine::math::tvec<T, 4> v4a;
+	eagine::math::tvec<T, 5> v5a;
+	eagine::math::tvec<T, 6> v6a;
+	eagine::math::tvec<T, 7> v7a;
+	eagine::math::tvec<T, 8> v8a;
+	eagine::math::tvec<T, 9> v9a;
 
-	eagine::math::tvec<float, 2> v2(v2a);
-	eagine::math::tvec<float, 3> v3(v3a);
-	eagine::math::tvec<float, 4> v4(v4a);
-	eagine::math::tvec<float, 5> v5(v5a);
-	eagine::math::tvec<float, 6> v6(v6a);
-	eagine::math::tvec<float, 7> v7(v7a);
-	eagine::math::tvec<float, 8> v8(v8a);
-	eagine::math::tvec<float, 9> v9(v9a);
+	eagine::math::tvec<T, 2> v2(v2a);
+	eagine::math::tvec<T, 3> v3(v3a);
+	eagine::math::tvec<T, 4> v4(v4a);
+	eagine::math::tvec<T, 5> v5(v5a);
+	eagine::math::tvec<T, 6> v6(v6a);
+	eagine::math::tvec<T, 7> v7(v7a);
+	eagine::math::tvec<T, 8> v8(v8a);
+	eagine::math::tvec<T, 9> v9(v9a);
 
 	(void)v2; (void)v3; (void)v4; (void)v5;
 	(void)v6; (void)v7; (void)v8; (void)v9;
@@ -76,14 +76,14 @@ BOOST_AUTO_TEST_CASE(math_tvec_copy_ctr)
 template <typename T>
 void test_math_tvec_init_ctr(void)
 {
-	eagine::math::tvec<float, 2> v2(1,2);
-	eagine::math::tvec<float, 3> v3(1,2,3);
-	eagine::math::tvec<float, 4> v4(1,2,3,4);
-	eagine::math::tvec<float, 5> v5(1,2,3,4,5);
-	eagine::math::tvec<float, 6> v6(1,2,3,4,5,6);
-	eagine::math::tvec<float, 7> v7(1,2,3,4,5,6,7);
-	eagine::math::tvec<float, 8> v8(1,2,3,4,5,6,7,8);
-	eagine::math::tvec<float, 9> v9(1,2,3,4,5,6,7,8,9);
+	eagine::math::tvec<T, 2> v2(1,2);
+	eagine::math::tvec<T, 3> v3(1,2,3);
+	eagine::math::tvec<T, 4> v4(1,2,3,4);
+	eagine::math::tvec<T, 5> v5(1,2,3,4,5);
+	eagine::math::tvec<T, 6> v6(1,2,3,4,5,6);
+	eagine::math::tvec<T, 7> v7(1,2,3,4,5,6,7);
+	eagine::math::tvec<T, 8> v8(1,2,3,4,5,6,7,8);
+	eagine::math::tvec<T, 9> v9(1,2,3,4,5,6,7,8,9);
 
 	(void)v2; (void)v3; (void)v4; (void)v5;
 	(void)v6; (void)v7; (void)v8; (void)v9;
@@ -99,14 +99,14 @@ BOOST_AUTO_TEST_CASE(math_tvec_init_ctr)
 template <typename T>
 void test_math_tvec_conv_ctr1(void)
 {
-	eagine::math::tvec<float, 2> v2(1,2);
-	eagine::math::tvec<float, 3> v3(v2,3);
-	eagine::math::tvec<float, 4> v4(v3,4);
-	eagine::math::tvec<float, 5> v5(v4,5);
-	eagine::math::tvec<float, 6> v6(v5,6);
-	eagine::math::tvec<float, 7> v7(v6,7);
-	eagine::math::tvec<float, 8> v8(v7,8);
-	eagine::math::tvec<float, 9> v9(v8,9);
+	eagine::math::tvec<T, 2> v2(1,2);
+	eagine::math::tvec<T, 3> v3(v2,3);
+	eagine::math::tvec<T, 4> v4(v3,4);
+	eagine::math::tvec<T, 5> v5(v4,5);
+	eagine::math::tvec<T, 6> v6(v5,6);
+	eagine::math::tvec<T, 7> v7(v6,7);
+	eagine::math::tvec<T, 8> v8(v7,8);
+	eagine::math::tvec<T, 9> v9(v8,9);
 
 	(void)v2; (void)v3; (void)v4; (void)v5;
 	(void)v6; (void)v7; (void)v8; (void)v9;

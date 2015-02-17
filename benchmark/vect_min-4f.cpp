@@ -14,7 +14,7 @@ int main(int argc, const char** argv)
 	static const unsigned N = 4;
 #endif
 
-	for(unsigned j=0; j!=10000; ++j)
+	for(unsigned j=0; j!=100000; ++j)
 	for(unsigned i=0; i!=100000; ++i)
 	{
 #ifndef EAGINE_BENCHMARK_BASELINE

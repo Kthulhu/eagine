@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/matrix_ctrs.hpp>
+#include <utility>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
@@ -21,12 +22,25 @@ BOOST_AUTO_TEST_SUITE(math_matrix_ctrs1)
 template <typename MC, typename T, unsigned R, unsigned C, bool RM>
 void do_test_math_matrix_constructor(void)
 {
+	typedef eagine::math::matrix<T,R,C,RM> M;
+
 	BOOST_ASSERT(eagine::math::is_matrix_constructor<MC>());
 
 	BOOST_ASSERT((
 		std::is_same<
 			typename eagine::math::constructed_matrix<MC>::type,
-			eagine::math::matrix<T,R,C,RM>
+			M
+		>()
+	));
+
+	BOOST_ASSERT((
+		std::is_same<
+			typename eagine::math::constructed_matrix<
+				decltype(eagine::math::reorder_mat_ctr(
+					std::declval<MC>()
+				))
+			>::type,
+			decltype(reorder(std::declval<M>()))
 		>()
 	));
 }

@@ -24,3 +24,6 @@ eagine_exec_test_sse(matrix_ctrs2)
 eagine_exec_test_nosse(matrix_ctrs2)
 eagine_exec_test_sse(matrix_ctrs3)
 eagine_exec_test_nosse(matrix_ctrs3)
+
+eagine_exec_test_sse(tmat)
+eagine_exec_test_nosse(tmat)
