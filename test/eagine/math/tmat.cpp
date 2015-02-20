@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(math_tmat_data_ctr)
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -184,7 +184,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -198,7 +198,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -212,7 +212,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -226,7 +226,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -241,7 +241,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -256,7 +256,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -271,7 +271,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -286,7 +286,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -302,7 +302,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -318,7 +318,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -334,7 +334,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -350,7 +350,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -367,7 +367,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -384,7 +384,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -401,7 +401,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -418,7 +418,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -432,7 +432,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -447,7 +447,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -463,7 +463,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 2>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -480,7 +480,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -494,7 +494,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -509,7 +509,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -525,7 +525,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 3>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -542,7 +542,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -556,7 +556,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -571,7 +571,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -587,7 +587,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 4>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -604,7 +604,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 2>,
@@ -618,7 +618,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 3>,
@@ -633,7 +633,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 4>,
@@ -649,7 +649,7 @@ auto make_math_tmat(
 }
 
 template <typename T>
-auto make_math_tmat(
+auto make_math_tmat_v(
 	const T* d,
 	eagine::meta::integral_constant<unsigned, 5>,
 	eagine::meta::integral_constant<unsigned, 5>,
@@ -666,7 +666,7 @@ auto make_math_tmat(
 }
 
 template <typename T, unsigned R, unsigned C, bool RM>
-void test_math_tmat_init_ctr_TRC(void)
+void test_math_tmat_vector_ctr_TRC(void)
 {
 	T d[R*C];
 
@@ -675,7 +675,7 @@ void test_math_tmat_init_ctr_TRC(void)
 		d[k] = std::rand()/T(11);
 	}
 
-	eagine::math::tmat<T,R,C,RM> m = make_math_tmat(
+	eagine::math::tmat<T,R,C,RM> m = make_math_tmat_v(
 		d,
 		eagine::meta::integral_constant<unsigned, R>(),
 		eagine::meta::integral_constant<unsigned, C>(),
@@ -692,37 +692,593 @@ void test_math_tmat_init_ctr_TRC(void)
 }
 
 template <typename T, bool RM>
-void test_math_tmat_init_ctr(void)
+void test_math_tmat_vector_ctr(void)
 {
-	test_math_tmat_init_ctr_TRC<T,2,2,RM>();
-	test_math_tmat_init_ctr_TRC<T,2,3,RM>();
-	test_math_tmat_init_ctr_TRC<T,2,4,RM>();
-	test_math_tmat_init_ctr_TRC<T,2,5,RM>();
+	test_math_tmat_vector_ctr_TRC<T,2,2,RM>();
+	test_math_tmat_vector_ctr_TRC<T,2,3,RM>();
+	test_math_tmat_vector_ctr_TRC<T,2,4,RM>();
+	test_math_tmat_vector_ctr_TRC<T,2,5,RM>();
 
-	test_math_tmat_init_ctr_TRC<T,3,2,RM>();
-	test_math_tmat_init_ctr_TRC<T,3,3,RM>();
-	test_math_tmat_init_ctr_TRC<T,3,4,RM>();
-	test_math_tmat_init_ctr_TRC<T,3,5,RM>();
+	test_math_tmat_vector_ctr_TRC<T,3,2,RM>();
+	test_math_tmat_vector_ctr_TRC<T,3,3,RM>();
+	test_math_tmat_vector_ctr_TRC<T,3,4,RM>();
+	test_math_tmat_vector_ctr_TRC<T,3,5,RM>();
 
-	test_math_tmat_init_ctr_TRC<T,4,2,RM>();
-	test_math_tmat_init_ctr_TRC<T,4,3,RM>();
-	test_math_tmat_init_ctr_TRC<T,4,4,RM>();
-	test_math_tmat_init_ctr_TRC<T,4,5,RM>();
+	test_math_tmat_vector_ctr_TRC<T,4,2,RM>();
+	test_math_tmat_vector_ctr_TRC<T,4,3,RM>();
+	test_math_tmat_vector_ctr_TRC<T,4,4,RM>();
+	test_math_tmat_vector_ctr_TRC<T,4,5,RM>();
 
-	test_math_tmat_init_ctr_TRC<T,5,2,RM>();
-	test_math_tmat_init_ctr_TRC<T,5,3,RM>();
-	test_math_tmat_init_ctr_TRC<T,5,4,RM>();
-	test_math_tmat_init_ctr_TRC<T,5,5,RM>();
+	test_math_tmat_vector_ctr_TRC<T,5,2,RM>();
+	test_math_tmat_vector_ctr_TRC<T,5,3,RM>();
+	test_math_tmat_vector_ctr_TRC<T,5,4,RM>();
+	test_math_tmat_vector_ctr_TRC<T,5,5,RM>();
 }
 
-BOOST_AUTO_TEST_CASE(math_tmat_init_ctr)
+BOOST_AUTO_TEST_CASE(math_tmat_vector_ctr)
 {
-	test_math_tmat_init_ctr<float, true>();
-	test_math_tmat_init_ctr<float,false>();
+	test_math_tmat_vector_ctr<float, true>();
+	test_math_tmat_vector_ctr<float,false>();
 
-	test_math_tmat_init_ctr<double, true>();
-	test_math_tmat_init_ctr<double,false>();
+	test_math_tmat_vector_ctr<double, true>();
+	test_math_tmat_vector_ctr<double,false>();
 }
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,2,2, true>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,2,3, true>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,2,4, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,2,5, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,3,2, true>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3],
+		d[ 4], d[ 5]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,3,3, true>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5],
+		d[ 6], d[ 7], d[ 8]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,3,4, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7],
+		d[ 8], d[ 9], d[10], d[11]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,3,5, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9],
+		d[10], d[11], d[12], d[13], d[14]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,4,2, true>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3],
+		d[ 4], d[ 5],
+		d[ 6], d[ 7]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,4,3, true>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5],
+		d[ 6], d[ 7], d[ 8],
+		d[ 9], d[10], d[11]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,4,4, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7],
+		d[ 8], d[ 9], d[10], d[11],
+		d[12], d[13], d[14], d[15]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,4,5, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9],
+		d[10], d[11], d[12], d[13], d[14],
+		d[15], d[16], d[17], d[18], d[19]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,5,2, true>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3],
+		d[ 4], d[ 5],
+		d[ 6], d[ 7],
+		d[ 8], d[ 9]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,5,3, true>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5],
+		d[ 6], d[ 7], d[ 8],
+		d[ 9], d[10], d[11],
+		d[12], d[13], d[14]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,5,4, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7],
+		d[ 8], d[ 9], d[10], d[11],
+		d[12], d[13], d[14], d[15],
+		d[16], d[17], d[18], d[19]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool, true>
+)
+{
+	return eagine::math::tmat<T,5,5, true>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9],
+		d[10], d[11], d[12], d[13], d[14],
+		d[15], d[16], d[17], d[18], d[19],
+		d[20], d[21], d[22], d[23], d[24]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,2,2,false>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,2,3,false>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3],
+		d[ 4], d[ 5]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,2,4,false>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3],
+		d[ 4], d[ 5],
+		d[ 6], d[ 7]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,2,5,false>(
+		d[ 0], d[ 1],
+		d[ 2], d[ 3],
+		d[ 4], d[ 5],
+		d[ 6], d[ 7],
+		d[ 8], d[ 9]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,3,2,false>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,3,3,false>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5],
+		d[ 6], d[ 7], d[ 8]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,3,4,false>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5],
+		d[ 6], d[ 7], d[ 8],
+		d[ 9], d[10], d[11]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,3,5,false>(
+		d[ 0], d[ 1], d[ 2],
+		d[ 3], d[ 4], d[ 5],
+		d[ 6], d[ 7], d[ 8],
+		d[ 9], d[10], d[11],
+		d[12], d[13], d[14]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,4,2,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,4,3,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7],
+		d[ 8], d[ 9], d[10], d[11]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,4,4,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7],
+		d[ 8], d[ 9], d[10], d[11],
+		d[12], d[13], d[14], d[15]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,4,5,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3],
+		d[ 4], d[ 5], d[ 6], d[ 7],
+		d[ 8], d[ 9], d[10], d[11],
+		d[12], d[13], d[14], d[15],
+		d[16], d[17], d[18], d[19]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 2>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,5,2,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 3>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,5,3,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9],
+		d[10], d[11], d[12], d[13], d[14]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 4>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,5,4,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9],
+		d[10], d[11], d[12], d[13], d[14],
+		d[15], d[16], d[17], d[18], d[19]
+	);
+}
+
+template <typename T>
+auto make_math_tmat_p(
+	const T* d,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<unsigned, 5>,
+	eagine::meta::integral_constant<bool,false>
+)
+{
+	return eagine::math::tmat<T,5,5,false>(
+		d[ 0], d[ 1], d[ 2], d[ 3], d[ 4],
+		d[ 5], d[ 6], d[ 7], d[ 8], d[ 9],
+		d[10], d[11], d[12], d[13], d[14],
+		d[15], d[16], d[17], d[18], d[19],
+		d[20], d[21], d[22], d[23], d[24]
+	);
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_tmat_pack_ctr_TRC(void)
+{
+	T d[R*C];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d[k] = std::rand()/T(11);
+	}
+
+	eagine::math::tmat<T,R,C,RM> m = make_math_tmat_p(
+		d,
+		eagine::meta::integral_constant<unsigned, R>(),
+		eagine::meta::integral_constant<unsigned, C>(),
+		eagine::meta::integral_constant<bool, RM>()
+	);
+
+	for(unsigned i=0; i<R; ++i)
+	for(unsigned j=0; j<C; ++j)
+	{
+		unsigned k = RM?i*C+j:j*R+i;
+		BOOST_ASSERT((get(m, i, j) == d[k]));
+		BOOST_ASSERT((m[RM?i:j][RM?j:i] == d[k]));
+	}
+}
+
+template <typename T, bool RM>
+void test_math_tmat_pack_ctr(void)
+{
+	test_math_tmat_pack_ctr_TRC<T,2,2,RM>();
+	test_math_tmat_pack_ctr_TRC<T,2,3,RM>();
+	test_math_tmat_pack_ctr_TRC<T,2,4,RM>();
+	test_math_tmat_pack_ctr_TRC<T,2,5,RM>();
+
+	test_math_tmat_pack_ctr_TRC<T,3,2,RM>();
+	test_math_tmat_pack_ctr_TRC<T,3,3,RM>();
+	test_math_tmat_pack_ctr_TRC<T,3,4,RM>();
+	test_math_tmat_pack_ctr_TRC<T,3,5,RM>();
+
+	test_math_tmat_pack_ctr_TRC<T,4,2,RM>();
+	test_math_tmat_pack_ctr_TRC<T,4,3,RM>();
+	test_math_tmat_pack_ctr_TRC<T,4,4,RM>();
+	test_math_tmat_pack_ctr_TRC<T,4,5,RM>();
+
+	test_math_tmat_pack_ctr_TRC<T,5,2,RM>();
+	test_math_tmat_pack_ctr_TRC<T,5,3,RM>();
+	test_math_tmat_pack_ctr_TRC<T,5,4,RM>();
+	test_math_tmat_pack_ctr_TRC<T,5,5,RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_tmat_pack_ctr)
+{
+	test_math_tmat_pack_ctr<float, true>();
+	test_math_tmat_pack_ctr<float,false>();
+
+	test_math_tmat_pack_ctr<double, true>();
+	test_math_tmat_pack_ctr<double,false>();
+}
+
 
 // TODO
 

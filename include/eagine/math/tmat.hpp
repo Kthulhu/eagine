@@ -20,8 +20,10 @@ namespace math {
 template <typename T, unsigned R, unsigned C, bool RM>
 struct tmat : matrix<T, R, C, RM>
 {
+private:
 	typedef matrix<T, R, C, RM> _base;
 
+public:
 	constexpr inline
 	tmat(void)
 	noexcept
@@ -32,6 +34,31 @@ struct tmat : matrix<T, R, C, RM>
 	tmat(const T* d, unsigned n)
 	noexcept
 	 : _base(_base::from(d, n))
+	{ }
+
+private:
+	template <
+		typename ... P,
+		typename = typename meta::enable_if<
+			((sizeof...(P)) == (R*C))
+		>::type
+	>
+	static inline
+	_base _make(P&& ... p)
+	{
+		T d[R*C] = {T(p)...};
+		return _base::from(d, R*C);
+	}
+public:
+	template <
+		typename ... P,
+		typename = typename meta::enable_if<
+			((sizeof...(P)) == (R*C))
+		>::type
+	>
+	inline
+	tmat(P&& ... p)
+	 : _base(_make(std::forward<P>(p)...))
 	{ }
 
 	template <
