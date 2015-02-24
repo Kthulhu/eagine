@@ -58,6 +58,20 @@ struct tvec : vector<T, N>
 	 : _base(_base::make(v, std::forward<P>(p)...))
 	{ }
 
+	template <
+		typename P,
+		unsigned M,
+		typename = typename meta::enable_if<
+			!meta::is_same<P, T>::value ||
+			!(M==N)
+		>::type
+	>
+	constexpr inline
+	tvec(const vector<P, M>& v)
+	noexcept
+	 : _base(_base::from(v, T(0)))
+	{ }
+
 	template <typename P, unsigned M>
 	constexpr inline
 	tvec(const vector<P, M>& v, T d)
