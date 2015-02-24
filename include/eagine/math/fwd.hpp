@@ -1,7 +1,7 @@
 /**
  *  @file eagine/math/fwd.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -31,6 +31,9 @@ noexcept;
 
 template <typename T, unsigned R, unsigned C, bool RowMajor>
 struct matrix;
+
+template <typename T, unsigned R, unsigned C, bool RowMajor>
+struct tmat;
 
 template <typename Matrix>
 class matrix_data_ref;
