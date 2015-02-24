@@ -12,6 +12,7 @@
 
 #include <eagine/math/matrix.hpp>
 #include <eagine/meta/type_traits.hpp>
+#include <eagine/meta/fold.hpp>
 
 namespace eagine {
 namespace math {
@@ -28,6 +29,12 @@ public:
 	tmat(void)
 	noexcept
 	 : _base(identity<_base>())
+	{ }
+
+	constexpr inline
+	tmat(const _base& m)
+	noexcept
+	 : _base(m)
 	{ }
 
 	inline
@@ -49,11 +56,25 @@ private:
 		T d[R*C] = {T(p)...};
 		return _base::from(d, R*C);
 	}
+
+	static constexpr
+	bool _and(bool a, bool b)
+	noexcept
+	{
+		return a && b;
+	}
+
+	template <typename ... P>
+	struct _all_T
+	 : meta::integral_constant<
+		bool,
+		meta::fold_with(_and, meta::is_convertible<P, T>()..., true)
+	> { };
 public:
 	template <
 		typename ... P,
 		typename = typename meta::enable_if<
-			((sizeof...(P)) == (R*C))
+			((sizeof...(P)) == (R*C)) && _all_T<P...>::value
 		>::type
 	>
 	inline
