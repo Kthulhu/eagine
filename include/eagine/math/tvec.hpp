@@ -34,6 +34,12 @@ struct tvec : vector<T, N>
 	 : _base(_base::fill(v))
 	{ }
 
+	constexpr inline
+	tvec(const _base& v)
+	noexcept
+	 : _base(v)
+	{ }
+
 	inline
 	tvec(const T* d, unsigned n)
 	noexcept
