@@ -54,7 +54,7 @@ struct tvec : vector<T, N>
 
 	template <typename P, unsigned M>
 	constexpr inline
-	tvec(const vector<P, M>& v, T d = T(0))
+	tvec(const vector<P, M>& v, T d)
 	noexcept
 	 : _base(_base::from(v, d))
 	{ }
