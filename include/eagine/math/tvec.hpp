@@ -63,13 +63,13 @@ struct tvec : vector<T, N>
 		unsigned M,
 		typename = typename meta::enable_if<
 			!meta::is_same<P, T>::value ||
-			!(M==N)
+			!(M == N)
 		>::type
 	>
 	constexpr inline
 	tvec(const vector<P, M>& v)
 	noexcept
-	 : _base(_base::from(v, T(0)))
+	 : _base(_base::from(v))
 	{ }
 
 	template <typename P, unsigned M>

@@ -141,6 +141,8 @@ struct _ary_cref
 template <typename T>
 struct _ary_data<T, 0u>
 {
+	typedef _ary_data type;
+
 	T operator [] (unsigned i) const;
 };
 
