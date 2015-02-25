@@ -148,11 +148,43 @@ struct vector
 		return N;
 	}
 
-	inline
+	constexpr inline
 	T operator [] (unsigned pos) const
 	noexcept
 	{
 		return _v[pos];
+	}
+
+	template <unsigned M = N>
+	constexpr inline
+	typename meta::enable_if<(M > 0), T>::type x(void) const
+	noexcept
+	{
+		return _v[0];
+	}
+
+	template <unsigned M = N>
+	constexpr inline
+	typename meta::enable_if<(M > 1), T>::type y(void) const
+	noexcept
+	{
+		return _v[1];
+	}
+
+	template <unsigned M = N>
+	constexpr inline
+	typename meta::enable_if<(M > 2), T>::type z(void) const
+	noexcept
+	{
+		return _v[2];
+	}
+
+	template <unsigned M = N>
+	constexpr inline
+	typename meta::enable_if<(M > 3), T>::type w(void) const
+	noexcept
+	{
+		return _v[3];
 	}
 
 	friend constexpr

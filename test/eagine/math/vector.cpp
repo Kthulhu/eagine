@@ -3,7 +3,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -236,6 +236,112 @@ BOOST_AUTO_TEST_CASE(math_vector_element)
 		test_math_vector_element<int>();
 		test_math_vector_element<float>();
 		test_math_vector_element<double>();
+	}
+}
+
+template <typename T, unsigned N>
+void test_math_vector_x(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::true_type
+)
+{
+	BOOST_ASSERT(v.x() == v[0]);
+}
+
+template <typename T, unsigned N>
+void test_math_vector_x(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::false_type
+) { }
+
+template <typename T, unsigned N>
+void test_math_vector_y(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::true_type
+)
+{
+	BOOST_ASSERT(v.y() == v[1]);
+}
+
+template <typename T, unsigned N>
+void test_math_vector_y(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::false_type
+) { }
+
+template <typename T, unsigned N>
+void test_math_vector_z(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::true_type
+)
+{
+	BOOST_ASSERT(v.z() == v[2]);
+}
+
+template <typename T, unsigned N>
+void test_math_vector_z(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::false_type
+) { }
+
+template <typename T, unsigned N>
+void test_math_vector_w(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::true_type
+)
+{
+	BOOST_ASSERT(v.w() == v[3]);
+}
+
+template <typename T, unsigned N>
+void test_math_vector_w(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::false_type
+) { }
+
+template <typename T, unsigned N>
+void test_math_vector_xyzw_T(void)
+{
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+	}
+
+	eagine::math::vector<T, N> v;
+
+	eagine::meta::integral_constant<bool,(N > 0)> has_x;
+	eagine::meta::integral_constant<bool,(N > 1)> has_y;
+	eagine::meta::integral_constant<bool,(N > 2)> has_z;
+	eagine::meta::integral_constant<bool,(N > 3)> has_w;
+
+	test_math_vector_x<T, N>(v, has_x);
+	test_math_vector_y<T, N>(v, has_y);
+	test_math_vector_z<T, N>(v, has_z);
+	test_math_vector_w<T, N>(v, has_w);
+}
+
+template <typename T>
+void test_math_vector_xyzw(void)
+{
+	test_math_vector_xyzw_T<T, 1>();
+	test_math_vector_xyzw_T<T, 2>();
+	test_math_vector_xyzw_T<T, 3>();
+	test_math_vector_xyzw_T<T, 4>();
+	test_math_vector_xyzw_T<T, 5>();
+	test_math_vector_xyzw_T<T, 6>();
+	test_math_vector_xyzw_T<T, 7>();
+	test_math_vector_xyzw_T<T, 8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_xyzw)
+{
+	for(unsigned i=0; i<100; ++i)
+	{
+		test_math_vector_xyzw<int>();
+		test_math_vector_xyzw<float>();
+		test_math_vector_xyzw<double>();
 	}
 }
 
