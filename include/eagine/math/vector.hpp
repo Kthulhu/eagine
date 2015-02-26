@@ -160,6 +160,7 @@ struct vector
 	typename meta::enable_if<(M > 0), T>::type x(void) const
 	noexcept
 	{
+		static_assert(M == N, "");
 		return _v[0];
 	}
 
@@ -168,6 +169,7 @@ struct vector
 	typename meta::enable_if<(M > 1), T>::type y(void) const
 	noexcept
 	{
+		static_assert(M == N, "");
 		return _v[1];
 	}
 
@@ -176,6 +178,7 @@ struct vector
 	typename meta::enable_if<(M > 2), T>::type z(void) const
 	noexcept
 	{
+		static_assert(M == N, "");
 		return _v[2];
 	}
 
@@ -184,6 +187,7 @@ struct vector
 	typename meta::enable_if<(M > 3), T>::type w(void) const
 	noexcept
 	{
+		static_assert(M == N, "");
 		return _v[3];
 	}
 

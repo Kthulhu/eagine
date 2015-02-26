@@ -309,7 +309,7 @@ void test_math_vector_xyzw_T(void)
 		a[i] = std::rand() / T(3);
 	}
 
-	eagine::math::vector<T, N> v;
+	auto v = eagine::math::vector<T, N>::from(a, N);
 
 	eagine::meta::integral_constant<bool,(N > 0)> has_x;
 	eagine::meta::integral_constant<bool,(N > 1)> has_y;
