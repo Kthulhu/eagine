@@ -192,6 +192,20 @@ struct vector
 	}
 
 	friend constexpr
+	vector operator + (_cpT a)
+	noexcept
+	{
+		return a;
+	}
+
+	friend constexpr
+	vector operator - (_cpT a)
+	noexcept
+	{
+		return vector{-a._v};
+	}
+
+	friend constexpr
 	vector operator + (_cpT a, _cpT b)
 	noexcept
 	{
