@@ -37,7 +37,7 @@ struct matrix
 	) noexcept
 	{
 		return matrix{{
-			vect::from<T, RM?C:R>::apply(
+			vect::from_array<T, RM?C:R>::apply(
 				dt+I*(RM?C:R),
 				sz-I*(RM?C:R)
 			)...

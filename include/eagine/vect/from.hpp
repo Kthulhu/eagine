@@ -1,7 +1,7 @@
 /**
  *  @file eagine/vect/from.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -17,7 +17,7 @@ namespace eagine {
 namespace vect {
 
 template <typename T, unsigned N>
-struct from
+struct from_array
 {
 	static
 	typename data<T, N>::type
@@ -34,8 +34,30 @@ struct from
 	}
 };
 
+// from shorter array and fallback value
+template <typename T, unsigned N>
+struct from_saafv
+{
+	static
+	typename data<T, N>::type
+	apply(const T* d, unsigned n, T v)
+	noexcept
+	{
+		typename data<T, N>::type r;
+		for(unsigned i=0; i<N && i<n; ++i)
+		{
+			r[i] = d[i];
+		}
+		for(unsigned i=n; i<N; ++i)
+		{
+			r[i] = v;
+		}
+		return r;
+	}
+};
+
 template <typename T>
-struct from<T, 0>
+struct from_array<T, 0>
 {
 	static constexpr
 	typename data<T, 0>::type
@@ -47,7 +69,7 @@ struct from<T, 0>
 };
 
 template <typename T>
-struct from<T, 1>
+struct from_array<T, 1>
 {
 	static
 	typename data<T, 1>::type
@@ -61,7 +83,7 @@ struct from<T, 1>
 };
 
 template <typename T>
-struct from<T, 2>
+struct from_array<T, 2>
 {
 	static
 	typename data<T, 2>::type
@@ -75,7 +97,7 @@ struct from<T, 2>
 };
 
 template <typename T>
-struct from<T, 3>
+struct from_array<T, 3>
 {
 	static
 	typename data<T, 3>::type
@@ -89,7 +111,7 @@ struct from<T, 3>
 };
 
 template <typename T>
-struct from<T, 4>
+struct from_array<T, 4>
 {
 	static
 	typename data<T, 4>::type
@@ -103,7 +125,7 @@ struct from<T, 4>
 };
 
 template <typename T>
-struct from<T, 8>
+struct from_array<T, 8>
 {
 	static
 	typename data<T, 8>::type

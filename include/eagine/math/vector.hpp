@@ -103,12 +103,18 @@ struct vector
 		return vector{{T(v._v[I])...}};
 	}
 
-	template <typename P>
 	static inline
-	vector from(const P* dt, std::size_t sz)
+	vector from(const T* dt, std::size_t sz)
 	noexcept
 	{
-		return vector{vect::from<T,N>::apply(dt, sz)};
+		return vector{vect::from_array<T,N>::apply(dt, sz)};
+	}
+
+	static inline
+	vector from(const T* dt, std::size_t sz, T fv)
+	noexcept
+	{
+		return vector{vect::from_saafv<T,N>::apply(dt, sz, fv)};
 	}
 
 	static inline
