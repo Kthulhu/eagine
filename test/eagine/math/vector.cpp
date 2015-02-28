@@ -1119,6 +1119,50 @@ BOOST_AUTO_TEST_CASE(math_vector_add)
 }
 
 template <typename T, unsigned N>
+void test_math_vector_add_2_T(void)
+{
+	T a[N], b[N], c[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+		b[i] = std::rand() / T(3);
+		c[i] = a[i] + b[i];
+	}
+
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vc = eagine::math::vector<T, N>::from(c, N);
+
+	va += vb;
+
+	BOOST_ASSERT(test_math_vector_close(va, vc));
+}
+
+template <typename T>
+void test_math_vector_add_2(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_add_2_T<T, 1>();
+		test_math_vector_add_2_T<T, 2>();
+		test_math_vector_add_2_T<T, 3>();
+		test_math_vector_add_2_T<T, 4>();
+		test_math_vector_add_2_T<T, 5>();
+		test_math_vector_add_2_T<T, 6>();
+		test_math_vector_add_2_T<T, 7>();
+		test_math_vector_add_2_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_add_2)
+{
+	test_math_vector_add_2<int>();
+	test_math_vector_add_2<float>();
+	test_math_vector_add_2<double>();
+}
+
+template <typename T, unsigned N>
 void test_math_vector_sub_T(void)
 {
 	T a[N], b[N], c[N], d[N];

@@ -218,11 +218,25 @@ struct vector
 		return vector{a._v+b._v};
 	}
 
+	vector& operator += (_cpT a)
+	noexcept
+	{
+		_v = _v + a._v;
+		return *this;
+	}
+
 	friend constexpr
 	vector operator - (_cpT a, _cpT b)
 	noexcept
 	{
 		return vector{a._v-b._v};
+	}
+
+	vector& operator -= (_cpT a)
+	noexcept
+	{
+		_v = _v - a._v;
+		return *this;
 	}
 
 	friend constexpr
