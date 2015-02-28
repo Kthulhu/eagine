@@ -46,6 +46,12 @@ struct tvec : vector<T, N>
 	 : _base(_base::from(d, n))
 	{ }
 
+	inline
+	tvec(const T* d, unsigned n, T v)
+	noexcept
+	 : _base(_base::from(d, n, v))
+	{ }
+
 	template <
 		typename ... P,
 		typename = typename meta::enable_if<

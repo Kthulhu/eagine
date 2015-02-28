@@ -37,13 +37,13 @@ void test_vect_from_array_apply_T(void)
 template <typename T>
 void test_vect_from_array_apply(void)
 {
-	test_vect_from_array_apply<T, 2>();
-	test_vect_from_array_apply<T, 3>();
-	test_vect_from_array_apply<T, 4>();
-	test_vect_from_array_apply<T, 5>();
-	test_vect_from_array_apply<T, 6>();
-	test_vect_from_array_apply<T, 7>();
-	test_vect_from_array_apply<T, 8>();
+	test_vect_from_array_apply_T<T, 2>();
+	test_vect_from_array_apply_T<T, 3>();
+	test_vect_from_array_apply_T<T, 4>();
+	test_vect_from_array_apply_T<T, 5>();
+	test_vect_from_array_apply_T<T, 6>();
+	test_vect_from_array_apply_T<T, 7>();
+	test_vect_from_array_apply_T<T, 8>();
 }
 
 BOOST_AUTO_TEST_CASE(vect_from_array_apply)
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(vect_from_array_apply)
 
 
 template <typename T, unsigned N, unsigned M>
-void test_vect_from_array_saafv_T(void)
+void test_vect_from_saafv_apply_T(void)
 {
 	static_assert(M <= N, "");
 
@@ -85,13 +85,47 @@ void test_vect_from_array_saafv_T(void)
 template <typename T>
 void test_vect_from_saafv_apply(void)
 {
-	test_vect_from_saafv_apply<T, 2>();
-	test_vect_from_saafv_apply<T, 3>();
-	test_vect_from_saafv_apply<T, 4>();
-	test_vect_from_saafv_apply<T, 5>();
-	test_vect_from_saafv_apply<T, 6>();
-	test_vect_from_saafv_apply<T, 7>();
-	test_vect_from_saafv_apply<T, 8>();
+	test_vect_from_saafv_apply_T<T, 2,1>();
+	test_vect_from_saafv_apply_T<T, 2,2>();
+
+	test_vect_from_saafv_apply_T<T, 3,1>();
+	test_vect_from_saafv_apply_T<T, 3,2>();
+	test_vect_from_saafv_apply_T<T, 3,3>();
+
+	test_vect_from_saafv_apply_T<T, 4,1>();
+	test_vect_from_saafv_apply_T<T, 4,2>();
+	test_vect_from_saafv_apply_T<T, 4,3>();
+	test_vect_from_saafv_apply_T<T, 4,4>();
+
+	test_vect_from_saafv_apply_T<T, 5,1>();
+	test_vect_from_saafv_apply_T<T, 5,2>();
+	test_vect_from_saafv_apply_T<T, 5,3>();
+	test_vect_from_saafv_apply_T<T, 5,4>();
+	test_vect_from_saafv_apply_T<T, 5,5>();
+
+	test_vect_from_saafv_apply_T<T, 6,1>();
+	test_vect_from_saafv_apply_T<T, 6,2>();
+	test_vect_from_saafv_apply_T<T, 6,3>();
+	test_vect_from_saafv_apply_T<T, 6,4>();
+	test_vect_from_saafv_apply_T<T, 6,5>();
+	test_vect_from_saafv_apply_T<T, 6,6>();
+
+	test_vect_from_saafv_apply_T<T, 7,1>();
+	test_vect_from_saafv_apply_T<T, 7,2>();
+	test_vect_from_saafv_apply_T<T, 7,3>();
+	test_vect_from_saafv_apply_T<T, 7,4>();
+	test_vect_from_saafv_apply_T<T, 7,5>();
+	test_vect_from_saafv_apply_T<T, 7,6>();
+	test_vect_from_saafv_apply_T<T, 7,7>();
+
+	test_vect_from_saafv_apply_T<T, 8,1>();
+	test_vect_from_saafv_apply_T<T, 8,2>();
+	test_vect_from_saafv_apply_T<T, 8,3>();
+	test_vect_from_saafv_apply_T<T, 8,4>();
+	test_vect_from_saafv_apply_T<T, 8,5>();
+	test_vect_from_saafv_apply_T<T, 8,6>();
+	test_vect_from_saafv_apply_T<T, 8,7>();
+	test_vect_from_saafv_apply_T<T, 8,8>();
 }
 
 BOOST_AUTO_TEST_CASE(vect_from_saafv_apply)

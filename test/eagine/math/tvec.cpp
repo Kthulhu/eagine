@@ -120,6 +120,86 @@ BOOST_AUTO_TEST_CASE(math_tvec_data_ctr)
 	test_math_tvec_data_ctr<double>();
 }
 
+template <typename T, unsigned N, unsigned M>
+void test_math_tvec_data_ctr_2_T(void)
+{
+	static_assert(M <= N, "");
+
+	T d[M];
+
+	for(unsigned i=0; i<M; ++i)
+	{
+		d[i] = std::rand() / T(11);
+	}
+
+	T f = std::rand() / T(11);
+
+	eagine::math::tvec<T, N> u(d, M, f);
+
+	for(unsigned i=0; i<M; ++i)
+	{
+		BOOST_ASSERT(d[i] == u[i]);
+	}
+
+	for(unsigned i=M; i<N; ++i)
+	{
+		BOOST_ASSERT(f == u[i]);
+	}
+}
+
+template <typename T>
+void test_math_tvec_data_ctr_2(void)
+{
+	test_math_tvec_data_ctr_2_T<T, 2,1>();
+	test_math_tvec_data_ctr_2_T<T, 2,2>();
+
+	test_math_tvec_data_ctr_2_T<T, 3,1>();
+	test_math_tvec_data_ctr_2_T<T, 3,2>();
+	test_math_tvec_data_ctr_2_T<T, 3,3>();
+
+	test_math_tvec_data_ctr_2_T<T, 4,1>();
+	test_math_tvec_data_ctr_2_T<T, 4,2>();
+	test_math_tvec_data_ctr_2_T<T, 4,3>();
+	test_math_tvec_data_ctr_2_T<T, 4,4>();
+
+	test_math_tvec_data_ctr_2_T<T, 5,1>();
+	test_math_tvec_data_ctr_2_T<T, 5,2>();
+	test_math_tvec_data_ctr_2_T<T, 5,3>();
+	test_math_tvec_data_ctr_2_T<T, 5,4>();
+	test_math_tvec_data_ctr_2_T<T, 5,5>();
+
+	test_math_tvec_data_ctr_2_T<T, 6,1>();
+	test_math_tvec_data_ctr_2_T<T, 6,2>();
+	test_math_tvec_data_ctr_2_T<T, 6,3>();
+	test_math_tvec_data_ctr_2_T<T, 6,4>();
+	test_math_tvec_data_ctr_2_T<T, 6,5>();
+	test_math_tvec_data_ctr_2_T<T, 6,6>();
+
+	test_math_tvec_data_ctr_2_T<T, 7,1>();
+	test_math_tvec_data_ctr_2_T<T, 7,2>();
+	test_math_tvec_data_ctr_2_T<T, 7,3>();
+	test_math_tvec_data_ctr_2_T<T, 7,4>();
+	test_math_tvec_data_ctr_2_T<T, 7,5>();
+	test_math_tvec_data_ctr_2_T<T, 7,6>();
+	test_math_tvec_data_ctr_2_T<T, 7,7>();
+
+	test_math_tvec_data_ctr_2_T<T, 8,1>();
+	test_math_tvec_data_ctr_2_T<T, 8,2>();
+	test_math_tvec_data_ctr_2_T<T, 8,3>();
+	test_math_tvec_data_ctr_2_T<T, 8,4>();
+	test_math_tvec_data_ctr_2_T<T, 8,5>();
+	test_math_tvec_data_ctr_2_T<T, 8,6>();
+	test_math_tvec_data_ctr_2_T<T, 8,7>();
+	test_math_tvec_data_ctr_2_T<T, 8,8>();
+}
+
+BOOST_AUTO_TEST_CASE(math_tvec_data_ctr_2)
+{
+	test_math_tvec_data_ctr_2<int>();
+	test_math_tvec_data_ctr_2<float>();
+	test_math_tvec_data_ctr_2<double>();
+}
+
 template <typename T, typename ... P>
 void test_math_tvec_init_ctr_T(P ... p)
 {
