@@ -54,6 +54,45 @@ BOOST_AUTO_TEST_CASE(math_matrix_ortho_1)
 }
 
 template <typename T, bool RM>
+void test_math_matrix_orbiting_y_T_1(void)
+{
+	eagine::math::vector<T, 3> t{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000)
+	}};
+
+	eagine::math::vector<T, 4> v1{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		T(1)
+	}};
+
+	eagine::math::orbiting_y<eagine::math::matrix<T,4,4,RM>> o(
+		t,
+		1+std::rand()%100,
+		eagine::math::angle<T>((std::rand()%1571)/T(1000)),
+		eagine::math::angle<T>((std::rand()%1571)/T(1000))
+	);
+
+	eagine::math::vector<T, 4> v2 = o*v1;
+	(void)v2;
+	// TODO
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_orbiting_y_1)
+{
+	for(unsigned k=0; k<1000; ++k)
+	{
+		test_math_matrix_orbiting_y_T_1<float, true>();
+		test_math_matrix_orbiting_y_T_1<float,false>();
+		test_math_matrix_orbiting_y_T_1<double, true>();
+		test_math_matrix_orbiting_y_T_1<double,false>();
+	}
+}
+
+template <typename T, bool RM>
 void test_math_matrix_perspective_T_1(void)
 {
 	eagine::math::vector<T, 4> v1{{
