@@ -359,12 +359,12 @@ struct is_matrix_constructor<rotation_I<matrix<T,R,C,RM>, I>>
 template <typename T, bool RM, unsigned I>
 struct rotation_I<matrix<T,4,4, RM>, I>
 {
-	T _a;
+	angle<T> _a;
 
 	constexpr
 	rotation_I(angle<T> a)
 	noexcept
-	 : _a(value(a))
+	 : _a(a)
 	{ }
 
 	typedef meta::integral_constant<unsigned, 0> _x;
@@ -411,8 +411,6 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	matrix<T,4,4, RM> operator()(void) const
 	noexcept
 	{
-		using std::cos;
-		using std::sin;
 		typedef meta::integral_constant<unsigned, I> _axis;
 		return _make(cos(_a), sin(_a)*(RM?1:-1), _axis());
 	}
@@ -434,7 +432,7 @@ operator * (
 	const rotation_I<matrix<T,R,C,RM>, I>& c2
 ) noexcept
 {
-	return {angle<T>{c1._a+c2._a}};
+	return {c1._a+c2._a};
 }
 
 // reorder_mat_ctr(rotation_I)
@@ -444,7 +442,7 @@ rotation_I<matrix<T,R,C,!RM>, I>
 reorder_mat_ctr(const rotation_I<matrix<T,R,C,RM>, I>& r)
 noexcept
 {
-	return {angle<T>{r._a}};
+	return {r._a};
 }
 
 // rotation x
@@ -476,6 +474,83 @@ template <typename T, unsigned R, unsigned C, bool RM>
 struct is_matrix_constructor<rotation_z<matrix<T,R,C,RM>>>
  : meta::true_type
 { };
+
+// rotation_a
+template <typename X>
+struct rotation_a;
+
+// is_matrix_constructor<rotation_x>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<rotation_a<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// rotation around arbitrary axis matrix 4x4
+template <typename T, bool RM>
+struct rotation_a<matrix<T,4,4, RM>>
+{
+	typedef vector<T,4> _vT;
+
+	vector<T,4> _v;
+	angle<T> _a;
+
+	constexpr
+	rotation_a(const vector<T,4>& v, angle<T> a)
+	noexcept
+	 : _v(v)
+	 , _a(a)
+	{ }
+
+	constexpr
+	rotation_a(const vector<T,3>& v, angle<T> a)
+	noexcept
+	 : _v(normalized(v),T(0))
+	 , _a(a)
+	{ }
+
+	static constexpr inline
+	matrix<T,4,4, RM> _make(T ca, T sa, const _vT& v, const _vT& u)
+	noexcept
+	{
+		return matrix<T,4,4, RM>{{
+			(_vT::fill(u[0])*v+_vT( ca*T(1),-sa*u[2], sa*u[1],0))._v,
+			(_vT::fill(u[1])*v+_vT( sa*u[2], ca*T(1),-sa*u[0],0))._v,
+			(_vT::fill(u[2])*v+_vT(-sa*u[1], sa*u[0], ca*T(1),0))._v,
+			(_vT::template axis<3>())._v
+		}};
+	}
+
+	static constexpr inline
+	matrix<T,4,4, RM> _make(T ca, T sa, const _vT& v)
+	noexcept
+	{
+		return _make(ca, sa, v, v*(1-ca));
+	}
+
+	constexpr inline
+	matrix<T,4,4, RM> operator()(void) const
+	noexcept
+	{
+		return _make(cos(_a), sin(_a)*(RM?1:-1), _v);
+	}
+
+	constexpr inline
+	operator matrix<T,4,4, RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
+};
+
+// reorder_mat_ctr(rotation_a)
+template <typename T, unsigned R, unsigned C, bool RM>
+static constexpr inline
+rotation_a<matrix<T,R,C,!RM>>
+reorder_mat_ctr(const rotation_a<matrix<T,R,C,RM>>& r)
+noexcept
+{
+	return {r._v, r._a};
+}
 
 // scale
 template <typename X>

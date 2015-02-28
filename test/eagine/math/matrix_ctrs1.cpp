@@ -116,6 +116,12 @@ void test_math_matrix_constructor(void)
 			eagine::math::matrix<T,4,4,RM>
 		>,T,4,4,RM
 	>();
+	// rotation_a
+	do_test_math_matrix_constructor<
+		eagine::math::rotation_a<
+			eagine::math::matrix<T,4,4,RM>
+		>,T,4,4,RM
+	>();
 	// scale
 	do_test_math_matrix_constructor<
 		eagine::math::scale<
