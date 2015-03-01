@@ -515,15 +515,15 @@ struct rotation_a<matrix<T,4,4, RM>>
 		return matrix<T,4,4, RM>{{
 			(
 				_vT::fill(u[0])*v+
-				_vT::make( ca*T(1),-sa*u[2], sa*u[1],0)
+				_vT::make( ca*T(1),-sa*v[2], sa*v[1],0)
 			)._v,
 			(
 				_vT::fill(u[1])*v+
-				_vT::make( sa*u[2], ca*T(1),-sa*u[0],0)
+				_vT::make( sa*v[2], ca*T(1),-sa*v[0],0)
 			)._v,
 			(
 				_vT::fill(u[2])*v+
-				_vT::make(-sa*u[1], sa*u[0], ca*T(1),0)
+				_vT::make(-sa*v[1], sa*v[0], ca*T(1),0)
 			)._v,
 			(_vT::template axis<3>())._v
 		}};
