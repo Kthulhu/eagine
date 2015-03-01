@@ -97,6 +97,11 @@ void test_math_matrix_constructor(void)
 		>,T,4,4,RM
 	>();
 	do_test_math_matrix_constructor<
+		eagine::math::pitch<
+			eagine::math::matrix<T,4,4,RM>
+		>,T,4,4,RM
+	>();
+	do_test_math_matrix_constructor<
 		eagine::math::rotation_I<
 			eagine::math::matrix<T,4,4,RM>, 1
 		>,T,4,4,RM
@@ -107,12 +112,22 @@ void test_math_matrix_constructor(void)
 		>,T,4,4,RM
 	>();
 	do_test_math_matrix_constructor<
+		eagine::math::yaw<
+			eagine::math::matrix<T,4,4,RM>
+		>,T,4,4,RM
+	>();
+	do_test_math_matrix_constructor<
 		eagine::math::rotation_I<
 			eagine::math::matrix<T,4,4,RM>, 2
 		>,T,4,4,RM
 	>();
 	do_test_math_matrix_constructor<
 		eagine::math::rotation_z<
+			eagine::math::matrix<T,4,4,RM>
+		>,T,4,4,RM
+	>();
+	do_test_math_matrix_constructor<
+		eagine::math::roll<
 			eagine::math::matrix<T,4,4,RM>
 		>,T,4,4,RM
 	>();
@@ -208,9 +223,15 @@ void test_math_matrix_constructor(void)
 			eagine::math::matrix<T,4,4,RM>
 		>,T,4,4,RM
 	>();
-	// orbiting_y
+	// looking_at_y_up
 	do_test_math_matrix_constructor<
-		eagine::math::orbiting_y<
+		eagine::math::looking_at_y_up<
+			eagine::math::matrix<T,4,4,RM>
+		>,T,4,4,RM
+	>();
+	// orbiting_y_up
+	do_test_math_matrix_constructor<
+		eagine::math::orbiting_y_up<
 			eagine::math::matrix<T,4,4,RM>
 		>,T,4,4,RM
 	>();

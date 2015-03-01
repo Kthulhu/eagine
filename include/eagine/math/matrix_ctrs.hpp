@@ -349,7 +349,7 @@ struct is_matrix_constructor<translation_z<matrix<T,R,C,RM>>>
 template <typename X, unsigned I>
 struct rotation_I;
 
-// is_matrix_constructor<rotation_x>
+// is_matrix_constructor<rotation_I>
 template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 struct is_matrix_constructor<rotation_I<matrix<T,R,C,RM>, I>>
  : meta::true_type
@@ -455,6 +455,10 @@ struct is_matrix_constructor<rotation_x<matrix<T,R,C,RM>>>
  : meta::true_type
 { };
 
+// pitch
+template <typename M>
+using pitch = rotation_x<M>;
+
 // rotation y
 template <typename M>
 using rotation_y = rotation_I<M, 1>;
@@ -465,6 +469,10 @@ struct is_matrix_constructor<rotation_y<matrix<T,R,C,RM>>>
  : meta::true_type
 { };
 
+// yaw
+template <typename M>
+using yaw = rotation_y<M>;
+
 // rotation z
 template <typename M>
 using rotation_z = rotation_I<M, 2>;
@@ -474,6 +482,10 @@ template <typename T, unsigned R, unsigned C, bool RM>
 struct is_matrix_constructor<rotation_z<matrix<T,R,C,RM>>>
  : meta::true_type
 { };
+
+// roll
+template <typename M>
+using roll = rotation_z<M>;
 
 // rotation_a
 template <typename X>
@@ -1165,83 +1177,78 @@ noexcept
 	return {c._s};
 }
 
-// orbiting_y
+// looking_at_y_up
 template <typename X>
-struct orbiting_y;
+struct looking_at_y_up;
 
-// is_matrix_constructor<orbiting_y>
+// is_matrix_constructor<looking_at_y_up>
 template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<orbiting_y<matrix<T,R,C,RM>>>
+struct is_matrix_constructor<looking_at_y_up<matrix<T,R,C,RM>>>
  : meta::true_type
 { };
 
-// orbiting_y matrix 4x4
+// looking_at_y_up matrix 4x4
 template <typename T, bool RM>
-struct orbiting_y<matrix<T,4,4,RM>>
+struct looking_at_y_up<matrix<T,4,4,RM>>
 {
-	vector<T,3> _t;
-	vector<T,3> _x, _z, _y;
-	T _r;
+	typedef vector<T,3> _dT;
 
-	constexpr
-	orbiting_y(
-		const vector<T,3>& t,
-		const vector<T,3>& x,
-		const vector<T,3>& y,
-		const vector<T,3>& z,
-		T r
+	vector<T,3> _e, _t;
+
+	constexpr looking_at_y_up(
+		const vector<T, 3>& eye,
+		const vector<T, 3>& target
 	) noexcept
-	 : _t(t)
-	 , _x(x)
-	 , _z(z)
-	 , _y(y)
-	 , _r(r)
+	 : _e(eye)
+	 , _t(target)
 	{ }
 
-	constexpr orbiting_y(
-		const vector<T, 3>& t,
-		const T rs,
-		const T sa,
-		const T ca,
-		const T se,
-		const T ce
-	) noexcept
-	 : _t(t)
-	 , _x{{-sa, T(0), -ca}}
-	 , _z{{ce*ca, se, ce*-sa}}
-	 , _y(cross(_z, _x))
-	 , _r(rs)
-	{ }
-
-	constexpr orbiting_y(
-		const vector<T, 3>& target,
-		const T radius,
-		angle<T> azimuth,
-		angle<T> elevation
-	) noexcept
-	 : orbiting_y(
-		target,
-		radius,
-		sin(azimuth),
-		cos(azimuth),
-		sin(elevation),
-		cos(elevation)
-	){ }
-
-	constexpr inline
-	matrix<T,4,4,RM> _make(meta::true_type) const
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make(const _dT& x, const _dT& y, const _dT& z, const _dT& t)
 	noexcept
 	{
 		return matrix<T,4,4, true>{{
-			{_x[0],_x[1],_x[2],-_r*dot(_x,_z) - dot(_x,_t)},
-			{_y[0],_y[1],_y[2],-_r*dot(_y,_z) - dot(_y,_t)},
-			{_z[0],_z[1],_z[2],-_r*dot(_z,_z) - dot(_z,_t)},
+			{x[0],x[1],x[2], -dot(x,t)},
+			{y[0],y[1],y[2], -dot(y,t)},
+			{z[0],z[1],z[2], -dot(z,t)},
 			{T(0), T(0), T(0), T(1)}
 		}};
 	}
 
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make(const _dT& y, const _dT& z, const _dT& t)
+	noexcept
+	{
+		return _make(cross(y, z), y, z, t);
+	}
+
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make(const _dT& z, const _dT& t)
+	noexcept
+	{
+		return _make(normalized(cross(z, t)), z, t);
+	}
+
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make(const _dT& z)
+	noexcept
+	{
+		return _make(z, _dT::make(z.z(), T(0),-z.x()));
+	}
+
 	constexpr inline
-	matrix<T,4,4,RM> _make(meta::false_type) const
+	matrix<T,4,4,true> _make(meta::true_type) const
+	noexcept
+	{
+		return _make(normalized(_e-_t));
+	}
+
+	constexpr inline
+	matrix<T,4,4,false> _make(meta::false_type) const
 	noexcept
 	{
 		return reorder(_make(meta::true_type()));
@@ -1262,11 +1269,118 @@ struct orbiting_y<matrix<T,4,4,RM>>
 	}
 };
 
-// reorder_mat_ctr(orbiting_y)
+// reorder_mat_ctr(looking_at_y_up)
 template <typename T, bool RM>
 static constexpr inline
-orbiting_y<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const orbiting_y<matrix<T,4,4,RM>>& c)
+looking_at_y_up<matrix<T,4,4,!RM>>
+reorder_mat_ctr(const looking_at_y_up<matrix<T,4,4,RM>>& c)
+noexcept
+{
+	return {c._e,c._t};
+}
+
+// orbiting_y_up
+template <typename X>
+struct orbiting_y_up;
+
+// is_matrix_constructor<orbiting_y_up>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<orbiting_y_up<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// orbiting_y_up matrix 4x4
+template <typename T, bool RM>
+struct orbiting_y_up<matrix<T,4,4,RM>>
+{
+	vector<T,3> _t;
+	vector<T,3> _x, _z, _y;
+	T _r;
+
+	constexpr
+	orbiting_y_up(
+		const vector<T,3>& t,
+		const vector<T,3>& x,
+		const vector<T,3>& y,
+		const vector<T,3>& z,
+		T r
+	) noexcept
+	 : _t(t)
+	 , _x(x)
+	 , _z(z)
+	 , _y(y)
+	 , _r(r)
+	{ }
+
+	constexpr orbiting_y_up(
+		const vector<T, 3>& t,
+		const T rs,
+		const T sa,
+		const T ca,
+		const T se,
+		const T ce
+	) noexcept
+	 : _t(t)
+	 , _x{{-sa, T(0), -ca}}
+	 , _z{{ce*ca, se, ce*-sa}}
+	 , _y(cross(_z, _x))
+	 , _r(rs)
+	{ }
+
+	constexpr orbiting_y_up(
+		const vector<T, 3>& target,
+		const T radius,
+		angle<T> azimuth,
+		angle<T> elevation
+	) noexcept
+	 : orbiting_y_up(
+		target,
+		radius,
+		sin(azimuth),
+		cos(azimuth),
+		sin(elevation),
+		cos(elevation)
+	){ }
+
+	constexpr inline
+	matrix<T,4,4,true> _make(meta::true_type) const
+	noexcept
+	{
+		return matrix<T,4,4, true>{{
+			{_x[0],_x[1],_x[2],-_r*dot(_x,_z) - dot(_x,_t)},
+			{_y[0],_y[1],_y[2],-_r*dot(_y,_z) - dot(_y,_t)},
+			{_z[0],_z[1],_z[2],-_r*dot(_z,_z) - dot(_z,_t)},
+			{T(0), T(0), T(0), T(1)}
+		}};
+	}
+
+	constexpr inline
+	matrix<T,4,4,false> _make(meta::false_type) const
+	noexcept
+	{
+		return reorder(_make(meta::true_type()));
+	}
+
+	constexpr inline
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
+	{
+		return _make(meta::integral_constant<bool, RM>());
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
+};
+
+// reorder_mat_ctr(orbiting_y_up)
+template <typename T, bool RM>
+static constexpr inline
+orbiting_y_up<matrix<T,4,4,!RM>>
+reorder_mat_ctr(const orbiting_y_up<matrix<T,4,4,RM>>& c)
 noexcept
 {
 	return {c._t,c._x,c._y,c._z,c._r};
