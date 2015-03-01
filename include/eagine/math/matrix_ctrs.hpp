@@ -504,7 +504,7 @@ struct rotation_a<matrix<T,4,4, RM>>
 	constexpr
 	rotation_a(const vector<T,3>& v, angle<T> a)
 	noexcept
-	 : _v(normalized(v),T(0))
+	 : _v(_vT::from(normalized(v),T(0)))
 	 , _a(a)
 	{ }
 
@@ -513,9 +513,18 @@ struct rotation_a<matrix<T,4,4, RM>>
 	noexcept
 	{
 		return matrix<T,4,4, RM>{{
-			(_vT::fill(u[0])*v+_vT( ca*T(1),-sa*u[2], sa*u[1],0))._v,
-			(_vT::fill(u[1])*v+_vT( sa*u[2], ca*T(1),-sa*u[0],0))._v,
-			(_vT::fill(u[2])*v+_vT(-sa*u[1], sa*u[0], ca*T(1),0))._v,
+			(
+				_vT::fill(u[0])*v+
+				_vT::make( ca*T(1),-sa*u[2], sa*u[1],0)
+			)._v,
+			(
+				_vT::fill(u[1])*v+
+				_vT::make( sa*u[2], ca*T(1),-sa*u[0],0)
+			)._v,
+			(
+				_vT::fill(u[2])*v+
+				_vT::make(-sa*u[1], sa*u[0], ca*T(1),0)
+			)._v,
 			(_vT::template axis<3>())._v
 		}};
 	}

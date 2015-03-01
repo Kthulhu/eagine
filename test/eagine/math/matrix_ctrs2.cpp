@@ -285,6 +285,54 @@ BOOST_AUTO_TEST_CASE(math_matrix_rotation_I_2)
 }
 
 template <typename T, bool RM>
+void test_math_matrix_rotation_aT_1(void)
+{
+	auto rv = eagine::math::vector<T, 3>::make(
+		std::rand()/T(1111),
+		std::rand()/T(1111),
+		std::rand()/T(1111)
+	);
+
+	auto v1 = eagine::math::vector<T, 4>::make(
+		std::rand()/T(1111),
+		std::rand()/T(1111),
+		std::rand()/T(1111),
+		T(1)
+	);
+
+	eagine::math::angle<T> ra((std::rand()%1571)/T(1000));
+
+	eagine::math::rotation_a<eagine::math::matrix<T,4,4,RM>> r(rv, ra);
+
+	eagine::math::vector<T, 4> v2 = r*v1;
+
+	(void)v2;
+/* TODO
+	eagine::math::angle<T> ab = angle_between(
+		eagine::math::vector<T, 3>::template from<0,1,2>(v1),
+		eagine::math::vector<T, 3>::template from<0,1,2>(v2)
+	);
+
+	T diff = fabs(value(ri) - value(ab));
+	BOOST_ASSERT(test_math_close(diff+1, T(1)));
+
+	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
+*/
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_rotation_a_1)
+{
+	for(unsigned k=0; k<1000; ++k)
+	{
+		test_math_matrix_rotation_aT_1<float, true>();
+		test_math_matrix_rotation_aT_1<float,false>();
+
+		test_math_matrix_rotation_aT_1<double, true>();
+		test_math_matrix_rotation_aT_1<double,false>();
+	}
+}
+
+template <typename T, bool RM>
 void test_math_matrix_scale_T_1(void)
 {
 	eagine::math::vector<T, 4> v1{{
