@@ -1520,6 +1520,22 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	 : _s{x_left, x_right, y_bottom, y_top}
 	{ }
 
+	static constexpr inline
+	screen_stretch tile(
+		unsigned x,
+		unsigned y,
+		unsigned nx,
+		unsigned ny
+	) noexcept
+	{
+		return screen_stretch(
+			-T(1)+T(2*(x+0))/T(nx),
+			-T(1)+T(2*(x+1))/T(nx),
+			-T(1)+T(2*(y+0))/T(ny),
+			-T(1)+T(2*(y+1))/T(ny)
+		);
+	}
+
 	constexpr inline
 	T _x_left(void) const
 	noexcept

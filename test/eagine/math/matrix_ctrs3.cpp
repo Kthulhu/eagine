@@ -160,6 +160,40 @@ BOOST_AUTO_TEST_CASE(math_matrix_screen_stretch_1)
 	}
 }
 
+template <typename T, bool RM>
+void test_math_matrix_screen_tile_T_1(void)
+{
+	eagine::math::vector<T, 4> v1{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		T(1)
+	}};
+
+	unsigned m = std::rand() % 10 + 1;
+	unsigned n = std::rand() % 10 + 1;
+	unsigned i = std::rand() % m;
+	unsigned j = std::rand() % n;
+
+	auto p = eagine::math::screen_stretch<eagine::math::matrix<T,4,4,RM>>
+		::tile(i, j, m, n);
+
+	eagine::math::vector<T, 4> v2 = p*v1;
+	(void)v2;
+	// TODO
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_screen_tile_1)
+{
+	for(unsigned k=0; k<1000; ++k)
+	{
+		test_math_matrix_screen_tile_T_1<float, true>();
+		test_math_matrix_screen_tile_T_1<float,false>();
+		test_math_matrix_screen_tile_T_1<double, true>();
+		test_math_matrix_screen_tile_T_1<double,false>();
+	}
+}
+
 template <typename T, bool RM, unsigned I>
 void test_math_matrix_trans_rotat_T_1(void)
 {
