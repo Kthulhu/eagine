@@ -1255,6 +1255,50 @@ BOOST_AUTO_TEST_CASE(math_vector_mul)
 }
 
 template <typename T, unsigned N>
+void test_math_vector_mul_2_T(void)
+{
+	T a[N], b[N], c[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() % 100000;
+		b[i] = std::rand() % 100000;
+		c[i] = a[i] * b[i];
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+	auto vc = eagine::math::vector<T, N>::from(c, N);
+
+	va *= vb;
+
+	BOOST_ASSERT(test_math_vector_close(va, vc));
+}
+
+template <typename T>
+void test_math_vector_mul_2(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_mul_2_T<T, 1>();
+		test_math_vector_mul_2_T<T, 2>();
+		test_math_vector_mul_2_T<T, 3>();
+		test_math_vector_mul_2_T<T, 4>();
+		test_math_vector_mul_2_T<T, 5>();
+		test_math_vector_mul_2_T<T, 6>();
+		test_math_vector_mul_2_T<T, 7>();
+		test_math_vector_mul_2_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_mul_2)
+{
+	test_math_vector_mul_2<int>();
+	test_math_vector_mul_2<float>();
+	test_math_vector_mul_2<double>();
+}
+
+template <typename T, unsigned N>
 void test_math_vector_mulc_T(void)
 {
 	T a[N], b[N], c = std::rand() % 10000;
@@ -1293,6 +1337,48 @@ BOOST_AUTO_TEST_CASE(math_vector_mulc)
 	test_math_vector_mulc<int>();
 	test_math_vector_mulc<float>();
 	test_math_vector_mulc<double>();
+}
+
+template <typename T, unsigned N>
+void test_math_vector_mulc_2_T(void)
+{
+	T a[N], b[N], c = std::rand() % 10000;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() % 100000;
+		b[i] = a[i] * c;
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto vb = eagine::math::vector<T, N>::from(b, N);
+
+	va *= c;
+
+	BOOST_ASSERT(test_math_vector_close(va, vb));
+}
+
+template <typename T>
+void test_math_vector_mulc_2(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_mulc_2_T<T, 1>();
+		test_math_vector_mulc_2_T<T, 2>();
+		test_math_vector_mulc_2_T<T, 3>();
+		test_math_vector_mulc_2_T<T, 4>();
+		test_math_vector_mulc_2_T<T, 5>();
+		test_math_vector_mulc_2_T<T, 6>();
+		test_math_vector_mulc_2_T<T, 7>();
+		test_math_vector_mulc_2_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_mulc_2)
+{
+	test_math_vector_mulc_2<int>();
+	test_math_vector_mulc_2<float>();
+	test_math_vector_mulc_2<double>();
 }
 
 template <typename T, unsigned N>

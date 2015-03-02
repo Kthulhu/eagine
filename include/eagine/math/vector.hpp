@@ -73,7 +73,7 @@ struct vector
 			(!meta::is_same<T, P>::value || (N != M))
 		>::type
 	>
-	static constexpr inline 
+	static constexpr inline
 	vector from(const vector<P, M>& v, T d = T(0))
 	noexcept
 	{
@@ -81,7 +81,7 @@ struct vector
 	}
 
 	template <typename P, unsigned M>
-	static constexpr inline 
+	static constexpr inline
 	vector from(const vector<P, M>& v, const vector<T, N-M>& u)
 	noexcept
 	{
@@ -246,6 +246,13 @@ struct vector
 		return vector{a._v*b._v};
 	}
 
+	vector& operator *= (_cpT a)
+	noexcept
+	{
+		_v = _v*a._v;
+		return *this;
+	}
+
 	friend constexpr
 	vector operator * (T c, _cpT a)
 	noexcept
@@ -258,6 +265,13 @@ struct vector
 	noexcept
 	{
 		return vector{a._v*vect::fill<T, N>::apply(c)};
+	}
+
+	vector& operator *= (T c)
+	noexcept
+	{
+		_v = _v*vect::fill<T, N>::apply(c);
+		return *this;
 	}
 
 	friend constexpr
@@ -478,7 +492,7 @@ public:
 
 // data
 template <typename T, unsigned N>
-static inline 
+static inline
 vector_data_ref<vector<T, N>> data(const vector<T, N>& v)
 noexcept
 {
