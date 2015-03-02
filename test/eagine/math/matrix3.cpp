@@ -19,6 +19,23 @@
 BOOST_AUTO_TEST_SUITE(math_matrix3)
 
 template <typename T, unsigned R, unsigned C, bool RM>
+bool test_math_matrix_close(
+	const eagine::math::matrix<T, R, C, RM>& a,
+	const eagine::math::matrix<T, R, C, RM>& b
+)
+{
+	for(unsigned i=0; i<R; ++i)
+	for(unsigned j=0; j<C; ++j)
+	{
+		if(!test_math_close(a[RM?i:j][RM?j:i], b[RM?i:j][RM?j:i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
 void test_math_matrix_data_TRC(void)
 {
 	T d[R*C];
@@ -311,7 +328,6 @@ void test_math_matrix_mult_identity_T(void)
 	test_math_matrix_mult_identity_TPQR<T, 2, 2, RM>();
 	test_math_matrix_mult_identity_TPQR<T, 3, 3, RM>();
 	test_math_matrix_mult_identity_TPQR<T, 4, 4, RM>();
-	test_math_matrix_mult_identity_TPQR<T, 5, 5, RM>();
 }
 
 BOOST_AUTO_TEST_CASE(math_matrix_mult_identity)
@@ -323,6 +339,49 @@ BOOST_AUTO_TEST_CASE(math_matrix_mult_identity)
 		//test_math_matrix_mult_identity_T<float,false>();
 		test_math_matrix_mult_identity_T<double, true>();
 		//test_math_matrix_mult_identity_T<double,false>();
+	}
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_mult_inverse_T(void)
+{
+	T d[R*C];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d[k] = std::rand() / T(1111);
+	}
+
+	auto m1 = eagine::math::matrix<T,R,C,RM>::from(d, R*C);
+
+	if(auto om2 = eagine::math::inverse(m1))
+	{
+		auto m2 = om2.get();
+
+		eagine::math::identity<eagine::math::matrix<T,R,C,RM>> e;
+
+		BOOST_ASSERT(test_math_matrix_close(e(), m1*m2));
+	}
+}
+
+template <typename T, bool RM>
+void test_math_matrix_mult_inverse_T(void)
+{
+	test_math_matrix_mult_inverse_T<T, 2, 2, RM>();
+	test_math_matrix_mult_inverse_T<T, 3, 3, RM>();
+	test_math_matrix_mult_inverse_T<T, 4, 4, RM>();
+	test_math_matrix_mult_inverse_T<T, 5, 5, RM>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_mult_inverse)
+{
+	for(int i=0; i<100; ++i)
+	{
+		test_math_matrix_mult_inverse_T<float, true>();
+		// TODO
+		//test_math_matrix_mult_inverse_T<float,false>();
+		test_math_matrix_mult_inverse_T<double, true>();
+		//test_math_matrix_mult_inverse_T<double,false>();
 	}
 }
 
