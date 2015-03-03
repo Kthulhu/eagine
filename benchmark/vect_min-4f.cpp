@@ -6,6 +6,7 @@
 #ifndef EAGINE_BENCHMARK_BASELINE
 #include <eagine/vect/minmax.hpp>
 #endif
+#include "fake_use.hpp"
 
 int main(int argc, const char** argv)
 {
@@ -24,24 +25,10 @@ int main(int argc, const char** argv)
 
 		data<T, N>::type w = min<T, N>::apply(u, v);
 
-		if(!(
-			((i<j)?w[0]==T(i):w[0]==T(j)) &&
-			((i<j)?w[1]==T(argc+i):w[1]==T(argc+j)) &&
-			(w[2]==T(i)-T(j)) &&
-			(w[3]==T(0))
-			
-		))
+		fake_use(&w);
 #else
-		if(
-			(-1.0f == T(argc+i)) ||
-			(-1.0f == T(argc+j)) ||
-			(-1.0f == T(i)+T(j)) ||
-			(T(i)-T(j) > T(i)+T(j))
-		)
+		fake_use(&i, &j);
 #endif
-		{
-			return 1;
-		}
 	}
 
 	return 0;

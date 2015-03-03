@@ -19,11 +19,10 @@ int main(int argc, const char** argv)
 		vector<T, N> v = vector<T, N>::axis<1>(argc+i);
 		vector<T, N> w = cross(u, v);
 
-		T r = std::fabs(dot(u,w))+std::fabs(dot(v,w));
+		fake_use(&w);
 #else
-		T r = std::fabs(argc+i)+std::fabs(argc+j);
+		fake_use(&i, &j);
 #endif
-		fake_use(&r);
 	}
 
 	return 0;

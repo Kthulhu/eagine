@@ -22,7 +22,7 @@ int main(int argc, const char** argv)
 		data[k] = T(std::rand())/T(RAND_MAX);
 	}
 
-	for(unsigned j=0; j!=10000; ++j)
+	for(unsigned j=0; j!=100000; ++j)
 	for(unsigned i=0; i!=100000; ++i)
 	{
 		data[0] = T(j+i);

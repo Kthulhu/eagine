@@ -30,7 +30,7 @@ int main(int argc, const char** argv)
 		T l = length(u); 
 		fake_use(&l);
 #else
-		fake_use(a, &i);
+		fake_use(a);
 #endif
 	}
 
