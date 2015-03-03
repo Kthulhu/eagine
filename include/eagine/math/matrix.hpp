@@ -13,7 +13,6 @@
 #include <eagine/math/vector.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/int_sequence.hpp>
-#include <eagine/base/optional.hpp>
 #include <cassert>
 
 namespace eagine {
@@ -630,6 +629,104 @@ vector<T, R> operator * (
 	return multiply(reorder(m), v);
 }
 
+// row_swap
+template <typename T, unsigned R, unsigned C>
+inline
+void row_swap(matrix<T,R,C,true>& a, unsigned m, unsigned n)
+noexcept
+{
+	using std::swap;
+	swap(a._v[m], a._v[n]);
+}
+
+// row_multiply
+template <typename T, unsigned R, unsigned C>
+inline
+void row_multiply(matrix<T,R,C,true>& a, unsigned n, T c)
+noexcept
+{
+	a._v[n] = a._v[n]*vect::fill<T,C>::apply(c);
+}
+
+// row_add
+template <typename T, unsigned R, unsigned C>
+inline
+void row_add(matrix<T,R,C,true>& a, unsigned m, unsigned n, T c)
+noexcept
+{
+	a._v[m] = a._v[m] + a._v[n]*vect::fill<T,C>::apply(c);
+}
+
+// gauss matrix elimination
+template <typename T, unsigned R, unsigned C1, unsigned C2>
+inline
+bool gauss(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
+{
+	for(unsigned i=0; i<R; ++i)
+	{
+		T d = a._v[i][i];
+
+		if(d == T(0))
+		{
+			for(unsigned k=i+1; k<R; ++k)
+			{
+				if(a._v[k][i] != T(0))
+				{
+					row_swap(a, i, k);
+					row_swap(b, i, k);
+					break;
+				}
+			}
+			d = a._v[i][i];
+		}
+
+		if(d == T(0))
+		{
+			return false;
+		}
+
+		row_multiply(a, i, T(1)/d);
+		row_multiply(b, i, T(1)/d);
+
+		for(unsigned k=i+1; k<R; ++k)
+		{
+			T c = a._v[k][i];
+			if(c != T(0))
+			{
+				row_add(a, k, i,-c);
+				row_add(b, k, i,-c);
+			}
+		}
+	}
+	return true;
+}
+
+/// gauss_jordan matrix elimination
+template <typename T, unsigned R, unsigned C1, unsigned C2>
+inline
+bool gauss_jordan(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
+{
+	if(!gauss(a, b))
+	{
+		return false;
+	}
+
+	for(unsigned i=R-1; i>0; --i)
+	{
+		for(unsigned k=0; k<i; ++k)
+		{
+			T c = a._v[k][i];
+			if(c != T(0))
+			{
+				row_add(a, k, i, -c);
+				row_add(b, k, i, -c);
+			}
+		}
+	}
+
+	return true;
+}
+
 
 // is_matrix_constructor trait
 template <typename X>
@@ -849,121 +946,6 @@ identity<matrix<T,R,C,!RM>>
 reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&)
 noexcept
 { return {}; }
-
-// row_swap
-template <typename T, unsigned R, unsigned C>
-inline
-void row_swap(matrix<T,R,C,true>& a, unsigned m, unsigned n)
-noexcept
-{
-	using std::swap;
-	swap(a._v[m], a._v[n]);
-}
-
-// row_multiply
-template <typename T, unsigned R, unsigned C>
-inline
-void row_multiply(matrix<T,R,C,true>& a, unsigned n, T c)
-noexcept
-{
-	a._v[n] = a._v[n]*vect::fill<T,C>::apply(c);
-}
-
-// row_add
-template <typename T, unsigned R, unsigned C>
-inline
-void row_add(matrix<T,R,C,true>& a, unsigned m, unsigned n, T c)
-noexcept
-{
-	a._v[m] = a._v[m] + a._v[n]*vect::fill<T,C>::apply(c);
-}
-
-// gauss matrix elimination
-template <typename T, unsigned R, unsigned C1, unsigned C2>
-inline
-bool gauss(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
-{
-	for(unsigned i=0; i<R; ++i)
-	{
-		T d = a._v[i][i];
-
-		if(d == T(0))
-		{
-			for(unsigned k=i+1; k<R; ++k)
-			{
-				if(a._v[k][i] != T(0))
-				{
-					row_swap(a, i, k);
-					row_swap(b, i, k);
-					break;
-				}
-			}
-			d = a._v[i][i];
-		}
-
-		if(d == T(0))
-		{
-			return false;
-		}
-
-		row_multiply(a, i, T(1)/d);
-		row_multiply(b, i, T(1)/d);
-
-		for(unsigned k=i+1; k<R; ++k)
-		{
-			T c = a._v[k][i];
-			if(c != T(0))
-			{
-				row_add(a, k, i,-c);
-				row_add(b, k, i,-c);
-			}
-		}
-	}
-	return true;
-}
-
-/// gauss_jordan matrix elimination
-template <typename T, unsigned R, unsigned C1, unsigned C2>
-inline
-bool gauss_jordan(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
-{
-	if(!gauss(a, b))
-	{
-		return false;
-	}
-
-	for(unsigned i=R-1; i>0; --i)
-	{
-		for(unsigned k=0; k<i; ++k)
-		{
-			T c = a._v[k][i];
-			if(c != T(0))
-			{
-				row_add(a, k, i, -c);
-				row_add(b, k, i, -c);
-			}
-		}
-	}
-
-	return true;
-}
-
-// inverse matrix
-template <typename T, unsigned R, unsigned C>
-inline
-base::optional<matrix<T,R,C,true>>
-inverse(matrix<T,R,C,true> m)
-{
-	base::optional<matrix<T,R,C,true>> r;
-
-	matrix<T,R,C,true> i = identity<matrix<T,R,C,true>>()();
-	if(gauss_jordan(m, i))
-	{
-		r = i;
-	}
-
-	return r;
-}
 
 // matrix_data_ref
 template <typename Matrix>

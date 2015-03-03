@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/matrix.hpp>
+#include <eagine/math/inverse.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
