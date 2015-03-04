@@ -6,12 +6,12 @@
 #ifndef EAGINE_BENCHMARK_BASELINE
 #include <eagine/math/matrix_ctrs.hpp>
 #endif
-#include "fake_use.hpp"
+#include "common.hpp"
 
 int main(int argc, const char** argv)
 {
-	for(unsigned j=0; j!=100000; ++j)
-	for(unsigned i=0; i!=100000; ++i)
+	for(unsigned j=0; j!=EAGINE_BR_M; ++j)
+	for(unsigned i=0; i!=EAGINE_BR_N; ++i)
 	{
 #ifndef EAGINE_BENCHMARK_BASELINE
 		static const unsigned M = EAGINE_BM_M;
