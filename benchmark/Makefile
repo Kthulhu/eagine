@@ -3,16 +3,16 @@
 # LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 CXX ?= g++
-OPT = O2
+OPT ?= O2
 
 TIME ?= time
-GNUPLOT = gnuplot
+GNUPLOT ?= gnuplot
 
 SOURCES = $(basename $(wildcard *.cpp))
 DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
 TIMES = $(addsuffix .time,$(BENCHMARKS))
-CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES)))
+CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES))) _pdf/run-speedup.pdf
 
 OUT_DIRS = _pdf _out _bld
 
@@ -34,14 +34,23 @@ charts: timing $(CHARTS)
 $(OUT_DIRS):
 	mkdir -p $@
 
-_pdf/%.pdf: _bld/%.gp _bld/%.gp.dat | _pdf
+_pdf/run-speedup.pdf: _bld/run-speedup.gp _bld/run-speedup.gp.dat | _pdf
 	$(GNUPLOT) $<
 
-_bld/%.gp: ./make.gp.py | _bld
-	./make.gp.py _bld/$* _pdf/$* > $@
+_pdf/%.pdf: _bld/%-case-times.gp _bld/%-case-times.gp.dat | _pdf
+	$(GNUPLOT) $<
 
-_bld/%.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
-	./make.gp.dat.py $^ > $@
+_bld/%-case-times.gp: ./make-case-times.gp.py | _bld
+	./make-case-times.gp.py _bld/$* _pdf/$* > $@
+
+_bld/%-case-times.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
+	./make-case-times.gp.dat.py $^ > $@
+
+_bld/run-speedup.gp: ./make-run-speedup.gp.py | _bld
+	./make-run-speedup.gp.py _bld/run-speedup _pdf/run-speedup "$(CXX) -$(OPT)" > $@
+
+_bld/run-speedup.gp.dat: $(TIMES) | _bld
+	./make-run-speedup.gp.dat.py $(addprefix _out/,$(addsuffix -$(OPT),$(SOURCES))) > $@
 
 _out/%.time: _out/% | _out
 	$(TIME) -f "%x:%S:%U:%e" -o $@ $<
