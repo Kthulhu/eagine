@@ -101,7 +101,7 @@ struct quaternion
 
 	friend inline T square_mag(_cpT q)
 	{
-		return vect::hsum<T, 4>::apply(q._v * q._v)[0];
+		return vect::esum<T, 4>::apply(q._v * q._v);
 	}
 
 	friend inline T magnitude(_cpT q)
@@ -148,7 +148,7 @@ struct quaternion
 	{
 		using std::acos;
 		return angle<T>
-			{acos(vect::hsum<T, 4>::apply(a._v * b._v)[0])};
+			{acos(vect::esum<T, 4>::apply(a._v * b._v))};
 	}
 };
 

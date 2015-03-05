@@ -13,31 +13,35 @@ int main(int argc, const char** argv)
 {
 	static const unsigned M = EAGINE_BM_M;
 	static const unsigned N = EAGINE_BM_N;
+	static const unsigned O = 4;
 
-	T data[M*N];
+	T data[O][M*N];
 
+	for(unsigned l=0; l<O; ++l)
 	for(unsigned k=0; k<M*N; ++k)
 	{
-		data[k] = T(std::rand())/T(1111);
+		data[l][k] = T(std::rand())/T(1111);
 	}
 
 	for(unsigned j=0; j!=EAGINE_BR_M; ++j)
 	for(unsigned i=0; i!=EAGINE_BR_N; ++i)
 	{
-		data[0] = T(j+1);
+		data[j%O][0] = T(j+1);
 #ifndef EAGINE_BENCHMARK_BASELINE
 		using namespace eagine::math;
 
-		auto m1 = matrix<T,M,N, true>::from(data, M*N);
-		auto m2 = matrix<T,M,N,false>::from(data, M*N);
+		auto m0 = matrix<T,M,N, true>::from(data[(0+i)%O], M*N);
+		auto m1 = matrix<T,M,N,false>::from(data[(1+i)%O], M*N);
+		auto m2 = matrix<T,M,N,false>::from(data[(2+i)%O], M*N);
+		auto m3 = matrix<T,M,N,false>::from(data[(3+i)%O], M*N);
 
 # if EAGINE_USE_SSE
-		matrix<T,M,N, true> m3 = multiply(m1, m2);
+		matrix<T,M,N, true> m = multiply(multiply(multiply(m0, m1), m2), m3);
 # else
-		matrix<T,M,N, true> m3 = trivial_multiply(m1, m2);
+		matrix<T,M,N, true> m = trivial_multiply(trivial_multiply(trivial_multiply(m0, m1), m2), m3); 
 # endif
 
-		fake_use(&m3);
+		fake_use(&m);
 #else
 		fake_use(data);
 

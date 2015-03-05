@@ -14,6 +14,7 @@
 #include <eagine/vect/axis.hpp>
 #include <eagine/vect/from.hpp>
 #include <eagine/vect/hsum.hpp>
+#include <eagine/vect/esum.hpp>
 #include <eagine/vect/sdiv.hpp>
 #include <eagine/vect/cast.hpp>
 #include <eagine/vect/compare.hpp>
@@ -316,7 +317,7 @@ struct vector
 	T dot(_cpT a, _cpT b)
 	noexcept
 	{
-		return vect::hsum<T, N>::apply(a._v * b._v)[0];
+		return vect::esum<T, N>::apply(a._v * b._v);
 	}
 
 	friend constexpr
@@ -353,7 +354,7 @@ struct vector
 	{
 		using std::acos;
 		return angle<T>
-			{T(acos(vect::hsum<T, N>::apply(a._v * b._v)[0]))};
+			{T(acos(vect::esum<T, N>::apply(a._v * b._v)))};
 	}
 
 	friend constexpr

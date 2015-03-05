@@ -19,7 +19,7 @@ speedups2 = {}
 
 for n,t in iter(sorted(times.iteritems())):
 	speedups1[n] = max(t['NOSSE']/t['SSE'], 0);
-	speedups2[n] = max((t['NOSSE']-t['BASELINE'])/max(t['SSE']-t['BASELINE'], 0.001), 0.001);
+	speedups2[n] = min(max((t['NOSSE']-t['BASELINE'])/max(t['SSE']-t['BASELINE'], 0.01), 0.01), 100);
 
 print("Name\tt_{NoSSE}/t_{SSE}\t(t_{NoSSE}-t_{BL})/(t_{SSE}-t_{BL})\tS=1")
 
