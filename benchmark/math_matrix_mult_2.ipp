@@ -27,9 +27,10 @@ int main(int argc, const char** argv)
 		scale_z<mat> s(T(1)/T(1+j));
 
 #if EAGINE_USE_SSE
-		matrix<T,M,N, true> m = r1*t*r2*s;
+		//matrix<T,M,N, true> m = r1*t*r2*s;
+		matrix<T,M,N, true> m = r1()|t()|r2()|s();
 #else
-		matrix<T,M,N, true> m = trivial_multiply(trivial_multiply(trivial_multiply(r1(), t()), r2()), s());
+		matrix<T,M,N, true> m = r1()|t()|r2()|s();
 #endif
 
 		fake_use(&m);

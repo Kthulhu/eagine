@@ -36,9 +36,10 @@ int main(int argc, const char** argv)
 		auto m3 = matrix<T,M,N,false>::from(data[(3+i)%O], M*N);
 
 # if EAGINE_USE_SSE
-		matrix<T,M,N, true> m = multiply(multiply(multiply(m0, m1), m2), m3);
+		//matrix<T,M,N, true> m = m0*m1*m2*m3;
+		matrix<T,M,N, true> m = m0|m1|m2|m3;
 # else
-		matrix<T,M,N, true> m = trivial_multiply(trivial_multiply(trivial_multiply(m0, m1), m2), m3); 
+		matrix<T,M,N, true> m = m0|m1|m2|m3;
 # endif
 
 		fake_use(&m);

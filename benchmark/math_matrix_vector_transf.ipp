@@ -28,9 +28,10 @@ int main(int argc, const char** argv)
 		scale_z<mat> s(T(1)/T(1+j));
 
 #if EAGINE_USE_SSE
-		vector<T,N> v2 = r1*t*r2*s*v1;
+		//vector<T,N> v2 = (r1*t*r2*s)*v1;
+		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
 #else
-		vector<T,N> v2 = trivial_multiply(trivial_multiply(trivial_multiply(r1(), t()), r2()), s())*v1;
+		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
 #endif
 
 		fake_use(&v2);
