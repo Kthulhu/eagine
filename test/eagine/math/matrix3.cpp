@@ -319,7 +319,7 @@ void test_math_matrix_mult_identity_TPQR(void)
 
 	auto m2 = e()*m1;
 
-	BOOST_ASSERT(m2 == m1);
+	BOOST_ASSERT(test_math_matrix_close(m2, m1));
 }
 
 template <typename T, bool RM>

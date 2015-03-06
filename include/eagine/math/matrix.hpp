@@ -466,6 +466,30 @@ _multiply_hlp2(
 		{dot(row<I>(m1), column<J>(m2))...};
 }
 
+// _multiply_hlp2
+/*
+template <unsigned I, typename T>
+static constexpr inline
+typename vect::data<T, 4>::type
+_multiply_hlp2(
+	meta::integer_sequence<unsigned, 0,1,2,3>,
+	const matrix<T, 4, 4, true>& m1,
+	const matrix<T, 4, 4,false>& m2
+) noexcept
+{
+	return vect::shuffle2<T,4>::template apply<0,1,4,5>(
+		vect::shuffle2<T,4>::template apply<0,4,0,4>(
+			vect::hsum<T,4>::apply(m1._v[I] * m2._v[0]),
+			vect::hsum<T,4>::apply(m1._v[I] * m2._v[1])
+		),
+		vect::shuffle2<T,4>::template apply<0,4,0,4>(
+			vect::hsum<T,4>::apply(m1._v[I] * m2._v[2]),
+			vect::hsum<T,4>::apply(m1._v[I] * m2._v[3])
+		)
+	);
+}
+*/
+
 // multiply hlp
 template <
 	unsigned ... I,
