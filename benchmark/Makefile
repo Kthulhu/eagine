@@ -16,7 +16,7 @@ CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES))) _pdf/run-speedup
 
 OUT_DIRS = _pdf _out _bld
 
-local_OPTIONS = -std=c++1y -Wall -pedantic
+local_OPTIONS = -std=c++1y -Wall -pedantic -march=native
 local_INCLDIRS = -I../_build/include -I../include -I../implement -I../third_party/include
 local_CXXFLAGS = $(CXXFLAGS) $(local_OPTIONS) $(local_INCLDIRS)
 local_LDFLAGS = $(LDFLAGS) $(local_OPTIONS)

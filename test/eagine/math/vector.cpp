@@ -1530,7 +1530,7 @@ void test_math_vector_dot_T(void)
 	auto va = eagine::math::vector<T, N>::from(a, N);
 	auto vb = eagine::math::vector<T, N>::from(b, N);
 
-	BOOST_ASSERT(test_math_close(dot(va, vb), d));
+	BOOST_ASSERT(test_math_close(T(dot(va, vb)), d));
 }
 
 template <typename T>
@@ -1574,8 +1574,8 @@ void test_math_vector_length_T(void)
 
 	auto va = eagine::math::vector<T, N>::from(a, N);
 
-	BOOST_ASSERT(test_math_close(length(va), l));
-	BOOST_ASSERT(test_math_close(magnitude(va), l));
+	BOOST_ASSERT(test_math_close(T(length(va)), l));
+	BOOST_ASSERT(test_math_close(T(magnitude(va)), l));
 }
 
 template <typename T>
@@ -1613,7 +1613,7 @@ void test_math_vector_normalized_T(void)
 
 	auto va = eagine::math::vector<T, N>::from(a, N);
 
-	BOOST_ASSERT(test_math_close(length(normalized(va)), T(1)));
+	BOOST_ASSERT(test_math_close(T(length(normalized(va))), T(1)));
 }
 
 template <typename T>

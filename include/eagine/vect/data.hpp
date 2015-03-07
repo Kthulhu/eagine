@@ -72,15 +72,14 @@ struct _ary_data
 	}
 
 	friend
-	_ary_data operator - (const _ary_data& a)
+	_ary_data operator - (_ary_data a)
 	noexcept
 	{
-		_ary_data c;
 		for(unsigned i=0; i<N; ++i)
 		{
-			c._v[i] = -a._v[i];
+			a._v[i] = -a._v[i];
 		}
-		return c;
+		return a;
 	}
 
 	friend

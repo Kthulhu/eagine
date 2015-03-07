@@ -16,6 +16,7 @@
 #include <eagine/vect/hsum.hpp>
 #include <eagine/vect/esum.hpp>
 #include <eagine/vect/sdiv.hpp>
+#include <eagine/vect/sqrt.hpp>
 #include <eagine/vect/cast.hpp>
 #include <eagine/vect/compare.hpp>
 #include <eagine/vect/array_ref.hpp>
@@ -28,9 +29,32 @@ namespace eagine {
 namespace math {
 
 template <typename T, unsigned N>
+struct scalar
+{
+	typedef scalar type;
+	typedef T value_type;
+	typedef typename vect::data<T, N>::type _vT;
+	typedef _vT data_type;
+
+	_vT _v;
+
+	operator T (void) const
+	{
+		return _v[0];
+	}
+
+	scalar& operator = (T v)
+	{
+		_v = vect::fill<T, N>::apply(v);
+		return *this;
+	}
+};
+
+template <typename T, unsigned N>
 struct vector
 {
 	typedef vector type;
+	typedef scalar<T, N> scalar_type;
 
 	typedef T value_type;
 
@@ -38,6 +62,7 @@ struct vector
 	typedef _vT data_type;
 
 	typedef const vector& _cpT;
+	typedef const scalar<T, N>& _cspT;
 
 	_vT _v;
 
@@ -255,6 +280,27 @@ struct vector
 	}
 
 	friend constexpr
+	vector operator * (_cspT c, _cpT a)
+	noexcept
+	{
+		return vector{c._v*a._v};
+	}
+
+	friend constexpr
+	vector operator * (_cpT a, _cspT c)
+	noexcept
+	{
+		return vector{a._v*c._v};
+	}
+
+	vector& operator *= (_cspT c)
+	noexcept
+	{
+		_v = _v*c._v;
+		return *this;
+	}
+
+	friend constexpr
 	vector operator * (T c, _cpT a)
 	noexcept
 	{
@@ -314,29 +360,32 @@ struct vector
 	}
 
 	friend constexpr
-	T dot(_cpT a, _cpT b)
+	scalar<T, N> dot(_cpT a, _cpT b)
 	noexcept
 	{
-		return vect::esum<T, N>::apply(a._v * b._v);
+		return scalar<T, N>{vect::hsum<T, N>::apply(a._v * b._v)};
 	}
 
 	friend constexpr
-	T magnitude(_cpT a)
+	scalar<T, N> magnitude(_cpT a)
 	noexcept
 	{
-		using std::sqrt;
-		return sqrt(dot(a, a));
+		return scalar<T, N>{
+			vect::sqrt<T, N>::apply(
+				vect::hsum<T, N>::apply(a._v * a._v)
+			)
+		};
 	}
 
 	friend constexpr
-	T length(_cpT a)
+	scalar<T, N> length(_cpT a)
 	noexcept
 	{
 		return magnitude(a);
 	}
 
 	friend constexpr
-	T distance(_cpT a, _cpT b)
+	scalar<T, N> distance(_cpT a, _cpT b)
 	noexcept
 	{
 		return magnitude(a-b);
