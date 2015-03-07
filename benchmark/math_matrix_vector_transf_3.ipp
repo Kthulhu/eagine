@@ -23,13 +23,15 @@ int main(int argc, const char** argv)
 		vector<T,N> v1 = vector<T,N>::fill(T(0));
 
 		rotation_x<mat> r1((angle<T>(j)));
+		translation_x<mat> t((T(i-j)));
 		rotation_y<mat> r2((angle<T>(i)));
+		scale_z<mat> s(T(1)/T(1+j));
 
 #if EAGINE_USE_SSE
-		//vector<T,N> v2 = (r1()*r2())*v1;
-		vector<T,N> v2 = (r1()|r2())*v1;
+		//vector<T,N> v2 = (r1*t*r2*s)*v1;
+		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
 #else
-		vector<T,N> v2 = (r1()|r2())*v1;
+		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
 #endif
 
 		fake_use(&v2);
