@@ -558,24 +558,60 @@ vector<T, R> operator * (
 
 // _multiply_hlp2
 template <
-	unsigned I,
 	unsigned ... J,
 	typename T,
-	unsigned M,
 	unsigned K,
-	unsigned N,
-	bool RM
+	unsigned N
 >
 static constexpr inline
 typename vect::data<T, N>::type
-_multiply_hlp2(
+_multiply_hlp2f(
 	meta::integer_sequence<unsigned, J...>,
-	const matrix<T, M, K, RM>& m1,
-	const matrix<T, K, N,!RM>& m2
+	typename vect::data_param<T, K>::type v,
+	const matrix<T, K, N,false>& m
 ) noexcept
 {
 	return typename vect::data<T, N>::type
-		{dot(row<I>(m1), column<J>(m2))...};
+		{vect::hsum<T, K>::apply(v * m._v[J])[0]...};
+}
+
+// _multiply_hlp2
+template <
+	unsigned ... J,
+	typename T,
+	typename ... P,
+	unsigned N
+>
+static constexpr inline
+typename vect::data<T, N>::type
+_multiply_hlp2f(
+	meta::integer_sequence<unsigned, J...> is,
+	typename vect::data_param<T, N>::type v,
+	const matrix<T, N, N,false>& m1,
+	const matrix<T, N, N,false>& m2,
+	const matrix<P, N, N,false>& ... mn
+) noexcept
+{
+	return _multiply_hlp2f(is, _multiply_hlp2f(is, v, m1), m2, mn...);
+}
+
+// _multiply_hlp2
+template <
+	unsigned ... J,
+	typename T,
+	unsigned K,
+	unsigned N
+>
+static constexpr inline
+typename vect::data<T, N>::type
+_multiply_hlp2t(
+	meta::integer_sequence<unsigned, J...>,
+	const vector<T, K>& v,
+	const matrix<T, K, N,true>& m
+) noexcept
+{
+	return typename vect::data<T, N>::type
+		{dot(v, column<J>(m))...};
 }
 
 // multipliable_matrices
@@ -595,22 +631,65 @@ template <
 	typename T,
 	unsigned M,
 	unsigned N,
-	unsigned K,
-	bool RM
+	unsigned K
 >
 static constexpr inline
-matrix<T, M, N, RM>
+matrix<T, M, N, true>
 _multiply_hlp(
 	meta::integer_sequence<unsigned, I...>,
-	const matrix<T, M, K, RM>& m1,
-	const matrix<T, K, N,!RM>& m2
+	const matrix<T, M, K, true>& m1,
+	const matrix<T, K, N,false>& m2
 ) noexcept
 {
 	typedef typename meta::make_integer_sequence<
 		unsigned, N
 	>::type is;
-	return matrix<T, M, N, RM>
-		{{_multiply_hlp2<I>(is(), m1, m2)...}};
+	return matrix<T, M, N, true>
+		{{_multiply_hlp2f(is(), m1._v[I], m2)...}};
+}
+
+// multiply hlp
+template <
+	unsigned ... I,
+	typename T,
+	typename ... P,
+	unsigned N
+>
+static constexpr inline
+matrix<T, N, N, true>
+_multiply_hlp(
+	meta::integer_sequence<unsigned, I...> is,
+	const matrix<T, N, N, true>& m1,
+	const matrix<T, N, N,false>& m2,
+	const matrix<T, N, N,false>& m3,
+	const matrix<P, N, N,false>& ... mn
+) noexcept
+{
+	return matrix<T, N, N, true>
+		{{_multiply_hlp2f(is, m1._v[I], m2, m3, mn...)...}};
+}
+
+// multiply hlp
+template <
+	unsigned ... I,
+	typename T,
+	unsigned M,
+	unsigned N,
+	unsigned K
+>
+static constexpr inline
+matrix<T, M, N,false>
+_multiply_hlp(
+	meta::integer_sequence<unsigned, I...>,
+	const matrix<T, M, K,false>& m1,
+	const matrix<T, K, N, true>& m2
+) noexcept
+{
+	typedef typename meta::make_integer_sequence<
+		unsigned, N
+	>::type is;
+	return matrix<T, M, N,false>
+		{{_multiply_hlp2t(is(), row<I>(m1), m2)...}};
 }
 
 // multiply MxM
@@ -636,6 +715,21 @@ matrix<T, M, N, RM> multiply(
 ) noexcept
 {
 	return multiply(m1, reorder(m2));
+}
+
+template <typename T, typename ... P, unsigned N>
+static inline
+matrix<T, N, N, true> multiply(
+	const matrix<T, N, N, true>& m1,
+	const matrix<T, N, N,false>& m2,
+	const matrix<T, N, N,false>& m3,
+	const matrix<P, N, N,false>& ... mn
+)
+{
+	typedef typename meta::make_integer_sequence<
+		unsigned, N
+	>::type is;
+	return _multiply_hlp(is(), m1, m2, m3, mn...);
 }
 
 // trivial_multiply MxM

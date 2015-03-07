@@ -38,6 +38,7 @@ int main(int argc, const char** argv)
 # if EAGINE_USE_SSE
 		//matrix<T,M,N, true> m = m0*m1*m2*m3;
 		matrix<T,M,N, true> m = m0|m1|m2|m3;
+		//matrix<T,M,N, true> m = multiply(m0,m1,m2,m3);
 # else
 		matrix<T,M,N, true> m = m0|m1|m2|m3;
 # endif
