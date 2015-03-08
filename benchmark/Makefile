@@ -11,6 +11,7 @@ GNUPLOT ?= gnuplot
 SOURCES = $(basename $(wildcard *.cpp))
 DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
+ASM_FILES= $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var).asm))
 TIMES = $(addsuffix .time,$(BENCHMARKS))
 CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES))) _pdf/run-speedup.pdf
 
@@ -26,6 +27,8 @@ all: charts
 .SECONDARY:
 
 benchmarks: $(BENCHMARKS)
+
+asm_files: $(ASM_FILES)
 
 timing: benchmarks $(TIMES)
 
@@ -63,6 +66,15 @@ _out/%-$(OPT)-NOSSE: _bld/%-$(OPT)-NOSSE.o _bld/fake_use.o | _out
 
 _out/%-$(OPT)-SSE: _bld/%-$(OPT)-SSE.o _bld/fake_use.o | _out
 	$(CXX) $(local_LDFLAGS) -msse -DEAGINE_USE_SSE=1 -$(OPT) $^ -o $@
+
+_out/%-$(OPT)-BASELINE.asm: %.cpp | _out
+	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -S -o $@
+
+_out/%-$(OPT)-NOSSE.asm: %.cpp | _out
+	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $< -S -o $@
+
+_out/%-$(OPT)-SSE.asm: %.cpp | _out
+	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SSE=1 -$(OPT) $< -S -o $@
 
 _bld/%-$(OPT)-BASELINE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -c -o $@
