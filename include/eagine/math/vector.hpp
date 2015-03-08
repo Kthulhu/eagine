@@ -173,6 +173,15 @@ struct vector
 		return vector{vect::axis<T,N,I>::apply(v)};
 	}
 
+	static inline
+	vector axis(unsigned i, T v)
+	noexcept
+	{
+		vector r{vect::fill<T,N>::apply(T(0))};
+		r._v[i] = v;
+		return r;
+	}
+
 	static constexpr inline
 	unsigned dimension(void)
 	noexcept

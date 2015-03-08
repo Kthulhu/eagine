@@ -880,13 +880,84 @@ void test_math_vector_axis_I(void)
 	test_math_vector_axis_I_T<T, 7, 8>();
 }
 
-BOOST_AUTO_TEST_CASE(math_vector_axis)
+BOOST_AUTO_TEST_CASE(math_vector_axis_I)
 {
 	for(unsigned i=0; i<10; ++i)
 	{
 		test_math_vector_axis_I<int>();
 		test_math_vector_axis_I<float>();
 		test_math_vector_axis_I<double>();
+	}
+}
+
+template <typename T, unsigned N>
+void test_math_vector_axis_T(unsigned i)
+{
+	T a = std::rand() / T(3);
+
+	auto v = eagine::math::vector<T, N>::axis(i, a);
+
+	for(unsigned j=0; j<N; ++j)
+	{
+		BOOST_ASSERT(v[j] == ((i==j)?a:T(0)));
+	}
+}
+
+template <typename T>
+void test_math_vector_axis(void)
+{
+	test_math_vector_axis_T<T, 1>(0);
+
+	test_math_vector_axis_T<T, 2>(0);
+	test_math_vector_axis_T<T, 2>(1);
+
+	test_math_vector_axis_T<T, 3>(0);
+	test_math_vector_axis_T<T, 3>(1);
+	test_math_vector_axis_T<T, 3>(2);
+
+	test_math_vector_axis_T<T, 4>(0);
+	test_math_vector_axis_T<T, 4>(1);
+	test_math_vector_axis_T<T, 4>(2);
+	test_math_vector_axis_T<T, 4>(3);
+
+	test_math_vector_axis_T<T, 5>(0);
+	test_math_vector_axis_T<T, 5>(1);
+	test_math_vector_axis_T<T, 5>(2);
+	test_math_vector_axis_T<T, 5>(3);
+	test_math_vector_axis_T<T, 5>(4);
+
+	test_math_vector_axis_T<T, 6>(0);
+	test_math_vector_axis_T<T, 6>(1);
+	test_math_vector_axis_T<T, 6>(2);
+	test_math_vector_axis_T<T, 6>(3);
+	test_math_vector_axis_T<T, 6>(4);
+	test_math_vector_axis_T<T, 6>(5);
+
+	test_math_vector_axis_T<T, 7>(0);
+	test_math_vector_axis_T<T, 7>(1);
+	test_math_vector_axis_T<T, 7>(2);
+	test_math_vector_axis_T<T, 7>(3);
+	test_math_vector_axis_T<T, 7>(4);
+	test_math_vector_axis_T<T, 7>(5);
+	test_math_vector_axis_T<T, 7>(6);
+
+	test_math_vector_axis_T<T, 8>(0);
+	test_math_vector_axis_T<T, 8>(1);
+	test_math_vector_axis_T<T, 8>(2);
+	test_math_vector_axis_T<T, 8>(3);
+	test_math_vector_axis_T<T, 8>(4);
+	test_math_vector_axis_T<T, 8>(5);
+	test_math_vector_axis_T<T, 8>(6);
+	test_math_vector_axis_T<T, 8>(7);
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_axis)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_axis<int>();
+		test_math_vector_axis<float>();
+		test_math_vector_axis<double>();
 	}
 }
 
