@@ -95,6 +95,52 @@ BOOST_AUTO_TEST_CASE(math_matrix_looking_at_y_up_1)
 }
 
 template <typename T, bool RM>
+void test_math_matrix_looking_at_T_1(void)
+{
+	eagine::math::vector<T, 3> e{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000)
+	}};
+	eagine::math::vector<T, 3> t{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000)
+	}};
+	eagine::math::vector<T, 3> u{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000)
+	}};
+
+	eagine::math::vector<T, 4> v1{{
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		std::rand()/T(1000)-std::rand()/T(1000),
+		T(1)
+	}};
+
+	eagine::math::looking_at<eagine::math::matrix<T,4,4,RM>> l(
+		e, t, u
+	);
+
+	eagine::math::vector<T, 4> v2 = l*v1;
+	(void)v2;
+	// TODO
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_looking_at_1)
+{
+	for(unsigned k=0; k<1000; ++k)
+	{
+		test_math_matrix_looking_at_T_1<float, true>();
+		test_math_matrix_looking_at_T_1<float,false>();
+		test_math_matrix_looking_at_T_1<double, true>();
+		test_math_matrix_looking_at_T_1<double,false>();
+	}
+}
+
+template <typename T, bool RM>
 void test_math_matrix_orbiting_y_up_T_1(void)
 {
 	eagine::math::vector<T, 3> t{{

@@ -1279,6 +1279,110 @@ noexcept
 	return {c._e,c._t};
 }
 
+// looking_at
+template <typename X>
+struct looking_at;
+
+// is_matrix_constructor<looking_at>
+template <typename T, unsigned R, unsigned C, bool RM>
+struct is_matrix_constructor<looking_at<matrix<T,R,C,RM>>>
+ : meta::true_type
+{ };
+
+// looking_at matrix 4x4
+template <typename T, bool RM>
+struct looking_at<matrix<T,4,4,RM>>
+{
+	typedef vector<T,3> _dT;
+
+	vector<T,3> _e, _t, _u;
+
+	constexpr looking_at(
+		const vector<T, 3>& eye,
+		const vector<T, 3>& target,
+		const vector<T, 3>& up
+	) noexcept
+	 : _e(eye)
+	 , _t(target)
+	 , _u(up)
+	{ }
+
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make4(const _dT& e, const _dT& x, const _dT& y, const _dT& z)
+	noexcept
+	{
+		return matrix<T,4,4, true>{{
+			{x[0],x[1],x[2], -dot(x,e)},
+			{y[0],y[1],y[2], -dot(y,e)},
+			{z[0],z[1],z[2], -dot(z,e)},
+			{T(0), T(0), T(0), T(1)}
+		}};
+	}
+
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make3(const _dT& e, const _dT& y, const _dT& z)
+	noexcept
+	{
+		return _make4(e, cross(y, z), y, z);
+	}
+
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make2(const _dT& e, const _dT& u, const _dT& z, const scalar<T,3>& dzu)
+	noexcept
+	{
+		return _make3(e, normalized((dzu != 0)?u-z*dzu:u), z);
+	}
+
+	static constexpr inline
+	matrix<T,4,4,true>
+	_make1(const _dT& e, const _dT& u, const _dT& z)
+	noexcept
+	{
+		return _make2(e, u, z, dot(z,u));
+	}
+
+	constexpr inline
+	matrix<T,4,4,true> _make(meta::true_type) const
+	noexcept
+	{
+		return _make1(_e, _u, normalized(_e-_t));
+	}
+
+	constexpr inline
+	matrix<T,4,4,false> _make(meta::false_type) const
+	noexcept
+	{
+		return reorder(_make(meta::true_type()));
+	}
+
+	constexpr inline
+	matrix<T,4,4,RM> operator()(void) const
+	noexcept
+	{
+		return _make(meta::integral_constant<bool, RM>());
+	}
+
+	constexpr inline
+	operator matrix<T,4,4,RM> (void) const
+	noexcept
+	{
+		return (*this)();
+	}
+};
+
+// reorder_mat_ctr(looking_at)
+template <typename T, bool RM>
+static constexpr inline
+looking_at<matrix<T,4,4,!RM>>
+reorder_mat_ctr(const looking_at<matrix<T,4,4,RM>>& c)
+noexcept
+{
+	return {c._e,c._t,c._u};
+}
+
 // orbiting_y_up
 template <typename X>
 struct orbiting_y_up;

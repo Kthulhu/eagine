@@ -229,6 +229,12 @@ void test_math_matrix_constructor(void)
 			eagine::math::matrix<T,4,4,RM>
 		>,T,4,4,RM
 	>();
+	// looking_at
+	do_test_math_matrix_constructor<
+		eagine::math::looking_at<
+			eagine::math::matrix<T,4,4,RM>
+		>,T,4,4,RM
+	>();
 	// orbiting_y_up
 	do_test_math_matrix_constructor<
 		eagine::math::orbiting_y_up<
