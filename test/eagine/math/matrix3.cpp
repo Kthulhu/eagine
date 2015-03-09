@@ -304,6 +304,159 @@ BOOST_AUTO_TEST_CASE(math_matrix_multiply)
 	}
 }
 
+template <typename T, unsigned R, unsigned C>
+void test_math_matrix_vector_mult_TRC(void)
+{
+	T d1[R*C];
+	T d2[C];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d1[k] = std::rand() / T(3);
+	}
+
+	for(unsigned k=0; k<C; ++k)
+	{
+		d2[k] = std::rand() / T(3);
+	}
+
+	auto m = eagine::math::matrix<T,R,C,true>::from(d1, R*C);
+	auto v = eagine::math::vector<T,C>::from(d2, C);
+
+	eagine::math::vector<T,R> u = m*v;
+
+
+	for(unsigned i=0; i<R; ++i)
+	{
+		T s = T(0);
+		for(unsigned j=0; j<C; ++j)
+		{
+			s += m[i][j]*v[j];
+		}
+		BOOST_ASSERT(test_math_close(u[i], s));
+	}
+}
+
+template <typename T>
+void test_math_matrix_vector_mult_T(void)
+{
+	test_math_matrix_vector_mult_TRC<T, 1, 1>();
+	test_math_matrix_vector_mult_TRC<T, 1, 2>();
+	test_math_matrix_vector_mult_TRC<T, 1, 3>();
+	test_math_matrix_vector_mult_TRC<T, 1, 4>();
+	test_math_matrix_vector_mult_TRC<T, 1, 5>();
+
+	test_math_matrix_vector_mult_TRC<T, 2, 1>();
+	test_math_matrix_vector_mult_TRC<T, 2, 2>();
+	test_math_matrix_vector_mult_TRC<T, 2, 3>();
+	test_math_matrix_vector_mult_TRC<T, 2, 4>();
+	test_math_matrix_vector_mult_TRC<T, 2, 5>();
+
+	test_math_matrix_vector_mult_TRC<T, 3, 1>();
+	test_math_matrix_vector_mult_TRC<T, 3, 2>();
+	test_math_matrix_vector_mult_TRC<T, 3, 3>();
+	test_math_matrix_vector_mult_TRC<T, 3, 4>();
+	test_math_matrix_vector_mult_TRC<T, 3, 5>();
+
+	test_math_matrix_vector_mult_TRC<T, 4, 1>();
+	test_math_matrix_vector_mult_TRC<T, 4, 2>();
+	test_math_matrix_vector_mult_TRC<T, 4, 3>();
+	test_math_matrix_vector_mult_TRC<T, 4, 4>();
+	test_math_matrix_vector_mult_TRC<T, 4, 5>();
+
+	test_math_matrix_vector_mult_TRC<T, 5, 1>();
+	test_math_matrix_vector_mult_TRC<T, 5, 2>();
+	test_math_matrix_vector_mult_TRC<T, 5, 3>();
+	test_math_matrix_vector_mult_TRC<T, 5, 4>();
+	test_math_matrix_vector_mult_TRC<T, 5, 5>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_vector_mult)
+{
+	for(int i=0; i<1000; ++i)
+	{
+		test_math_matrix_vector_mult_T<float>();
+		test_math_matrix_vector_mult_T<double>();
+	}
+}
+
+template <typename T, unsigned R, unsigned C>
+void test_math_vector_matrix_mult_TRC(void)
+{
+	T d1[R*C];
+	T d2[R];
+
+	for(unsigned k=0; k<R*C; ++k)
+	{
+		d1[k] = std::rand() / T(3);
+	}
+
+	for(unsigned k=0; k<R; ++k)
+	{
+		d2[k] = std::rand() / T(3);
+	}
+
+	auto m = eagine::math::matrix<T,R,C,false>::from(d1, R*C);
+	auto v = eagine::math::vector<T,R>::from(d2, R);
+
+	eagine::math::vector<T,C> u = v*m;
+
+
+	for(unsigned j=0; j<C; ++j)
+	{
+		T s = T(0);
+		for(unsigned i=0; i<R; ++i)
+		{
+			s += v[i]*m[j][i];
+
+		}
+		BOOST_ASSERT(test_math_close(u[j], s));
+	}
+}
+
+template <typename T>
+void test_math_vector_matrix_mult_T(void)
+{
+	test_math_vector_matrix_mult_TRC<T, 1, 1>();
+	test_math_vector_matrix_mult_TRC<T, 1, 2>();
+	test_math_vector_matrix_mult_TRC<T, 1, 3>();
+	test_math_vector_matrix_mult_TRC<T, 1, 4>();
+	test_math_vector_matrix_mult_TRC<T, 1, 5>();
+
+	test_math_vector_matrix_mult_TRC<T, 2, 1>();
+	test_math_vector_matrix_mult_TRC<T, 2, 2>();
+	test_math_vector_matrix_mult_TRC<T, 2, 3>();
+	test_math_vector_matrix_mult_TRC<T, 2, 4>();
+	test_math_vector_matrix_mult_TRC<T, 2, 5>();
+
+	test_math_vector_matrix_mult_TRC<T, 3, 1>();
+	test_math_vector_matrix_mult_TRC<T, 3, 2>();
+	test_math_vector_matrix_mult_TRC<T, 3, 3>();
+	test_math_vector_matrix_mult_TRC<T, 3, 4>();
+	test_math_vector_matrix_mult_TRC<T, 3, 5>();
+
+	test_math_vector_matrix_mult_TRC<T, 4, 1>();
+	test_math_vector_matrix_mult_TRC<T, 4, 2>();
+	test_math_vector_matrix_mult_TRC<T, 4, 3>();
+	test_math_vector_matrix_mult_TRC<T, 4, 4>();
+	test_math_vector_matrix_mult_TRC<T, 4, 5>();
+
+	test_math_vector_matrix_mult_TRC<T, 5, 1>();
+	test_math_vector_matrix_mult_TRC<T, 5, 2>();
+	test_math_vector_matrix_mult_TRC<T, 5, 3>();
+	test_math_vector_matrix_mult_TRC<T, 5, 4>();
+	test_math_vector_matrix_mult_TRC<T, 5, 5>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_matrix_mult)
+{
+	for(int i=0; i<1000; ++i)
+	{
+		test_math_vector_matrix_mult_T<float>();
+		test_math_vector_matrix_mult_T<double>();
+	}
+}
+
 template <typename T, unsigned R, unsigned C, bool RM>
 void test_math_matrix_mult_identity_TPQR(void)
 {
@@ -350,7 +503,7 @@ void test_math_matrix_mult_inverse_T(void)
 
 	for(unsigned k=0; k<R*C; ++k)
 	{
-		d[k] = std::rand() / T(1111);
+		d[k] = (std::rand() % 1111) / T(3);
 	}
 
 	auto m1 = eagine::math::matrix<T,R,C,RM>::from(d, R*C);

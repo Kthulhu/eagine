@@ -556,6 +556,17 @@ vector<T, R> operator * (
 	return multiply(reorder(m), v);
 }
 
+// V * M
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+vector<T, C> operator * (
+	const vector<T, R>& v,
+	const matrix<T, R, C,false>& m
+) noexcept
+{
+	return multiply(v, m);
+}
+
 // _multiply_hlp2
 template <
 	unsigned ... J,

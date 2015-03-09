@@ -1,5 +1,5 @@
 /**
- *  .file test/eagine/math/matrix_ctrs2.cpp
+ *  .file test/eagine/math/matrix_ctrs3.cpp
  *
  *  .author Matus Chochlik
  *
@@ -8,7 +8,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE eagine_math_matrix_ctrs2
+#define BOOST_TEST_MODULE eagine_math_matrix_ctrs3
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/matrix_ctrs.hpp>
@@ -16,7 +16,7 @@
 #include <cmath>
 #include "common.hpp"
 
-BOOST_AUTO_TEST_SUITE(math_matrix_ctrs2)
+BOOST_AUTO_TEST_SUITE(math_matrix_ctrs3)
 
 template <typename T, bool RM>
 void test_math_matrix_ortho_T_1(void)
