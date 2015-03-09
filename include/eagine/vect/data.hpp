@@ -1,7 +1,7 @@
 /**
  *  @file eagine/vect/data.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -318,7 +318,10 @@ struct data
 	_vec_data<T, N>,
 	_ary_data<T, N>
 >::type
-{ };
+{
+	typedef T value_type;
+	static constexpr unsigned size = N;
+};
 
 template <typename T, unsigned N>
 struct data_param
