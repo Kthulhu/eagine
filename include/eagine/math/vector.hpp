@@ -21,6 +21,7 @@
 #include <eagine/vect/compare.hpp>
 #include <eagine/vect/array_ref.hpp>
 #include <eagine/meta/min_max.hpp>
+#include <eagine/meta/identity.hpp>
 #include <eagine/math/angle.hpp>
 #include <eagine/base/memory_range.hpp>
 #include <cmath>
@@ -33,20 +34,94 @@ struct scalar
 {
 	typedef scalar type;
 	typedef T value_type;
-	typedef typename vect::data<T, N>::type _vT;
-	typedef _vT data_type;
 
-	_vT _v;
+	typedef typename vect::_has_vec_data<T, N>::type _vdB;
 
-	operator T (void) const
+	typedef typename meta::conditional<
+		_vdB::value, vect::data<T, N>, meta::identity<T>
+	>::type::type data_type;
+
+	typedef typename meta::conditional<
+		_vdB::value, const scalar&, scalar
+	>::type _cpT;
+
+	data_type _v;
+
+	static constexpr inline
+	scalar _make(T v, meta::true_type)
+	noexcept
+	{
+		return scalar{vect::fill<T, N>::apply(v)};
+	}
+
+	static constexpr inline
+	scalar _make(T v, meta::false_type)
+	noexcept
+	{
+		return scalar{v};
+	}
+
+	static constexpr inline
+	scalar make(T v)
+	noexcept
+	{
+		return _make(_vdB());
+	}
+
+	constexpr inline
+	T _get(meta::true_type) const
+	noexcept
 	{
 		return _v[0];
 	}
 
-	scalar& operator = (T v)
+	constexpr inline
+	T _get(meta::false_type) const
+	noexcept
 	{
-		_v = vect::fill<T, N>::apply(v);
-		return *this;
+		return _v;
+	}
+
+	constexpr inline
+	operator T (void) const
+	noexcept
+	{
+		return _get(_vdB());
+	}
+
+	inline
+	scalar& operator = (T v)
+	noexcept
+	{
+		return *this = make(v);
+	}
+
+	static constexpr inline
+	bool _equal(_cpT a, _cpT b, meta::true_type)
+	noexcept
+	{
+		return vect::equal<T,N>::apply(a._v, b._v);
+	}
+
+	static constexpr inline
+	bool _equal(_cpT a, _cpT b, meta::false_type)
+	noexcept
+	{
+		return a._v == b._v;
+	}
+
+	friend
+	bool operator == (_cpT a, _cpT b)
+	noexcept
+	{
+		return _equal(a, b, _vdB());
+	}
+
+	friend
+	bool operator != (_cpT a, _cpT b)
+	noexcept
+	{
+		return !_equal(a, b, _vdB());
 	}
 };
 
@@ -288,21 +363,27 @@ struct vector
 		return *this;
 	}
 
+	template <typename V = vector>
 	friend constexpr
-	vector operator * (_cspT c, _cpT a)
+	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	operator * (_cspT c, _cpT a)
 	noexcept
 	{
 		return vector{c._v*a._v};
 	}
 
+	template <typename V = vector>
 	friend constexpr
-	vector operator * (_cpT a, _cspT c)
+	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	operator * (_cpT a, _cspT c)
 	noexcept
 	{
 		return vector{a._v*c._v};
 	}
 
-	vector& operator *= (_cspT c)
+	template <typename V = vector>
+	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type&
+	operator *= (_cspT c)
 	noexcept
 	{
 		_v = _v*c._v;
@@ -337,6 +418,24 @@ struct vector
 		return vector{vect::sdiv<T, N>::apply(a._v, b._v)};
 	}
 
+	template <typename V = vector>
+	friend constexpr
+	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	operator / (_cspT c, _cpT a)
+	noexcept
+	{
+		return vector{vect::sdiv<T, N>::apply(c._v, a._v)};
+	}
+
+	template <typename V = vector>
+	friend constexpr
+	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	operator / (_cpT a, _cspT c)
+	noexcept
+	{
+		return vector{vect::sdiv<T, N>::apply(a._v, c._v)};
+	}
+
 	friend constexpr
 	vector operator / (_cpT a, T c)
 	noexcept
@@ -344,6 +443,16 @@ struct vector
 		return vector{vect::sdiv<T, N>::apply(
 			a._v,
 			vect::fill<T, N>::apply(c)
+		)};
+	}
+
+	friend constexpr
+	vector operator / (T c, _cpT a)
+	noexcept
+	{
+		return vector{vect::sdiv<T, N>::apply(
+			vect::fill<T, N>::apply(c),
+			a._v
 		)};
 	}
 
@@ -369,14 +478,28 @@ struct vector
 	}
 
 	friend constexpr
-	scalar<T, N> dot(_cpT a, _cpT b)
+	scalar<T, N> _dot(_cpT a, _cpT b, meta::true_type)
 	noexcept
 	{
 		return scalar<T, N>{vect::hsum<T, N>::apply(a._v * b._v)};
 	}
 
 	friend constexpr
-	scalar<T, N> magnitude(_cpT a)
+	scalar<T, N> _dot(_cpT a, _cpT b, meta::false_type)
+	noexcept
+	{
+		return scalar<T, N>{vect::esum<T, N>::apply(a._v * b._v)};
+	}
+
+	friend constexpr
+	scalar<T, N> dot(_cpT a, _cpT b)
+	noexcept
+	{
+		return _dot(a, b, vect::_has_vec_data<T,N>());
+	}
+
+	friend constexpr
+	scalar<T, N> _mag(_cpT a, meta::true_type)
 	noexcept
 	{
 		return scalar<T, N>{
@@ -384,6 +507,22 @@ struct vector
 				vect::hsum<T, N>::apply(a._v * a._v)
 			)
 		};
+	}
+
+	friend constexpr
+	scalar<T, N> _mag(_cpT a, meta::false_type)
+	noexcept
+	{
+		using std::sqrt;
+		return scalar<T, N>
+			{T(sqrt(vect::esum<T, N>::apply(a._v * a._v)))};
+	}
+
+	friend constexpr
+	scalar<T, N> magnitude(_cpT a)
+	noexcept
+	{
+		return _mag(a, vect::_has_vec_data<T,N>());
 	}
 
 	friend constexpr
