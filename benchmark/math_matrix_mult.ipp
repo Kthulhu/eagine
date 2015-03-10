@@ -32,7 +32,7 @@ int main(int argc, const char** argv)
 		auto m2 = matrix<T,M,N,false>::from(data, M*N);
 
 # if EAGINE_USE_SSE
-		matrix<T,M,N, true> m3 = multiply(m1, m2);
+		matrix<T,M,N, true> m3 = fast_multiply(m1, m2);
 # else
 		matrix<T,M,N, true> m3 = trivial_multiply(m1, m2);
 # endif

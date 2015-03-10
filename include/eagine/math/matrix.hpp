@@ -287,6 +287,42 @@ noexcept
 	return transpose_tpl<!RM, RM, T>(m);
 }
 
+// make_row_major
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+matrix<T,R,C, true> make_row_major(matrix<T,R,C, true> m)
+noexcept
+{
+	return m;
+}
+
+// make_row_major
+template <typename T, unsigned R, unsigned C>
+static inline
+matrix<T,R,C, true> make_row_major(const matrix<T,R,C,false>& m)
+noexcept
+{
+	return reorder(m);
+}
+
+// make_column_major
+template <typename T, unsigned R, unsigned C>
+static inline
+matrix<T,R,C,false> make_column_major(const matrix<T,R,C, true>& m)
+noexcept
+{
+	return reorder(m);
+}
+
+// make_column_major
+template <typename T, unsigned R, unsigned C>
+static constexpr inline
+matrix<T,R,C,false> make_column_major(matrix<T,R,C,false> m)
+noexcept
+{
+	return m;
+}
+
 // major_vector
 template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
 static constexpr inline
@@ -790,6 +826,57 @@ matrix<T, M, N, RM1> operator | (
 	return trivial_multiply(m1, m2);
 }
 
+// fast_multiply M * M
+template <typename T, unsigned N, bool RM1, bool RM2>
+static constexpr inline
+matrix<T, N, N, true> fast_multiply(
+	const matrix<T, N, N, RM1>& m1,
+	const matrix<T, N, N, RM2>& m2
+) noexcept
+{
+	// TODO
+	return multiply(make_row_major(m1), make_column_major(m2));
+}
+
+// fast_multiply M * ... M
+template <typename T, unsigned N, bool RM1, bool RM2, bool RM3>
+static constexpr inline
+matrix<T, N, N, true> fast_multiply(
+	const matrix<T, N, N, RM1>& m1,
+	const matrix<T, N, N, RM2>& m2,
+	const matrix<T, N, N, RM2>& m3
+) noexcept
+{
+	// TODO
+	return trivial_multiply(
+		trivial_multiply(make_row_major(m1), make_column_major(m2)),
+		make_column_major(m3)
+	);
+}
+
+// fast_multiply M * ... M
+template <
+	typename T,
+	unsigned N,
+	bool RM1,
+	bool RM2,
+	bool RM3,
+	bool RM4,
+	bool ... RMn
+>
+static constexpr inline
+matrix<T, N, N, true> fast_multiply(
+	const matrix<T, N, N, RM1>& m1,
+	const matrix<T, N, N, RM2>& m2,
+	const matrix<T, N, N, RM3>& m3,
+	const matrix<T, N, N, RM4>& m4,
+	const matrix<T, N, N, RMn>& ... m
+) noexcept
+{
+	// TODO
+	return fast_multiply(trivial_multiply(m1, m2), m3, m...);
+}
+
 // row_swap
 template <typename T, unsigned R, unsigned C>
 inline
@@ -950,6 +1037,24 @@ noexcept
 	return reorder_mat_ctr(c);
 }
 
+// construct_matrix (noop)
+template <bool RM, typename T, unsigned R, unsigned C>
+static constexpr inline
+matrix<T,R,C,RM> construct_matrix(matrix<T,R,C,RM> m)
+noexcept
+{
+	return m;
+}
+
+// construct_matrix (reorder)
+template <bool RM, typename T, unsigned R, unsigned C>
+static constexpr inline
+matrix<T,R,C,RM> construct_matrix(const matrix<T,R,C,!RM>& m)
+noexcept
+{
+	return reorder(m);
+}
+
 // matrix_constructor * matrix_constructor
 template <typename MC1, typename MC2>
 static constexpr inline
@@ -1038,6 +1143,21 @@ noexcept
 			typename constructed_matrix<MC1>::type
 		>::type(reorder_mat_ctr(c1)),
 		m2
+	);
+}
+
+template <typename MC1, typename ... MCn>
+static constexpr inline
+typename meta::enable_if<
+	is_matrix_constructor<MC1>::value,
+	typename constructed_matrix<MC1>::type
+>::type
+fast_multiply(const MC1& c1, const MCn& ... cn)
+noexcept
+{
+	return fast_multiply(
+		construct_matrix<true>(c1),
+		construct_matrix<false>(cn)...
 	);
 }
 

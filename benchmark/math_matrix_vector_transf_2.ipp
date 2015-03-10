@@ -38,7 +38,7 @@ int main(int argc, const char** argv)
 # if EAGINE_USE_SSE
 		//vector<T,N> v2 = (m0*m1*m2*m3)*v1;
 		//vector<T,N> v2 = (m0|m1|m2|m3)*v1;
-		vector<T,N> v2 = multiply(m0,m1,m2,m3)*v1;
+		vector<T,N> v2 = fast_multiply(m0,m1,m2,m3)*v1;
 # else
 		vector<T,N> v2 = (m0|m1|m2|m3)*v1;
 # endif

@@ -10,5 +10,5 @@
 #endif
 
 #ifndef EAGINE_BR_N
-#define EAGINE_BR_N 100000
+#define EAGINE_BR_N 10000
 #endif

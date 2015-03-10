@@ -29,7 +29,7 @@ int main(int argc, const char** argv)
 
 #if EAGINE_USE_SSE
 		//vector<T,N> v2 = (r1*t*r2*s)*v1;
-		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
+		vector<T,N> v2 = fast_multiply(r1,t,r2,s)*v1;
 #else
 		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
 #endif
