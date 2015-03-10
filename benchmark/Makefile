@@ -13,9 +13,10 @@ DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
 ASM_FILES= $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var).asm))
 TIMES = $(addsuffix .time,$(BENCHMARKS))
+BAK_TIMES = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _bak/$(src)-$(OPT)-$(var).time))
 CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES))) _pdf/run-speedup.pdf
 
-OUT_DIRS = _pdf _out _bld
+OUT_DIRS = _pdf _out _bld _bak
 
 local_OPTIONS = -std=c++1y -Wall -pedantic -march=native
 local_INCLDIRS = -I../_build/include -I../include -I../implement -I../third_party/include
@@ -32,12 +33,19 @@ asm_files: $(ASM_FILES)
 
 timing: benchmarks $(TIMES)
 
+bak_times: $(BAK_TIMES)
+
 charts: timing $(CHARTS)
+
+diff_charts: timing _pdf/run-time-diff.pdf
 
 $(OUT_DIRS):
 	mkdir -p $@
 
 _pdf/run-speedup.pdf: _bld/run-speedup.gp _bld/run-speedup.gp.dat | _pdf
+	$(GNUPLOT) $<
+
+_pdf/run-time-diff.pdf: _bld/run-time-diff.gp _bld/run-time-diff.gp.dat | _pdf
 	$(GNUPLOT) $<
 
 _pdf/%.pdf: _bld/%-case-times.gp _bld/%-case-times.gp.dat | _pdf
@@ -54,6 +62,15 @@ _bld/run-speedup.gp: ./make-run-speedup.gp.py | _bld
 
 _bld/run-speedup.gp.dat: $(TIMES) | _bld
 	./make-run-speedup.gp.dat.py $(addprefix _out/,$(addsuffix -$(OPT),$(SOURCES))) > $@
+
+_bld/run-time-diff.gp: ./make-run-time-diff.gp.py | _bld
+	./make-run-time-diff.gp.py _bld/run-time-diff _pdf/run-time-diff "$(CXX) -$(OPT)" > $@
+
+_bld/run-time-diff.gp.dat: $(TIMES) | _bld
+	./make-run-time-diff.gp.dat.py $(addprefix _out/,$(addsuffix -$(OPT),$(SOURCES))) > $@
+
+_bak/%.time: _out/%.time | _bak
+	cp $< $@
 
 _out/%.time: _out/% | _out
 	$(TIME) -f "%x:%S:%U:%e" -o $@ $<
