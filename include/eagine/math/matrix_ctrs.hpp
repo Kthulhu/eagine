@@ -367,9 +367,9 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	 : _a(a)
 	{ }
 
-	typedef meta::integral_constant<unsigned, 0> _x;
-	typedef meta::integral_constant<unsigned, 1> _y;
-	typedef meta::integral_constant<unsigned, 2> _z;
+	typedef meta::unsigned_constant<0> _x;
+	typedef meta::unsigned_constant<1> _y;
+	typedef meta::unsigned_constant<2> _z;
 
 	static constexpr inline
 	matrix<T,4,4, RM> _make(T cx, T sx, _x)
@@ -411,7 +411,7 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	matrix<T,4,4, RM> operator()(void) const
 	noexcept
 	{
-		typedef meta::integral_constant<unsigned, I> _axis;
+		typedef meta::unsigned_constant<I> _axis;
 		return _make(cos(_a), sin(_a)*(RM?1:-1), _axis());
 	}
 

@@ -2,7 +2,7 @@
  *  @file eagine/base/static_variant.hpp
  *  @brief Static variant.
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -35,8 +35,8 @@ private:
 	template <typename V, unsigned I>
 	RV _do_accept(
 		V& v,
-		meta::integral_constant<unsigned, I>,
-		meta::integral_constant<unsigned, I>
+		meta::unsigned_constant<I>,
+		meta::unsigned_constant<I>
 	)
 	{
 		typedef typename tuple_element<
@@ -49,23 +49,23 @@ private:
 	template <typename V, unsigned L, unsigned H>
 	RV _do_accept(
 		V& v,
-		meta::integral_constant<unsigned, L>,
-		meta::integral_constant<unsigned, H>
+		meta::unsigned_constant<L>,
+		meta::unsigned_constant<H>
 	)
 	{
 		constexpr unsigned M = (L+H)/2;
 		if(_var_id <= M)
 		{
 			return _do_accept(v,
-				meta::integral_constant<unsigned, L>(),
-				meta::integral_constant<unsigned, M>()
+				meta::unsigned_constant<L>(),
+				meta::unsigned_constant<M>()
 			);
 		}
 		else
 		{
 			return _do_accept(v,
-				meta::integral_constant<unsigned, M+1>(),
-				meta::integral_constant<unsigned, H>()
+				meta::unsigned_constant<M+1>(),
+				meta::unsigned_constant<H>()
 			);
 		}
 	}
@@ -74,8 +74,8 @@ private:
 	RV _do_accept_ref(Visitor& v)
 	{
 		return _do_accept(v,
-			meta::integral_constant<unsigned, 0>(),
-			meta::integral_constant<unsigned, sizeof...(T)-1>()
+			meta::unsigned_constant<0>(),
+			meta::unsigned_constant<sizeof...(T)-1>()
 		);
 	}
 
@@ -140,21 +140,21 @@ private:
 
 	array<_func_t, sizeof...(T)> _funcs;
 
-	void _init(meta::integral_constant<unsigned, sizeof...(T)>)
+	void _init(meta::unsigned_constant<sizeof...(T)>)
 	noexcept
 	{ }
 
 	template <unsigned I>
-	void _init(meta::integral_constant<unsigned, I>)
+	void _init(meta::unsigned_constant<I>)
 	{
 		_funcs[I] = &_impl<I>::call;
-		_init(meta::integral_constant<unsigned, I+1>());
+		_init(meta::unsigned_constant<I+1>());
 	}
 public:
 	static_variant_dispatcher(void)
 	noexcept
 	{
-		_init(meta::integral_constant<unsigned, 0>());
+		_init(meta::unsigned_constant<0>());
 	}
 
 	RV operator()(const Variant& var, Visitor vis) const

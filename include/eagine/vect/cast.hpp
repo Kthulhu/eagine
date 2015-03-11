@@ -40,8 +40,8 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 	_cast(
 		typename param<data<TF, NF>>::type v,
 		typename param<data<TT, sizeof...(D)>>::type d,
-		meta::integer_sequence<unsigned, I...>,
-		meta::integer_sequence<unsigned, D...>
+		meta::unsigned_sequence<I...>,
+		meta::unsigned_sequence<D...>
 	) noexcept
 	{
 		return typename data<TT, NT>::type
@@ -54,7 +54,7 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 	_cast(
 		typename param<data<TF, NF>>::type v,
 		typename param<data<TT, 0u>>::type,
-		meta::integer_sequence<unsigned, I...>,
+		meta::unsigned_sequence<I...>,
 		meta::integer_sequence<unsigned>
 	) noexcept
 	{
@@ -70,12 +70,10 @@ struct data_caster<data<TF, NF>, data<TT, NT>>
 	)
 	noexcept
 	{
-		typedef typename meta::make_integer_sequence<
-			unsigned,
+		typedef typename meta::make_unsigned_sequence<
 			(NT>NF)?NF:NT
 		>::type is;
-		typedef typename meta::make_integer_sequence<
-			unsigned,
+		typedef typename meta::make_unsigned_sequence<
 			(NT>NF)?NT-NF:0
 		>::type ds;
 		return _cast(v, d, is(), ds());

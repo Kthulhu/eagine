@@ -23,6 +23,9 @@ using ::std::false_type;
 template <bool B>
 using boolean_constant = integral_constant<bool, B>;
 
+template <unsigned U>
+using unsigned_constant = integral_constant<unsigned, U>;
+
 template <typename IC1, typename IC2>
 struct plus;
 

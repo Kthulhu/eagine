@@ -22,6 +22,9 @@ struct integer_sequence
 	typedef integer_sequence type;
 };
 
+template <unsigned ... I>
+using unsigned_sequence = integer_sequence<unsigned, I ...>;
+
 template <typename IS, typename I>
 struct push_back_t;
 
@@ -50,6 +53,9 @@ template <typename Int, Int N>
 struct make_integer_sequence
  : make_integer_sequence_t<integral_constant<Int, N>>
 { };
+
+template <unsigned N>
+using make_unsigned_sequence = make_integer_sequence<unsigned, N>;
 
 } // namespace meta
 } // namespace eagine

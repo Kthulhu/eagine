@@ -24,7 +24,7 @@ struct swizzle_mask
 	template <typename T, typename V, unsigned J>
 	static inline T _get(
 		const V& v,
-		meta::integral_constant<unsigned, J>
+		meta::unsigned_constant<J>
 	)
 	{
 		return v[J-1];
@@ -33,7 +33,7 @@ struct swizzle_mask
 	template <typename T, typename V>
 	inline T _get(
 		const V&,
-		meta::integral_constant<unsigned, 0>
+		meta::unsigned_constant<0>
 	) const
 	{
 		return T(_c);
@@ -42,7 +42,7 @@ struct swizzle_mask
 	template <unsigned J, typename T, typename V>
 	inline T get(const V& v) const
 	{
-		return _get<T>(v, meta::integral_constant<unsigned, J>());
+		return _get<T>(v, meta::unsigned_constant<J>());
 	}
 
 	template <typename T>

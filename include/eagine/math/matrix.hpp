@@ -34,7 +34,7 @@ struct matrix
 	matrix _from_hlp(
 		const P* dt,
 		std::size_t sz,
-		meta::integer_sequence<unsigned, I...>
+		meta::unsigned_sequence<I...>
 	) noexcept
 	{
 		return matrix{{
@@ -52,7 +52,7 @@ struct matrix
 	{
 		return _from_hlp(
 			dt, sz,
-			meta::make_integer_sequence<unsigned, RM?R:C>()
+			meta::make_unsigned_sequence<RM?R:C>()
 		);
 	}
 
@@ -382,7 +382,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 vector<T, C> row_hlp(
 	const matrix<T,R,C,RM>& m,
-	meta::integral_constant<unsigned, 0u>,
+	meta::unsigned_constant<0u>,
 	unsigned i
 ) noexcept
 {
@@ -395,12 +395,12 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static inline
 vector<T, C> row_hlp(
 	const matrix<T,R,C,RM>& m,
-	meta::integral_constant<unsigned, I>,
+	meta::unsigned_constant<I>,
 	unsigned i
 ) noexcept
 {
 	if(I == i) return row<I>(m);
-	return row_hlp(m, meta::integral_constant<unsigned, I-1>(), i);
+	return row_hlp(m, meta::unsigned_constant<I-1>(), i);
 }
 
 // row - run-time
@@ -410,7 +410,7 @@ vector<T, C>
 row(const matrix<T,R,C,RM>& m, unsigned i)
 noexcept
 {
-	typedef meta::integral_constant<unsigned, R-1> I;
+	typedef meta::unsigned_constant<R-1> I;
 	return row_hlp(m, I(), i);
 }
 
@@ -439,7 +439,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 static inline
 vector<T, R> col_hlp(
 	const matrix<T,R,C,RM>& m,
-	meta::integral_constant<unsigned, 0u>,
+	meta::unsigned_constant<0u>,
 	unsigned i
 ) noexcept
 {
@@ -452,12 +452,12 @@ template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
 static inline
 vector<T, R> col_hlp(
 	const matrix<T,R,C,RM>& m,
-	meta::integral_constant<unsigned, I>,
+	meta::unsigned_constant<I>,
 	unsigned i
 ) noexcept
 {
 	if(I == i) return column<I>(m);
-	return col_hlp(m, meta::integral_constant<unsigned, I-1>(), i);
+	return col_hlp(m, meta::unsigned_constant<I-1>(), i);
 }
 
 // column - run-time
@@ -467,7 +467,7 @@ vector<T, R>
 column(const matrix<T,R,C,RM>& m, unsigned i)
 noexcept
 {
-	typedef meta::integral_constant<unsigned, C-1> I;
+	typedef meta::unsigned_constant<C-1> I;
 	return col_hlp(m, I(), i);
 }
 
@@ -503,7 +503,7 @@ template <
 static constexpr inline
 vector<T, R>
 _multiply_hlp(
-	meta::integer_sequence<unsigned, I...>,
+	meta::unsigned_sequence<I...>,
 	const matrix<T, R, C, true>& m,
 	const vector<T, C>& v
 ) noexcept
@@ -534,7 +534,7 @@ template <
 static constexpr inline
 vector<T, C>
 _multiply_hlp(
-	meta::integer_sequence<unsigned, J...>,
+	meta::unsigned_sequence<J...>,
 	const vector<T, R>& v,
 	const matrix<T, R, C,false>& m
 ) noexcept
@@ -551,9 +551,7 @@ vector<T, R> multiply(
 	const vector<T, C>& v
 ) noexcept
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, R
-	>::type is;
+	typedef typename meta::make_unsigned_sequence<R>::type is;
 	return _multiply_hlp(is(), m, v);
 }
 
@@ -565,9 +563,7 @@ vector<T, C> multiply(
 	const matrix<T, R, C,false>& m
 ) noexcept
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, C
-	>::type is;
+	typedef typename meta::make_unsigned_sequence<C>::type is;
 	return _multiply_hlp(is(), v, m);
 }
 
@@ -614,7 +610,7 @@ template <
 static constexpr inline
 typename vect::data<T, N>::type
 _multiply_hlp2f(
-	meta::integer_sequence<unsigned, J...>,
+	meta::unsigned_sequence<J...>,
 	typename vect::data_param<T, K>::type v,
 	const matrix<T, K, N,false>& m
 ) noexcept
@@ -633,7 +629,7 @@ template <
 static constexpr inline
 typename vect::data<T, N>::type
 _multiply_hlp2f(
-	meta::integer_sequence<unsigned, J...> is,
+	meta::unsigned_sequence<J...> is,
 	typename vect::data_param<T, N>::type v,
 	const matrix<T, N, N,false>& m1,
 	const matrix<T, N, N,false>& m2,
@@ -653,7 +649,7 @@ template <
 static constexpr inline
 typename vect::data<T, N>::type
 _multiply_hlp2t(
-	meta::integer_sequence<unsigned, J...>,
+	meta::unsigned_sequence<J...>,
 	const vector<T, K>& v,
 	const matrix<T, K, N,true>& m
 ) noexcept
@@ -684,14 +680,12 @@ template <
 static constexpr inline
 matrix<T, M, N, true>
 _multiply_hlp(
-	meta::integer_sequence<unsigned, I...>,
+	meta::unsigned_sequence<I...>,
 	const matrix<T, M, K, true>& m1,
 	const matrix<T, K, N,false>& m2
 ) noexcept
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, N
-	>::type is;
+	typedef typename meta::make_unsigned_sequence<N>::type is;
 	return matrix<T, M, N, true>
 		{{_multiply_hlp2f(is(), m1._v[I], m2)...}};
 }
@@ -706,7 +700,7 @@ template <
 static constexpr inline
 matrix<T, N, N, true>
 _multiply_hlp(
-	meta::integer_sequence<unsigned, I...> is,
+	meta::unsigned_sequence<I...> is,
 	const matrix<T, N, N, true>& m1,
 	const matrix<T, N, N,false>& m2,
 	const matrix<T, N, N,false>& m3,
@@ -728,14 +722,12 @@ template <
 static constexpr inline
 matrix<T, M, N,false>
 _multiply_hlp(
-	meta::integer_sequence<unsigned, I...>,
+	meta::unsigned_sequence<I...>,
 	const matrix<T, M, K,false>& m1,
 	const matrix<T, K, N, true>& m2
 ) noexcept
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, N
-	>::type is;
+	typedef typename meta::make_unsigned_sequence<N>::type is;
 	return matrix<T, M, N,false>
 		{{_multiply_hlp2t(is(), row<I>(m1), m2)...}};
 }
@@ -748,9 +740,7 @@ matrix<T, M, N, RM> multiply(
 	const matrix<T, K, N,!RM>& m2
 ) noexcept
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, M
-	>::type is;
+	typedef typename meta::make_unsigned_sequence<M>::type is;
 	return _multiply_hlp(is(), m1, m2);
 }
 
@@ -774,9 +764,7 @@ matrix<T, N, N, true> multiply(
 	const matrix<P, N, N,false>& ... mn
 )
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, N
-	>::type is;
+	typedef typename meta::make_unsigned_sequence<N>::type is;
 	return _multiply_hlp(is(), m1, m2, m3, mn...);
 }
 
@@ -1211,7 +1199,7 @@ struct identity<matrix<T,R,C,RM>>
 	template <unsigned ... I>
 	static constexpr inline
 	matrix<T,R,C,RM>
-	_identity(meta::integer_sequence<unsigned, I...>)
+	_identity(meta::unsigned_sequence<I...>)
 	noexcept
 	{
 		return {{vect::axis<T, RM?C:R, I>::apply(1)...}};
@@ -1221,9 +1209,8 @@ struct identity<matrix<T,R,C,RM>>
 	matrix<T,R,C,RM> operator()(void) const
 	noexcept
 	{
-		typedef typename meta::make_integer_sequence<
-			unsigned, RM?R:C
-		>::type _riS;
+		typedef typename 
+			meta::make_unsigned_sequence<RM?R:C>::type _riS;
 		return _identity(_riS());
 	}
 

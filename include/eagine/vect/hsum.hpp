@@ -27,7 +27,7 @@ private:
 	static constexpr inline
 	_dT _hlp(
 		_dT v,
-		meta::integral_constant<unsigned, 1>,
+		meta::unsigned_constant<1>,
 		meta::boolean_constant<B>
 	) noexcept
 	{
@@ -37,7 +37,7 @@ private:
 	static constexpr inline
 	_dT _hlp(
 		_dpT v,
-		meta::integral_constant<unsigned, 2>,
+		meta::unsigned_constant<2>,
 		meta::boolean_constant<true>
 	) noexcept
 	{
@@ -48,7 +48,7 @@ private:
 	static
 	_dT _hlp(
 		_dT v,
-		meta::integral_constant<unsigned, M>,
+		meta::unsigned_constant<M>,
 		meta::boolean_constant<B>
 	) noexcept
 	{
@@ -76,7 +76,7 @@ private:
 	static constexpr inline
 	_dT _hlp(
 		_dpT v,
-		meta::integral_constant<unsigned, 3>,
+		meta::unsigned_constant<3>,
 		meta::boolean_constant<true>
 	) noexcept
 	{
@@ -93,7 +93,7 @@ private:
 	static constexpr inline
 	_dT _hlp(
 		_dpT v,
-		meta::integral_constant<unsigned, 4>,
+		meta::unsigned_constant<4>,
 		meta::boolean_constant<true>
 	) noexcept
 	{
@@ -124,7 +124,7 @@ private:
 	static constexpr inline
 	_dT _hlp(
 		_dpT v,
-		meta::integral_constant<unsigned, 8>,
+		meta::unsigned_constant<8>,
 		meta::boolean_constant<true>
 	) noexcept
 	{
@@ -137,7 +137,7 @@ public:
 	{
 		return _hlp(
 			v,
-			meta::integral_constant<unsigned, N>(),
+			meta::unsigned_constant<N>(),
 			_has_vec_data<T,N>()
 		);
 	}

@@ -41,13 +41,13 @@ struct element_count;
 // element_count<vector>
 template <typename T, unsigned N>
 struct element_count<vector<T,N>>
- : meta::integral_constant<unsigned, N>
+ : meta::unsigned_constant<N>
 { };
 
 // element_count<matrix>
 template <typename T, unsigned R, unsigned C, bool RM>
 struct element_count<matrix<T,R,C,RM>>
- : meta::integral_constant<unsigned, R*C>
+ : meta::unsigned_constant<R*C>
 { };
 
 // data_elements
@@ -154,7 +154,7 @@ data_elements<
 	element_count<X>::value,
 	false
 >
-elements_copy(const X& x, meta::integer_sequence<unsigned, I...>)
+elements_copy(const X& x, meta::unsigned_sequence<I...>)
 {
 	return {{get_elem<I>(x)...}};
 }
@@ -171,8 +171,8 @@ typename meta::enable_if<
 	>
 >::type elements(const X& x)
 {
-	typedef typename meta::make_integer_sequence<
-		unsigned, element_count<X>::value
+	typedef typename meta::make_unsigned_sequence<
+		element_count<X>::value
 	>::type is;
 	return elements_copy(x, is());
 }

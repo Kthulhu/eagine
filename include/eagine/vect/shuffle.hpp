@@ -100,7 +100,7 @@ struct shuffle2
 		_dpT v1,
 		_dpT v2,
 		shuffle_mask<I...>,
-		meta::integral_constant<unsigned, M>,
+		meta::unsigned_constant<M>,
 		meta::true_type
 	) noexcept
 	{
@@ -115,7 +115,7 @@ struct shuffle2
 		_dpT v1,
 		_dpT v2,
 		shuffle_mask<I...>,
-		meta::integral_constant<unsigned, M>,
+		meta::unsigned_constant<M>,
 		meta::false_type
 	) noexcept
 	{
@@ -128,7 +128,7 @@ struct shuffle2
 		return _do_apply(
 			v1, v2,
 			shuffle_mask<I...>(),
-			meta::integral_constant<unsigned, M>(),
+			meta::unsigned_constant<M>(),
 			meta::true_type()
 		);
 #endif
@@ -140,7 +140,7 @@ struct shuffle2
 		_dpT v1,
 		_dpT v2,
 		shuffle_mask<I...>,
-		meta::integral_constant<unsigned, 3>,
+		meta::unsigned_constant<3>,
 		meta::false_type
 	) noexcept
 	{
@@ -153,7 +153,7 @@ struct shuffle2
 		return _do_apply(
 			v1, v2,
 			shuffle_mask<I...>(),
-			meta::integral_constant<unsigned, 3>(),
+			meta::unsigned_constant<3>(),
 			meta::true_type()
 		);
 #endif
@@ -169,7 +169,7 @@ struct shuffle2
 	{
 		return _do_apply(
 			v1, v2, m,
-			meta::integral_constant<unsigned, N>(),
+			meta::unsigned_constant<N>(),
 			typename meta::is_same<_dT, _ary_data<T, N>>::type()
 		);
 	}
