@@ -365,7 +365,7 @@ struct vector
 
 	template <typename V = vector>
 	friend constexpr
-	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	typename meta::enable_if<scalar_type::_vdB::value, V>::type
 	operator * (_cspT c, _cpT a)
 	noexcept
 	{
@@ -374,7 +374,7 @@ struct vector
 
 	template <typename V = vector>
 	friend constexpr
-	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	typename meta::enable_if<scalar_type::_vdB::value, V>::type
 	operator * (_cpT a, _cspT c)
 	noexcept
 	{
@@ -382,7 +382,7 @@ struct vector
 	}
 
 	template <typename V = vector>
-	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type&
+	typename meta::enable_if<scalar_type::_vdB::value, V>::type&
 	operator *= (_cspT c)
 	noexcept
 	{
@@ -420,7 +420,7 @@ struct vector
 
 	template <typename V = vector>
 	friend constexpr
-	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	typename meta::enable_if<scalar_type::_vdB::value, V>::type
 	operator / (_cspT c, _cpT a)
 	noexcept
 	{
@@ -429,7 +429,7 @@ struct vector
 
 	template <typename V = vector>
 	friend constexpr
-	typename meta::enable_if<vect::_has_vec_data<T,N>::value, V>::type
+	typename meta::enable_if<scalar_type::_vdB::value, V>::type
 	operator / (_cpT a, _cspT c)
 	noexcept
 	{
@@ -495,7 +495,7 @@ struct vector
 	scalar<T, N> dot(_cpT a, _cpT b)
 	noexcept
 	{
-		return _dot(a, b, vect::_has_vec_data<T,N>());
+		return _dot(a, b, typename scalar_type::_vdB());
 	}
 
 	friend constexpr
@@ -522,7 +522,7 @@ struct vector
 	scalar<T, N> magnitude(_cpT a)
 	noexcept
 	{
-		return _mag(a, vect::_has_vec_data<T,N>());
+		return _mag(a, typename scalar_type::_vdB());
 	}
 
 	friend constexpr
