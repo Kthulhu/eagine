@@ -70,8 +70,7 @@ struct data_elements<T, N,false>
 
 template <typename X, typename T, unsigned N>
 struct data_elements_reintrpr_hlp
- : meta::integral_constant<
-	bool,
+ : meta::boolean_constant<
 	meta::is_pod<decltype(X::_v)>::value &&
 	meta::is_pod<const T[N]>::value &&
 	(sizeof(decltype(X::_v)) == sizeof(const T[N])) &&

@@ -176,7 +176,7 @@ struct _vec_data<int32_t, 4>
 
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 
 template <>
@@ -199,7 +199,7 @@ struct _vec_data<int64_t, 4>
 
 template <unsigned N>
 struct _has_vec_data<int64_t, N>
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 
 template <>
@@ -222,7 +222,7 @@ struct _vec_data<float, 4>
 
 template <unsigned N>
 struct _has_vec_data<float, N>
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 
 template <>
@@ -245,7 +245,7 @@ struct _vec_data<double, 4>
 
 template <unsigned N>
 struct _has_vec_data<double, N>
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 
 #elif defined(__GNUC__)
@@ -281,30 +281,30 @@ struct _vec_data<float,8> : _gnuc_vec_data<float,8>
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
 #if __AVX__
- : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
+ : meta::boolean_constant<(N>=2 && N<=4) || N==8>
 #else
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 #endif
 { };
 
 template <unsigned N>
 struct _has_vec_data<float, N>
 #if __AVX__
- : meta::integral_constant<bool, (N>=2 && N<=4) || N==8>
+ : meta::boolean_constant<(N>=2 && N<=4) || N==8>
 #else
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 #endif
 { };
 
 template <unsigned N>
 struct _has_vec_data<int64_t, N>
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 
 #if __AVX__
 template <unsigned N>
 struct _has_vec_data<double, N>
- : meta::integral_constant<bool, (N>=2 && N<=4)>
+ : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 #endif // __AVX__
 

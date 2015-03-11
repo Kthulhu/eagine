@@ -1156,7 +1156,7 @@ struct ortho<matrix<T,4,4,RM>>
 	matrix<T,4,4, RM> operator()(void) const
 	noexcept
 	{
-		return _make(meta::integral_constant<bool, RM>());
+		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
@@ -1258,7 +1258,7 @@ struct looking_at_y_up<matrix<T,4,4,RM>>
 	matrix<T,4,4,RM> operator()(void) const
 	noexcept
 	{
-		return _make(meta::integral_constant<bool, RM>());
+		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
@@ -1362,7 +1362,7 @@ struct looking_at<matrix<T,4,4,RM>>
 	matrix<T,4,4,RM> operator()(void) const
 	noexcept
 	{
-		return _make(meta::integral_constant<bool, RM>());
+		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
@@ -1469,7 +1469,7 @@ struct orbiting_y_up<matrix<T,4,4,RM>>
 	matrix<T,4,4,RM> operator()(void) const
 	noexcept
 	{
-		return _make(meta::integral_constant<bool, RM>());
+		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
@@ -1686,7 +1686,7 @@ struct perspective<matrix<T,4,4,RM>>
 	matrix<T,4,4,RM> operator()(void) const
 	noexcept
 	{
-		return _make(meta::integral_constant<bool, RM>());
+		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
@@ -1830,7 +1830,7 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	matrix<T,4,4,RM> operator()(void) const
 	noexcept
 	{
-		return _make(meta::integral_constant<bool, RM>());
+		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline

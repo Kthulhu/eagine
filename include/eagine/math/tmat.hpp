@@ -66,8 +66,7 @@ private:
 
 	template <typename ... P>
 	struct _all_T
-	 : meta::integral_constant<
-		bool,
+	 : meta::boolean_constant<
 		meta::fold_with(_and, meta::is_convertible<P, T>()..., true)
 	> { };
 public:

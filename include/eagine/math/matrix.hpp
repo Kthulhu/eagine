@@ -68,7 +68,7 @@ struct is_row_major;
 
 template <typename T, unsigned R, unsigned C, bool RM>
 struct is_row_major<matrix<T,R,C,RM>>
- : meta::integral_constant<bool, RM>
+ : meta::boolean_constant<RM>
 { };
 
 // reordered matrix trait
@@ -1237,8 +1237,7 @@ template <typename T, unsigned R, unsigned C, bool RM>
 class matrix_data_ref<matrix<T, R, C, RM>>
 {
 private:
-	typedef meta::integral_constant<
-		bool,
+	typedef meta::boolean_constant<
 		sizeof(T[R*C]) == sizeof(typename matrix<T,R,C,RM>::_vT)
 	> _alias;
 

@@ -2,7 +2,7 @@
  *  @file eagine/meta/int_const.hpp
  *  @brief Compile-time integral_constants.
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -19,6 +19,9 @@ namespace meta {
 using ::std::integral_constant;
 using ::std::true_type;
 using ::std::false_type;
+
+template <bool B>
+using boolean_constant = integral_constant<bool, B>;
 
 template <typename IC1, typename IC2>
 struct plus;

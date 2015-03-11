@@ -46,8 +46,7 @@ struct char_string_traits
 // is_ext_char_string_any_const
 template <typename Char, typename X>
 struct is_ext_char_string_any_const
- : meta::integral_constant<
-	bool,
+ : meta::boolean_constant<
 	is_ext_char_string<
 		typename meta::add_const<Char>::type, X
 	>::value || is_ext_char_string<
@@ -58,8 +57,7 @@ struct is_ext_char_string_any_const
 // is_char_string_any_const
 template <typename Char, typename X>
 struct is_char_string_any_const
- : meta::integral_constant<
-	bool,
+ : meta::boolean_constant<
 	is_char_string<
 		typename meta::add_const<Char>::type, X
 	>::value || is_char_string<
@@ -80,8 +78,7 @@ struct are_char_strings_any_const<Char, X1>
 // are_char_strings_any_const
 template <typename Char, typename X1, typename X2, typename ... XN>
 struct are_char_strings_any_const<Char, X1, X2, XN...>
- : meta::integral_constant<
-	bool,
+ : meta::boolean_constant<
 	is_char_string_any_const<Char, X1>::value &&
 	are_char_strings_any_const<Char, X2, XN...>::value
 >
@@ -393,8 +390,7 @@ private:
 
 	template <typename Char_>
 	struct _compatible
-	 : meta::integral_constant<
-		bool,
+	 : meta::boolean_constant<
 		meta::is_same<Char, Char_>::value ||
 		meta::is_same<
 			typename meta::add_const<Char_>::type,
@@ -764,8 +760,7 @@ namespace detail {
 // are_bin_op_char_strings
 template <typename Char, typename X1, typename X2>
 struct are_bin_op_char_strings
- : meta::integral_constant<
-	bool,
+ : meta::boolean_constant<
 	are_char_strings_any_const<Char, X1, X2>::value && !(
 		is_ext_char_string_any_const<Char, X1>::value &&
 		is_ext_char_string_any_const<Char, X2>::value
