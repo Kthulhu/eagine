@@ -10,6 +10,7 @@
 #ifndef EAGINE_MATH_MATRIX_1308281038_HPP
 #define EAGINE_MATH_MATRIX_1308281038_HPP
 
+#include <eagine/math/config.hpp>
 #include <eagine/math/vector.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/int_sequence.hpp>
@@ -826,6 +827,30 @@ matrix<T, M, N, RM1> operator | (
 	return trivial_multiply(m1, m2);
 }
 
+// _fast_multiply M * M
+template <typename T, unsigned N, bool RM1, bool RM2>
+static constexpr inline
+matrix<T, N, N, true> _fast_multiply(
+	const matrix<T, N, N, RM1>& m1,
+	const matrix<T, N, N, RM2>& m2,
+	meta::true_type /*trivial */
+) noexcept
+{
+	return trivial_multiply(make_row_major(m1), make_column_major(m2));
+}
+
+// _fast_multiply M * M
+template <typename T, unsigned N, bool RM1, bool RM2>
+static constexpr inline
+matrix<T, N, N, true> _fast_multiply(
+	const matrix<T, N, N, RM1>& m1,
+	const matrix<T, N, N, RM2>& m2,
+	meta::false_type /*trivial */
+) noexcept
+{
+	return multiply(make_row_major(m1), make_column_major(m2));
+}
+
 // fast_multiply M * M
 template <typename T, unsigned N, bool RM1, bool RM2>
 static constexpr inline
@@ -834,8 +859,13 @@ matrix<T, N, N, true> fast_multiply(
 	const matrix<T, N, N, RM2>& m2
 ) noexcept
 {
-	// TODO
-	return multiply(make_row_major(m1), make_column_major(m2));
+	return _fast_multiply(
+		m1, m2,
+		meta::boolean_constant<
+			(EAGINE_MATH_FAST_MAT_MULT_TRIVIAL > 1) ||
+			not(vect::_has_vec_data<T, N>())
+		>()
+	);
 }
 
 // fast_multiply M * ... M
@@ -847,11 +877,11 @@ matrix<T, N, N, true> fast_multiply(
 	const matrix<T, N, N, RM2>& m3
 ) noexcept
 {
-	// TODO
-	return trivial_multiply(
-		trivial_multiply(make_row_major(m1), make_column_major(m2)),
-		make_column_major(m3)
-	);
+	typedef meta::boolean_constant<
+		(EAGINE_MATH_FAST_MAT_MULT_TRIVIAL > 0) ||
+		not(vect::_has_vec_data<T, N>())
+	> _triv;
+	return _fast_multiply(_fast_multiply(m1, m2, _triv()), m3, _triv());
 }
 
 // fast_multiply M * ... M
@@ -873,8 +903,11 @@ matrix<T, N, N, true> fast_multiply(
 	const matrix<T, N, N, RMn>& ... m
 ) noexcept
 {
-	// TODO
-	return fast_multiply(trivial_multiply(m1, m2), m3, m...);
+	typedef meta::boolean_constant<
+		(EAGINE_MATH_FAST_MAT_MULT_TRIVIAL > 0) ||
+		not(vect::_has_vec_data<T, N>())
+	> _triv;
+	return fast_multiply(_fast_multiply(m1, m2, _triv()), m3, m...);
 }
 
 // row_swap

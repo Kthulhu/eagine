@@ -12,7 +12,7 @@ print('set title "%s"' % sys.argv[3])
 print('set key left on inside nobox')
 print('set style data lines')
 print('set ylabel "Speedup"')
-print('set logscale y 10')
+print('set logscale y 2')
 print('set xtics axis out nomirror offset 0 rotate by -50 font ",4"')
 print('set bmargin 7')
 print('set rmargin 7')
@@ -21,9 +21,10 @@ print('set boxwidth 0.9 relative')
 print('set style fill transparent solid 0.7 border lt -1')
 
 print('plot "%s.gp.dat" \
-	using 2:xtic(1) title col lw 5 lc rgb"#404080", \'\' \
-	using 3:xtic(1) title col lw 1 lc rgb"#A0A0FF", \'\' \
-	using 4:xtic(1) title col lw 2 lc rgb"black"' %
+	using 2:xtic(1) title col lw 3 lc rgb"#4040A0", \'\' \
+	using 3:xtic(1) title col lw 1 lc rgb"#303080", \'\' \
+	using 4:xtic(1) title col lw 5 lc rgb"#40A040", \'\' \
+	using 5:xtic(1) title col lw 2 lc rgb"black"' %
 	sys.argv[1]
 	
 )

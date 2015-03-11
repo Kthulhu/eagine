@@ -296,12 +296,12 @@ struct _has_vec_data<float, N>
 #endif
 { };
 
+#if __AVX__
 template <unsigned N>
 struct _has_vec_data<int64_t, N>
  : meta::boolean_constant<(N>=2 && N<=4)>
 { };
 
-#if __AVX__
 template <unsigned N>
 struct _has_vec_data<double, N>
  : meta::boolean_constant<(N>=2 && N<=4)>
