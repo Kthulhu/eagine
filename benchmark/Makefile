@@ -79,28 +79,28 @@ _out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o _bld/fake_use.o | _out
 	$(CXX) $(local_LDFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $^ -o $@
 
 _out/%-$(OPT)-NOSSE: _bld/%-$(OPT)-NOSSE.o _bld/fake_use.o | _out
-	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $^ -o $@
+	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SIMD=0 -$(OPT) $^ -o $@
 
 _out/%-$(OPT)-SSE: _bld/%-$(OPT)-SSE.o _bld/fake_use.o | _out
-	$(CXX) $(local_LDFLAGS) -msse -DEAGINE_USE_SSE=1 -$(OPT) $^ -o $@
+	$(CXX) $(local_LDFLAGS) -msse -DEAGINE_USE_SIMD=1 -$(OPT) $^ -o $@
 
 _out/%-$(OPT)-BASELINE.asm: %.cpp | _out
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -S -o $@
 
 _out/%-$(OPT)-NOSSE.asm: %.cpp | _out
-	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $< -S -o $@
+	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SIMD=0 -$(OPT) $< -S -o $@
 
 _out/%-$(OPT)-SSE.asm: %.cpp | _out
-	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SSE=1 -$(OPT) $< -S -o $@
+	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SIMD=1 -$(OPT) $< -S -o $@
 
 _bld/%-$(OPT)-BASELINE.o: %.cpp | _bld
 	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -c -o $@
 
 _bld/%-$(OPT)-NOSSE.o: %.cpp | _bld
-	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SSE=0 -$(OPT) $< -c -o $@
+	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SIMD=0 -$(OPT) $< -c -o $@
 
 _bld/%-$(OPT)-SSE.o: %.cpp | _bld
-	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SSE=1 -$(OPT) $< -c -o $@
+	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SIMD=1 -$(OPT) $< -c -o $@
 
 _bld/fake_use.o: fake_use.cxx | _bld
 	$(CXX) $(local_CXXFLAGS) $< -c -o $@

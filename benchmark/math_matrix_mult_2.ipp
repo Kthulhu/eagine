@@ -26,7 +26,7 @@ int main(int argc, const char** argv)
 		rotation_y<mat> r2((angle<T>(i)));
 		scale_z<mat> s(T(1)/T(1+j));
 
-#if EAGINE_USE_SSE
+#if EAGINE_USE_SIMD
 		matrix<T,M,N, true> m = fast_multiply(r1,t,r2,s);
 #else
 		matrix<T,M,N, true> m = r1()|t()|r2()|s();

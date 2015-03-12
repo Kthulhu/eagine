@@ -26,7 +26,7 @@ struct min
 	_dT _hlp(_dpT a, _dpT b, meta::true_type)
 	noexcept
 	{
-#if EAGINE_USE_SSE && defined(__GNUC__) && !defined(__clang__)
+#if EAGINE_USE_SIMD && defined(__GNUC__) && !defined(__clang__)
 		return (a<b)?a:b;
 #else
 		return _hlp(a, b, meta::false_type());
@@ -155,7 +155,7 @@ struct max
 	_dT _hlp(_dpT a, _dpT b, meta::true_type)
 	noexcept
 	{
-#if EAGINE_USE_SSE && defined(__GNUC__) && !defined(__clang__)
+#if EAGINE_USE_SIMD && defined(__GNUC__) && !defined(__clang__)
 		return (a>b)?a:b;
 #else
 		return _hlp(a, b, meta::false_type());

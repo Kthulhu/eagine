@@ -18,53 +18,49 @@ namespace vect {
 template <typename T, unsigned N>
 struct esum
 {
+private:
 	typedef typename data_param<T, N>::type _dpT;
 
+	template <unsigned M, bool B>
 	static inline
-	T apply(_dpT v)
+	T _hlp(_dpT v, meta::unsigned_constant<M>, meta::boolean_constant<B>)
 	noexcept
 	{
-		return hsum<T,N>::apply(v)[0];
+		static_assert(M == N, "");
+		T r = T(0);
+		for(unsigned i=0; i<N; ++i)
+		{
+			r += v[i];
+		}
+		return r;
 	}
-};
 
-
-template <typename T>
-struct esum<T, 1>
-{
-	typedef typename data_param<T, 1>::type _dpT;
-
+	template <bool B>
 	static constexpr inline
-	T apply(_dpT v)
+	T _hlp(_dpT v, meta::unsigned_constant<1>, meta::boolean_constant<B>)
 	noexcept
 	{
 		return v[0];
 	}
-};
 
-template <typename T>
-struct esum<T, 2>
-{
-	typedef typename data_param<T, 2>::type _dpT;
-
-	static constexpr inline
-	T apply(_dpT v)
+	template <unsigned M>
+	static inline
+	T _hlp(_dpT v, meta::unsigned_constant<M>, meta::true_type)
 	noexcept
 	{
-		return v[0] + v[1];
+		static_assert(M == N, "");
+		return hsum<T, N>::apply(v)[N-1];
 	}
-};
-
-template <typename T>
-struct esum<T, 3>
-{
-	typedef typename data_param<T, 3>::type _dpT;
-
-	static constexpr inline
+public:
+	static inline
 	T apply(_dpT v)
 	noexcept
 	{
-		return v[0] + v[1] + v[2];
+		return _hlp(
+			v,
+			meta::unsigned_constant<N>(),
+			_has_vec_data<T, N>()
+		);
 	}
 };
 

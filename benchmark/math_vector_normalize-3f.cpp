@@ -3,8 +3,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-#include <cstdint>
-typedef int32_t T;
+typedef float T;
 #define EAGINE_BM_N 3
-#include "math_vector_hsum.ipp"
+#include "math_vector_normalize.ipp"
 

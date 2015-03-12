@@ -930,6 +930,7 @@ noexcept
 template <typename T, unsigned R, unsigned C1, unsigned C2>
 inline
 bool gauss(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
+noexcept
 {
 	for(unsigned i=0; i<R; ++i)
 	{
@@ -974,6 +975,7 @@ bool gauss(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
 template <typename T, unsigned R, unsigned C1, unsigned C2>
 inline
 bool gauss_jordan(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
+noexcept
 {
 	if(!gauss(a, b))
 	{
@@ -1299,13 +1301,15 @@ public:
 		return _v;
 	}
 
-	std::size_t size(void) const
+	static constexpr inline
+	std::size_t size(void)
 	noexcept
 	{
 		return R*C;
 	}
 
-	bool row_major(void) const
+	static constexpr inline
+	bool row_major(void)
 	noexcept
 	{
 		return RM;

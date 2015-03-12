@@ -153,19 +153,28 @@ struct _has_vec_data
  : meta::false_type
 { };
 
-#if EAGINE_USE_SSE
+#if EAGINE_USE_SIMD
 #if defined(__clang__)
 
+// int8_t
+template <>
+struct _vec_data<int8_t, 8>
+{
+	typedef int8_t type __attribute__ ((vector_size ( 8)));
+};
+
+// int16_t
+template <>
+struct _vec_data<int16_t, 4>
+{
+	typedef int16_t type __attribute__ ((vector_size ( 8)));
+};
+
+// int32_t
 template <>
 struct _vec_data<int32_t, 2>
 {
 	typedef int32_t type __attribute__ ((vector_size ( 8)));
-};
-
-template <>
-struct _vec_data<int32_t, 3>
-{
-	typedef int32_t type __attribute__ ((vector_size (16)));
 };
 
 template <>
@@ -174,21 +183,11 @@ struct _vec_data<int32_t, 4>
 	typedef int32_t type __attribute__ ((vector_size (16)));
 };
 
-template <unsigned N>
-struct _has_vec_data<int32_t, N>
- : meta::boolean_constant<(N>=2 && N<=4)>
-{ };
-
+// int64_t
 template <>
 struct _vec_data<int64_t, 2>
 {
 	typedef int64_t type __attribute__ ((vector_size (16)));
-};
-
-template <>
-struct _vec_data<int64_t, 3>
-{
-	typedef int64_t type __attribute__ ((vector_size (32)));
 };
 
 template <>
@@ -197,11 +196,7 @@ struct _vec_data<int64_t, 4>
 	typedef int64_t type __attribute__ ((vector_size (32)));
 };
 
-template <unsigned N>
-struct _has_vec_data<int64_t, N>
- : meta::boolean_constant<(N>=2 && N<=4)>
-{ };
-
+// float
 template <>
 struct _vec_data<float, 2>
 {
@@ -220,11 +215,7 @@ struct _vec_data<float, 4>
 	typedef float type __attribute__ ((vector_size (16)));
 };
 
-template <unsigned N>
-struct _has_vec_data<float, N>
- : meta::boolean_constant<(N>=2 && N<=4)>
-{ };
-
+// double
 template <>
 struct _vec_data<double, 2>
 {
@@ -242,11 +233,6 @@ struct _vec_data<double, 4>
 {
 	typedef double type __attribute__ ((vector_size (32)));
 };
-
-template <unsigned N>
-struct _has_vec_data<double, N>
- : meta::boolean_constant<(N>=2 && N<=4)>
-{ };
 
 #elif defined(__GNUC__)
 
@@ -268,49 +254,92 @@ template <typename T>
 struct _vec_data<T,4> : _gnuc_vec_data<T,4>
 { };
 
-#if __AVX__
-template <>
-struct _vec_data<int32_t,8> : _gnuc_vec_data<int32_t,8>
+template <typename T>
+struct _vec_data<T,8> : _gnuc_vec_data<T,8>
 { };
 
-template <>
-struct _vec_data<float,8> : _gnuc_vec_data<float,8>
-{ };
-#endif // __AVX__
+#endif // platform
 
+// has_vec_data<int8_t>
+template <unsigned N>
+struct _has_vec_data<int8_t, N>
+ : meta::boolean_constant<
+#if __SSE2__
+	((N==2)||(N==4)||(N==8)||(N==16)) ||
+#endif
+#if __MMX__
+	((N==2)||(N==4)||(N==8)) ||
+#endif
+	false
+>
+{ };
+
+// has_vec_data<int16_t>
+template <unsigned N>
+struct _has_vec_data<int16_t, N>
+ : meta::boolean_constant<
+#if __SSE2__
+	((N==2)||(N==4)||(N==8)) ||
+#endif
+#if __MMX__
+	((N==2)||(N==4)) ||
+#endif
+	false
+>
+{ };
+
+// has_vec_data<int32_t>
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
-#if __AVX__
- : meta::boolean_constant<(N>=2 && N<=4) || N==8>
-#else
- : meta::boolean_constant<(N>=2 && N<=4)>
+ : meta::boolean_constant<
+#if __SSE2__
+	((N==2)||(N==4)) ||
 #endif
+#if __MMX__
+	(N==2) ||
+#endif
+	false
+>
 { };
 
-template <unsigned N>
-struct _has_vec_data<float, N>
-#if __AVX__
- : meta::boolean_constant<(N>=2 && N<=4) || N==8>
-#else
- : meta::boolean_constant<(N>=2 && N<=4)>
-#endif
-{ };
-
-#if __AVX__
+// has_vec_data<int64_t>
 template <unsigned N>
 struct _has_vec_data<int64_t, N>
- : meta::boolean_constant<(N>=2 && N<=4)>
+ : meta::boolean_constant<
+#if __SSE2__
+	(N==2) ||
+#endif
+	false
+>
 { };
 
+// has_vec_data<float>
+template <unsigned N>
+struct _has_vec_data<float, N>
+ : meta::boolean_constant<
+#if __AVX__
+	((N==2)||(N==3)||(N==4)) ||
+#endif
+#if __SSE__
+	((N==2)||(N==4)) ||
+#endif
+	false
+>
+{ };
+
+// has_vec_data<double>
 template <unsigned N>
 struct _has_vec_data<double, N>
- : meta::boolean_constant<(N>=2 && N<=4)>
+ : meta::boolean_constant<
+#if __SSE2__
+	(N==2) ||
+#endif
+	false
+>
 { };
-#endif // __AVX__
+#endif // EAGINE_USE_SIMD
 
-#endif
-#endif
-
+// data
 template <typename T, unsigned N>
 struct data
  : meta::conditional<
@@ -323,6 +352,7 @@ struct data
 	static constexpr unsigned size = N;
 };
 
+// data_param
 template <typename T, unsigned N>
 struct data_param
  : meta::conditional<
@@ -332,6 +362,7 @@ struct data_param
 >::type
 { };
 
+// param
 template <typename Data>
 struct param;
 

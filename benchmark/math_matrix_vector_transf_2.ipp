@@ -35,9 +35,7 @@ int main(int argc, const char** argv)
 		auto m2 = matrix<T,N,N,false>::from(data[(2+i)%O], N*N);
 		auto m3 = matrix<T,N,N,false>::from(data[(3+i)%O], N*N);
 
-# if EAGINE_USE_SSE
-		//vector<T,N> v2 = (m0*m1*m2*m3)*v1;
-		//vector<T,N> v2 = (m0|m1|m2|m3)*v1;
+# if EAGINE_USE_SIMD
 		vector<T,N> v2 = fast_multiply(m0,m1,m2,m3)*v1;
 # else
 		vector<T,N> v2 = (m0|m1|m2|m3)*v1;

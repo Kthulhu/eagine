@@ -25,8 +25,7 @@ int main(int argc, const char** argv)
 		rotation_x<mat> r1((angle<T>(j)));
 		rotation_y<mat> r2((angle<T>(i)));
 
-#if EAGINE_USE_SSE
-		//vector<T,N> v2 = (r1()*r2())*v1;
+#if EAGINE_USE_SIMD
 		vector<T,N> v2 = fast_multiply(r1,r2)*v1;
 #else
 		vector<T,N> v2 = (r1()|r2())*v1;
