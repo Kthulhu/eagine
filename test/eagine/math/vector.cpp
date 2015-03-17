@@ -300,6 +300,36 @@ void test_math_vector_w(
 ) { }
 
 template <typename T, unsigned N>
+void test_math_vector_xy(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::true_type
+)
+{
+	BOOST_ASSERT((v.xy() == eagine::math::vector<T,2>::template from<0,1>(v)));
+}
+
+template <typename T, unsigned N>
+void test_math_vector_xy(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::false_type
+) { }
+
+template <typename T, unsigned N>
+void test_math_vector_xyz(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::true_type
+)
+{
+	BOOST_ASSERT((v.xyz() == eagine::math::vector<T,3>::template from<0,1,2>(v)));
+}
+
+template <typename T, unsigned N>
+void test_math_vector_xyz(
+	const eagine::math::vector<T, N>& v,
+	eagine::meta::false_type
+) { }
+
+template <typename T, unsigned N>
 void test_math_vector_xyzw_T(void)
 {
 	T a[N];
@@ -320,6 +350,9 @@ void test_math_vector_xyzw_T(void)
 	test_math_vector_y<T, N>(v, has_y);
 	test_math_vector_z<T, N>(v, has_z);
 	test_math_vector_w<T, N>(v, has_w);
+
+	test_math_vector_xy<T, N>(v, has_y);
+	test_math_vector_xyz<T, N>(v, has_z);
 }
 
 template <typename T>
