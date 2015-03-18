@@ -4,10 +4,6 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-constexpr auto x(value_type c = 0) const noexcept { return this->swizzle<1>(c); }
-constexpr auto y(value_type c = 0) const noexcept { return this->swizzle<2>(c); }
-constexpr auto z(value_type c = 0) const noexcept { return this->swizzle<3>(c); }
-constexpr auto w(value_type c = 0) const noexcept { return this->swizzle<4>(c); }
 constexpr auto Ox(value_type c = 0) const noexcept { return this->swizzle<0,1>(c); }
 constexpr auto Oy(value_type c = 0) const noexcept { return this->swizzle<0,2>(c); }
 constexpr auto Oz(value_type c = 0) const noexcept { return this->swizzle<0,3>(c); }

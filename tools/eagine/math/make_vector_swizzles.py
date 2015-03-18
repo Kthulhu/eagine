@@ -20,7 +20,7 @@ def generate(coord_str):
 	print(" *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)")
 	print(" */")
 
-	for n in range(1, 5):
+	for n in range(2, 5):
 		for comb in itertools.product(coords, repeat=n):
 			name = str("").join(comb)
 			if name != n * coords[0]:

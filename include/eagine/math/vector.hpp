@@ -286,6 +286,7 @@ struct vector
 		typename = typename meta::enable_if<M == 1, void>::type
 	>
 	constexpr inline
+	explicit
 	operator T(void) const
 	noexcept
 	{
