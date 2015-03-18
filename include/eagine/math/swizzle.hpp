@@ -52,10 +52,23 @@ struct swizzle_mask
 	}
 };
 
+template <typename V, unsigned ... I>
+struct has_swizzle;
+
+template <typename T, unsigned N, unsigned ...I>
+struct has_swizzle<vector<T, N>, I...>
+ : meta::boolean_constant<meta::max_constant<unsigned, I...>::value<=N>
+{ };
+
+template <typename T, unsigned N, unsigned ...I>
+struct has_swizzle<tvec<T, N>, I...>
+ : meta::boolean_constant<meta::max_constant<unsigned, I...>::value<=N>
+{ };
+
 template <typename T, typename C, unsigned ... I, typename U, unsigned M>
 static inline
 typename meta::enable_if<
-	meta::max_constant<unsigned, I...>::value<=M,
+	has_swizzle<vector<U,M>, I...>::value,
 	vector<T, sizeof...(I)>
 >::type
 swizzle(
@@ -69,7 +82,7 @@ swizzle(
 template <unsigned ... I, typename T, typename C, unsigned N>
 static inline
 typename meta::enable_if<
-	meta::max_constant<unsigned, I...>::value<=N,
+	has_swizzle<vector<T,N>, I...>::value,
 	vector<T, sizeof...(I)>
 >::type
 operator / (const vector<T, N>& v, swizzle_mask<C, I...> m)

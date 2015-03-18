@@ -20,6 +20,11 @@ namespace math {
 template <typename T, unsigned N>
 struct tvec : vector<T, N>
 {
+	template <typename U, unsigned M>
+	struct rebind
+	 : tvec<U,M>
+	{ };
+
 	typedef vector<T, N> _base;
 
 	constexpr inline

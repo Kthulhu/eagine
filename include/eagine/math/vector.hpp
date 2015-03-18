@@ -32,6 +32,11 @@ namespace math {
 template <typename T, unsigned N>
 struct scalar
 {
+	template <typename U, unsigned M>
+	struct rebind
+	 : scalar<U,M>
+	{ };
+
 	typedef scalar type;
 	typedef T value_type;
 
@@ -128,6 +133,11 @@ struct scalar
 template <typename T, unsigned N>
 struct vector
 {
+	template <typename U, unsigned M>
+	struct rebind
+	 : vector<U,M>
+	{ };
+
 	typedef vector type;
 	typedef scalar<T, N> scalar_type;
 
@@ -269,6 +279,17 @@ struct vector
 	noexcept
 	{
 		return _v[pos];
+	}
+
+	template <
+		unsigned M = N,
+		typename = typename meta::enable_if<M == 1, void>::type
+	>
+	constexpr inline
+	operator T(void) const
+	noexcept
+	{
+		return _v[0];
 	}
 
 	template <unsigned M = N>
