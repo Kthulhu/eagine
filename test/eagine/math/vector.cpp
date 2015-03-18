@@ -1743,6 +1743,31 @@ BOOST_AUTO_TEST_CASE(math_vector_normalized)
 }
 
 template <typename T>
+void test_math_vector_perpendicular(void)
+{
+	for(unsigned n=0; n<1000; ++n)
+	{
+		T a[2];
+
+		for(unsigned i=0; i<2; ++i)
+		{
+			a[i] = std::rand() / T(RAND_MAX);
+		}
+
+		auto va = normalized(eagine::math::vector<T, 2>::from(a, 2));
+		auto vb = perpendicular(va);
+
+		BOOST_ASSERT(test_math_close(dot(va, vb)+T(2), T(2)));
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_perpendicular)
+{
+	test_math_vector_perpendicular<float>();
+	test_math_vector_perpendicular<double>();
+}
+
+template <typename T>
 void test_math_vector_cross(void)
 {
 	unsigned n = 1000;

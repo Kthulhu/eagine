@@ -655,6 +655,16 @@ shuffle(
 	return {vect::shuffle2<T, N>::apply(v1._v, v2._v, m)};
 }
 
+// perpendicular
+template <typename T>
+static inline
+vector<T, 2>
+perpendicular(const vector<T, 2>& a)
+noexcept
+{
+	return {-a._v[1], a._v[0]};
+}
+
 // cross
 template <typename T>
 static inline
