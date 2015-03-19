@@ -10,7 +10,7 @@
 #ifndef EAGINE_MATH_SWIZZLE_1308281038_HPP
 #define EAGINE_MATH_SWIZZLE_1308281038_HPP
 
-#include <eagine/math/vector.hpp>
+#include <eagine/math/fwd.hpp>
 #include <eagine/meta/int_const.hpp>
 
 namespace eagine {
@@ -77,6 +77,20 @@ swizzle(
 )
 {
 	return {{m.template get<I,T>(v._v)...}};
+}
+
+template <typename T, typename C, unsigned ... I, typename U, unsigned M>
+static inline
+typename meta::enable_if<
+	has_swizzle<vector<U,M>, I...>::value,
+	tvec<T, sizeof...(I)>
+>::type
+swizzle(
+	const tvec<U, M>& v,
+	swizzle_mask<C, I...> m
+)
+{
+	return tvec<T, sizeof...(I)>(m.template get<I,T>(v._v)...);
 }
 
 template <unsigned ... I, typename T, typename C, unsigned N>

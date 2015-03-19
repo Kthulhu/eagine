@@ -29,11 +29,14 @@ int main(void)
 		using namespace eagine::math;
 
 		vector_swizzles<tvec<float,4>> v(1,2,3,4);
+		vector_swizzles<tvec<float,3>> u(5,6,7);
 
 		std::cout << v << std::endl;
 		std::cout << v.xyz() << std::endl;
 		std::cout << v.wOwO(5) << std::endl;
 		std::cout << v.z() << std::endl;
+
+		std::cout << u.zzz() << std::endl;
 
 		return 0;
 	}

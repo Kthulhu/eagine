@@ -329,24 +329,6 @@ struct vector
 		return _v[3];
 	}
 
-	template <unsigned M = N>
-	constexpr inline
-	typename meta::enable_if<(M > 1), vector<T,2>>::type xy(void) const
-	noexcept
-	{
-		static_assert(M == N, "");
-		return vector<T,2>::template from<0,1>(*this);
-	}
-
-	template <unsigned M = N>
-	constexpr inline
-	typename meta::enable_if<(M > 2), vector<T,3>>::type xyz(void) const
-	noexcept
-	{
-		static_assert(M == N, "");
-		return vector<T,3>::template from<0,1,2>(*this);
-	}
-
 	friend constexpr
 	vector operator + (_cpT a)
 	noexcept

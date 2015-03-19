@@ -24,11 +24,21 @@ public:
 
 	using Vector::Vector;
 
+	vector_swizzles(const Vector& v)
+	noexcept
+	 : Vector(v)
+	{ }
+
 	template <unsigned ... I>
 	constexpr inline
 	typename meta::enable_if<
 		has_swizzle<Vector, I...>::value,
-		typename Vector::template rebind<value_type, sizeof...(I)>::type
+		vector_swizzles<
+			typename Vector::template rebind<
+				value_type,
+				sizeof...(I)
+			>::type
+		>
 	>::type swizzle(typename Vector::value_type c = 0) const
 	noexcept
 	{
