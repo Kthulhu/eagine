@@ -24,6 +24,9 @@ struct tvec;
 template <typename Vector>
 class vector_data_ref;
 
+template <typename Vector>
+class vector_swizzles;
+
 template <typename T, unsigned N>
 static
 vector_data_ref<vector<T, N>> data(const vector<T, N>&)
