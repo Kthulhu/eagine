@@ -24,6 +24,8 @@ public:
 
 	using Vector::Vector;
 
+	vector_swizzles(void) = default;
+
 	vector_swizzles(const Vector& v)
 	noexcept
 	 : Vector(v)
