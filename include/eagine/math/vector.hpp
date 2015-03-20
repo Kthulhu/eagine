@@ -22,12 +22,55 @@
 #include <eagine/vect/array_ref.hpp>
 #include <eagine/meta/min_max.hpp>
 #include <eagine/meta/identity.hpp>
+#include <eagine/math/fwd.hpp>
 #include <eagine/math/angle.hpp>
 #include <eagine/base/memory_range.hpp>
 #include <cmath>
 
 namespace eagine {
 namespace math {
+
+// swizzle_mask
+template <typename C, unsigned ... I>
+struct swizzle_mask
+{
+	C _c;
+
+	template <typename T, typename V, unsigned J>
+	static constexpr inline
+	T _get(const V& v, meta::unsigned_constant<J>)
+	noexcept
+	{
+		return v[J-1];
+	}
+
+	template <typename T, typename V>
+	constexpr inline
+	T _get(const V&, meta::unsigned_constant<0>) const
+	noexcept
+	{
+		return T(_c);
+	}
+
+	template <unsigned J, typename T, typename V>
+	constexpr inline
+	T get(const V& v) const
+	noexcept
+	{
+		return _get<T>(v, meta::unsigned_constant<J>());
+	}
+};
+
+// has_swizzle
+template <typename T, unsigned N, unsigned ...I>
+struct has_swizzle<vector<T, N>, I...>
+ : meta::boolean_constant<meta::max_constant<unsigned, I...>::value<=N>
+{ };
+
+template <typename T, unsigned N, unsigned ...I>
+struct has_swizzle<tvec<T, N>, I...>
+ : meta::boolean_constant<meta::max_constant<unsigned, I...>::value<=N>
+{ };
 
 template <typename T, unsigned N>
 struct scalar
@@ -328,6 +371,34 @@ struct vector
 		static_assert(M == N, "");
 		return _v[3];
 	}
+
+	template <unsigned ... I>
+	constexpr inline
+	typename meta::enable_if<
+		has_swizzle<vector<T,N>, I...>::value,
+		vector<T, sizeof...(I)>
+	>::type
+	swizzle_by(swizzle_mask<T, I...> m) const
+	noexcept
+	{
+		return {{m.template get<I,T>(_v)...}};
+	}
+
+	template <unsigned ... I>
+	constexpr inline
+	typename meta::enable_if<
+		has_swizzle<vector<T,N>, I...>::value,
+		vector<T, sizeof...(I)>
+	>::type
+	swizzle(T c = T(0)) const
+	noexcept
+	{
+		return this->swizzle_by(swizzle_mask<T, I...>{c});
+	}
+
+#if !EAGINE_NO_MATH_VECTOR_SWIZZLES
+#include <eagine/math/vector_swizzles.ipp>
+#endif
 
 	friend constexpr
 	vector operator + (_cpT a)

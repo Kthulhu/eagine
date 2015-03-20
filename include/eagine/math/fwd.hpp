@@ -21,11 +21,11 @@ struct vector;
 template <typename T, unsigned N>
 struct tvec;
 
-template <typename Vector>
-class vector_data_ref;
+template <typename V, unsigned ... I>
+struct has_swizzle;
 
 template <typename Vector>
-class vector_swizzles;
+class vector_data_ref;
 
 template <typename T, unsigned N>
 static

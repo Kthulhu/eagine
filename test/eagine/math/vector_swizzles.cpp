@@ -12,7 +12,6 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/tvec.hpp>
-#include <eagine/math/vector_swizzles.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
@@ -22,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(math_vector_swizzles)
 template <typename T>
 void test_math_vector_swizzles_1_T(void)
 {
-	eagine::math::vector_swizzles<eagine::math::tvec<T,4>> v(
+	eagine::math::tvec<T,4> v(
 		std::rand() / T(111), 
 		std::rand() / T(111), 
 		std::rand() / T(111), 
