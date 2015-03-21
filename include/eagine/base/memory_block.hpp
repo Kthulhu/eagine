@@ -20,21 +20,167 @@
 namespace eagine {
 namespace base {
 
+template <typename Derived, typename T, typename E>
+class crtp_base_memory_range
+{
+protected:
+	inline
+	Derived& self(void)
+	noexcept
+	{
+		return *static_cast<Derived*>(this);
+	}
+
+	inline
+	const Derived& self(void) const
+	noexcept
+	{
+		return *static_cast<const Derived*>(this);
+	}
+public:
+	explicit
+	operator bool (void) const
+	noexcept
+	{
+		return	(self().addr() != nullptr) &&
+			(self().size() != 0);
+	}
+
+	bool empty(void) const
+	noexcept
+	{
+		return self().size() == 0;
+	}
+
+	typedef T value_type;
+	typedef E element_type;
+
+	typedef typename meta::add_lvalue_reference<
+		typename meta::add_const<value_type>::type
+	>::type const_reference;
+
+	typedef typename meta::add_lvalue_reference<
+		value_type
+	>::type reference;
+
+	typedef typename meta::add_pointer<
+		typename meta::add_const<value_type>::type
+	>::type const_pointer;
+
+	typedef typename meta::add_pointer<
+		value_type
+	>::type pointer;
+
+	typedef typename meta::add_pointer<
+		typename meta::add_const<element_type>::type
+	>::type const_element_pointer;
+
+	typedef typename meta::add_pointer<
+		element_type
+	>::type element_pointer;
+
+	typedef std::size_t size_type;
+	typedef const_pointer const_iterator;
+	typedef pointer iterator;
+
+	const_pointer begin(void) const
+	noexcept
+	{
+		return self().addr();
+	}
+
+	template <typename X = value_type>
+	typename meta::enable_if<
+		!meta::is_const<X>::value,
+		pointer
+	>::type begin(void)
+	noexcept
+	{
+		return self().addr();
+	}
+
+	const_pointer offs(size_type n) const
+	noexcept
+	{
+		assert(self().addr());
+		assert(n < self().size());
+		return static_cast<const_pointer>(
+			static_cast<const_element_pointer>(
+				self().addr()
+			)+n
+		);
+	}
+
+	template <typename X = value_type>
+	typename meta::enable_if<
+		!meta::is_const<X>::value,
+		pointer
+	>::type offs(size_type n)
+	noexcept
+	{
+		assert(self().addr());
+		assert(n < self().size());
+		return static_cast<pointer>(
+			static_cast<element_pointer>(
+				self().addr()
+			)+n
+		);
+	}
+
+	const_pointer end(void) const
+	noexcept
+	{
+		return offs(self().size());
+	}
+
+	template <typename X = value_type>
+	typename meta::enable_if<
+		!meta::is_const<X>::value,
+		pointer
+	>::type end(void)
+	noexcept
+	{
+		return offs(self().size());
+	}
+
+	const_reference operator [](size_type n) const
+	{
+		return *offs(n);
+	}
+
+	reference operator [](size_type n)
+	{
+		return *offs(n);
+	}
+
+	Derived slice(size_type o, size_type s) const
+	noexcept
+	{
+		assert(o+s <= self().size());
+		return Derived(offs(o), s);
+	}
+
+	Derived slice(size_type o) const
+	noexcept
+	{
+		assert(o <= self().size());
+		return slice(o, self().size()-o);
+	}
+};
+
 template <bool Const>
 class basic_memory_block
+ : public crtp_base_memory_range<
+	basic_memory_block<Const>,
+	typename meta::conditional<Const, const void, void>::type,
+	typename meta::conditional<Const, const byte, byte >::type
+>
 {
 private:
-	typedef typename meta::conditional<
-		Const,
-		const void,
-		void
-	>::type T;
+	typedef typename meta::conditional<Const, const void, void >::type T; 
+	typedef typename meta::conditional<Const, const byte, byte >::type B; 
 
-	typedef typename meta::conditional<
-		Const,
-		const byte,
-		byte
-	>::type B;
+	typedef crtp_base_memory_range<basic_memory_block<Const>, T, B> _base;
 
 	T* _addr;
 	std::size_t _size;
@@ -51,6 +197,12 @@ private:
 		return _misalign((B*)p, alignment);
 	}
 public:
+	typedef typename _base::const_iterator const_iterator;
+
+	using _base::begin;
+	using _base::offs;
+	using _base::end;
+
 	basic_memory_block(void)
 	noexcept
 	 : _addr(nullptr)
@@ -76,12 +228,6 @@ public:
 	 , _size(that.size())
 	{ }
 
-	explicit operator bool (void) const
-	noexcept
-	{
-		return (_addr != nullptr) && (_size != 0);
-	}
-
 	T* addr(void) const
 	noexcept
 	{
@@ -94,68 +240,23 @@ public:
 		return _size;
 	}
 
-	bool empty(void) const
-	noexcept
-	{
-		return _size == 0;
-	}
-
-	T* offs(std::size_t byte_offs) const
-	noexcept
-	{
-		assert(byte_offs <= _size);
-		return (T*)(((B*)_addr)+byte_offs);
-	}
-
-	typedef T* iterator;
-	typedef T* const_iterator;
-
-	iterator begin(void) const
-	noexcept
-	{
-		return _addr;
-	}
-
-	iterator end(void) const
-	noexcept
-	{
-		return offs(_size);
-	}
-
-	iterator aligned_begin(std::uintptr_t alignment) const
+	const_iterator aligned_begin(std::uintptr_t alignment) const
 	noexcept
 	{
 		std::uintptr_t ma = _misalign(begin(), alignment);
-		return (iterator)(
+		return (const_iterator)(
 			((B*)begin())+
 			(ma?alignment-ma:0)
 		);
 	}
 
-	iterator aligned_end(std::uintptr_t alignment) const
+	const_iterator aligned_end(std::uintptr_t alignment) const
 	noexcept
 	{
-		return (iterator)(
+		return (const_iterator)(
 			((B*)end())-
 			_misalign(end(), alignment)
 		);
-	}
-
-	basic_memory_block slice(
-		std::size_t byte_offs,
-		std::size_t byte_size
-	) const
-	noexcept
-	{
-		assert(byte_offs+byte_size<= _size);
-		return basic_memory_block(offs(byte_offs), byte_size);
-	}
-
-	basic_memory_block slice(std::size_t byte_offs) const
-	noexcept
-	{
-		assert(byte_offs <= _size);
-		return slice(byte_offs, _size-byte_offs);
 	}
 
 	basic_memory_block slice_to_align(std::size_t alignment) const
@@ -175,6 +276,52 @@ public:
 
 typedef basic_memory_block<false> memory_block;
 typedef basic_memory_block<true > const_memory_block;
+
+template <typename Derived, typename T, typename E>
+class crtp_memory_range
+ : public crtp_base_memory_range<Derived, T, E>
+{
+public:
+	basic_memory_block<true> block(void) const
+	noexcept
+	{
+		return {
+			this->self().addr(),
+			this->self().size()*
+			sizeof(E)
+		};
+	}
+
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<
+		!Const,
+		basic_memory_block<false>
+	>::type block(void)
+	noexcept
+	{
+		return {
+			this->self().addr(),
+			this->self().size()*
+			sizeof(E)
+		};
+	}
+
+	operator basic_memory_block<true>(void) const
+	noexcept
+	{
+		return block();
+	}
+
+	template <
+		bool Const = meta::is_const<T>::value,
+		typename = typename meta::enable_if<!Const>::type
+	>
+	operator basic_memory_block<false>(void) const
+	noexcept
+	{
+		return block();
+	}
+};
 
 } // namespace base
 } // namespace eagine

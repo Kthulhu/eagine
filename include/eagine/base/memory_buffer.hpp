@@ -2,7 +2,7 @@
  *  @file eagine/base/memory_buffer.hpp
  *  @brief Resizable memory buffer with exclusive ownership.
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -18,6 +18,7 @@ namespace eagine {
 namespace base {
 
 class memory_buffer
+ : public crtp_memory_range<memory_buffer, void, byte>
 {
 private:
 	void* _addr;
@@ -72,47 +73,23 @@ public:
 		return *this;
 	}
 
+	void* addr(void)
+	noexcept
+	{
+		return _addr;
+	}
+
+	const void* addr(void) const
+	noexcept
+	{
+		return _addr;
+	}
+
 	std::size_t size(void) const
 	noexcept
 	{
 		assert((_addr == nullptr) == (_size == 0));
 		return _size;
-	}
-
-	bool empty(void) const
-	noexcept
-	{
-		return size() == 0;
-	}
-
-	explicit operator bool (void) const
-	noexcept
-	{
-		return !empty();
-	}
-
-	memory_block block(void)
-	noexcept
-	{
-		return {_addr, _size};
-	}
-
-	const_memory_block block(void) const
-	noexcept
-	{
-		return {_addr, _size};
-	}
-
-	operator memory_block(void)
-	noexcept
-	{
-		return block();
-	}
-
-	operator const_memory_block(void) const
-	noexcept
-	{
-		return block();
 	}
 };
 

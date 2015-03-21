@@ -23,5 +23,10 @@
 # endif
 #endif
 
+// EAGINE_NO_MATH_VECTOR_SWIZZLES
+#ifndef EAGINE_NO_MATH_VECTOR_SWIZZLES
+#define EAGINE_NO_MATH_VECTOR_SWIZZLES 0
+#endif
+
 #endif //include guard
 
