@@ -81,11 +81,9 @@ public:
 		return static_cast<const_iterator>(self().addr());
 	}
 
-	template <typename X = value_type>
-	typename meta::enable_if<
-		!meta::is_const<X>::value,
-		iterator
-	>::type begin(void)
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<!Const, iterator>::type
+	begin(void)
 	noexcept
 	{
 		return static_cast<iterator>(self().addr());
@@ -99,11 +97,9 @@ public:
 		return static_cast<const_iterator>(self().addr())+n;
 	}
 
-	template <typename X = value_type>
-	typename meta::enable_if<
-		!meta::is_const<X>::value,
-		iterator
-	>::type offs(size_type n)
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<!Const, iterator>::type
+	offs(size_type n)
 	noexcept
 	{
 		assert((n == 0) || (self().addr()));
@@ -117,11 +113,9 @@ public:
 		return offs(self().size());
 	}
 
-	template <typename X = value_type>
-	typename meta::enable_if<
-		!meta::is_const<X>::value,
-		iterator
-	>::type end(void)
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<!Const, iterator>::type
+	end(void)
 	noexcept
 	{
 		return offs(self().size());
@@ -146,11 +140,9 @@ public:
 		return Derived(offs(o), s);
 	}
 
-	template <typename X = value_type>
-	typename meta::enable_if<
-		!meta::is_const<X>::value,
-		Derived
-	>::type slice(size_type o, size_type s)
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<!Const, Derived>::type
+	slice(size_type o, size_type s)
 	noexcept
 	{
 		assert(o+s <= self().size());
@@ -164,7 +156,9 @@ public:
 		return slice(o, self().size()-o);
 	}
 
-	Derived slice(size_type o)
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<!Const, Derived>::type
+	slice(size_type o)
 	noexcept
 	{
 		assert(o <= self().size());
@@ -349,7 +343,7 @@ public:
 		bool Const = meta::is_const<T>::value,
 		typename = typename meta::enable_if<!Const>::type
 	>
-	operator basic_memory_block<false>(void) const
+	operator basic_memory_block<false>(void)
 	noexcept
 	{
 		return block();

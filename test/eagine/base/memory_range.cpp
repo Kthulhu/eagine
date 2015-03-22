@@ -390,6 +390,45 @@ BOOST_AUTO_TEST_CASE(base_memory_range_compare)
 	test_base_memory_range_compare<double>();
 }
 
+template <typename MemoryRange, typename T, bool Const>
+void test_base_memory_range_block_C(std::size_t n)
+{
+	T b[n];
+
+	MemoryRange mr(b, n);
+
+	eagine::base::basic_memory_block<Const> mb1 = mr.block();
+	eagine::base::basic_memory_block<Const> mb2 = mr;
+
+	BOOST_ASSERT((const void*)mr.begin() == (const void*)mb1.begin());
+	BOOST_ASSERT((const void*)mr.end() == (const void*)mb1.end());
+	BOOST_ASSERT((const void*)mr.begin() == (const void*)mb2.begin());
+	BOOST_ASSERT((const void*)mr.end() == (const void*)mb2.end());
+}
+
+template <typename T>
+void test_base_memory_range_block_C(std::size_t n)
+{
+	test_base_memory_range_block_C<
+		::eagine::base::typed_memory_range<T>, T, false
+	>(n);
+	test_base_memory_range_block_C<
+		::eagine::base::typed_memory_range<const T>, T, true
+	>(n);
+}
+
+BOOST_AUTO_TEST_CASE(base_memory_range_block_C)
+{
+	for(std::size_t i=0; i<100; ++i)
+	{
+		test_base_memory_range_block_C<bool>(i);
+		test_base_memory_range_block_C<char>(i);
+		test_base_memory_range_block_C<long>(i);
+		test_base_memory_range_block_C<float>(i);
+		test_base_memory_range_block_C<double>(i);
+	}
+}
+
 // TODO
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -58,11 +58,9 @@ public:
 	 , _size(_cast(raw.aligned_end(alignof(T)))-_addr)
 	{ }
 
-	template <typename X = T>
-	typename meta::enable_if<
-		!meta::is_const<X>::value,
-		T*
-	>::type addr(void)
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<!Const, T*>::type
+	addr(void)
 	noexcept
 	{
 		return _addr;
@@ -83,6 +81,50 @@ public:
 
 typedef typed_memory_range<byte> byte_range;
 typedef typed_memory_range<const byte> const_byte_range;
+
+template <typename Derived, typename T>
+class crtp_derived_memory_range
+ : public crtp_memory_range<Derived, T, T>
+{
+public:
+	typed_memory_range<const T> range(void) const
+	noexcept
+	{
+		return {
+			this->self().addr(),
+			this->self().size()
+		};
+	}
+
+	template <bool Const = meta::is_const<T>::value>
+	typename meta::enable_if<
+		!Const,
+		typed_memory_range<T>
+	>::type range(void)
+	noexcept
+	{
+		return {
+			this->self().addr(),
+			this->self().size()
+		};
+	}
+
+	operator typed_memory_range<const T>(void) const
+	noexcept
+	{
+		return range();
+	}
+
+	template <
+		bool Const = meta::is_const<T>::value,
+		typename = typename meta::enable_if<!Const>::type
+	>
+	operator typed_memory_range<T>(void)
+	noexcept
+	{
+		return range();
+	}
+};
 
 } // namespace base
 } // namespace eagine
