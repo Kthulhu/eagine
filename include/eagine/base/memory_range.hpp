@@ -34,6 +34,12 @@ private:
 public:
 	typedef basic_memory_block<meta::is_const<T>::value> raw_block;
 
+	typed_memory_range(void)
+	noexcept
+	 : _addr(nullptr)
+	 , _size(0)
+	{ }
+
 	typed_memory_range(T* addr_, std::size_t size_)
 	noexcept
 	 : _addr(addr_)
@@ -52,7 +58,17 @@ public:
 	 , _size(_cast(raw.aligned_end(alignof(T)))-_addr)
 	{ }
 
-	T* addr(void)
+	template <typename X = T>
+	typename meta::enable_if<
+		!meta::is_const<X>::value,
+		T*
+	>::type addr(void)
+	noexcept
+	{
+		return _addr;
+	}
+
+	const T* addr(void) const
 	noexcept
 	{
 		return _addr;

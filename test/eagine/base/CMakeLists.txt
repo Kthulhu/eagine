@@ -12,6 +12,7 @@ eagine_exec_test(array)
 eagine_exec_test(string)
 
 eagine_exec_test(memory_block)
+eagine_exec_test(memory_range)
 
 eagine_exec_test(locale)
 eagine_exec_test(format)

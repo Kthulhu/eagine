@@ -303,6 +303,33 @@ BOOST_AUTO_TEST_CASE(base_memory_block_slice_2)
 	}
 }
 
+BOOST_AUTO_TEST_CASE(base_memory_block_compare)
+{
+	static const std::size_t n = 512;
+	eagine::base::byte b[n];
+
+	for(unsigned k=0; k<1000; ++k)
+	{
+		std::size_t i1 = std::rand() % n;
+		std::size_t i2 = std::rand() % n;
+		std::size_t l1 = std::rand() % (n-i1);
+		std::size_t l2 = std::rand() % (n-i2);
+
+		if(std::rand() % 10 == 0)
+		{
+			i2 = i1;
+			l2 = l1;
+		}
+
+		::eagine::base::const_memory_block mb1(b+i1, l1);
+		::eagine::base::const_memory_block mb2(b+i2, l2);
+
+		BOOST_ASSERT((mb1 == mb2) == ((i1==i2) && (l1==l2)));
+		BOOST_ASSERT((mb1 != mb2) == ((i1!=i2) || (l1!=l2)));
+		BOOST_ASSERT((mb1 <  mb2) == ((i1<i2) || ((i1==i2)&&(l1<l2))));
+	}
+}
+
 // TODO
 
 BOOST_AUTO_TEST_SUITE_END()

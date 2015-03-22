@@ -176,8 +176,8 @@ public:
 		const crtp_base_memory_range& b
 	) noexcept
 	{
-		return	(a.addr() == b.addr()) &&
-			(a.size() == b.size());
+		return	(a.self().addr() == b.self().addr()) &&
+			(a.self().size() == b.self().size());
 	}
 
 	friend bool operator != (
@@ -185,8 +185,8 @@ public:
 		const crtp_base_memory_range& b
 	) noexcept
 	{
-		return	(a.addr() != b.addr()) ||
-			(a.size() != b.size());
+		return	(a.self().addr() != b.self().addr()) ||
+			(a.self().size() != b.self().size());
 	}
 
 	friend bool operator <  (
@@ -194,9 +194,9 @@ public:
 		const crtp_base_memory_range& b
 	) noexcept
 	{
-		return	(a.addr() <  b.addr()) || (
-			(a.addr() == b.addr()) &&
-			(a.size() <  b.size())
+		return	(a.self().addr() <  b.self().addr()) || (
+			(a.self().addr() == b.self().addr()) &&
+			(a.self().size() <  b.self().size())
 		);
 	}
 };
