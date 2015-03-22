@@ -56,78 +56,62 @@ public:
 	typedef E element_type;
 
 	typedef typename meta::add_lvalue_reference<
-		typename meta::add_const<value_type>::type
+		typename meta::add_const<element_type>::type
 	>::type const_reference;
 
 	typedef typename meta::add_lvalue_reference<
-		value_type
+		element_type
 	>::type reference;
 
 	typedef typename meta::add_pointer<
-		typename meta::add_const<value_type>::type
+		typename meta::add_const<element_type>::type
 	>::type const_pointer;
 
 	typedef typename meta::add_pointer<
-		value_type
-	>::type pointer;
-
-	typedef typename meta::add_pointer<
-		typename meta::add_const<element_type>::type
-	>::type const_element_pointer;
-
-	typedef typename meta::add_pointer<
 		element_type
-	>::type element_pointer;
+	>::type pointer;
 
 	typedef std::size_t size_type;
 	typedef const_pointer const_iterator;
 	typedef pointer iterator;
 
-	const_pointer begin(void) const
+	const_iterator begin(void) const
 	noexcept
 	{
-		return self().addr();
+		return static_cast<const_iterator>(self().addr());
 	}
 
 	template <typename X = value_type>
 	typename meta::enable_if<
 		!meta::is_const<X>::value,
-		pointer
+		iterator
 	>::type begin(void)
 	noexcept
 	{
-		return self().addr();
+		return static_cast<iterator>(self().addr());
 	}
 
-	const_pointer offs(size_type n) const
+	const_iterator offs(size_type n) const
 	noexcept
 	{
-		assert(self().addr());
-		assert(n < self().size());
-		return static_cast<const_pointer>(
-			static_cast<const_element_pointer>(
-				self().addr()
-			)+n
-		);
+		assert((n == 0) || (self().addr()));
+		assert(n <= self().size());
+		return static_cast<const_iterator>(self().addr())+n;
 	}
 
 	template <typename X = value_type>
 	typename meta::enable_if<
 		!meta::is_const<X>::value,
-		pointer
+		iterator
 	>::type offs(size_type n)
 	noexcept
 	{
-		assert(self().addr());
-		assert(n < self().size());
-		return static_cast<pointer>(
-			static_cast<element_pointer>(
-				self().addr()
-			)+n
-		);
+		assert((n == 0) || (self().addr()));
+		assert(n <= self().size());
+		return static_cast<iterator>(self().addr())+n;
 	}
 
-	const_pointer end(void) const
+	const_iterator end(void) const
 	noexcept
 	{
 		return offs(self().size());
@@ -136,7 +120,7 @@ public:
 	template <typename X = value_type>
 	typename meta::enable_if<
 		!meta::is_const<X>::value,
-		pointer
+		iterator
 	>::type end(void)
 	noexcept
 	{
@@ -145,15 +129,28 @@ public:
 
 	const_reference operator [](size_type n) const
 	{
+		assert(!empty());
 		return *offs(n);
 	}
 
 	reference operator [](size_type n)
 	{
+		assert(!empty());
 		return *offs(n);
 	}
 
 	Derived slice(size_type o, size_type s) const
+	noexcept
+	{
+		assert(o+s <= self().size());
+		return Derived(offs(o), s);
+	}
+
+	template <typename X = value_type>
+	typename meta::enable_if<
+		!meta::is_const<X>::value,
+		Derived
+	>::type slice(size_type o, size_type s)
 	noexcept
 	{
 		assert(o+s <= self().size());
@@ -165,6 +162,42 @@ public:
 	{
 		assert(o <= self().size());
 		return slice(o, self().size()-o);
+	}
+
+	Derived slice(size_type o)
+	noexcept
+	{
+		assert(o <= self().size());
+		return slice(o, self().size()-o);
+	}
+
+	friend bool operator == (
+		const crtp_base_memory_range& a,
+		const crtp_base_memory_range& b
+	) noexcept
+	{
+		return	(a.addr() == b.addr()) &&
+			(a.size() == b.size());
+	}
+
+	friend bool operator != (
+		const crtp_base_memory_range& a,
+		const crtp_base_memory_range& b
+	) noexcept
+	{
+		return	(a.addr() != b.addr()) ||
+			(a.size() != b.size());
+	}
+
+	friend bool operator <  (
+		const crtp_base_memory_range& a,
+		const crtp_base_memory_range& b
+	) noexcept
+	{
+		return	(a.addr() <  b.addr()) || (
+			(a.addr() == b.addr()) &&
+			(a.size() <  b.size())
+		);
 	}
 };
 

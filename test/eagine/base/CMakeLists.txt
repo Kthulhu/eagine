@@ -1,4 +1,4 @@
-#  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+#  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
 #  Software License, Version 1.0. (See accompanying file
 #  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
@@ -10,6 +10,9 @@ eagine_exec_test(alloc)
 
 eagine_exec_test(array)
 eagine_exec_test(string)
+
+eagine_exec_test(memory_block)
+
 eagine_exec_test(locale)
 eagine_exec_test(format)
 eagine_exec_test(guid)
