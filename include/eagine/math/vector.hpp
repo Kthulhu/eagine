@@ -756,18 +756,19 @@ noexcept
 	};
 }
 
-// vector_data_ref
-template <typename Vector>
-class vector_data_ref;
-
-// vector_data_ref<vector>
+// composite_data_ref<vector>
 template <typename T, unsigned N>
-class vector_data_ref<vector<T, N>>
+class composite_data_ref<vector<T, N>>
+ : public base::crtp_derived_memory_range<
+	composite_data_ref<vector<T, N>>,
+	base::typed_memory_range<const T>,
+	const T
+>
 {
 private:
 	vect::array_ref<T, N> _ar;
 public:
-	vector_data_ref(const vector<T, N>& v)
+	composite_data_ref(const vector<T, N>& v)
 	noexcept
 	 : _ar(v._v)
 	{ }
@@ -783,18 +784,12 @@ public:
 	{
 		return N;
 	}
-
-	base::typed_memory_range<const T> range(void) const
-	noexcept
-	{
-		return base::typed_memory_range<const T>(addr(), size());
-	}
 };
 
 // data
 template <typename T, unsigned N>
 static inline
-vector_data_ref<vector<T, N>> data(const vector<T, N>& v)
+composite_data_ref<vector<T, N>> data(const vector<T, N>& v)
 noexcept
 {
 	return v;

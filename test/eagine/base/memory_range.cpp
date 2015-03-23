@@ -353,6 +353,33 @@ BOOST_AUTO_TEST_CASE(base_memory_range_slice_2)
 	}
 }
 
+template <typename T, typename E>
+void test_base_memory_range_iterate_T(void)
+{
+	static const std::size_t n = 512;
+	E b[n];
+
+	::eagine::base::typed_memory_range<T> mr(b, n);
+
+	for(T e : mr) { }
+}
+
+template <typename T>
+void test_base_memory_range_iterate(void)
+{
+	test_base_memory_range_iterate_T<T, T>();
+	test_base_memory_range_iterate_T<const T, T>();
+}
+
+BOOST_AUTO_TEST_CASE(base_memory_range_iterate)
+{
+	test_base_memory_range_iterate<bool>();
+	test_base_memory_range_iterate<char>();
+	test_base_memory_range_iterate<long>();
+	test_base_memory_range_iterate<float>();
+	test_base_memory_range_iterate<double>();
+}
+
 template <typename T>
 void test_base_memory_range_compare(void)
 {

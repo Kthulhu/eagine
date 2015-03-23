@@ -521,4 +521,86 @@ BOOST_AUTO_TEST_CASE(math_matrix_col)
 	}
 }
 
+template <typename T, unsigned N, typename Range>
+void test_math_matrix_data_range_T(const T(&a)[N], Range& r)
+{
+	BOOST_ASSERT(r.addr() != nullptr);
+	BOOST_ASSERT(r.size() == N);
+
+	const T* b = r.begin();
+	const T* e = r.end();
+
+	BOOST_ASSERT(b != e);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		const T* o = r.offs(i);
+
+		BOOST_ASSERT(r[i] == a[i]);
+		BOOST_ASSERT(*o  == a[i]);
+	}
+
+	for(T e : r) { }
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		auto s = r.slice(i);
+		BOOST_ASSERT(s.size() == N-i);
+	}
+}
+
+template <typename T, unsigned R, unsigned C, bool RM>
+void test_math_matrix_data_T(void)
+{
+	T a[R*C];
+
+	for(unsigned i=0; i<R*C; ++i)
+	{
+		a[i] = std::rand() / T(R*C);
+	}
+
+	auto ma = eagine::math::matrix<T, R, C, RM>::from(a, R*C);
+
+	auto d = data(ma);
+	eagine::base::typed_memory_range<const T> r = d.range();
+
+	test_math_matrix_data_range_T(a, d);
+	test_math_matrix_data_range_T(a, r);
+}
+
+template <typename T, bool RM>
+void test_math_matrix_data(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_matrix_data_T<T, 2, 2, RM>();
+		test_math_matrix_data_T<T, 2, 3, RM>();
+		test_math_matrix_data_T<T, 2, 4, RM>();
+		test_math_matrix_data_T<T, 2, 8, RM>();
+
+		test_math_matrix_data_T<T, 3, 2, RM>();
+		test_math_matrix_data_T<T, 3, 3, RM>();
+		test_math_matrix_data_T<T, 3, 4, RM>();
+		test_math_matrix_data_T<T, 3, 8, RM>();
+
+		test_math_matrix_data_T<T, 4, 2, RM>();
+		test_math_matrix_data_T<T, 4, 3, RM>();
+		test_math_matrix_data_T<T, 4, 4, RM>();
+		test_math_matrix_data_T<T, 4, 8, RM>();
+
+		test_math_matrix_data_T<T, 8, 2, RM>();
+		test_math_matrix_data_T<T, 8, 3, RM>();
+		test_math_matrix_data_T<T, 8, 4, RM>();
+		test_math_matrix_data_T<T, 8, 8, RM>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_data)
+{
+	test_math_matrix_data<float, true>();
+	test_math_matrix_data<double, true>();
+	test_math_matrix_data<float,false>();
+	test_math_matrix_data<double,false>();
+}
+
 BOOST_AUTO_TEST_SUITE_END()

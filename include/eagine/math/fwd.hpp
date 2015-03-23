@@ -24,12 +24,12 @@ struct tvec;
 template <typename V, unsigned ... I>
 struct has_swizzle;
 
-template <typename Vector>
-class vector_data_ref;
+template <typename Composite>
+class composite_data_ref;
 
 template <typename T, unsigned N>
 static
-vector_data_ref<vector<T, N>> data(const vector<T, N>&)
+composite_data_ref<vector<T, N>> data(const vector<T, N>&)
 noexcept;
 
 template <typename T, unsigned R, unsigned C, bool RowMajor>
@@ -38,12 +38,9 @@ struct matrix;
 template <typename T, unsigned R, unsigned C, bool RowMajor>
 struct tmat;
 
-template <typename Matrix>
-class matrix_data_ref;
-
 template <typename T, unsigned R, unsigned C, bool RM>
 static
-matrix_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>&)
+composite_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>&)
 noexcept;
 
 } // namespace math

@@ -162,42 +162,6 @@ BOOST_AUTO_TEST_CASE(base_memory_block_begin_end_offs_2)
 }
 
 template <typename MemoryBlock>
-void test_base_memory_block_begin_end_offs_3(std::size_t n)
-{
-	eagine::base::byte b[n];
-
-	for(unsigned i=0; i<n; ++i)
-	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
-	}
-
-	MemoryBlock mb((void*)b, (void*)(b+n));
-
-	BOOST_ASSERT((mb.begin() == mb.end()) == (n == 0));
-	BOOST_ASSERT((mb.begin() != mb.end()) == (n != 0));
-
-	BOOST_ASSERT(*mb.begin() == b[0]);
-
-	for(std::size_t i = 0; i<n; ++i)
-	{
-		BOOST_ASSERT(*mb.offs(i) == b[i]);
-	}
-}
-
-BOOST_AUTO_TEST_CASE(base_memory_block_begin_end_offs_3)
-{
-	for(unsigned i=0; i<500; ++i)
-	{
-		test_base_memory_block_begin_end_offs_3<
-			::eagine::base::memory_block
-		>(i);
-		test_base_memory_block_begin_end_offs_3<
-			::eagine::base::const_memory_block
-		>(i);
-	}
-}
-
-template <typename MemoryBlock>
 void test_base_memory_block_element(std::size_t n)
 {
 	eagine::base::byte b[n];

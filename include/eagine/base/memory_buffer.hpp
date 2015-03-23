@@ -18,7 +18,7 @@ namespace eagine {
 namespace base {
 
 class memory_buffer
- : public crtp_memory_range<memory_buffer, void, byte>
+ : public crtp_memory_range<memory_buffer, memory_block, void, byte>
 {
 private:
 	void* _addr;
@@ -88,7 +88,7 @@ public:
 	std::size_t size(void) const
 	noexcept
 	{
-		assert((_addr == nullptr) == (_size == 0));
+		assert((_addr != nullptr) || (_size == 0));
 		return _size;
 	}
 };

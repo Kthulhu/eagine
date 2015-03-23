@@ -1250,13 +1250,14 @@ reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&)
 noexcept
 { return {}; }
 
-// matrix_data_ref
-template <typename Matrix>
-class matrix_data_ref;
-
-// matrix_data_ref<matrix>
+// composite_data_ref<matrix>
 template <typename T, unsigned R, unsigned C, bool RM>
-class matrix_data_ref<matrix<T, R, C, RM>>
+class composite_data_ref<matrix<T, R, C, RM>>
+ : public base::crtp_derived_memory_range<
+	composite_data_ref<matrix<T, R, C, RM>>,
+	base::typed_memory_range<const T>,
+	const T
+>
 {
 private:
 	typedef meta::boolean_constant<
@@ -1289,7 +1290,7 @@ private:
 		}
 	}
 public:
-	matrix_data_ref(const matrix<T,R,C,RM>& m)
+	composite_data_ref(const matrix<T,R,C,RM>& m)
 	noexcept
 	{
 		_init(m, _alias());
@@ -1314,18 +1315,12 @@ public:
 	{
 		return RM;
 	}
-
-	base::typed_memory_range<const T> range(void) const
-	noexcept
-	{
-		return base::typed_memory_range<const T>(addr(), size());
-	}
 };
 
 // data
 template <typename T, unsigned R, unsigned C, bool RM>
 static inline 
-matrix_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>& m)
+composite_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>& m)
 noexcept
 {
 	return m;

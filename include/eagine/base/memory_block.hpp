@@ -20,7 +20,7 @@
 namespace eagine {
 namespace base {
 
-template <typename Derived, typename T, typename E>
+template <typename Derived, typename Slice, typename T, typename E>
 class crtp_base_memory_range
 {
 protected:
@@ -72,6 +72,7 @@ public:
 	>::type pointer;
 
 	typedef std::size_t size_type;
+	typedef std::ptrdiff_t difference_type;
 	typedef const_pointer const_iterator;
 	typedef pointer iterator;
 
@@ -133,23 +134,23 @@ public:
 		return *offs(n);
 	}
 
-	Derived slice(size_type o, size_type s) const
+	Slice slice(size_type o, size_type s) const
 	noexcept
 	{
 		assert(o+s <= self().size());
-		return Derived(offs(o), s);
+		return Slice(offs(o), s);
 	}
 
 	template <bool Const = meta::is_const<T>::value>
-	typename meta::enable_if<!Const, Derived>::type
+	typename meta::enable_if<!Const, Slice>::type
 	slice(size_type o, size_type s)
 	noexcept
 	{
 		assert(o+s <= self().size());
-		return Derived(offs(o), s);
+		return Slice(offs(o), s);
 	}
 
-	Derived slice(size_type o) const
+	Slice slice(size_type o) const
 	noexcept
 	{
 		assert(o <= self().size());
@@ -157,7 +158,7 @@ public:
 	}
 
 	template <bool Const = meta::is_const<T>::value>
-	typename meta::enable_if<!Const, Derived>::type
+	typename meta::enable_if<!Const, Slice>::type
 	slice(size_type o)
 	noexcept
 	{
@@ -199,6 +200,7 @@ template <bool Const>
 class basic_memory_block
  : public crtp_base_memory_range<
 	basic_memory_block<Const>,
+	basic_memory_block<Const>,
 	typename meta::conditional<Const, const void, void>::type,
 	typename meta::conditional<Const, const byte, byte >::type
 >
@@ -207,7 +209,11 @@ private:
 	typedef typename meta::conditional<Const, const void, void >::type T; 
 	typedef typename meta::conditional<Const, const byte, byte >::type B; 
 
-	typedef crtp_base_memory_range<basic_memory_block<Const>, T, B> _base;
+	typedef crtp_base_memory_range<
+		basic_memory_block<Const>,
+		basic_memory_block<Const>,
+		T, B
+	> _base;
 
 	T* _addr;
 	std::size_t _size;
@@ -304,9 +310,9 @@ public:
 typedef basic_memory_block<false> memory_block;
 typedef basic_memory_block<true > const_memory_block;
 
-template <typename Derived, typename T, typename E>
+template <typename Derived, typename Slice, typename T, typename E>
 class crtp_memory_range
- : public crtp_base_memory_range<Derived, T, E>
+ : public crtp_base_memory_range<Derived, Slice, T, E>
 {
 public:
 	basic_memory_block<true> block(void) const

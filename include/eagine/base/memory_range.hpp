@@ -19,7 +19,11 @@ namespace base {
 
 template <typename T>
 class typed_memory_range
- : public crtp_memory_range<typed_memory_range<T>, T, T>
+ : public crtp_memory_range<
+	typed_memory_range<T>,
+	typed_memory_range<T>,
+	T, T
+>
 {
 private:
 	T* _addr;
@@ -82,9 +86,9 @@ public:
 typedef typed_memory_range<byte> byte_range;
 typedef typed_memory_range<const byte> const_byte_range;
 
-template <typename Derived, typename T>
+template <typename Derived, typename Slice, typename T>
 class crtp_derived_memory_range
- : public crtp_memory_range<Derived, T, T>
+ : public crtp_memory_range<Derived, Slice, T, T>
 {
 public:
 	typed_memory_range<const T> range(void) const

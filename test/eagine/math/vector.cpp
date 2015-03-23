@@ -1809,4 +1809,74 @@ BOOST_AUTO_TEST_CASE(math_vector_angle_between)
 	test_math_vector_angle_between<double>();
 }
 
+template <typename T, unsigned N, typename Range>
+void test_math_vector_data_range_T(const T(&a)[N], Range& r)
+{
+
+	BOOST_ASSERT(r.addr() != nullptr);
+	BOOST_ASSERT(r.size() == N);
+
+	const T* b = r.begin();
+	const T* e = r.end();
+
+	BOOST_ASSERT(b != e);
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		const T* o = r.offs(i);
+
+		BOOST_ASSERT(r[i] == a[i]);
+		BOOST_ASSERT(*o  == a[i]);
+	}
+
+	for(T e : r) { }
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		auto s = r.slice(i);
+		BOOST_ASSERT(s.size() == N-i);
+	}
+}
+
+template <typename T, unsigned N>
+void test_math_vector_data_T(void)
+{
+	T a[N];
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(N*N);
+	}
+
+	auto va = eagine::math::vector<T, N>::from(a, N);
+
+	auto d = data(va);
+	eagine::base::typed_memory_range<const T> r = d.range();
+
+	test_math_vector_data_range_T(a, d);
+	test_math_vector_data_range_T(a, r);
+}
+
+template <typename T>
+void test_math_vector_data(void)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_data_T<T, 2>();
+		test_math_vector_data_T<T, 3>();
+		test_math_vector_data_T<T, 4>();
+		test_math_vector_data_T<T, 5>();
+		test_math_vector_data_T<T, 6>();
+		test_math_vector_data_T<T, 7>();
+		test_math_vector_data_T<T, 8>();
+	}
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_data)
+{
+	test_math_vector_data<int>();
+	test_math_vector_data<float>();
+	test_math_vector_data<double>();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
