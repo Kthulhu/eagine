@@ -727,7 +727,8 @@ shuffle(
 	shuffle_mask<I...> m = shuffle_mask<I...>()
 ) noexcept
 {
-	return {vect::shuffle2<T, N>::apply(v1._v, v2._v, m)};
+	return vector<T,N>
+		{vect::shuffle2<T, N>::apply(v1._v, v2._v, m)};
 }
 
 // perpendicular
@@ -737,7 +738,8 @@ vector<T, 2>
 perpendicular(const vector<T, 2>& a)
 noexcept
 {
-	return {-a._v[1], a._v[0]};
+	return vector<T,2>
+		{-a._v[1], a._v[0]};
 }
 
 // cross
@@ -748,7 +750,7 @@ cross(const vector<T, 3>& a, const vector<T, 3>& b)
 noexcept
 {
 	typedef vect::shuffle<T, 3> _sh;
-	return {
+	return vector<T,3>{
 		_sh::template apply<1,2,0>(a._v)*
 		_sh::template apply<2,0,1>(b._v)-
 		_sh::template apply<2,0,1>(a._v)*
