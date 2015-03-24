@@ -43,6 +43,12 @@ public:
 	 : _base(_base::from(d, n))
 	{ }
 
+	inline
+	tmat(const T(&d)[R*C])
+	noexcept
+	 : _base(_base::from(d, R*C))
+	{ }
+
 private:
 	template <
 		typename ... P,
@@ -91,6 +97,21 @@ public:
 	tmat(const vector<P, RM?C:R>&... v)
 	noexcept
 	 : _base{{v._v...}}
+	{ }
+
+	template <
+		typename P,
+		unsigned M,
+		unsigned N,
+		typename = typename meta::enable_if<
+			meta::is_convertible<P,T>::value &&
+			(R<=M)&&(C<=N)
+		>::type
+	>
+	constexpr inline
+	tmat(const matrix<P,M,N,RM>& m)
+	noexcept
+	 : _base(_base::from(m))
 	{ }
 };
 

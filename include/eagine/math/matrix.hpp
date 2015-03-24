@@ -56,6 +56,36 @@ struct matrix
 		);
 	}
 
+	template <typename P, unsigned M, unsigned N, unsigned ... I>
+	static inline
+	matrix _from_hlp(
+		const matrix<P,M,N,RM>& m,
+		meta::unsigned_sequence<I...>
+	) noexcept
+	{
+		return matrix{{
+			vect::cast<
+				P,(RM?N:M),
+				T,(RM?C:R)
+			>::apply(m._v[I],T(0))...
+		}};
+	}
+
+	template <typename P, unsigned M, unsigned N>
+	static inline
+	typename meta::enable_if<
+		(R<=M)&&(C<=N),
+		matrix
+	>::type
+	from(const matrix<P,M,N,RM>& m)
+	noexcept
+	{
+		return _from_hlp(
+			m,
+			meta::make_unsigned_sequence<RM?R:C>()
+		);
+	}
+
 	inline
 	const vector<T, RM?C:R> operator [] (unsigned i) const
 	noexcept
