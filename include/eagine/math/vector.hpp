@@ -739,7 +739,7 @@ perpendicular(const vector<T, 2>& a)
 noexcept
 {
 	return vector<T,2>
-		{-a._v[1], a._v[0]};
+		{{-a._v[1], a._v[0]}};
 }
 
 // cross
