@@ -1,0 +1,66 @@
+/**
+ *  .file test/eagine/math/close_to.cpp
+ *
+ *  .author Matus Chochlik
+ *
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
+ *  Software License, Version 1.0. (See accompanying file
+ *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE eagine_math_close_to
+#include <boost/test/unit_test.hpp>
+
+#include <eagine/math/close_to.hpp>
+#include <cstdlib>
+#include <cmath>
+
+BOOST_AUTO_TEST_SUITE(math_close_to)
+
+template <typename T>
+void test_math_close_to_1(void)
+{
+	T a = T(std::rand());
+
+	using eagine::math::close_to;
+	BOOST_ASSERT((a <<close_to>> a));
+}
+
+BOOST_AUTO_TEST_CASE(math_close_to_1)
+{
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_close_to_1<short>();
+		test_math_close_to_1<int>();
+		test_math_close_to_1<long>();
+		test_math_close_to_1<float>();
+		test_math_close_to_1<double>();
+	}
+}
+
+template <typename T>
+void test_math_not_farther_from_1(void)
+{
+	T a = T(std::rand());
+	T b = -a;
+
+	using eagine::math::not_farther_from;
+	BOOST_ASSERT( (a <<not_farther_from>> a).than.eps());
+	BOOST_ASSERT( (a <<not_farther_from>> b).than.rel(2));
+}
+
+BOOST_AUTO_TEST_CASE(math_not_farther_from_1)
+{
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_not_farther_from_1<short>();
+		test_math_not_farther_from_1<int>();
+		test_math_not_farther_from_1<long>();
+		test_math_not_farther_from_1<float>();
+		test_math_not_farther_from_1<double>();
+	}
+}
+
+// TODO
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -1,7 +1,7 @@
 /**
  *  @file eagine/quantity/quantity.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,6 +13,7 @@
 #include <eagine/unit/fwd.hpp>
 #include <eagine/unit/traits.hpp>
 #include <eagine/unit/dimensionless.hpp>
+#include <eagine/math/close_to.hpp>
 #include <eagine/meta/type_traits.hpp>
 
 namespace eagine {
@@ -121,7 +122,8 @@ constexpr inline
 bool operator == (const quantity<U1, T>& a, const quantity<U2, T>& b)
 {
 	typedef typename value_conv<U2, U1>::type conv;
-	return a._v == conv::apply(b._v);
+	using math::close_to;
+	return (a._v <<close_to>> conv::apply(b._v));
 }
 
 template <typename U1, typename U2, typename T>
@@ -129,7 +131,8 @@ constexpr inline
 bool operator != (const quantity<U1, T>& a, const quantity<U2, T>& b)
 {
 	typedef typename value_conv<U2, U1>::type conv;
-	return a._v != conv::apply(b._v);
+	using math::close_to;
+	return not(a._v <<close_to>> conv::apply(b._v));
 }
 
 template <typename U1, typename U2, typename T>

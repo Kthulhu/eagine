@@ -227,7 +227,7 @@ private:
 	static std::uintptr_t _misalign(T* p, std::uintptr_t alignment)
 	noexcept
 	{
-		return _misalign((B*)p, alignment);
+		return _misalign(static_cast<B*>(p), alignment);
 	}
 public:
 	typedef typename _base::const_iterator const_iterator;
@@ -245,7 +245,7 @@ public:
 	basic_memory_block(T* bgn_, T* end_)
 	noexcept
 	 : _addr(bgn_)
-	 , _size(((B*)end_)-((B*)bgn_))
+	 , _size((static_cast<B*>(end_))-(static_cast<B*>(bgn_)))
 	{ }
 
 	basic_memory_block(T* addr_, std::size_t size_)
@@ -277,8 +277,8 @@ public:
 	noexcept
 	{
 		std::uintptr_t ma = _misalign(begin(), alignment);
-		return (const_iterator)(
-			((B*)begin())+
+		return static_cast<const_iterator>(
+			(begin())+
 			(ma?alignment-ma:0)
 		);
 	}
@@ -286,8 +286,8 @@ public:
 	const_iterator aligned_end(std::uintptr_t alignment) const
 	noexcept
 	{
-		return (const_iterator)(
-			((B*)end())-
+		return static_cast<const_iterator>(
+			(end())-
 			_misalign(end(), alignment)
 		);
 	}

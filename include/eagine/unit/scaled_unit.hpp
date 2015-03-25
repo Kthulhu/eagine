@@ -1,7 +1,7 @@
 /**
  *  @file eagine/unit/scaled_unit.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -71,7 +71,7 @@ struct value_conv<scaled_unit<D1, US, S>, unit<D2, S>>
 	template <typename T>
 	static constexpr inline T apply(T v)
 	{
-		return v*scaled_unit<D1, US, S>::scale::value;
+		return T(v*scaled_unit<D1, US, S>::scale::value);
 	}
 };
 

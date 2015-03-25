@@ -32,7 +32,7 @@ private:
 	T* _cast(typename meta::add_same_constness<T, void>::type* ptr)
 	noexcept
 	{
-		assert((std::uintptr_t)ptr % alignof(T) == 0);
+		assert(std::uintptr_t(ptr) % alignof(T) == 0);
 		return static_cast<T*>(ptr);
 	}
 public:

@@ -2,7 +2,7 @@
  *  @file eagine/base/alloc.hpp
  *  @brief Generic memory allocators.
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -30,9 +30,11 @@ struct byte_allocator
 	typedef byte value_type;
 	typedef std::size_t size_type;
 
-	virtual ~byte_allocator(void)
-	noexcept
-	{ }
+	byte_allocator(void) = default;
+	byte_allocator(const byte_allocator&) = default;
+	byte_allocator& operator = (const byte_allocator&) = default;
+
+	virtual ~byte_allocator(void) = default;
 
 	virtual
 	byte_allocator* duplicate(void)
@@ -204,7 +206,7 @@ public:
 	{
 		Final tmp = std::move(that);
 		tmp.deallocate(
-			(byte*)(void*)&that,
+			static_cast<byte*>(static_cast<void*>(&that)),
 			sizeof(Final),
 			alignof(Final)
 		);
@@ -505,7 +507,7 @@ public:
 			return nullptr;
 		}
 
-		byte* p = (byte*)std::malloc(n);
+		byte* p = static_cast<byte*>(std::malloc(n));
 
 		// TODO fix if misaligned ?
 		assert((reinterpret_cast<std::uintptr_t>(p) % a) == 0);
@@ -539,7 +541,7 @@ public:
 			return nullptr;
 		}
 
-		p = (byte*)std::realloc(p, n);
+		p = static_cast<byte*>(std::realloc(p, n));
 
 		// TODO fix if misaligned ?
 		assert((reinterpret_cast<std::uintptr_t>(p) % a) == 0);
@@ -708,7 +710,7 @@ public:
 	static inline
 	void construct(U* p, A&& ... a)
 	{
-		::new((void*)p) U(std::forward<A>(a)...);
+		::new(static_cast<void*>(p)) U(std::forward<A>(a)...);
 	}
 
 	template <typename U>

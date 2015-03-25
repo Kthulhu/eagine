@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/angle.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
@@ -65,6 +66,9 @@ BOOST_AUTO_TEST_CASE(math_angle_ctr_units)
 	eagine::math::angle<float> af5 = eagine::unit::quantity<eagine::unit::turn, float>(9);
 	eagine::math::angle<double> ad5 = eagine::unit::quantity<eagine::unit::turn, double>(0);
 
+	(void)af1; (void)af2; (void)af3; (void)af4; (void)af5; 
+	(void)ad1; (void)ad2; (void)ad3; (void)ad4; (void)ad5; 
+
 }
 
 BOOST_AUTO_TEST_CASE(math_angle_value1)
@@ -77,8 +81,10 @@ BOOST_AUTO_TEST_CASE(math_angle_value1)
 		eagine::math::angle<float> af(f);
 		eagine::math::angle<double> ad(d);
 
-		BOOST_ASSERT(value(af) == f);
-		BOOST_ASSERT(value(ad) == d);
+		using eagine::math::close_to;
+
+		BOOST_ASSERT((value(af) <<close_to>> f));
+		BOOST_ASSERT((value(ad) <<close_to>> d));
 	}
 }
 
@@ -99,19 +105,21 @@ BOOST_AUTO_TEST_CASE(math_angle_compare_eq)
 		eagine::math::angle<double> ad1(d1);
 		eagine::math::angle<double> ad2(d2);
 
-		// ==
-		BOOST_ASSERT((af1 == af2) == (af2 == af1));
-		BOOST_ASSERT((ad1 == ad2) == (ad2 == ad1));
+		using eagine::math::close_to;
 
-		BOOST_ASSERT((af1 == af2) == (f1 == f2));
-		BOOST_ASSERT((ad1 == ad2) == (d1 == d2));
+		// ==
+		BOOST_ASSERT((af1 == af2) == (af2 <<close_to>> af1));
+		BOOST_ASSERT((ad1 == ad2) == (ad2 <<close_to>> ad1));
+
+		BOOST_ASSERT((af1 == af2) == (f1 <<close_to>> f2));
+		BOOST_ASSERT((ad1 == ad2) == (d1 <<close_to>> d2));
 
 		// !=
-		BOOST_ASSERT((af1 != af2) == (af2 != af1));
-		BOOST_ASSERT((ad1 != ad2) == (ad2 != ad1));
+		BOOST_ASSERT((af1 != af2) == not(af2 <<close_to>> af1));
+		BOOST_ASSERT((ad1 != ad2) == not(ad2 <<close_to>> ad1));
 
-		BOOST_ASSERT((af1 != af2) == (f1 != f2));
-		BOOST_ASSERT((ad1 != ad2) == (d1 != d2));
+		BOOST_ASSERT((af1 != af2) == not(f1 <<close_to>> f2));
+		BOOST_ASSERT((ad1 != ad2) == not(d1 <<close_to>> d2));
 
 		// <
 		BOOST_ASSERT((af1 <  af2) == (af2 >  af1));
@@ -220,8 +228,10 @@ BOOST_AUTO_TEST_CASE(math_angle_ratio)
 		eagine::math::angle<float> afa(f1);
 		eagine::math::angle<float> afb(f2);
 
-		BOOST_ASSERT(value(afa/afb) == f1/f2);
-		BOOST_ASSERT(value(afb/afa) == f2/f1);
+		using eagine::math::close_to;
+
+		BOOST_ASSERT((value(afa/afb) <<close_to>> f1/f2));
+		BOOST_ASSERT((value(afb/afa) <<close_to>> f2/f1));
 	}
 }
 

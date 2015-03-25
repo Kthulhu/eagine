@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_1)
 
 	for(unsigned i=0; i!=n; ++i)
 	{
-		v.push_back(new (a.allocate(1)) int(i));
+		v.push_back(new (a.allocate(1)) int(int(i)));
 	}
 
 	for(unsigned i=n; i!=0; --i)
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_1)
 
 	for(unsigned i=0; i!=n; ++i)
 	{
-		v.push_back(new (a.allocate(1)) int(i));
+		v.push_back(new (a.allocate(1)) int(int(i)));
 	}
 
 	for(unsigned i=n; i!=0; --i)
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_3)
 		v.push_back(std::vector<int>());
 		for(unsigned j=0; j!=m; ++j)
 		{
-			v.back().push_back(j);
+			v.back().push_back(int(j));
 		}
 	}
 
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_4)
 		v.push_back(std::vector<int, eagine::base::allocator<int>>(a));
 		for(unsigned j=0; j!=m; ++j)
 		{
-			v.back().push_back(j);
+			v.back().push_back(int(j));
 		}
 	}
 

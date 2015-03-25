@@ -8,50 +8,32 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <boost/test/unit_test.hpp>
-#include <type_traits>
+#include <eagine/math/close_to.hpp>
 
 template <typename T>
 inline
-bool test_math_close(T a, T b, std::true_type)
+T test_math_close_eps(T*)
 {
-	return a == b;
+	return T(0);
 }
 
 inline
-bool test_math_close(float a, float b, std::false_type)
+float test_math_close_eps(float*)
 {
-	using namespace boost::test_tools;
-
-	float ofs = (a==0)?((b<0)?-10:10):((a<0)?-10:10);
-
-	return check_is_close(
-		a+ofs, b+ofs,
-		percent_tolerance_t<float>(0.1f),
-		FPC_STRONG
-	);
+	return 0.1f;
 }
 
 inline
-bool test_math_close(double a, double b, std::false_type)
+double test_math_close_eps(double*)
 {
-	using namespace boost::test_tools;
-
-	double ofs = (a==0)?((b<0)?-10:10):((a<0)?-10:10);
-
-	return check_is_close(
-		a+ofs, b+ofs,
-		percent_tolerance_t<double>(0.001),
-		FPC_STRONG
-	);
+	return 0.001;
 }
 
 template <typename T>
 inline
 bool test_math_close(T a, T b)
 {
-	return test_math_close(
-		a, b,
-		typename std::is_integral<T>::type()
-	);
+	using eagine::math::not_farther_from;
+	return (a <<not_farther_from>> b).than(test_math_close_eps(&a));
 }
 

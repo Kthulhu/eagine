@@ -206,7 +206,7 @@ struct axis<T, 4, I>
 {
 	static constexpr
 	typename data<T, 4>::type
-	apply(T v)
+	apply(T)
 	noexcept
 	{
 		return typename data<T, 4>::type

@@ -113,7 +113,7 @@ struct scalar
 	scalar make(T v)
 	noexcept
 	{
-		return _make(_vdB());
+		return _make(v, _vdB());
 	}
 
 	constexpr inline
@@ -396,7 +396,7 @@ struct vector
 		return this->swizzle_by(swizzle_mask<T, I...>{c});
 	}
 
-#if !EAGINE_NO_MATH_VECTOR_SWIZZLES
+#if defined(EAGINE_NO_MATH_VECTOR_SWIZZLES) && !EAGINE_NO_MATH_VECTOR_SWIZZLES
 #include <eagine/math/vector_swizzles.ipp>
 #endif
 

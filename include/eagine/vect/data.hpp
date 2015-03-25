@@ -264,10 +264,10 @@ struct _vec_data<T,8> : _gnuc_vec_data<T,8>
 template <unsigned N>
 struct _has_vec_data<int8_t, N>
  : meta::boolean_constant<
-#if __SSE2__
+#if defined(__SSE2__) && __SSE2__
 	((N==2)||(N==4)||(N==8)||(N==16)) ||
 #endif
-#if __MMX__
+#if defined(__MMX__) && __MMX__
 	((N==2)||(N==4)||(N==8)) ||
 #endif
 	false
@@ -278,10 +278,10 @@ struct _has_vec_data<int8_t, N>
 template <unsigned N>
 struct _has_vec_data<int16_t, N>
  : meta::boolean_constant<
-#if __SSE2__
+#if defined(__SSE2__) && __SSE2__
 	((N==2)||(N==4)||(N==8)) ||
 #endif
-#if __MMX__
+#if defined(__MMX__) && __MMX__
 	((N==2)||(N==4)) ||
 #endif
 	false
@@ -292,10 +292,10 @@ struct _has_vec_data<int16_t, N>
 template <unsigned N>
 struct _has_vec_data<int32_t, N>
  : meta::boolean_constant<
-#if __SSE2__
+#if defined(__SSE2__) && __SSE2__
 	((N==2)||(N==4)) ||
 #endif
-#if __MMX__
+#if defined(__MMX__) && __MMX__
 	(N==2) ||
 #endif
 	false
@@ -306,7 +306,7 @@ struct _has_vec_data<int32_t, N>
 template <unsigned N>
 struct _has_vec_data<int64_t, N>
  : meta::boolean_constant<
-#if __SSE2__
+#if defined(__SSE2__) && __SSE2__
 	(N==2) ||
 #endif
 	false
@@ -317,10 +317,10 @@ struct _has_vec_data<int64_t, N>
 template <unsigned N>
 struct _has_vec_data<float, N>
  : meta::boolean_constant<
-#if __AVX__
+#if defined(__AVX__) && __AVX__
 	((N==2)||(N==3)||(N==4)) ||
 #endif
-#if __SSE__
+#if defined(__SSE__) && __SSE__
 	((N==2)||(N==4)) ||
 #endif
 	false
@@ -331,10 +331,10 @@ struct _has_vec_data<float, N>
 template <unsigned N>
 struct _has_vec_data<double, N>
  : meta::boolean_constant<
-#if __AVX__
+#if defined(__AVX__) && __AVX__
 	((N==2)||(N==4)) ||
 #endif
-#if __SSE2__
+#if defined(__SSE2__) && __SSE2__
 	(N==2) ||
 #endif
 	false
