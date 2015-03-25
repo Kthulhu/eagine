@@ -22,12 +22,14 @@ BOOST_AUTO_TEST_SUITE(base_guid)
 BOOST_AUTO_TEST_CASE(base_guid_default_construction)
 {
 	eagine::base::guid g;
+	(void)g;
 }
 
 BOOST_AUTO_TEST_CASE(base_guid_copy_construction)
 {
 	eagine::base::guid g1;
 	eagine::base::guid g2(g1);
+	(void)g2;
 }
 
 BOOST_AUTO_TEST_CASE(base_guid_uniqueness)

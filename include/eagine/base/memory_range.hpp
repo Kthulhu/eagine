@@ -12,7 +12,6 @@
 #define EAGINE_BASE_MEMORY_RANGE_1408161723_HPP
 
 #include <eagine/base/memory_block.hpp>
-#include <cstdint>
 
 namespace eagine {
 namespace base {
@@ -35,6 +34,14 @@ private:
 		assert(std::uintptr_t(ptr) % alignof(T) == 0);
 		return static_cast<T*>(ptr);
 	}
+
+	static inline
+	std::size_t _dist(T* b, T* e)
+	noexcept
+	{
+		assert(b <= e);
+		return std::size_t(e-b);
+	}
 public:
 	typedef basic_memory_block<meta::is_const<T>::value> raw_block;
 
@@ -53,7 +60,7 @@ public:
 	typed_memory_range(T* bgn_, T* end_)
 	noexcept
 	 : _addr(bgn_)
-	 , _size(end_-bgn_)
+	 , _size(_dist(bgn_, end_))
 	{ }
 
 	typed_memory_range(const raw_block& raw)

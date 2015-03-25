@@ -218,13 +218,23 @@ private:
 	T* _addr;
 	std::size_t _size;
 
-	static std::uintptr_t _misalign(B* p, std::uintptr_t alignment)
+	static inline
+	std::size_t _dist(B* b, B* e)
+	noexcept
+	{
+		assert(b <= e);
+		return std::size_t(e-b);
+	}
+
+	static
+	std::uintptr_t _misalign(B* p, std::uintptr_t alignment)
 	noexcept
 	{
 		return (std::uintptr_t(p) % alignment);
 	}
 
-	static std::uintptr_t _misalign(T* p, std::uintptr_t alignment)
+	static
+	std::uintptr_t _misalign(T* p, std::uintptr_t alignment)
 	noexcept
 	{
 		return _misalign(static_cast<B*>(p), alignment);
@@ -245,7 +255,7 @@ public:
 	basic_memory_block(T* bgn_, T* end_)
 	noexcept
 	 : _addr(bgn_)
-	 , _size((static_cast<B*>(end_))-(static_cast<B*>(bgn_)))
+	 , _size(_dist(static_cast<B*>(bgn_),static_cast<B*>(end_)))
 	{ }
 
 	basic_memory_block(T* addr_, std::size_t size_)

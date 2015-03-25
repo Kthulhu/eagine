@@ -27,6 +27,8 @@ void test_base_memory_buffer_construction_1()
 	typename MemoryBuffer::iterator pb = mb.begin();
 	typename MemoryBuffer::iterator pe = mb.end();
 	typename MemoryBuffer::iterator po = mb.offs(0);
+
+	(void)pb; (void)pe; (void)po;
 }
 
 BOOST_AUTO_TEST_CASE(base_memory_buffer_construction_1)
@@ -109,13 +111,14 @@ BOOST_AUTO_TEST_CASE(base_memory_buffer_begin_end_offs_1)
 template <typename MemoryBuffer>
 void test_base_memory_buffer_begin_end_offs_2(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
 	MemoryBuffer mb(n);
 
 	for(unsigned i=0; i<n; ++i)
 	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
+		b[i] = eagine::base::byte(i);
 		mb[i] = b[i];
 	}
 
@@ -143,12 +146,13 @@ BOOST_AUTO_TEST_CASE(base_memory_buffer_begin_end_offs_2)
 template <typename MemoryBuffer>
 void test_base_memory_buffer_element(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 	MemoryBuffer mb(n);
 
 	for(unsigned i=0; i<n; ++i)
 	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
+		b[i] = eagine::base::byte(i);
 		mb[i] = b[i];
 	}
 

@@ -16,11 +16,8 @@
 namespace eagine {
 namespace math {
 
-struct operator_close_to { };
-static constexpr operator_close_to close_to = {};
-
-struct operator_not_farther_from { };
-static constexpr operator_not_farther_from not_farther_from = {};
+struct operator_close_to;
+struct operator_not_farther_from;
 
 template <typename T>
 struct half_operation_close_to
@@ -37,7 +34,7 @@ struct half_operation_not_farther_from
 template <typename T>
 static constexpr inline
 half_operation_close_to<T>
-operator << (T loperand, operator_close_to)
+operator << (T loperand, const operator_close_to&)
 noexcept
 {
 	return {loperand};
@@ -46,7 +43,7 @@ noexcept
 template <typename T>
 static constexpr inline
 half_operation_not_farther_from<T>
-operator << (T loperand, operator_not_farther_from)
+operator << (T loperand, const operator_not_farther_from&)
 noexcept
 {
 	return {loperand};
@@ -208,6 +205,32 @@ noexcept
 {
 	return {{{lop._loperand,roperand}}};
 }
+
+struct operator_close_to
+{
+	template <typename T>
+	constexpr inline
+	full_operation_close_to<T>
+	operator()(T loperand, T roperand) const
+	noexcept
+	{
+		return {{loperand, roperand}};
+	}
+};
+static constexpr operator_close_to close_to = {};
+
+struct operator_not_farther_from
+{
+	template <typename T>
+	constexpr inline
+	full_operation_not_farther_from<T>
+	operator()(T loperand, T roperand) const
+	noexcept
+	{
+		return {{{loperand, roperand}}};
+	}
+};
+static constexpr operator_not_farther_from not_farther_from = {};
 
 } // namespace math
 } // namespace eagine

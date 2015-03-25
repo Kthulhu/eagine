@@ -13,6 +13,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 		-Wno-global-constructors
 		-Wno-exit-time-destructors
 		-Wno-date-time
+		-Wno-weak-vtables
+		-Wno-padded
 	)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	add_definitions(-pedantic -Werror -Wall -Wextra -Wshadow)

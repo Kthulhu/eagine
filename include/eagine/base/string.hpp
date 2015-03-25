@@ -837,10 +837,9 @@ noexcept
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
 
-	std::ptrdiff_t lcmp = s1s - s2s;
 	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
 
-	return (scmp < 0) || ((scmp == 0) && (lcmp < 0));
+	return (scmp < 0) || ((scmp == 0) && (s1s < s2s));
 }
 
 // operator >  (S1, S2)
@@ -859,10 +858,9 @@ noexcept
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
 
-	std::ptrdiff_t lcmp = s1s - s2s;
 	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
 
-	return (scmp > 0) || ((scmp == 0) && (lcmp > 0));
+	return (scmp > 0) || ((scmp == 0) && (s1s > s2s));
 }
 
 // operator <= (S1, S2)
@@ -881,10 +879,9 @@ noexcept
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
 
-	std::ptrdiff_t lcmp = s1s - s2s;
 	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
 
-	return (scmp < 0) || ((scmp == 0) && (lcmp <= 0));
+	return (scmp < 0) || ((scmp == 0) && (s1s <= s2s));
 }
 
 // operator >= (S1, S2)
@@ -903,10 +900,9 @@ noexcept
 	std::size_t s1s = s1.size();
 	std::size_t s2s = s2.size();
 
-	std::ptrdiff_t lcmp = s1s - s2s;
 	int scmp = cht::compare(s1.data(), s2.data(), s1s<s2s?s1s:s2s);
 
-	return (scmp > 0) || ((scmp == 0) && (lcmp >= 0));
+	return (scmp > 0) || ((scmp == 0) && (s1s >= s2s));
 }
 
 // operator + (S1, S2)

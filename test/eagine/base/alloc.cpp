@@ -4,7 +4,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -337,16 +337,16 @@ BOOST_AUTO_TEST_CASE(base_alloc_vector_5)
 
 	const unsigned n = 1000+std::rand()%1000;
 
-	std::vector<std::shared_ptr<std::pair<long, double>>> v;
+	std::vector<std::shared_ptr<std::pair<unsigned, unsigned>>> v;
 
 	for(unsigned i=0; i!=n; ++i)
 	{
-		v.push_back(std::allocate_shared<std::pair<long, double>>(a, i, i));
+		v.push_back(std::allocate_shared<std::pair<unsigned, unsigned>>(a, i, i+1));
 	}
 
 	for(unsigned i=n; i!=0; --i)
 	{
-		BOOST_ASSERT(v.back()->second == double(i-1));
+		BOOST_ASSERT(v.back()->second == i);
 		v.pop_back();
 	}
 }

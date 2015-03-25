@@ -34,7 +34,9 @@ struct byte_allocator
 	byte_allocator(const byte_allocator&) = default;
 	byte_allocator& operator = (const byte_allocator&) = default;
 
-	virtual ~byte_allocator(void) = default;
+	virtual
+	~byte_allocator(void)
+	noexcept = default;
 
 	virtual
 	byte_allocator* duplicate(void)
@@ -165,6 +167,9 @@ public:
 	byte_allocator_impl(void) = default;
 	byte_allocator_impl(byte_allocator_impl&&) = default;
 	byte_allocator_impl(const byte_allocator_impl&) = delete;
+
+	byte_allocator_impl& operator = (byte_allocator_impl&&) = default;
+	byte_allocator_impl& operator = (const byte_allocator_impl&) = delete;
 
 	byte_allocator* duplicate(void)
 	noexcept override

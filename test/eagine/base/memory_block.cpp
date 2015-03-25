@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/memory_block.hpp>
+#include <vector>
 
 BOOST_AUTO_TEST_SUITE(base_memory_block)
 
@@ -27,6 +28,8 @@ void test_base_memory_block_construction_1()
 	typename MemoryBlock::iterator pb = mb.begin();
 	typename MemoryBlock::iterator pe = mb.end();
 	typename MemoryBlock::iterator po = mb.offs(0);
+
+	(void)pb; (void)pe; (void)po;
 }
 
 BOOST_AUTO_TEST_CASE(base_memory_block_construction_1)
@@ -42,11 +45,12 @@ BOOST_AUTO_TEST_CASE(base_memory_block_construction_1)
 template <typename MemoryBlock>
 void test_base_memory_block_construction_2(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
-	MemoryBlock mb((void*)b, (void*)(b+n));
+	MemoryBlock mb(b, b+n);
 
-	BOOST_ASSERT(mb.addr() == (void*)b);
+	BOOST_ASSERT(mb.addr() == b);
 	BOOST_ASSERT(mb.size() == n);
 	BOOST_ASSERT(mb.empty() == (n == 0));
 
@@ -75,11 +79,12 @@ BOOST_AUTO_TEST_CASE(base_memory_block_construction_2)
 template <typename MemoryBlock>
 void test_base_memory_block_construction_3(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
-	MemoryBlock mb((void*)b, n);
+	MemoryBlock mb(b, n);
 
-	BOOST_ASSERT(mb.addr() == (void*)b);
+	BOOST_ASSERT(mb.addr() == b);
 	BOOST_ASSERT(mb.size() == n);
 	BOOST_ASSERT(mb.empty() == (n == 0));
 
@@ -128,19 +133,23 @@ BOOST_AUTO_TEST_CASE(base_memory_block_begin_end_offs_1)
 template <typename MemoryBlock>
 void test_base_memory_block_begin_end_offs_2(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
 	for(unsigned i=0; i<n; ++i)
 	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
+		v[i] = eagine::base::byte(i);
 	}
 
-	MemoryBlock mb((void*)b, (void*)(b+n));
+	MemoryBlock mb(b, b+n);
 
 	BOOST_ASSERT((mb.begin() == mb.end()) == (n == 0));
 	BOOST_ASSERT((mb.begin() != mb.end()) == (n != 0));
 
-	BOOST_ASSERT(*mb.begin() == b[0]);
+	if(n > 0)
+	{
+		BOOST_ASSERT(*mb.begin() == b[0]);
+	}
 
 	for(std::size_t i = 0; i<n; ++i)
 	{
@@ -164,14 +173,15 @@ BOOST_AUTO_TEST_CASE(base_memory_block_begin_end_offs_2)
 template <typename MemoryBlock>
 void test_base_memory_block_element(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
 	for(unsigned i=0; i<n; ++i)
 	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
+		b[i] = eagine::base::byte(i);
 	}
 
-	MemoryBlock mb((void*)b, (void*)(b+n));
+	MemoryBlock mb(b, b+n);
 
 	for(std::size_t i = 0; i<n; ++i)
 	{
@@ -195,14 +205,15 @@ BOOST_AUTO_TEST_CASE(base_memory_block_element)
 template <typename MemoryBlock>
 void test_base_memory_block_slice_1(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
 	for(unsigned i=0; i<n; ++i)
 	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
+		b[i] = eagine::base::byte(i);
 	}
 
-	MemoryBlock mb((void*)b, n);
+	MemoryBlock mb(b, n);
 
 	for(std::size_t i = 0; i<n; ++i)
 	{
@@ -234,14 +245,15 @@ BOOST_AUTO_TEST_CASE(base_memory_block_slice_1)
 template <typename MemoryBlock>
 void test_base_memory_block_slice_2(std::size_t n)
 {
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
 	for(unsigned i=0; i<n; ++i)
 	{
-		b[i] = eagine::base::byte(i & (~eagine::base::byte(0)));
+		b[i] = eagine::base::byte(i);
 	}
 
-	MemoryBlock mb((void*)b, n);
+	MemoryBlock mb(b, n);
 
 	for(std::size_t i = 0; i<n; ++i)
 	{
@@ -270,14 +282,15 @@ BOOST_AUTO_TEST_CASE(base_memory_block_slice_2)
 BOOST_AUTO_TEST_CASE(base_memory_block_compare)
 {
 	static const std::size_t n = 512;
-	eagine::base::byte b[n];
+	std::vector<eagine::base::byte> v(n);
+	eagine::base::byte* b=v.data();
 
 	for(unsigned k=0; k<1000; ++k)
 	{
-		std::size_t i1 = std::rand() % n;
-		std::size_t i2 = std::rand() % n;
-		std::size_t l1 = std::rand() % (n-i1);
-		std::size_t l2 = std::rand() % (n-i2);
+		std::size_t i1 = std::size_t(std::rand()) % n;
+		std::size_t i2 = std::size_t(std::rand()) % n;
+		std::size_t l1 = std::size_t(std::rand()) % (n-i1);
+		std::size_t l2 = std::size_t(std::rand()) % (n-i2);
 
 		if(std::rand() % 10 == 0)
 		{
