@@ -1,7 +1,7 @@
 /**
  *  @file eagine/unit/info.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -137,6 +137,21 @@ struct info<scaled_unit<Dims, UnitScales, System>>
 	{ };
 	typedef typename bits::apply<_sym_hlp, Dims>::type symbol;
 };
+
+// dimension_name(Dimension)
+template <typename Dimension>
+static inline typename meta::enable_if<
+	is_dimension<Dimension>::value,
+	eagine::base::cstrref
+>::type dimension_name(const Dimension& = Dimension())
+noexcept
+{
+	typedef typename info<Dimension>::name ctn;
+	return eagine::base::cstrref(
+		meta::c_str<ctn>::value,
+		meta:: size<ctn>::value
+	);
+}
 
 // quantity_name(Unit)
 template <typename Unit>

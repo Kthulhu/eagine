@@ -150,6 +150,11 @@ struct dim_sub<nil_t, nil_t>
  : dimless
 { };
 
+template <>
+struct dim_sub<nil_t, dims<nil_t, nil_t>>
+ : dimless
+{ };
+
 template <typename H, typename T>
 struct dim_sub<dims<H, T>, nil_t>
  : dims<H, T>

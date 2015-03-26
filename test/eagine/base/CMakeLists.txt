@@ -18,5 +18,5 @@ eagine_exec_test(memory_range)
 eagine_exec_test(locale)
 eagine_exec_test(format)
 eagine_exec_test(guid)
-eagine_exec_test(path)
+
 eagine_exec_test(sim_clock)

@@ -4,7 +4,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2013 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -21,17 +21,20 @@ BOOST_AUTO_TEST_SUITE(base_sim_clock)
 BOOST_AUTO_TEST_CASE(base_sim_clock_default_construction)
 {
 	eagine::base::sim_clock c;
+	(void)c;
 }
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_init_construction)
 {
 	eagine::base::sim_clock c(1.5);
+	(void)c;
 }
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_copy_construction)
 {
 	eagine::base::sim_clock c1;
 	eagine::base::sim_clock c2(c1);
+	(void)c2;
 }
 
 BOOST_AUTO_TEST_CASE(base_sim_clock_update_time)
@@ -44,7 +47,9 @@ BOOST_AUTO_TEST_CASE(base_sim_clock_update_time)
 	{
 		t += (10.0*irm*std::rand());
 		c.update(t);
-		BOOST_ASSERT(c.time() == t);
+
+		using eagine::math::close_to;
+		BOOST_ASSERT(c.time() <<close_to>> t);
 	}
 }
 
@@ -59,7 +64,9 @@ BOOST_AUTO_TEST_CASE(base_sim_clock_advance_time)
 		double i = 10.0*irm*std::rand();
 		t += i;
 		c.advance(i);
-		BOOST_ASSERT(c.time() == t);
+
+		using eagine::math::close_to;
+		BOOST_ASSERT(c.time() <<close_to>> t);
 	}
 }
 

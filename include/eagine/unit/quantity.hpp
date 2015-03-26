@@ -29,6 +29,7 @@ struct quantity
 
 	constexpr quantity(void) = default;
 	constexpr quantity(const quantity&) = default;
+	quantity& operator = (const quantity&) = default;
 
 	explicit constexpr
 	quantity(T v)
@@ -70,6 +71,7 @@ struct quantity<unit<dimensionless, S>, T>
 
 	constexpr quantity(void) = default;
 	constexpr quantity(const quantity&) = default;
+	quantity& operator = (const quantity&) = default;
 
 	explicit constexpr
 	quantity(T v)
@@ -95,6 +97,7 @@ struct quantity<scaled_unit<dimensionless, US, S>, T>
 
 	constexpr quantity(void) = default;
 	constexpr quantity(const quantity&) = default;
+	quantity& operator = (const quantity&) = default;
 
 	explicit constexpr
 	quantity(T v)

@@ -24,6 +24,7 @@ void test_math_close_to_1(void)
 
 	using eagine::math::close_to;
 	BOOST_ASSERT((a <<close_to>> a));
+	BOOST_ASSERT(close_to(a, a));
 }
 
 BOOST_AUTO_TEST_CASE(math_close_to_1)
@@ -45,8 +46,11 @@ void test_math_not_farther_from_1(void)
 	T b = -a;
 
 	using eagine::math::not_farther_from;
-	BOOST_ASSERT( (a <<not_farther_from>> a).than.eps());
-	BOOST_ASSERT( (a <<not_farther_from>> b).than.rel(2));
+	BOOST_ASSERT((a <<not_farther_from>> a).than.eps());
+	BOOST_ASSERT(not_farther_from(a, a).than.eps());
+
+	BOOST_ASSERT((a <<not_farther_from>> b).than.rel(2));
+	BOOST_ASSERT(not_farther_from(a, b).than.rel(2));
 }
 
 BOOST_AUTO_TEST_CASE(math_not_farther_from_1)
