@@ -145,6 +145,68 @@ BOOST_AUTO_TEST_CASE(unit_quantity_subtract)
 	do_test_unit_quantity<test_unit_quantity_subtract>();
 }
 
+template <typename Unit1>
+struct test_unit_quantity_multiply
+{
+	template <typename Unit2>
+	struct tester
+	{
+		void operator()(void) const
+		{
+			using eagine::unit::operator*;
+
+			eagine::unit::quantity<Unit1> q1;
+			eagine::unit::quantity<Unit2> q2;
+
+			typedef decltype(Unit1()*Unit2()) Unit3;
+
+			eagine::unit::quantity<Unit3> q3 = q1*q2;
+			(void)q3;
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_quantity<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_quantity_multiply)
+{
+	do_test_unit_quantity<test_unit_quantity_multiply>();
+}
+
+template <typename Unit1>
+struct test_unit_quantity_divide
+{
+	template <typename Unit2>
+	struct tester
+	{
+		void operator()(void) const
+		{
+			using eagine::unit::operator/;
+
+			eagine::unit::quantity<Unit1> q1;
+			eagine::unit::quantity<Unit2> q2;
+
+			typedef decltype(Unit1()/Unit2()) Unit3;
+
+			eagine::unit::quantity<Unit3> q3 = q1/q2;
+			(void)q3;
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_quantity<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_quantity_divide)
+{
+	do_test_unit_quantity<test_unit_quantity_divide>();
+}
+
 // TODO
 
 BOOST_AUTO_TEST_SUITE_END()

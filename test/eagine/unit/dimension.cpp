@@ -16,6 +16,72 @@
 BOOST_AUTO_TEST_SUITE(unit_dimension)
 
 template <template <class> class Test>
+void do_test_unit_base_dimension(void)
+{
+	Test<eagine::unit::base::angle>()();
+	Test<eagine::unit::base::mass>()();
+	Test<eagine::unit::base::length>()();
+	Test<eagine::unit::base::time>()();
+	Test<eagine::unit::base::temperature>()();
+	Test<eagine::unit::base::electric_current>()();
+	Test<eagine::unit::base::number_of_cycles>()();
+	Test<eagine::unit::base::number_of_decays>()();
+	Test<eagine::unit::base::luminous_intensity>()();
+	Test<eagine::unit::base::amount_of_substance>()();
+	Test<eagine::unit::base::solid_angle>()();
+}
+
+template <template <class,class> class Test>
+void do_test_unit_dimension_base_dimension(void)
+{
+	Test<
+		eagine::unit::angle,
+		eagine::unit::base::angle
+	>()();
+	Test<
+		eagine::unit::mass,
+		eagine::unit::base::mass
+	>()();
+	Test<
+		eagine::unit::length,
+		eagine::unit::base::length
+	>()();
+	Test<
+		eagine::unit::time,
+		eagine::unit::base::time
+	>()();
+
+	Test<
+		eagine::unit::temperature,
+		eagine::unit::base::temperature
+	>()();
+	Test<
+		eagine::unit::electric_current,
+		eagine::unit::base::electric_current
+	>()();
+	Test<
+		eagine::unit::number_of_cycles,
+		eagine::unit::base::number_of_cycles
+	>()();
+	Test<
+		eagine::unit::number_of_decays,
+		eagine::unit::base::number_of_decays
+	>()();
+	Test<
+		eagine::unit::luminous_intensity,
+		eagine::unit::base::luminous_intensity
+	>()();
+	Test<
+		eagine::unit::amount_of_substance,
+		eagine::unit::base::amount_of_substance
+	>()();
+	Test<
+		eagine::unit::solid_angle,
+		eagine::unit::base::solid_angle
+	>()();
+}
+
+template <template <class> class Test>
 void do_test_unit_dimension(void)
 {
 	Test<eagine::unit::angle>()();
@@ -30,6 +96,36 @@ void do_test_unit_dimension(void)
 	Test<eagine::unit::number_of_decays>()();
 	Test<eagine::unit::luminous_intensity>()();
 	Test<eagine::unit::amount_of_substance>()();
+}
+
+template <typename Dimension, typename BaseDim1>
+struct test_unit_dimension_base_dimension_power
+{
+	template <typename BaseDim2>
+	struct tester
+	{
+		void operator()(void) const
+		{
+			BOOST_ASSERT((
+				eagine::unit::base_dimension_power<
+					Dimension,
+					BaseDim2
+				>() == std::is_same<BaseDim1,BaseDim2>()?1:0
+			));
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_base_dimension<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_dimension_base_dimension_power)
+{
+	do_test_unit_dimension_base_dimension<
+		test_unit_dimension_base_dimension_power
+	>();
 }
 
 template <typename Dimension>
@@ -100,6 +196,35 @@ struct test_unit_dimension_multiply
 	template <typename Dimension2>
 	struct tester
 	{
+		template <typename BaseDim>
+		struct tester2
+		{
+			void operator()(void) const
+			{
+				using eagine::unit::operator*;
+
+				Dimension1 d1;
+				Dimension2 d2;
+
+				typedef decltype(d1*d2) Dimension3;
+
+				BOOST_ASSERT((
+					eagine::unit::base_dimension_power<
+						Dimension1,
+						BaseDim
+					>() +
+					eagine::unit::base_dimension_power<
+						Dimension2,
+						BaseDim
+					>()==
+					eagine::unit::base_dimension_power<
+						Dimension3,
+						BaseDim
+					>()
+				));
+			}
+		};
+
 		void operator()(void) const
 		{
 			using eagine::unit::operator*;
@@ -110,6 +235,8 @@ struct test_unit_dimension_multiply
 			typedef decltype(d1*d2) Dimension3;
 
 			BOOST_ASSERT(eagine::unit::is_dimension<Dimension3>());
+
+			do_test_unit_base_dimension<tester2>();
 		}
 	};
 
@@ -130,6 +257,35 @@ struct test_unit_dimension_divide
 	template <typename Dimension2>
 	struct tester
 	{
+		template <typename BaseDim>
+		struct tester2
+		{
+			void operator()(void) const
+			{
+				using eagine::unit::operator/;
+
+				Dimension1 d1;
+				Dimension2 d2;
+
+				typedef decltype(d1/d2) Dimension3;
+
+				BOOST_ASSERT((
+					eagine::unit::base_dimension_power<
+						Dimension1,
+						BaseDim
+					>() -
+					eagine::unit::base_dimension_power<
+						Dimension2,
+						BaseDim
+					>()==
+					eagine::unit::base_dimension_power<
+						Dimension3,
+						BaseDim
+					>()
+				));
+			}
+		};
+
 		void operator()(void) const
 		{
 			using eagine::unit::operator/;
@@ -140,6 +296,8 @@ struct test_unit_dimension_divide
 			typedef decltype(d1/d2) Dimension3;
 
 			BOOST_ASSERT(eagine::unit::is_dimension<Dimension3>());
+
+			do_test_unit_base_dimension<tester2>();
 		}
 	};
 

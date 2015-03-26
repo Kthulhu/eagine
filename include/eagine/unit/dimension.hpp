@@ -41,6 +41,10 @@ typename meta::enable_if<
 	typename bits::dim_sub<D1, D2>::type
 >::type operator / (D1, D2);
 
+// base_dimension_power
+template <typename Dim, typename BaseDim>
+using base_dimension_power = bits::get_pow<Dim, BaseDim>;
+
 // basic dimensions
 typedef dimension<base::angle,       1> angle;
 typedef dimension<base::solid_angle, 1> solid_angle;

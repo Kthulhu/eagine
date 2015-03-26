@@ -180,7 +180,10 @@ struct dim_sub<dims<H, T>, dimless>
 
 template <typename D, typename P, typename T>
 struct dim_sub<dimless, dims<dim_pow<D, P>, T>>
- : dims<dim_pow<D, typename meta::negate<P>::type>, T>
+ : dims<
+	dim_pow<D, typename meta::negate<P>::type>,
+	typename dim_sub<nil_t, T>::type
+>
 { };
 
 template <
@@ -229,6 +232,35 @@ struct dim_sub<
 >::type
 { };
 
+// get_pow
+template <typename Dims, typename Dim>
+struct get_pow;
+
+// get_pow
+template <typename Dim>
+struct get_pow<nil_t, Dim>
+ : meta::integral_constant<int, 0>
+{ };
+
+// get_pow
+template <typename Dim>
+struct get_pow<dimless, Dim>
+ : meta::integral_constant<int, 0>
+{ };
+
+// get_pow
+template <typename H, typename T, typename Dim>
+struct get_pow<dims<H, T>, Dim>
+ : get_pow<T, Dim>
+{ };
+
+// get_pow
+template <typename Dim, typename Pow, typename T>
+struct get_pow<dims<dim_pow<Dim, Pow>, T>, Dim>
+ : Pow
+{ };
+
+ 
 // uni_sca
 template <typename Unit, typename Scale>
 struct uni_sca;
