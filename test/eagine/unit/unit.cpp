@@ -122,6 +122,118 @@ BOOST_AUTO_TEST_CASE(unit_unit_copy_assign)
 }
 
 template <typename Unit1>
+struct test_unit_unit_assignable
+{
+	template <typename Unit2>
+	struct tester
+	{
+		void operator()(void) const
+		{
+			BOOST_ASSERT((
+				std::is_assignable<Unit1, Unit2>() ==
+				std::is_assignable<Unit2, Unit1>()
+			));
+			BOOST_ASSERT((
+				std::is_assignable<Unit1, Unit2>() ==
+				std::is_same<Unit1, Unit2>()
+			));
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_unit<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_unit_assignable)
+{
+	do_test_unit_unit<test_unit_unit_assignable>();
+}
+
+template <typename Unit1>
+struct test_unit_unit_add
+{
+	template <typename Unit2>
+	struct tester
+	{
+		template <typename U1, typename U2>
+		static bool are_addable(decltype(U1()+U2())*)
+		{
+			return true;
+		}
+
+		template <typename U1, typename U2>
+		static bool are_addable(...)
+		{
+			return false;
+		}
+
+		void operator()(void) const
+		{
+			BOOST_ASSERT((
+				are_addable<Unit1, Unit2>(0) ==
+				std::is_same<
+					typename Unit1::dimension,
+					typename Unit2::dimension
+				>()
+			));
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_unit<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_unit_add)
+{
+	do_test_unit_unit<test_unit_unit_add>();
+}
+
+template <typename Unit1>
+struct test_unit_unit_subtract
+{
+	template <typename Unit2>
+	struct tester
+	{
+		template <typename U1, typename U2>
+		static bool are_subtractible(decltype(U1()-U2())*)
+		{
+			return true;
+		}
+
+		template <typename U1, typename U2>
+		static bool are_subtractible(...)
+		{
+			return false;
+		}
+
+		void operator()(void) const
+		{
+			BOOST_ASSERT((
+				are_subtractible<Unit1, Unit2>(0) ==
+				std::is_same<
+					typename Unit1::dimension,
+					typename Unit2::dimension
+				>()
+			));
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_unit<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_unit_subtract)
+{
+	do_test_unit_unit<test_unit_unit_subtract>();
+}
+
+template <typename Unit1>
 struct test_unit_unit_multiply
 {
 	template <typename Unit2>

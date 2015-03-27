@@ -120,6 +120,36 @@ BOOST_AUTO_TEST_CASE(unit_dim_derived_copy_assign)
 }
 
 template <typename Dimension1>
+struct test_unit_dim_derived_assignable
+{
+	template <typename Dimension2>
+	struct tester
+	{
+		void operator()(void) const
+		{
+			BOOST_ASSERT((
+				std::is_assignable<Dimension1, Dimension2>() ==
+				std::is_assignable<Dimension2, Dimension1>()
+			));
+			BOOST_ASSERT((
+				std::is_assignable<Dimension1, Dimension2>() ==
+				std::is_same<Dimension1, Dimension2>()
+			));
+		}
+	};
+
+	void operator()(void) const
+	{
+		do_test_unit_dim_derived<tester>();
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_dim_derived_assignable)
+{
+	do_test_unit_dim_derived<test_unit_dim_derived_assignable>();
+}
+
+template <typename Dimension1>
 struct test_unit_dim_derived_multiply
 {
 	template <typename Dimension2>
