@@ -1,7 +1,7 @@
 /**
  *  @file eagine/unit/scales.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -10,6 +10,7 @@
 #ifndef EAGINE_UNIT_SCALES_1308281038_HPP
 #define EAGINE_UNIT_SCALES_1308281038_HPP
 
+#include <eagine/meta/string.hpp>
 #include <cmath>
 
 namespace eagine {
@@ -23,7 +24,7 @@ struct one
 {
 	typedef one type;
 
-	static constexpr double value = 1;
+	static constexpr int value = 1;
 };
 
 template <>
@@ -38,7 +39,25 @@ struct rational
 {
 	typedef rational type;
 
-	static constexpr double value = double(Num)/Den;
+	struct _impl
+	{
+		template <typename T>
+		friend constexpr inline
+		auto operator*(T v, _impl)
+		noexcept
+		{
+			return (v*Num)/Den;
+		}
+
+		template <typename T>
+		friend constexpr inline
+		auto operator/(T v, _impl)
+		noexcept
+		{
+			return (v*Den)/Num;
+		}
+	};
+	static constexpr _impl value = {};
 };
 
 typedef rational<1, 1000000000> nano;
@@ -135,7 +154,25 @@ struct pi
 {
 	typedef pi type;
 
-	static constexpr auto value = M_PI;
+	struct _impl
+	{
+		template <typename T>
+		friend constexpr inline
+		auto operator*(T v,_impl)
+		noexcept
+		{
+			return v*M_PI;
+		}
+
+		template <typename T>
+		friend constexpr inline
+		auto operator/(T v,_impl)
+		noexcept
+		{
+			return v/M_PI;
+		}
+	};
+	static constexpr _impl value = {};
 };
 
 template <>
@@ -145,12 +182,58 @@ struct scale_info<pi>
 	typedef meta::string<char(0xCF), char(0x80)> symbol;
 };
 
+template <typename S>
+struct inverted
+{
+	typedef inverted type;
+
+	struct _impl
+	{
+		template <typename T>
+		friend constexpr inline
+		auto operator*(T v,_impl)
+		noexcept
+		{
+			return v/S::value;
+		}
+
+		template <typename T>
+		friend constexpr inline
+		auto operator/(T v,_impl)
+		noexcept
+		{
+			return v*S::value;
+		}
+	};
+
+	static constexpr _impl value = {};
+};
+
 template <typename S1, typename S2>
 struct multiplied
 {
 	typedef multiplied type;
 
-	static constexpr auto value = S1::value*S2::value;
+	struct _impl
+	{
+		template <typename T>
+		friend constexpr inline
+		auto operator*(T v,_impl)
+		noexcept
+		{
+			return (v*S1::value)*S2::value;
+		}
+
+		template <typename T>
+		friend constexpr inline
+		auto operator/(T v,_impl)
+		noexcept
+		{
+			return (v/S1::value)/S2::value;
+		}
+	};
+
+	static constexpr _impl value = {};
 };
 
 template <typename S1, typename S2>
@@ -158,7 +241,26 @@ struct divided
 {
 	typedef divided type;
 
-	static constexpr auto value = S1::value/S2::value;
+	struct _impl
+	{
+		template <typename T>
+		friend constexpr inline
+		auto operator*(T v,_impl)
+		noexcept
+		{
+			return (v*S1::value)/S2::value;
+		}
+
+		template <typename T>
+		friend constexpr inline
+		auto operator/(T v,_impl)
+		noexcept
+		{
+			return (v/S1::value)*S2::value;
+		}
+	};
+
+	static constexpr _impl value = {};
 };
 
 } // namespace scales
