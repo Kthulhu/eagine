@@ -82,6 +82,9 @@ int main(void)
 	eagine_PRINT(mkg*lm*lm/(ts*ts*ts));
 	eagine_PRINT(mkg*lm*lm/(ts*ts*ts*eca));
 
+	quantity<unit<temperature>> tK{300};
+
+	eagine_PRINT(mkg/(tK*tK));
 
 	auto x = (mkg*mkg)/lm;
 	auto y = mkg*(mkg/lm);

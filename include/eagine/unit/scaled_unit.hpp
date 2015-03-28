@@ -31,20 +31,31 @@ struct scaled_unit
 		typedef scale type;
 
 		template <typename ... DimPow>
-		struct _hlp
+		struct _impl : bits::_sc_unit_sc_hlp<Scales, System>
 		{
-			typedef _hlp type;
+			typedef _impl type;
 
-			typedef bits::_sc_unit_sc_hlp<Scales, System>_base;
+			template <typename T>
+			friend constexpr inline
+			auto operator * (T v, _impl i)
+			noexcept
+			{
+				return i._hlp(+1, v, DimPow()...);
+			}
 
-			static constexpr auto scale = _base::_prod(
-				_base::_one_dim_pow(DimPow())...
-			);
+			template <typename T>
+			friend constexpr inline
+			auto operator / (T v, _impl i)
+			noexcept
+			{
+				return i._hlp(-1, v, DimPow()...);
+			}
 		};
 
-		typedef typename bits::apply<_hlp, Dims>::type _hlp2;
-
-		static constexpr auto value = _hlp2::scale;
+		static constexpr typename bits::apply<
+			_impl,
+			Dims
+		>::type value = {};
 	};
 };
 
@@ -121,6 +132,11 @@ struct add_result<unit<D, S>, scaled_unit<D, US, S>>
  : unit<D, S>
 { };
 
+template <typename D, typename US1, typename US2, typename S>
+struct add_result<scaled_unit<D, US1, S>, scaled_unit<D, US2, S>>
+ : scaled_unit<D, US1, S>
+{ };
+
 template <typename D, typename US, typename S>
 struct sub_result<scaled_unit<D, US, S>, unit<D, S>>
  : unit<D, S>
@@ -129,6 +145,11 @@ struct sub_result<scaled_unit<D, US, S>, unit<D, S>>
 template <typename D, typename US, typename S>
 struct sub_result<unit<D, S>, scaled_unit<D, US, S>>
  : unit<D, S>
+{ };
+
+template <typename D, typename US1, typename US2, typename S>
+struct sub_result<scaled_unit<D, US1, S>, scaled_unit<D, US2, S>>
+ : scaled_unit<D, US1, S>
 { };
 
 template <typename D1, typename D2, typename US, typename S>

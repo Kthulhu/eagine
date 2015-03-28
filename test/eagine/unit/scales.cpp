@@ -135,6 +135,10 @@ void test_unit_scale_value(T m)
 		((v / Scale::value) <<not_farther_from>> (v / m))
 			.than.rel(1e-6)
 	));
+	BOOST_ASSERT((
+		((v*Scale::value/Scale::value) <<not_farther_from>> (v))
+			.than.rel(1e-6)
+	));
 }
 
 BOOST_AUTO_TEST_CASE(unit_scale_value)
