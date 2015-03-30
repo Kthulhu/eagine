@@ -11,6 +11,7 @@
 #define BOOST_TEST_MODULE eagine_unit_dim_derived
 #include <boost/test/unit_test.hpp>
 
+#include <eagine/unit/dimensionless.hpp>
 #include <eagine/unit/derived.hpp>
 
 BOOST_AUTO_TEST_SUITE(unit_dim_derived)
@@ -34,6 +35,7 @@ void do_test_unit_base_dimension(void)
 template <template <class> class Test>
 void do_test_unit_dim_derived(void)
 {
+	Test<eagine::unit::dimensionless>()();
 	Test<eagine::unit::acceleration>()();
 	Test<eagine::unit::electrical_capacitance>()();
 	Test<eagine::unit::electric_charge>()();

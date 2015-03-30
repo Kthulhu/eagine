@@ -11,6 +11,7 @@
 #define BOOST_TEST_MODULE eagine_unit_dimension
 #include <boost/test/unit_test.hpp>
 
+#include <eagine/unit/dimensionless.hpp>
 #include <eagine/unit/dimension.hpp>
 #include <type_traits>
 
@@ -85,6 +86,7 @@ void do_test_unit_dimension_base_dimension(void)
 template <template <class> class Test>
 void do_test_unit_dimension(void)
 {
+	Test<eagine::unit::dimensionless>()();
 	Test<eagine::unit::angle>()();
 	Test<eagine::unit::solid_angle>()();
 	Test<eagine::unit::length>()();

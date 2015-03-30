@@ -11,6 +11,7 @@
 #define BOOST_TEST_MODULE eagine_unit_unit
 #include <boost/test/unit_test.hpp>
 
+#include <eagine/unit/dimensionless.hpp>
 #include <eagine/unit/dimension.hpp>
 #include <eagine/unit/derived.hpp>
 #include <eagine/unit/unit.hpp>
@@ -21,6 +22,8 @@ template <template <class> class Test>
 void do_test_unit_unit(void)
 {
 	using eagine::unit::unit;
+
+	Test<unit<eagine::unit::dimensionless>>()();
 
 	Test<unit<eagine::unit::angle>>()();
 	Test<unit<eagine::unit::solid_angle>>()();

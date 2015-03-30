@@ -12,4 +12,6 @@ eagine_exec_test(scales)
 eagine_exec_test(unit)
 eagine_exec_test(si)
 
+eagine_exec_test(info)
+
 eagine_exec_test(quantity)

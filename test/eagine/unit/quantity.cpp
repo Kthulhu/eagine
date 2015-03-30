@@ -11,11 +11,16 @@
 #define BOOST_TEST_MODULE eagine_unit_quantity
 #include <boost/test/unit_test.hpp>
 
+#include <eagine/unit/dimensionless.hpp>
 #include <eagine/unit/dimension.hpp>
 #include <eagine/unit/derived.hpp>
 #include <eagine/unit/unit.hpp>
 #include <eagine/unit/quantity.hpp>
 #include <eagine/unit/si.hpp>
+
+#include <eagine/math/close_to.hpp>
+
+#include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(unit_quantity)
 
@@ -24,6 +29,8 @@ void do_test_unit_quantity(void)
 {
 	using eagine::unit::unit;
 	using eagine::unit::quantity;
+
+	Test<unit<eagine::unit::dimensionless>>()();
 
 	Test<unit<eagine::unit::angle>>()();
 	Test<unit<eagine::unit::solid_angle>>()();
@@ -114,11 +121,19 @@ struct test_unit_quantity_add
 {
 	void operator()(void) const
 	{
-		eagine::unit::quantity<Unit> q1;
-		eagine::unit::quantity<Unit> q2;
+		typedef typename eagine::unit::quantity<Unit>::value_type T;
+
+		eagine::unit::quantity<Unit> q1(T(std::rand() % 111));
+		eagine::unit::quantity<Unit> q2(T(std::rand() % 111));
 
 		eagine::unit::quantity<Unit> q3 = q1+q2;
-		(void)q3;
+
+		using eagine::math::close_to;
+
+		BOOST_ASSERT((
+			value(q3) <<close_to>>
+			(value(q1) + value(q2))
+		));
 	}
 };
 
@@ -132,11 +147,19 @@ struct test_unit_quantity_subtract
 {
 	void operator()(void) const
 	{
-		eagine::unit::quantity<Unit> q1;
-		eagine::unit::quantity<Unit> q2;
+		typedef typename eagine::unit::quantity<Unit>::value_type T;
+
+		eagine::unit::quantity<Unit> q1(T(std::rand() % 111));
+		eagine::unit::quantity<Unit> q2(T(std::rand() % 111));
 
 		eagine::unit::quantity<Unit> q3 = q1-q2;
-		(void)q3;
+
+		using eagine::math::close_to;
+
+		BOOST_ASSERT((
+			value(q3) <<close_to>>
+			(value(q1) - value(q2))
+		));
 	}
 };
 
@@ -155,13 +178,22 @@ struct test_unit_quantity_multiply
 		{
 			using eagine::unit::operator*;
 
-			eagine::unit::quantity<Unit1> q1;
-			eagine::unit::quantity<Unit2> q2;
+			typedef typename eagine::unit::quantity<Unit1>::value_type T1;
+			typedef typename eagine::unit::quantity<Unit2>::value_type T2;
+
+			eagine::unit::quantity<Unit1> q1(T1(std::rand() % 111));
+			eagine::unit::quantity<Unit2> q2(T2(std::rand() % 111));
 
 			typedef decltype(Unit1()*Unit2()) Unit3;
 
 			eagine::unit::quantity<Unit3> q3 = q1*q2;
-			(void)q3;
+
+			using eagine::math::close_to;
+
+			BOOST_ASSERT((
+				value(q3) <<close_to>>
+				(value(q1) * value(q2))
+			));
 		}
 	};
 
@@ -186,13 +218,22 @@ struct test_unit_quantity_divide
 		{
 			using eagine::unit::operator/;
 
-			eagine::unit::quantity<Unit1> q1;
-			eagine::unit::quantity<Unit2> q2;
+			typedef typename eagine::unit::quantity<Unit1>::value_type T1;
+			typedef typename eagine::unit::quantity<Unit2>::value_type T2;
+
+			eagine::unit::quantity<Unit1> q1(T1(std::rand() % 111));
+			eagine::unit::quantity<Unit2> q2(T2(1+std::rand() % 111));
 
 			typedef decltype(Unit1()/Unit2()) Unit3;
 
 			eagine::unit::quantity<Unit3> q3 = q1/q2;
-			(void)q3;
+
+			using eagine::math::close_to;
+
+			BOOST_ASSERT((
+				value(q3) <<close_to>>
+				(value(q1) / value(q2))
+			));
 		}
 	};
 
