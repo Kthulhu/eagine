@@ -54,6 +54,23 @@ static const char* test_unit_info_dim_names [] = {
 	"volume",
 };
 
+static const char* test_unit_info_scale_names [] = {
+	"",
+
+	"nano",
+	"micro",
+	"milli",
+	"centi",
+	"deci",
+	"deca",
+	"hecto",
+	"kilo",
+	"mega",
+	"giga",
+
+	"π",
+};
+
 BOOST_AUTO_TEST_SUITE(unit_info)
 
 template <template <class> class Test>
@@ -99,7 +116,7 @@ void do_test_unit_dimension_info(void)
 }
 
 template <typename Dimension>
-struct test_unit_dimension_info
+struct test_unit_dimension_info_name
 {
 	void operator()(unsigned i) const
 	{
@@ -114,9 +131,51 @@ struct test_unit_dimension_info
 	}
 };
 
-BOOST_AUTO_TEST_CASE(unit_dimension_info)
+BOOST_AUTO_TEST_CASE(unit_dimension_info_name)
 {
-	do_test_unit_dimension_info<test_unit_dimension_info>();
+	do_test_unit_dimension_info<test_unit_dimension_info_name>();
+}
+
+template <template <class> class Test>
+void do_test_unit_scale_info(void)
+{
+	unsigned i=0;
+
+	Test<eagine::unit::scales::one>()(i++);
+
+	Test<eagine::unit::scales::nano>()(i++);
+	Test<eagine::unit::scales::micro>()(i++);
+	Test<eagine::unit::scales::milli>()(i++);
+	Test<eagine::unit::scales::centi>()(i++);
+	Test<eagine::unit::scales::deci>()(i++);
+	Test<eagine::unit::scales::deca>()(i++);
+	Test<eagine::unit::scales::hecto>()(i++);
+	Test<eagine::unit::scales::kilo>()(i++);
+	Test<eagine::unit::scales::mega>()(i++);
+	Test<eagine::unit::scales::giga>()(i++);
+
+	Test<eagine::unit::scales::pi>()(i++);
+}
+
+template <typename Scale>
+struct test_unit_scale_info_name
+{
+	void operator()(unsigned i) const
+	{
+		BOOST_ASSERT((std::strcmp(
+			eagine::meta::c_str<
+				typename eagine::unit::scales::scale_info<
+					Scale
+				>::name
+			>::value,
+			test_unit_info_scale_names[i]
+		) == 0));
+	}
+};
+
+BOOST_AUTO_TEST_CASE(unit_scale_info_name)
+{
+	do_test_unit_scale_info<test_unit_scale_info_name>();
 }
 
 // TODO
