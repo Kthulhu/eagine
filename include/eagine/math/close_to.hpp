@@ -108,7 +108,7 @@ struct operation_close_to_operands
 	noexcept
 	{
 		using std::log2;
-		return (n < X(1)) ? _min(n*(2-log2(n)), X(1)) : n;
+		return (n < X(1)) ? _min(X(n*(2-log2(n))), X(1)) : n;
 	}
 
 	template <typename X>

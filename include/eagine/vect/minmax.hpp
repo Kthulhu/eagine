@@ -37,7 +37,7 @@ struct min
 	_dT _hlp(_dpT a, _dpT b, meta::false_type)
 	noexcept
 	{
-		_dT c;
+		_dT c = {};
 		for(unsigned i=0; i<N; ++i)
 		{
 			c[i] = (a[i]<b[i])?a[i]:b[i];
@@ -166,7 +166,7 @@ struct max
 	_dT _hlp(_dpT a, _dpT b, meta::false_type)
 	noexcept
 	{
-		_dT c;
+		_dT c = {};
 		for(unsigned i=0; i<N; ++i)
 		{
 			c[i] = (a[i]>b[i])?a[i]:b[i];

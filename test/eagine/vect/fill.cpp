@@ -3,7 +3,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/fill.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(vect_fill)
@@ -28,7 +29,8 @@ void test_vect_fill_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(v[i] == a);
+			using eagine::math::close_to;
+			BOOST_ASSERT(v[i] <<close_to>> a);
 		}
 	}
 }

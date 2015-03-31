@@ -3,7 +3,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/compare.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(vect_compare)
@@ -23,7 +24,7 @@ void test_vect_equal_apply_1(void)
 	{
 		T a[N];
 
-		typename eagine::vect::data<T, N>::type u, v;
+		typename eagine::vect::data<T, N>::type u = {}, v = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -81,7 +82,7 @@ void test_vect_equal_apply_2(void)
 	{
 		T a[N], b[N];
 
-		typename eagine::vect::data<T, N>::type u, v;
+		typename eagine::vect::data<T, N>::type u = {}, v = {};
 
 		bool eq = true;
 
@@ -92,7 +93,9 @@ void test_vect_equal_apply_2(void)
 			b[i] = std::rand();
 			v[i] = b[i];
 
-			eq &= a[i] == b[i];
+			using eagine::math::close_to;
+
+			eq &= (a[i] <<close_to>> b[i]);
 		}
 
 		typedef eagine::vect::equal<T, N> _equal;

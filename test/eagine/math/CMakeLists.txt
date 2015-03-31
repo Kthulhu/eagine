@@ -4,8 +4,6 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
-eagine_exec_test(close_to)
-
 eagine_exec_test(angle)
 
 eagine_exec_test_sse(vector)

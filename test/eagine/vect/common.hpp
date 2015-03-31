@@ -3,36 +3,36 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <boost/test/unit_test.hpp>
-#include <type_traits>
+#include <eagine/math/close_to.hpp>
 
 template <typename T>
-bool test_vect_data_close(T a, T b, std::true_type)
+inline
+T test_vect_close_eps(T*)
 {
-	return a == b;
+	return T(0);
+}
+
+inline
+float test_vect_close_eps(float*)
+{
+	return 0.1f;
+}
+
+inline
+double test_vect_close_eps(double*)
+{
+	return 0.001;
 }
 
 template <typename T>
-bool test_vect_data_close(T a, T b, std::false_type)
-{
-	using namespace boost::test_tools;
-	return check_is_close(
-		a, b,
-		percent_tolerance_t<double>(0.001),
-		FPC_STRONG
-	);
-}
-
-template <typename T>
+inline
 bool test_vect_data_close(T a, T b)
 {
-	return test_vect_data_close(
-		a, b,
-		typename std::is_integral<T>::type()
-	);
+	using eagine::math::not_farther_from;
+	return (a <<not_farther_from>> b).than(test_vect_close_eps(&a));
 }
-

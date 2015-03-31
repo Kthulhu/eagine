@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/minmax.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 
 #include "common.hpp"
@@ -23,8 +24,8 @@ void test_vect_min_apply(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u;
-		typename eagine::vect::data<T, N>::type v;
+		typename eagine::vect::data<T, N>::type u = {};
+		typename eagine::vect::data<T, N>::type v = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -37,7 +38,8 @@ void test_vect_min_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(min[i] == (u[i]<v[i])?u[i]:v[i]);
+			using eagine::math::close_to;
+			BOOST_ASSERT(min[i] <<close_to>> ((u[i]<v[i])?u[i]:v[i]));
 		}
 	}
 }
@@ -79,8 +81,8 @@ void test_vect_max_apply(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u;
-		typename eagine::vect::data<T, N>::type v;
+		typename eagine::vect::data<T, N>::type u = {};
+		typename eagine::vect::data<T, N>::type v = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -93,7 +95,8 @@ void test_vect_max_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(max[i] == (u[i]>v[i])?u[i]:v[i]);
+			using eagine::math::close_to;
+			BOOST_ASSERT(max[i] <<close_to>> ((u[i]>v[i])?u[i]:v[i]));
 		}
 	}
 }
@@ -135,7 +138,7 @@ void test_vect_hmin_apply(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u;
+		typename eagine::vect::data<T, N>::type u = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -153,9 +156,10 @@ void test_vect_hmin_apply(void)
 			}
 			for(unsigned j=i+1; j<N; ++j)
 			{
-				BOOST_ASSERT(min[i] == min[j]);
+				using eagine::math::close_to;
+				BOOST_ASSERT(min[i] <<close_to>> min[j]);
 			}
-	}
+		}
 	}
 }
 
@@ -196,7 +200,7 @@ void test_vect_hmax_apply(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u;
+		typename eagine::vect::data<T, N>::type u = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -214,7 +218,8 @@ void test_vect_hmax_apply(void)
 			}
 			for(unsigned j=i+1; j<N; ++j)
 			{
-				BOOST_ASSERT(max[i] == max[j]);
+				using eagine::math::close_to;
+				BOOST_ASSERT(max[i] <<close_to>> max[j]);
 			}
 		}
 	}

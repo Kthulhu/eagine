@@ -43,7 +43,7 @@ struct from_saafv
 	apply(const T* d, unsigned n, T v)
 	noexcept
 	{
-		typename data<T, N>::type r;
+		typename data<T, N>::type r = {};
 		for(unsigned i=0; i<N && i<n; ++i)
 		{
 			r[i] = d[i];

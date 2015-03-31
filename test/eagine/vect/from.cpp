@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/from.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(vect_from)
@@ -30,7 +31,8 @@ void test_vect_from_array_apply_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		BOOST_ASSERT(v[i] == a[i]);
+		using eagine::math::close_to;
+		BOOST_ASSERT(v[i] <<close_to>> a[i]);
 	}
 }
 
@@ -74,11 +76,13 @@ void test_vect_from_saafv_apply_T(void)
 
 	for(unsigned i=0; i<M; ++i)
 	{
-		BOOST_ASSERT(v[i] == a[i]);
+		using eagine::math::close_to;
+		BOOST_ASSERT(v[i] <<close_to>> a[i]);
 	}
 	for(unsigned i=M; i<N; ++i)
 	{
-		BOOST_ASSERT(v[i] == f);
+		using eagine::math::close_to;
+		BOOST_ASSERT(v[i] <<close_to>> f);
 	}
 }
 

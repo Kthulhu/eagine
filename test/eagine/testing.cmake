@@ -7,24 +7,26 @@ include(CTest)
 
 macro(add_eagine_test TEST_NAME SRC_NAME TEST_LIBRARIES BUILD_ONLY)
 
+	get_filename_component(DIR_NAME ${CMAKE_CURRENT_BINARY_DIR} NAME_WE)
+
 	add_executable(${TEST_NAME} EXCLUDE_FROM_ALL ${SRC_NAME}.cpp)
 	target_link_libraries(${TEST_NAME} ${TEST_LIBRARIES})
 	target_link_libraries(${TEST_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 	target_link_libraries(${TEST_NAME} ${EAGINE_THIRD_PARTY_LIBRARIES})
 
 	add_test(
-		build-test-${TEST_NAME}
+		build-test-${DIR_NAME}-${TEST_NAME}
 		"${CMAKE_COMMAND}"
 		--build ${CMAKE_BINARY_DIR}
 		--target ${TEST_NAME}
 	)
 
 	if(NOT BUILD_ONLY)
-		add_test(exec-test-${TEST_NAME} ${TEST_NAME})
+		add_test(exec-test-${DIR_NAME}-${TEST_NAME} ${TEST_NAME})
 		set_tests_properties(
-			exec-test-${TEST_NAME}
+			exec-test-${DIR_NAME}-${TEST_NAME}
 			PROPERTIES DEPENDS
-			build-test-${TEST_NAME}
+			build-test-${DIR_NAME}-${TEST_NAME}
 		)
 	endif()
 endmacro()

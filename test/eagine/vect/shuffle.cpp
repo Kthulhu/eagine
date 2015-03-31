@@ -3,7 +3,7 @@
  *
  *  .author Matus Chochlik
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/shuffle.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 #include <array>
 
@@ -20,14 +21,14 @@ BOOST_AUTO_TEST_SUITE(vect_shuffle)
 template <typename T, unsigned N, int ... I>
 void test_vect_shuffle_apply(void)
 {
-	std::array<int, N> n = {I...};
+	std::array<int, N> n = {{I...}};
 
 	for(unsigned k=0; k<10; ++k)
 	{
 		T a[N];
 
-		typename eagine::vect::data<T, N>::type v;
-		typename eagine::vect::shuffle_mask<I...> m;
+		typename eagine::vect::data<T, N>::type v = {};
+		typename eagine::vect::shuffle_mask<I...> m = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -40,7 +41,8 @@ void test_vect_shuffle_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(u[i] == a[n[i]]);
+			using eagine::math::close_to;
+			BOOST_ASSERT(u[i] <<close_to>> a[n[i]]);
 		}
 	}
 }
@@ -225,14 +227,14 @@ BOOST_AUTO_TEST_CASE(vect_shuffle_apply_double)
 template <typename T, unsigned N, int ... I>
 void test_vect_shuffle2_apply(void)
 {
-	std::array<int, N> n = {I...};
+	std::array<int, N> n = {{I...}};
 
 	for(unsigned k=0; k<10; ++k)
 	{
 		T a[N*2];
 
-		typename eagine::vect::data<T, N>::type v, u;
-		typename eagine::vect::shuffle_mask<I...> m;
+		typename eagine::vect::data<T, N>::type v = {}, u = {};
+		typename eagine::vect::shuffle_mask<I...> m = {};
 
 		for(unsigned i=0; i<N*2; ++i)
 		{
@@ -249,7 +251,8 @@ void test_vect_shuffle2_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			BOOST_ASSERT(w[i] == a[n[i]]);
+			using eagine::math::close_to;
+			BOOST_ASSERT(w[i] <<close_to>> a[n[i]]);
 		}
 	}
 }
