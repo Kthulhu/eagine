@@ -1,7 +1,7 @@
 /**
  *  @file eagine/unit/dimension.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -21,7 +21,7 @@ namespace unit {
 // dimension
 template <typename BaseDim, int Pow>
 using dimension = bits::dims<
-	bits::dim_pow<BaseDim, meta::integral_constant<int, Pow>>,
+	bits::dim_pow<BaseDim, meta::int_constant<Pow>>,
 	bits::nil_t
 >;
 

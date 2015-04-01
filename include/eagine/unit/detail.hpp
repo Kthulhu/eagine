@@ -1,7 +1,7 @@
 /**
  *  @file eagine/unit/detail.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -23,7 +23,7 @@ namespace bits {
 using meta::nil_t;
 
 // zero
-typedef meta::integral_constant<int, 0> zero;
+typedef meta::int_constant<0> zero;
 
 template <template <class...> class MetaFunc, typename X, typename ... P>
 struct apply;
@@ -239,13 +239,13 @@ struct get_pow;
 // get_pow
 template <typename Dim>
 struct get_pow<nil_t, Dim>
- : meta::integral_constant<int, 0>
+ : meta::int_constant<0>
 { };
 
 // get_pow
 template <typename Dim>
 struct get_pow<dimless, Dim>
- : meta::integral_constant<int, 0>
+ : meta::int_constant<0>
 { };
 
 // get_pow
@@ -412,20 +412,20 @@ struct _sc_unit_sc_hlp
 
 	template <typename Dir, typename T, typename SV>
 	static constexpr inline
-	auto _pow(Dir, T v, SV, meta::integral_constant<int, 0>)
+	auto _pow(Dir, T v, SV, meta::int_constant<0>)
 	{
 		return v;
 	}
 
 	template <typename Dir, typename T, typename SV, int E>
 	static constexpr inline
-	auto _pow(Dir dir, T v, SV sv, meta::integral_constant<int, E>)
+	auto _pow(Dir dir, T v, SV sv, meta::int_constant<E>)
 	{
 		return _pow(
 			dir,
 			dir?v*sv:v/sv,
 			sv,
-			meta::integral_constant<int, E+(dir?-1:1)>()
+			meta::int_constant<E+(dir?-1:1)>()
 		);
 	}
 

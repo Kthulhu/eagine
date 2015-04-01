@@ -41,37 +41,37 @@ struct amount_of_substance : dimension<amount_of_substance> { };
 template <typename Dimension>
 struct dim_num;
 
-template <> struct dim_num<angle>  : meta::integral_constant<int, 0>{ };
-template <> struct dim_num<mass>   : meta::integral_constant<int, 1> { };
-template <> struct dim_num<length> : meta::integral_constant<int, 2> { };
-template <> struct dim_num<time>   : meta::integral_constant<int, 3> { };
+template <> struct dim_num<angle>  : meta::int_constant<0>{ };
+template <> struct dim_num<mass>   : meta::int_constant<1> { };
+template <> struct dim_num<length> : meta::int_constant<2> { };
+template <> struct dim_num<time>   : meta::int_constant<3> { };
 
 template <> struct dim_num<temperature>
- : meta::integral_constant<int, 4>
+ : meta::int_constant<4>
 { };
 
 template <> struct dim_num<electric_current>
- : meta::integral_constant<int, 5>
+ : meta::int_constant<5>
 { };
 
 template <> struct dim_num<number_of_cycles>
- : meta::integral_constant<int, 6>
+ : meta::int_constant<6>
 { };
 
 template <> struct dim_num<number_of_decays>
- : meta::integral_constant<int, 7>
+ : meta::int_constant<7>
 { };
 
 template <> struct dim_num<luminous_intensity>
- : meta::integral_constant<int, 8>
+ : meta::int_constant<8>
 { };
 
 template <> struct dim_num<amount_of_substance>
- : meta::integral_constant<int, 9>
+ : meta::int_constant<9>
 { };
 
 template <> struct dim_num<solid_angle>
- : meta::integral_constant<int, 10>
+ : meta::int_constant<10>
 { };
   
 template <typename Dimension>

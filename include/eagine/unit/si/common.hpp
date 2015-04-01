@@ -1,7 +1,7 @@
 /**
  *  @file eagine/unit/si/common.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -28,7 +28,7 @@ struct si
 
 template <>
 struct system_id<si>
- : meta::integral_constant<int, 0>
+ : meta::int_constant<0>
 { };
 
 } // namespace unit
