@@ -27,6 +27,7 @@ struct _ary_data
 
 	_ary_data(void) = default;
 	_ary_data(const _ary_data& that) = default;
+	_ary_data& operator=(const _ary_data& that) = default;
 
 	template <
 		typename ... P,

@@ -21,10 +21,10 @@ struct from_array
 {
 	static
 	typename data<T, N>::type
-	apply(const T* d, unsigned n)
+	apply(const T* d, std::size_t n)
 	noexcept
 	{
-		assert(N <= n);
+		assert(N <= unsigned(n));
 		typename data<T, N>::type r;
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -40,15 +40,15 @@ struct from_saafv
 {
 	static
 	typename data<T, N>::type
-	apply(const T* d, unsigned n, T v)
+	apply(const T* d, std::size_t n, T v)
 	noexcept
 	{
 		typename data<T, N>::type r = {};
-		for(unsigned i=0; i<N && i<n; ++i)
+		for(unsigned i=0; i<N && i<unsigned(n); ++i)
 		{
 			r[i] = d[i];
 		}
-		for(unsigned i=n; i<N; ++i)
+		for(unsigned i=unsigned(n); i<N; ++i)
 		{
 			r[i] = v;
 		}
@@ -73,7 +73,7 @@ struct from_array<T, 1>
 {
 	static
 	typename data<T, 1>::type
-	apply(const T* d, unsigned n)
+	apply(const T* d, std::size_t n)
 	noexcept
 	{
 		assert(1 <= n);
@@ -87,7 +87,7 @@ struct from_array<T, 2>
 {
 	static
 	typename data<T, 2>::type
-	apply(const T* d, unsigned n)
+	apply(const T* d, std::size_t n)
 	noexcept
 	{
 		assert(2 <= n);
@@ -101,7 +101,7 @@ struct from_array<T, 3>
 {
 	static
 	typename data<T, 3>::type
-	apply(const T* d, unsigned n)
+	apply(const T* d, std::size_t n)
 	noexcept
 	{
 		assert(3 <= n);
@@ -115,7 +115,7 @@ struct from_array<T, 4>
 {
 	static
 	typename data<T, 4>::type
-	apply(const T* d, unsigned n)
+	apply(const T* d, std::size_t n)
 	noexcept
 	{
 		assert(4 <= n);
@@ -129,7 +129,7 @@ struct from_array<T, 8>
 {
 	static
 	typename data<T, 8>::type
-	apply(const T* d, unsigned n)
+	apply(const T* d, std::size_t n)
 	noexcept
 	{
 		assert(8 <= n);

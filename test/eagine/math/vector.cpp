@@ -1665,7 +1665,7 @@ void test_math_vector_length_T(void)
 		l += a[i]*a[i];
 	}
 
-	l = std::sqrt(l);
+	l = T(std::sqrt(l));
 
 	auto va = eagine::math::vector<T, N>::from(a, N);
 
@@ -1691,7 +1691,6 @@ void test_math_vector_length(void)
 
 BOOST_AUTO_TEST_CASE(math_vector_length)
 {
-	test_math_vector_length<int>();
 	test_math_vector_length<float>();
 	test_math_vector_length<double>();
 }
@@ -1855,7 +1854,7 @@ void test_math_vector_data_range_T(const T(&a)[N], Range& r)
 		BOOST_ASSERT( *o  <<close_to>> a[i]);
 	}
 
-	for(T x : r) { }
+	for(T x : r) { (void)x; }
 
 	for(unsigned i=0; i<N; ++i)
 	{

@@ -14,7 +14,14 @@
 #include <eagine/unit/dimension.hpp>
 #include <eagine/unit/derived.hpp>
 #include <eagine/unit/si.hpp>
-#include <eagine/unit/info.hpp> // TODO
+#include <eagine/unit/si/electric_charge.hpp>
+#include <eagine/unit/si/electric_tension.hpp>
+#include <eagine/unit/si/electrical_capacitance.hpp>
+#include <eagine/unit/si/electrical_conductance.hpp>
+#include <eagine/unit/si/electrical_resistance.hpp>
+#include <eagine/unit/si/force.hpp>
+#include <eagine/unit/si/energy.hpp>
+#include <eagine/unit/si/power.hpp>
 
 BOOST_AUTO_TEST_SUITE(unit_si)
 
@@ -35,6 +42,33 @@ void do_test_unit_si(void)
 	Test<eagine::unit::meter>()();
 	Test<eagine::unit::millimeter>()();
 	Test<eagine::unit::kilometer>()();
+
+	Test<eagine::unit::second>()();
+	Test<eagine::unit::minute>()();
+	Test<eagine::unit::hour>()();
+	Test<eagine::unit::day>()();
+
+	Test<eagine::unit::kelvin>()();
+
+	Test<eagine::unit::ampere>()();
+	Test<eagine::unit::coulomb>()();
+	Test<eagine::unit::volt>()();
+	Test<eagine::unit::farad>()();
+	Test<eagine::unit::siemens>()();
+	Test<eagine::unit::ohm>()();
+
+	Test<eagine::unit::newton>()();
+	Test<eagine::unit::joule>()();
+	Test<eagine::unit::watt>()();
+
+	Test<eagine::unit::hertz>()();
+	Test<eagine::unit::becquerel>()();
+
+	Test<eagine::unit::candela>()();
+
+	Test<eagine::unit::mole>()();
+
+	Test<eagine::unit::steradian>()();
 }
 
 template <typename Unit>
