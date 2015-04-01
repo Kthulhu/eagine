@@ -410,42 +410,52 @@ template <typename Scales, typename System>
 struct _sc_unit_sc_hlp
 {
 
-	template <typename T, typename SV>
-	static constexpr inline T _pow(T v, SV sv, int exp)
+	template <typename Dir, typename T, typename SV>
+	static constexpr inline
+	auto _pow(Dir, T v, SV, meta::integral_constant<int, 0>)
 	{
-		return	(exp == 0)?v:
-			(exp >  0)?
-				_pow(v*sv, sv, exp-1):
-				_pow(v/sv, sv, exp+1);
+		return v;
 	}
 
-	template <typename T>
+	template <typename Dir, typename T, typename SV, int E>
 	static constexpr inline
-	T _hlp(int, T v)
+	auto _pow(Dir dir, T v, SV sv, meta::integral_constant<int, E>)
+	{
+		return _pow(
+			dir,
+			dir?v*sv:v/sv,
+			sv,
+			meta::integral_constant<int, E+(dir?-1:1)>()
+		);
+	}
+
+	template <typename Dir, typename T>
+	static constexpr inline
+	T _hlp(Dir, T v)
 	noexcept
 	{
 		return v;
 	}
 
-	template <typename T>
+	template <typename Dir, typename T>
 	static constexpr inline
-	T _hlp(int, T v, nil_t)
+	T _hlp(Dir, T v, nil_t)
 	noexcept
 	{
 		return v;
 	}
 
-	template <typename T>
+	template <typename Dir, typename T>
 	static constexpr inline
-	T _hlp(int, T v, dimless)
+	T _hlp(Dir, T v, dimless)
 	noexcept
 	{
 		return v;
 	}
 
-	template <typename T, typename D, typename P>
+	template <typename Dir, typename T, typename D, typename P>
 	static constexpr inline
-	auto _hlp2(int dir, T v, dim_pow<D,P>)
+	auto _hlp2(Dir dir, T v, dim_pow<D,P>)
 	noexcept
 	{
 		typedef typename System
@@ -453,17 +463,18 @@ struct _sc_unit_sc_hlp
 		typedef typename BU::scale BS;
 		typedef get_scale<Scales, BU, BS> BUS;
 
-		return _pow(v, BUS::value, P::value*dir);
+		return _pow(dir, v, BUS::value, P());
 	}
 
 	template <
+		typename Dir,
 		typename T,
 		typename D,
 		typename P,
 		typename ... DP
 	>
 	static constexpr inline
-	auto _hlp(int dir, T v, dim_pow<D,P> dp, DP...dps)
+	auto _hlp(Dir dir, T v, dim_pow<D,P> dp, DP...dps)
 	noexcept
 	{
 		return _hlp(dir, _hlp2(dir, v, dp), dps...);

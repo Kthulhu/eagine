@@ -40,7 +40,10 @@ struct scaled_unit
 			auto operator * (T v, _impl i)
 			noexcept
 			{
-				return i._hlp(+1, v, DimPow()...);
+				return i._hlp(
+					meta::true_type(),
+					v, DimPow()...
+				);
 			}
 
 			template <typename T>
@@ -48,7 +51,10 @@ struct scaled_unit
 			auto operator / (T v, _impl i)
 			noexcept
 			{
-				return i._hlp(-1, v, DimPow()...);
+				return i._hlp(
+					meta::false_type(),
+					v, DimPow()...
+				);
 			}
 		};
 
