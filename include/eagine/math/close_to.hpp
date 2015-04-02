@@ -16,8 +16,15 @@
 namespace eagine {
 namespace math {
 
+struct operator_equal_to;
 struct operator_close_to;
 struct operator_not_farther_from;
+
+template <typename T>
+struct half_operation_equal_to
+{
+	T _loperand;
+};
 
 template <typename T>
 struct half_operation_close_to
@@ -35,6 +42,15 @@ template <typename T>
 static constexpr inline
 half_operation_close_to<T>
 operator << (T loperand, const operator_close_to&)
+noexcept
+{
+	return {loperand};
+}
+
+template <typename T>
+static constexpr inline
+half_operation_equal_to<T>
+operator << (T loperand, const operator_equal_to&)
 noexcept
 {
 	return {loperand};
@@ -87,6 +103,13 @@ struct operation_close_to_operands
 		return _abs(a-b);
 	}
 
+	constexpr inline
+	auto _dist(void) const
+	noexcept
+	{
+		return _dist(_loperand,_roperand);
+	}
+
 	template <typename X>
 	static constexpr inline
 	auto _norm(X a, X b)
@@ -128,13 +151,35 @@ struct operation_close_to_operands
 
 	template <typename X>
 	constexpr inline
-	bool _eval(X norm, T margin) const
+	bool _nle(X norm, T margin) const
 	noexcept
 	{
-		return	(norm <= _eps()) || 
-			(_dist(_loperand,_roperand)/norm <= margin);
+		return	(norm <= _eps()) || (_dist()/norm <= margin);
 	}
 };
+
+template <typename T>
+struct full_operation_equal_to
+{
+	operation_close_to_operands<T> _private;
+
+	constexpr inline
+	operator bool (void) const
+	noexcept
+	{
+		// TODO: 
+		return not(_private._dist() > 0);
+	}
+};
+
+template <typename T>
+static constexpr inline
+full_operation_equal_to<T>
+operator >> (half_operation_equal_to<T> lop, T roperand)
+noexcept
+{
+	return {{lop._loperand,roperand}};
+}
 
 template <typename T>
 struct full_operation_close_to
@@ -145,7 +190,7 @@ struct full_operation_close_to
 	operator bool (void) const
 	noexcept
 	{
-		return _private._eval(T(1), T(_private._eps()));
+		return _private._nle(T(1), _private._eps());
 	}
 };
 
@@ -168,28 +213,28 @@ struct full_operation_not_farther_from
 		bool abs(T margin) const
 		noexcept
 		{
-			return _private._eval(T(1), margin);
+			return _private._nle(T(1), margin);
 		}
 
 		constexpr inline
 		bool rel(T margin) const
 		noexcept
 		{
-			return _private._eval(_private._norm(), margin);
+			return _private._nle(_private._norm(), margin);
 		}
 
 		constexpr inline
 		bool eps(unsigned mult = 1u) const
 		noexcept
 		{
-			return _private._eval(T(1), T(_private._eps()*mult));
+			return _private._nle(T(1), T(_private._eps()*mult));
 		}
 
 		constexpr inline
 		bool operator()(T margin) const
 		noexcept
 		{
-			return _private._eval(
+			return _private._nle(
 				_private._adjn(_private._norm()),
 				margin
 			);
@@ -205,6 +250,19 @@ noexcept
 {
 	return {{{lop._loperand,roperand}}};
 }
+
+struct operator_equal_to
+{
+	template <typename T>
+	constexpr inline
+	full_operation_equal_to<T>
+	operator()(T loperand, T roperand) const
+	noexcept
+	{
+		return {{loperand, roperand}};
+	}
+};
+static constexpr operator_equal_to equal_to = {};
 
 struct operator_close_to
 {

@@ -210,10 +210,10 @@ void test_math_matrix_rotation_TI_1(void)
 		eagine::math::vector<T, 3>::template from<0,1,2>(v2)
 	);
 
-	T diff = fabs(value(ri) - value(ab));
-	BOOST_ASSERT(test_math_close(diff+1, T(1)));
+	BOOST_ASSERT(test_math_close(value(ri), value(ab)));
 
-	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
+	using eagine::math::equal_to;
+	BOOST_ASSERT(v2[3] <<equal_to>> v1[3]);
 }
 
 BOOST_AUTO_TEST_CASE(math_matrix_rotation_I_1)
@@ -258,10 +258,10 @@ void test_math_matrix_rotation_TI_2(void)
 		eagine::math::vector<T, 3>::template from<0,1,2>(v2)
 	);
 
-	T diff = fabs(value(ri1) + value(ri2) - value(ab));
-	BOOST_ASSERT(test_math_close(diff+1, T(1)));
+	BOOST_ASSERT(test_math_close(value(ri1) + value(ri2), value(ab)));
 
-	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
+	using eagine::math::equal_to;
+	BOOST_ASSERT(v2[3] <<equal_to>> v1[3]);
 }
 
 BOOST_AUTO_TEST_CASE(math_matrix_rotation_I_2)

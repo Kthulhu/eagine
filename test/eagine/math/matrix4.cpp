@@ -14,6 +14,7 @@
 #include <eagine/meta/int_sequence.hpp>
 #include <eagine/math/matrix.hpp>
 #include <eagine/math/inverse.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
@@ -42,7 +43,8 @@ bool test_math_matrix_from_TRCIJ(void)
 	for(unsigned i=0; i<=I; ++i)
 	for(unsigned j=0; j<=J; ++j)
 	{
-		BOOST_ASSERT(get(src,i,j) == get(dst,i,j));
+		using eagine::math::equal_to;
+		BOOST_ASSERT(get(src,i,j) <<equal_to>> get(dst,i,j));
 	}
 
 	return true;

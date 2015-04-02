@@ -29,8 +29,8 @@ void test_vect_axis_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			using eagine::math::close_to;
-			BOOST_ASSERT(v[i] <<close_to>> T(i==I?a:0));
+			using eagine::math::equal_to;
+			BOOST_ASSERT(v[i] <<equal_to>> T(i==I?a:0));
 		}
 	}
 }

@@ -105,7 +105,11 @@ struct shuffle2
 	) noexcept
 	{
 		return typename data<T, N>::type{
-			I<0?T(0):(unsigned(I)<N? v1[I]: v2[I%N])...
+			I<0?T(0):(
+				unsigned(I)<N?
+					v1[unsigned(I)]:
+					v2[unsigned(I)%N]
+			)...
 		};
 	}
 

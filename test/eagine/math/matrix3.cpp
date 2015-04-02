@@ -13,6 +13,7 @@
 
 #include <eagine/math/matrix.hpp>
 #include <eagine/math/inverse.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
@@ -56,7 +57,8 @@ void test_math_matrix_data_TRC(void)
 
 	for(unsigned k=0; k<R*C; ++k)
 	{
-		BOOST_ASSERT(dr.addr()[k] == d[k]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(dr.addr()[k] <<equal_to>> d[k]);
 	}
 }
 

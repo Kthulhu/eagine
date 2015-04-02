@@ -12,6 +12,7 @@
 
 #include <eagine/math/config.hpp>
 #include <eagine/math/vector.hpp>
+#include <eagine/math/close_to.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/int_sequence.hpp>
 #include <cassert>
@@ -925,7 +926,7 @@ matrix<T, N, N, true> fast_multiply(
 		(EAGINE_MATH_FAST_MAT_MULT_TRIVIAL > 0) ||
 		not(vect::_has_vec_data<T, N>())
 	> _triv;
-	return fast_multiply(_fast_multiply(m1, m2, _triv()), m3, m...);
+	return fast_multiply(_fast_multiply(m1, m2, _triv()), m3, m4, m...);
 }
 
 // row_swap
@@ -966,11 +967,11 @@ noexcept
 	{
 		T d = a._v[i][i];
 
-		if(d == T(0))
+		if(d <<equal_to>> T(0))
 		{
 			for(unsigned k=i+1; k<R; ++k)
 			{
-				if(a._v[k][i] != T(0))
+				if(not(a._v[k][i] <<equal_to>> T(0)))
 				{
 					row_swap(a, i, k);
 					row_swap(b, i, k);
@@ -980,7 +981,7 @@ noexcept
 			d = a._v[i][i];
 		}
 
-		if(d == T(0))
+		if(d <<equal_to>> T(0))
 		{
 			return false;
 		}
@@ -991,7 +992,7 @@ noexcept
 		for(unsigned k=i+1; k<R; ++k)
 		{
 			T c = a._v[k][i];
-			if(c != T(0))
+			if(not(c <<equal_to>> T(0)))
 			{
 				row_add(a, k, i,-c);
 				row_add(b, k, i,-c);
@@ -1017,7 +1018,7 @@ noexcept
 		for(unsigned k=0; k<i; ++k)
 		{
 			T c = a._v[k][i];
-			if(c != T(0))
+			if(not(c <<equal_to>> T(0)))
 			{
 				row_add(a, k, i, -c);
 				row_add(b, k, i, -c);

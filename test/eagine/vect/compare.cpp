@@ -93,9 +93,9 @@ void test_vect_equal_apply_2(void)
 			b[i] = std::rand();
 			v[i] = b[i];
 
-			using eagine::math::close_to;
+			using eagine::math::equal_to;
 
-			eq &= (a[i] <<close_to>> b[i]);
+			eq &= (a[i] <<equal_to>> b[i]);
 		}
 
 		typedef eagine::vect::equal<T, N> _equal;

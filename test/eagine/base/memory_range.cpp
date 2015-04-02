@@ -184,14 +184,14 @@ void test_base_memory_range_begin_end_offs_2_T(std::size_t n)
 
 	if(n > 0)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(*mr.begin() <<close_to>> b[0]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(*mr.begin() <<equal_to>> b[0]);
 	}
 
 	for(std::size_t i = 0; i<n; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(*mr.offs(i) <<close_to>> b[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(*mr.offs(i) <<equal_to>> b[i]);
 	}
 }
 
@@ -236,14 +236,14 @@ void test_base_memory_range_element_T(std::size_t n)
 
 	if(n > 0)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(*mr.begin() <<close_to>> b[0]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(*mr.begin() <<equal_to>> b[0]);
 	}
 
 	for(std::size_t i = 0; i<n; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(mr[i] <<close_to>> b[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(mr[i] <<equal_to>> b[i]);
 	}
 }
 
@@ -290,8 +290,8 @@ void test_base_memory_range_slice_1_T(std::size_t n)
 
 			for(std::size_t k = 0; k<j; ++k)
 			{
-				using eagine::math::close_to;
-				BOOST_ASSERT(mr2[k] <<close_to>> mr[i+k]);
+				using eagine::math::equal_to;
+				BOOST_ASSERT(mr2[k] <<equal_to>> mr[i+k]);
 			}
 		}
 	}
@@ -338,8 +338,8 @@ void test_base_memory_range_slice_2_T(std::size_t n)
 
 		for(std::size_t k = 0; k<mr2.size(); ++k)
 		{
-			using eagine::math::close_to;
-			BOOST_ASSERT(mr2[k] <<close_to>> mr[i+k]);
+			using eagine::math::equal_to;
+			BOOST_ASSERT(mr2[k] <<equal_to>> mr[i+k]);
 		}
 	}
 }

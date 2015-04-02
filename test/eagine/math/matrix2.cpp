@@ -191,7 +191,9 @@ void test_math_matrix_get_TRC(void)
 		for(unsigned j=0; j<C; ++j)
 		{
 			unsigned k = RM?(i*C+j):(j*R+i);
-			BOOST_ASSERT(get(m,i,j) == d[k]);
+
+			using eagine::math::equal_to;
+			BOOST_ASSERT(get(m,i,j) <<equal_to>> d[k]);
 		}
 	}
 }
@@ -260,7 +262,8 @@ void test_math_matrix_reorder_TRC(void)
 	{
 		for(unsigned j=0; j<C; ++j)
 		{
-			BOOST_ASSERT(get(m1,i,j) == get(m2,i,j));
+			using eagine::math::equal_to;
+			BOOST_ASSERT(get(m1,i,j) <<equal_to>> get(m2,i,j));
 		}
 	}
 }
@@ -329,7 +332,8 @@ void test_math_matrix_transpose_TRC(void)
 	{
 		for(unsigned j=0; j<N; ++j)
 		{
-			BOOST_ASSERT(get(m1,i,j) == get(m2,j,i));
+			using eagine::math::equal_to;
+			BOOST_ASSERT(get(m1,i,j) <<equal_to>> get(m2,j,i));
 		}
 	}
 }
@@ -399,8 +403,10 @@ void test_math_matrix_row_TRC(void)
 		for(unsigned j=0; j<C; ++j)
 		{
 			unsigned k = RM?(i*C+j):(j*R+i);
-			BOOST_ASSERT(r[j] == d[k]);
-			BOOST_ASSERT(r[j] == get(m,i,j));
+
+			using eagine::math::equal_to;
+			BOOST_ASSERT(r[j] <<equal_to>> d[k]);
+			BOOST_ASSERT(r[j] <<equal_to>> get(m,i,j));
 		}
 	}
 }
@@ -470,8 +476,10 @@ void test_math_matrix_col_TRC(void)
 		for(unsigned i=0; i<R; ++i)
 		{
 			unsigned k = RM?(i*C+j):(j*R+i);
-			BOOST_ASSERT(c[i] == d[k]);
-			BOOST_ASSERT(c[i] == get(m,i,j));
+
+			using eagine::math::equal_to;
+			BOOST_ASSERT(c[i] <<equal_to>> d[k]);
+			BOOST_ASSERT(c[i] <<equal_to>> get(m,i,j));
 		}
 	}
 }
@@ -536,11 +544,12 @@ void test_math_matrix_data_range_T(const T(&a)[N], Range& r)
 	{
 		const T* o = r.offs(i);
 
-		BOOST_ASSERT(r[i] == a[i]);
-		BOOST_ASSERT(*o  == a[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(r[i] <<equal_to>> a[i]);
+		BOOST_ASSERT(*o  <<equal_to>> a[i]);
 	}
 
-	for(T e : r) { }
+	for(T x : r) { (void)x; }
 
 	for(unsigned i=0; i<N; ++i)
 	{

@@ -12,6 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/math/matrix.hpp>
+#include <eagine/math/close_to.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"
@@ -1439,7 +1440,8 @@ void test_math_matrix_compare(void)
 		d1[k] = std::rand() / T(3);
 		d2[k] = gen_eq?d1[k]:std::rand() / T(3);
 
-		all_eq &= (d1[k] == d2[k]);
+		using eagine::math::equal_to;
+		all_eq &= (d1[k] <<equal_to>> d2[k]);
 	}
 
 	eagine::math::matrix<T,R,C,RM> m1 =

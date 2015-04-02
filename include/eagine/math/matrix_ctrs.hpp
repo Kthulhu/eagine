@@ -892,7 +892,7 @@ operator * (
 	const reflection_I<matrix<T,R,C,RM>, I>& c2
 ) noexcept
 {
-	return {c1._r!=c2._r};
+	return {not(c1._r <<equal_to>> c2._r)};
 }
 
 // reorder_mat_ctr(reflection_I)

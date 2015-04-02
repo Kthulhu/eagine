@@ -26,8 +26,8 @@ void test_math_tvec_default_ctr_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> T(0));
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> T(0));
 	}
 }
 
@@ -59,9 +59,9 @@ void test_math_tvec_copy_ctr_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> T(0));
-		BOOST_ASSERT(v[i] <<close_to>> u[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> T(0));
+		BOOST_ASSERT(v[i] <<equal_to>> u[i]);
 	}
 }
 
@@ -99,8 +99,8 @@ void test_math_tvec_data_ctr_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(d[i] <<close_to>> u[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(d[i] <<equal_to>> u[i]);
 	}
 }
 
@@ -142,14 +142,14 @@ void test_math_tvec_data_ctr_2_T(void)
 
 	for(unsigned i=0; i<M; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(d[i] <<close_to>> u[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(d[i] <<equal_to>> u[i]);
 	}
 
 	for(unsigned i=M; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(f <<close_to>> u[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(f <<equal_to>> u[i]);
 	}
 }
 
@@ -214,8 +214,8 @@ void test_math_tvec_init_ctr_T(P ... p)
 
 	for(unsigned i=0; i<sizeof...(P); ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(d[i] <<close_to>> v[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(d[i] <<equal_to>> v[i]);
 	}
 }
 
@@ -305,12 +305,12 @@ void test_math_tvec_conv_ctr1_T(const eagine::math::tvec<T, (M>N?N:0)>& v1)
 	T x = std::rand() / T(11);
 	eagine::math::tvec<T, N+1> v2(v1, x);
 
-	using eagine::math::close_to;
+	using eagine::math::equal_to;
 	for(unsigned i=0; i<N; ++i)
 	{
-		BOOST_ASSERT(v1[i] <<close_to>> v2[i]);
+		BOOST_ASSERT(v1[i] <<equal_to>> v2[i]);
 	}
-	BOOST_ASSERT(x <<close_to>> v2[N]);
+	BOOST_ASSERT(x <<equal_to>> v2[N]);
 
 	test_math_tvec_conv_ctr1_T<T, M>(v2);
 }
@@ -342,15 +342,15 @@ void test_math_tvec_conv_ctr2_TNP(
 	T d[sizeof...(P)] = {T(p)...};
 	eagine::math::tvec<T, N+sizeof...(P)> v2(v1, p...);
 
-	using eagine::math::close_to;
+	using eagine::math::equal_to;
 	for(unsigned i=0; i<N; ++i)
 	{
-		BOOST_ASSERT(v1[i] <<close_to>> v2[i]);
+		BOOST_ASSERT(v1[i] <<equal_to>> v2[i]);
 	}
 
 	for(unsigned i=0; i<sizeof...(P); ++i)
 	{
-		BOOST_ASSERT(d[i] <<close_to>> v2[N+i]);
+		BOOST_ASSERT(d[i] <<equal_to>> v2[N+i]);
 	}
 }
 
@@ -438,15 +438,15 @@ void test_math_tvec_conv_ctr3_TN(P ... p)
 	eagine::math::tvec<T, sizeof...(P)> u(p...);
 	eagine::math::tvec<T, N+sizeof...(P)> w(v, u);
 
-	using eagine::math::close_to;
+	using eagine::math::equal_to;
 	for(unsigned i=0; i<N; ++i)
 	{
-		BOOST_ASSERT(v[i] <<close_to>> w[i]);
+		BOOST_ASSERT(v[i] <<equal_to>> w[i]);
 	}
 
 	for(unsigned i=0; i<sizeof...(P); ++i)
 	{
-		BOOST_ASSERT(u[i] <<close_to>> w[N+i]);
+		BOOST_ASSERT(u[i] <<equal_to>> w[N+i]);
 	}
 }
 
@@ -519,10 +519,10 @@ void test_math_tvec_conv_ctr4_TN(void)
 	eagine::math::tvec<T, N> v(d, N);
 	eagine::math::tvec<T, M> u(v);
 
-	using eagine::math::close_to;
+	using eagine::math::equal_to;
 	for(unsigned i=0; i<M; ++i)
 	{
-		BOOST_ASSERT(v[i] <<close_to>> u[i]);
+		BOOST_ASSERT(v[i] <<equal_to>> u[i]);
 	}
 }
 
@@ -615,8 +615,8 @@ void test_math_taxis_elem1_T_N(std::integral_constant<unsigned, 0>)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(aN0[i] <<close_to>> (i==0?T(1):T(0)));
+		using eagine::math::equal_to;
+		BOOST_ASSERT(aN0[i] <<equal_to>> (i==0?T(1):T(0)));
 	}
 }
 
@@ -631,8 +631,8 @@ void test_math_taxis_elem1_T_N(std::integral_constant<unsigned, I>)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(aNI[i] <<close_to>> (i==I?T(1):T(0)));
+		using eagine::math::equal_to;
+		BOOST_ASSERT(aNI[i] <<equal_to>> (i==I?T(1):T(0)));
 	}
 }
 

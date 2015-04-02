@@ -41,8 +41,8 @@ void test_vect_shuffle_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			using eagine::math::close_to;
-			BOOST_ASSERT(u[i] <<close_to>> a[n[i]]);
+			using eagine::math::equal_to;
+			BOOST_ASSERT(u[i] <<equal_to>> a[n[i]]);
 		}
 	}
 }
@@ -251,8 +251,8 @@ void test_vect_shuffle2_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			using eagine::math::close_to;
-			BOOST_ASSERT(w[i] <<close_to>> a[n[i]]);
+			using eagine::math::equal_to;
+			BOOST_ASSERT(w[i] <<equal_to>> a[n[i]]);
 		}
 	}
 }

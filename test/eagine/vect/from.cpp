@@ -31,8 +31,8 @@ void test_vect_from_array_apply_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> a[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> a[i]);
 	}
 }
 
@@ -76,13 +76,13 @@ void test_vect_from_saafv_apply_T(void)
 
 	for(unsigned i=0; i<M; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> a[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> a[i]);
 	}
 	for(unsigned i=M; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> f);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> f);
 	}
 }
 

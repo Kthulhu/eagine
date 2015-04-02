@@ -184,51 +184,51 @@ void test_math_vector_element(void)
 	eagine::math::vector<T, 7> v7 = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6]}};
 	eagine::math::vector<T, 8> v8 = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]}};
 
-	using eagine::math::close_to;
+	using eagine::math::equal_to;
 
-	BOOST_ASSERT(v1[0] <<close_to>> a[0]);
+	BOOST_ASSERT(v1[0] <<equal_to>> a[0]);
 
-	BOOST_ASSERT(v2[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v2[1] <<close_to>> a[1]);
+	BOOST_ASSERT(v2[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v2[1] <<equal_to>> a[1]);
 
-	BOOST_ASSERT(v3[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v3[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v3[2] <<close_to>> a[2]);
+	BOOST_ASSERT(v3[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v3[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v3[2] <<equal_to>> a[2]);
 
-	BOOST_ASSERT(v4[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v4[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v4[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v4[3] <<close_to>> a[3]);
+	BOOST_ASSERT(v4[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v4[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v4[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v4[3] <<equal_to>> a[3]);
 
-	BOOST_ASSERT(v5[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v5[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v5[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v5[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v5[4] <<close_to>> a[4]);
+	BOOST_ASSERT(v5[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v5[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v5[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v5[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v5[4] <<equal_to>> a[4]);
 
-	BOOST_ASSERT(v6[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v6[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v6[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v6[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v6[4] <<close_to>> a[4]);
-	BOOST_ASSERT(v6[5] <<close_to>> a[5]);
+	BOOST_ASSERT(v6[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v6[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v6[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v6[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v6[4] <<equal_to>> a[4]);
+	BOOST_ASSERT(v6[5] <<equal_to>> a[5]);
 
-	BOOST_ASSERT(v7[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v7[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v7[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v7[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v7[4] <<close_to>> a[4]);
-	BOOST_ASSERT(v7[5] <<close_to>> a[5]);
-	BOOST_ASSERT(v7[6] <<close_to>> a[6]);
+	BOOST_ASSERT(v7[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v7[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v7[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v7[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v7[4] <<equal_to>> a[4]);
+	BOOST_ASSERT(v7[5] <<equal_to>> a[5]);
+	BOOST_ASSERT(v7[6] <<equal_to>> a[6]);
 
-	BOOST_ASSERT(v8[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v8[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v8[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v8[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v8[4] <<close_to>> a[4]);
-	BOOST_ASSERT(v8[5] <<close_to>> a[5]);
-	BOOST_ASSERT(v8[6] <<close_to>> a[6]);
-	BOOST_ASSERT(v8[7] <<close_to>> a[7]);
+	BOOST_ASSERT(v8[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v8[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v8[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v8[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v8[4] <<equal_to>> a[4]);
+	BOOST_ASSERT(v8[5] <<equal_to>> a[5]);
+	BOOST_ASSERT(v8[6] <<equal_to>> a[6]);
+	BOOST_ASSERT(v8[7] <<equal_to>> a[7]);
 }
 
 BOOST_AUTO_TEST_CASE(math_vector_element)
@@ -247,8 +247,8 @@ void test_math_vector_x(
 	eagine::meta::true_type
 )
 {
-	using eagine::math::close_to;
-	BOOST_ASSERT(v.x() <<close_to>> v[0]);
+	using eagine::math::equal_to;
+	BOOST_ASSERT(v.x() <<equal_to>> v[0]);
 }
 
 template <typename T, unsigned N>
@@ -263,8 +263,8 @@ void test_math_vector_y(
 	eagine::meta::true_type
 )
 {
-	using eagine::math::close_to;
-	BOOST_ASSERT(v.y() <<close_to>> v[1]);
+	using eagine::math::equal_to;
+	BOOST_ASSERT(v.y() <<equal_to>> v[1]);
 }
 
 template <typename T, unsigned N>
@@ -279,8 +279,8 @@ void test_math_vector_z(
 	eagine::meta::true_type
 )
 {
-	using eagine::math::close_to;
-	BOOST_ASSERT(v.z() <<close_to>> v[2]);
+	using eagine::math::equal_to;
+	BOOST_ASSERT(v.z() <<equal_to>> v[2]);
 }
 
 template <typename T, unsigned N>
@@ -295,8 +295,8 @@ void test_math_vector_w(
 	eagine::meta::true_type
 )
 {
-	using eagine::math::close_to;
-	BOOST_ASSERT(v.w() <<close_to>> v[3]);
+	using eagine::math::equal_to;
+	BOOST_ASSERT(v.w() <<equal_to>> v[3]);
 }
 
 template <typename T, unsigned N>
@@ -371,51 +371,51 @@ void test_math_vector_make(void)
 	auto v7 = eagine::math::vector<T, 7>::make(a[0], a[1], a[2], a[3], a[4], a[5], a[6]);
 	auto v8 = eagine::math::vector<T, 8>::make(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
 
-	using eagine::math::close_to;
+	using eagine::math::equal_to;
 
-	BOOST_ASSERT(v1[0] <<close_to>> a[0]);
+	BOOST_ASSERT(v1[0] <<equal_to>> a[0]);
 
-	BOOST_ASSERT(v2[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v2[1] <<close_to>> a[1]);
+	BOOST_ASSERT(v2[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v2[1] <<equal_to>> a[1]);
 
-	BOOST_ASSERT(v3[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v3[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v3[2] <<close_to>> a[2]);
+	BOOST_ASSERT(v3[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v3[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v3[2] <<equal_to>> a[2]);
 
-	BOOST_ASSERT(v4[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v4[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v4[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v4[3] <<close_to>> a[3]);
+	BOOST_ASSERT(v4[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v4[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v4[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v4[3] <<equal_to>> a[3]);
 
-	BOOST_ASSERT(v5[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v5[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v5[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v5[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v5[4] <<close_to>> a[4]);
+	BOOST_ASSERT(v5[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v5[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v5[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v5[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v5[4] <<equal_to>> a[4]);
 
-	BOOST_ASSERT(v6[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v6[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v6[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v6[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v6[4] <<close_to>> a[4]);
-	BOOST_ASSERT(v6[5] <<close_to>> a[5]);
+	BOOST_ASSERT(v6[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v6[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v6[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v6[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v6[4] <<equal_to>> a[4]);
+	BOOST_ASSERT(v6[5] <<equal_to>> a[5]);
 
-	BOOST_ASSERT(v7[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v7[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v7[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v7[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v7[4] <<close_to>> a[4]);
-	BOOST_ASSERT(v7[5] <<close_to>> a[5]);
-	BOOST_ASSERT(v7[6] <<close_to>> a[6]);
+	BOOST_ASSERT(v7[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v7[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v7[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v7[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v7[4] <<equal_to>> a[4]);
+	BOOST_ASSERT(v7[5] <<equal_to>> a[5]);
+	BOOST_ASSERT(v7[6] <<equal_to>> a[6]);
 
-	BOOST_ASSERT(v8[0] <<close_to>> a[0]);
-	BOOST_ASSERT(v8[1] <<close_to>> a[1]);
-	BOOST_ASSERT(v8[2] <<close_to>> a[2]);
-	BOOST_ASSERT(v8[3] <<close_to>> a[3]);
-	BOOST_ASSERT(v8[4] <<close_to>> a[4]);
-	BOOST_ASSERT(v8[5] <<close_to>> a[5]);
-	BOOST_ASSERT(v8[6] <<close_to>> a[6]);
-	BOOST_ASSERT(v8[7] <<close_to>> a[7]);
+	BOOST_ASSERT(v8[0] <<equal_to>> a[0]);
+	BOOST_ASSERT(v8[1] <<equal_to>> a[1]);
+	BOOST_ASSERT(v8[2] <<equal_to>> a[2]);
+	BOOST_ASSERT(v8[3] <<equal_to>> a[3]);
+	BOOST_ASSERT(v8[4] <<equal_to>> a[4]);
+	BOOST_ASSERT(v8[5] <<equal_to>> a[5]);
+	BOOST_ASSERT(v8[6] <<equal_to>> a[6]);
+	BOOST_ASSERT(v8[7] <<equal_to>> a[7]);
 }
 
 
@@ -554,8 +554,8 @@ void test_math_vector_from3_T(void)
 
 	for(unsigned i=0; i<M; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(u[i] <<close_to>> v[j[i]]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(u[i] <<equal_to>> v[j[i]]);
 	}
 }
 
@@ -653,9 +653,9 @@ void test_math_vector_from4_T(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			using eagine::math::close_to;
+			using eagine::math::equal_to;
 
-			BOOST_ASSERT(v[i] <<close_to>> a[i]);
+			BOOST_ASSERT(v[i] <<equal_to>> a[i]);
 		}
 	}
 }
@@ -694,8 +694,8 @@ void test_math_vector_get_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(get(va, i) <<close_to>> va[i]);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(get(va, i) <<equal_to>> va[i]);
 	}
 }
 
@@ -735,8 +735,8 @@ void test_math_vector_set_T(void)
 
 			set(va, i, a);
 
-			using eagine::math::close_to;
-			BOOST_ASSERT(get(va, i) <<close_to>> a);
+			using eagine::math::equal_to;
+			BOOST_ASSERT(get(va, i) <<equal_to>> a);
 		}
 	}
 }
@@ -771,8 +771,8 @@ void test_math_vector_zero_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> T(0));
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> T(0));
 	}
 }
 
@@ -805,8 +805,8 @@ void test_math_vector_fill_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
-		BOOST_ASSERT(v[i] <<close_to>> a);
+		using eagine::math::equal_to;
+		BOOST_ASSERT(v[i] <<equal_to>> a);
 	}
 }
 
@@ -843,10 +843,10 @@ void test_math_vector_axis_I_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
-		BOOST_ASSERT(v[i] <<close_to>> ((i==I)?a:T(0)));
-		BOOST_ASSERT(u[i] <<close_to>> ((i==I)?T(1):T(0)));
+		BOOST_ASSERT(v[i] <<equal_to>> ((i==I)?a:T(0)));
+		BOOST_ASSERT(u[i] <<equal_to>> ((i==I)?T(1):T(0)));
 	}
 }
 
@@ -917,9 +917,9 @@ void test_math_vector_axis_T(unsigned i)
 
 	for(unsigned j=0; j<N; ++j)
 	{
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
-		BOOST_ASSERT(v[j] <<close_to>> ((i==j)?a:T(0)));
+		BOOST_ASSERT(v[j] <<equal_to>> ((i==j)?a:T(0)));
 	}
 }
 
@@ -999,9 +999,9 @@ void test_math_vector_equal_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
-		eq &= (a[i] <<close_to>> b[i]);
+		eq &= (a[i] <<equal_to>> b[i]);
 	}
 
 	auto va = eagine::math::vector<T, N>::from(a, N);
@@ -1052,9 +1052,9 @@ void test_math_vector_noteq_T(void)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
-		eq &= (a[i] <<close_to>> b[i]);
+		eq &= (a[i] <<equal_to>> b[i]);
 	}
 
 	auto va = eagine::math::vector<T, N>::from(a, N);
@@ -1846,12 +1846,12 @@ void test_math_vector_data_range_T(const T(&a)[N], Range& r)
 
 	for(unsigned i=0; i<N; ++i)
 	{
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
 		const T* o = r.offs(i);
 
-		BOOST_ASSERT(r[i] <<close_to>> a[i]);
-		BOOST_ASSERT( *o  <<close_to>> a[i]);
+		BOOST_ASSERT(r[i] <<equal_to>> a[i]);
+		BOOST_ASSERT( *o  <<equal_to>> a[i]);
 	}
 
 	for(T x : r) { (void)x; }

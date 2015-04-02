@@ -81,10 +81,10 @@ BOOST_AUTO_TEST_CASE(math_angle_value1)
 		eagine::math::angle<float> af(f);
 		eagine::math::angle<double> ad(d);
 
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
-		BOOST_ASSERT((value(af) <<close_to>> f));
-		BOOST_ASSERT((value(ad) <<close_to>> d));
+		BOOST_ASSERT((value(af) <<equal_to>> f));
+		BOOST_ASSERT((value(ad) <<equal_to>> d));
 	}
 }
 
@@ -105,21 +105,21 @@ BOOST_AUTO_TEST_CASE(math_angle_compare_eq)
 		eagine::math::angle<double> ad1(d1);
 		eagine::math::angle<double> ad2(d2);
 
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
 		// ==
-		BOOST_ASSERT((af1 == af2) == (af2 <<close_to>> af1));
-		BOOST_ASSERT((ad1 == ad2) == (ad2 <<close_to>> ad1));
+		BOOST_ASSERT((af1 == af2) == (af2 == af1));
+		BOOST_ASSERT((ad1 == ad2) == (ad2 == ad1));
 
-		BOOST_ASSERT((af1 == af2) == (f1 <<close_to>> f2));
-		BOOST_ASSERT((ad1 == ad2) == (d1 <<close_to>> d2));
+		BOOST_ASSERT((af1 == af2) == (f1 <<equal_to>> f2));
+		BOOST_ASSERT((ad1 == ad2) == (d1 <<equal_to>> d2));
 
 		// !=
-		BOOST_ASSERT((af1 != af2) == not(af2 <<close_to>> af1));
-		BOOST_ASSERT((ad1 != ad2) == not(ad2 <<close_to>> ad1));
+		BOOST_ASSERT((af1 != af2) == not(af2 == af1));
+		BOOST_ASSERT((ad1 != ad2) == not(ad2 == ad1));
 
-		BOOST_ASSERT((af1 != af2) == not(f1 <<close_to>> f2));
-		BOOST_ASSERT((ad1 != ad2) == not(d1 <<close_to>> d2));
+		BOOST_ASSERT((af1 != af2) == not(f1 <<equal_to>> f2));
+		BOOST_ASSERT((ad1 != ad2) == not(d1 <<equal_to>> d2));
 
 		// <
 		BOOST_ASSERT((af1 <  af2) == (af2 >  af1));
@@ -228,10 +228,10 @@ BOOST_AUTO_TEST_CASE(math_angle_ratio)
 		eagine::math::angle<float> afa(f1);
 		eagine::math::angle<float> afb(f2);
 
-		using eagine::math::close_to;
+		using eagine::math::equal_to;
 
-		BOOST_ASSERT((value(afa/afb) <<close_to>> f1/f2));
-		BOOST_ASSERT((value(afb/afa) <<close_to>> f2/f1));
+		BOOST_ASSERT((value(afa/afb) <<equal_to>> f1/f2));
+		BOOST_ASSERT((value(afb/afa) <<equal_to>> f2/f1));
 	}
 }
 

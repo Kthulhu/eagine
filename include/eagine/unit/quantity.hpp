@@ -125,8 +125,8 @@ constexpr inline
 bool operator == (const quantity<U1, T>& a, const quantity<U2, T>& b)
 {
 	typedef typename value_conv<U2, U1>::type conv;
-	using math::close_to;
-	return (a._v <<close_to>> conv::apply(b._v));
+	using math::equal_to;
+	return (a._v <<equal_to>> conv::apply(b._v));
 }
 
 template <typename U1, typename U2, typename T>
@@ -134,8 +134,8 @@ constexpr inline
 bool operator != (const quantity<U1, T>& a, const quantity<U2, T>& b)
 {
 	typedef typename value_conv<U2, U1>::type conv;
-	using math::close_to;
-	return not(a._v <<close_to>> conv::apply(b._v));
+	using math::equal_to;
+	return not(a._v <<equal_to>> conv::apply(b._v));
 }
 
 template <typename U1, typename U2, typename T>

@@ -38,8 +38,8 @@ void test_vect_min_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			using eagine::math::close_to;
-			BOOST_ASSERT(min[i] <<close_to>> ((u[i]<v[i])?u[i]:v[i]));
+			using eagine::math::equal_to;
+			BOOST_ASSERT(min[i] <<equal_to>> ((u[i]<v[i])?u[i]:v[i]));
 		}
 	}
 }
@@ -95,8 +95,8 @@ void test_vect_max_apply(void)
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			using eagine::math::close_to;
-			BOOST_ASSERT(max[i] <<close_to>> ((u[i]>v[i])?u[i]:v[i]));
+			using eagine::math::equal_to;
+			BOOST_ASSERT(max[i] <<equal_to>> ((u[i]>v[i])?u[i]:v[i]));
 		}
 	}
 }
@@ -156,8 +156,8 @@ void test_vect_hmin_apply(void)
 			}
 			for(unsigned j=i+1; j<N; ++j)
 			{
-				using eagine::math::close_to;
-				BOOST_ASSERT(min[i] <<close_to>> min[j]);
+				using eagine::math::equal_to;
+				BOOST_ASSERT(min[i] <<equal_to>> min[j]);
 			}
 		}
 	}
@@ -218,8 +218,8 @@ void test_vect_hmax_apply(void)
 			}
 			for(unsigned j=i+1; j<N; ++j)
 			{
-				using eagine::math::close_to;
-				BOOST_ASSERT(max[i] <<close_to>> max[j]);
+				using eagine::math::equal_to;
+				BOOST_ASSERT(max[i] <<equal_to>> max[j]);
 			}
 		}
 	}
