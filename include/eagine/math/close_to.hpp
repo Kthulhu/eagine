@@ -81,14 +81,6 @@ struct operation_close_to_operands
 
 	template <typename X>
 	static constexpr inline 
-	X _min(X a, X b)
-	noexcept
-	{
-		return a < b ? a : b;
-	}
-
-	template <typename X>
-	static constexpr inline 
 	X _max(X a, X b)
 	noexcept
 	{
@@ -127,11 +119,11 @@ struct operation_close_to_operands
 
 	template <typename X>
 	static constexpr inline
-	auto _adjn(X n)
+	auto _adjm(T m, X n)
 	noexcept
 	{
-		using std::log2;
-		return (n < X(1)) ? _min(X(n*(2-log2(n))), X(1)) : n;
+		using std::pow;
+		return m + T(2)*pow(X(2), -n*X(sizeof(T)*8));
 	}
 
 	template <typename X>
@@ -154,7 +146,38 @@ struct operation_close_to_operands
 	bool _nle(X norm, T margin) const
 	noexcept
 	{
-		return	(norm <= _eps()) || (_dist()/norm <= margin);
+		return	(norm <= _eps()) ||
+			(_dist()/norm <= margin);
+	}
+
+	template <typename X>
+	constexpr inline
+	bool _nleam(X norm, T margin) const
+	noexcept
+	{
+		return	(norm <= _eps()) ||
+			(_dist()/norm <= _adjm(margin, norm));
+	}
+
+	constexpr inline
+	bool _eval_1(T margin) const
+	noexcept
+	{
+		return _nle(T(1), margin);
+	}
+
+	constexpr inline
+	bool _eval_n(T margin) const
+	noexcept
+	{
+		return _nle(_norm(), margin);
+	}
+
+	constexpr inline
+	bool _eval_nam(T margin) const
+	noexcept
+	{
+		return _nleam(_norm(), margin);
 	}
 };
 
@@ -190,7 +213,7 @@ struct full_operation_close_to
 	operator bool (void) const
 	noexcept
 	{
-		return _private._nle(T(1), _private._eps());
+		return _private._eval_1(_private._eps());
 	}
 };
 
@@ -213,31 +236,28 @@ struct full_operation_not_farther_from
 		bool abs(T margin) const
 		noexcept
 		{
-			return _private._nle(T(1), margin);
+			return _private._eval_1(margin);
 		}
 
 		constexpr inline
 		bool rel(T margin) const
 		noexcept
 		{
-			return _private._nle(_private._norm(), margin);
+			return _private._eval_n(margin);
 		}
 
 		constexpr inline
 		bool eps(unsigned mult = 1u) const
 		noexcept
 		{
-			return _private._nle(T(1), T(_private._eps()*mult));
+			return _private._eval_1(T(_private._eps()*mult));
 		}
 
 		constexpr inline
 		bool operator()(T margin) const
 		noexcept
 		{
-			return _private._nle(
-				_private._adjn(_private._norm()),
-				margin
-			);
+			return _private._eval_nam(margin);
 		}
 	} than;
 };

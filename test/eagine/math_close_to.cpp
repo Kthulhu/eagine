@@ -18,24 +18,24 @@
 BOOST_AUTO_TEST_SUITE(math_close_to)
 
 template <typename T>
-void test_math_close_to_1(void)
+void test_math_equal_to_1(void)
 {
 	T a = T(std::rand());
 
-	using eagine::math::close_to;
-	BOOST_ASSERT((a <<close_to>> a));
-	BOOST_ASSERT(close_to(a, a));
+	using eagine::math::equal_to;
+	BOOST_ASSERT((a <<equal_to>> a));
+	BOOST_ASSERT(equal_to(a, a));
 }
 
-BOOST_AUTO_TEST_CASE(math_close_to_1)
+BOOST_AUTO_TEST_CASE(math_equal_to_1)
 {
 	for(unsigned i=0; i<1000; ++i)
 	{
-		test_math_close_to_1<short>();
-		test_math_close_to_1<int>();
-		test_math_close_to_1<long>();
-		test_math_close_to_1<float>();
-		test_math_close_to_1<double>();
+		test_math_equal_to_1<short>();
+		test_math_equal_to_1<int>();
+		test_math_equal_to_1<long>();
+		test_math_equal_to_1<float>();
+		test_math_equal_to_1<double>();
 	}
 }
 
@@ -62,6 +62,27 @@ BOOST_AUTO_TEST_CASE(math_not_farther_from_1)
 		test_math_not_farther_from_1<long>();
 		test_math_not_farther_from_1<float>();
 		test_math_not_farther_from_1<double>();
+	}
+}
+
+template <typename T>
+void test_math_not_farther_from_2(void)
+{
+	T a = T(1)/T(1+std::rand());
+
+	using eagine::math::not_farther_from;
+	BOOST_ASSERT((a <<not_farther_from>> T(0)).than(a));
+}
+
+BOOST_AUTO_TEST_CASE(math_not_farther_from_2)
+{
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_not_farther_from_2<short>();
+		test_math_not_farther_from_2<int>();
+		test_math_not_farther_from_2<long>();
+		test_math_not_farther_from_2<float>();
+		test_math_not_farther_from_2<double>();
 	}
 }
 
