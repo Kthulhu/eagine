@@ -14,6 +14,10 @@ macro(add_eagine_test TEST_NAME SRC_NAME TEST_LIBRARIES BUILD_ONLY)
 	target_link_libraries(${TEST_NAME} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 	target_link_libraries(${TEST_NAME} ${EAGINE_THIRD_PARTY_LIBRARIES})
 
+	add_custom_target(build-${DIR_NAME}-${TEST_NAME} DEPENDS ${TEST_NAME})
+
+	add_dependencies(${DIR_NAME}-tests build-${DIR_NAME}-${TEST_NAME})
+
 	add_test(
 		build-test-${DIR_NAME}-${TEST_NAME}
 		"${CMAKE_COMMAND}"
@@ -49,7 +53,7 @@ function(eagine_exec_test_sse TEST_NAME)
 	set_target_properties(
 		"${TEST_NAME}-sse"
 		PROPERTIES COMPILE_FLAGS
-		"-msse"
+		"-march=native"
 	)
 endfunction()
 
@@ -61,3 +65,9 @@ function(eagine_exec_test_nosse TEST_NAME)
 		"-DEAGINE_USE_SSE=0"
 	)
 endfunction()
+
+function(eagine_test_dir)
+	get_filename_component(DIR_NAME ${CMAKE_CURRENT_BINARY_DIR} NAME_WE)
+	add_custom_target(${DIR_NAME}-tests)
+endfunction()
+

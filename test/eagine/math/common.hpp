@@ -37,3 +37,4 @@ bool test_math_close(T a, T b)
 	return (a <<not_farther_from>> b).than(test_math_close_eps(&a));
 }
 
+

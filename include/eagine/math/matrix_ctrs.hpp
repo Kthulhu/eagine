@@ -1,7 +1,7 @@
 /**
  *  @file eagine/math/matrix_ctrs.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -11,6 +11,7 @@
 #define EAGINE_MATH_MATRIX_CTRS_1308281038_HPP
 
 #include <eagine/math/matrix.hpp>
+#include <eagine/math/close_to.hpp>
 
 namespace eagine {
 namespace math {
@@ -1333,7 +1334,11 @@ struct looking_at<matrix<T,4,4,RM>>
 	_make2(const _dT& e, const _dT& u, const _dT& z, const scalar<T,3>& dzu)
 	noexcept
 	{
-		return _make3(e, normalized((dzu != 0)?u-z*dzu:u), z);
+		return _make3(
+			e,
+			normalized((T(dzu) <<close_to>> T(0))?u-z*dzu:u),
+			z
+		);
 	}
 
 	static constexpr inline

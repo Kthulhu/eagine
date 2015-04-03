@@ -13,6 +13,7 @@
 
 #include <eagine/math/tmat.hpp>
 #include <eagine/math/tvec.hpp>
+#include <eagine/math/close_to.hpp>
 #include <type_traits>
 #include <cstdlib>
 #include "common.hpp"
@@ -27,8 +28,9 @@ void test_math_tmat_default_ctr_TRC(void)
 	for(unsigned i=0; i<R; ++i)
 	for(unsigned j=0; j<C; ++j)
 	{
-		BOOST_ASSERT((get(m, i, j) == T(i==j?1:0)));
-		BOOST_ASSERT((m[RM?i:j][RM?j:i] == T(i==j?1:0)));
+		using eagine::math::equal_to;
+		BOOST_ASSERT((get(m, i, j) <<equal_to>> T(i==j?1:0)));
+		BOOST_ASSERT((m[RM?i:j][RM?j:i] <<equal_to>> T(i==j?1:0)));
 	}
 }
 
@@ -75,9 +77,10 @@ void test_math_tmat_copy_ctr_TRC(void)
 	for(unsigned i=0; i<R; ++i)
 	for(unsigned j=0; j<C; ++j)
 	{
-		BOOST_ASSERT((get(m1, i, j) == T(i==j?1:0)));
-		BOOST_ASSERT((get(m2, i, j) == T(i==j?1:0)));
-		BOOST_ASSERT((m2[RM?i:j][RM?j:i] == T(i==j?1:0)));
+		using eagine::math::equal_to;
+		BOOST_ASSERT((get(m1, i, j) <<equal_to>> T(i==j?1:0)));
+		BOOST_ASSERT((get(m2, i, j) <<equal_to>> T(i==j?1:0)));
+		BOOST_ASSERT((m2[RM?i:j][RM?j:i] <<equal_to>> T(i==j?1:0)));
 	}
 }
 
@@ -131,8 +134,10 @@ void test_math_tmat_data_ctr_TRC(void)
 	for(unsigned j=0; j<C; ++j)
 	{
 		unsigned k = RM?i*C+j:j*R+i;
-		BOOST_ASSERT((get(m, i, j) == d[k]));
-		BOOST_ASSERT((m[RM?i:j][RM?j:i] == d[k]));
+
+		using eagine::math::equal_to;
+		BOOST_ASSERT((get(m, i, j) <<equal_to>> d[k]));
+		BOOST_ASSERT((m[RM?i:j][RM?j:i] <<equal_to>> d[k]));
 	}
 }
 
@@ -686,8 +691,10 @@ void test_math_tmat_vector_ctr_TRC(void)
 	for(unsigned j=0; j<C; ++j)
 	{
 		unsigned k = RM?i*C+j:j*R+i;
-		BOOST_ASSERT((get(m, i, j) == d[k]));
-		BOOST_ASSERT((m[RM?i:j][RM?j:i] == d[k]));
+
+		using eagine::math::equal_to;
+		BOOST_ASSERT((get(m, i, j) <<equal_to>> d[k]));
+		BOOST_ASSERT((m[RM?i:j][RM?j:i] <<equal_to>> d[k]));
 	}
 }
 
@@ -1241,8 +1248,10 @@ void test_math_tmat_pack_ctr_TRC(void)
 	for(unsigned j=0; j<C; ++j)
 	{
 		unsigned k = RM?i*C+j:j*R+i;
-		BOOST_ASSERT((get(m, i, j) == d[k]));
-		BOOST_ASSERT((m[RM?i:j][RM?j:i] == d[k]));
+
+		using eagine::math::equal_to;
+		BOOST_ASSERT((get(m, i, j) <<equal_to>> d[k]));
+		BOOST_ASSERT((m[RM?i:j][RM?j:i] <<equal_to>> d[k]));
 	}
 }
 
@@ -1499,7 +1508,8 @@ bool test_math_tmat_from_TRCIJ(void)
 	for(unsigned i=0; i<=I; ++i)
 	for(unsigned j=0; j<=J; ++j)
 	{
-		BOOST_ASSERT(get(src,i,j) == get(dst,i,j));
+		using eagine::math::equal_to;
+		BOOST_ASSERT(get(src,i,j) <<equal_to>> get(dst,i,j));
 	}
 
 	return true;

@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 2.8)
 
 include(./testing.cmake)
 
+eagine_test_dir()
+
 eagine_exec_test(math_close_to)
 
 add_subdirectory(base)

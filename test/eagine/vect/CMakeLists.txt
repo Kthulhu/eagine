@@ -9,6 +9,8 @@ function(eagine_vect_exec_test TEST_NAME)
 	eagine_exec_test_nosse("${TEST_NAME}")
 endfunction()
 
+eagine_test_dir()
+
 eagine_vect_exec_test(data)
 eagine_vect_exec_test(fill)
 eagine_vect_exec_test(axis)

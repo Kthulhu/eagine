@@ -34,7 +34,7 @@ template <typename Op, typename ... P>
 static constexpr inline
 auto fold(P&& ... p)
 {
-	return fold_with(Op(), std::forward<P...>());
+	return fold_with(Op(), std::forward<P>(p)...);
 }
 
 } // namespace meta

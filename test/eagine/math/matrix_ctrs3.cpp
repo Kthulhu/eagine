@@ -257,10 +257,10 @@ void test_math_matrix_screen_tile_T_1(void)
 		T(1)
 	}};
 
-	unsigned m = std::rand() % 10 + 1;
-	unsigned n = std::rand() % 10 + 1;
-	unsigned i = std::rand() % m;
-	unsigned j = std::rand() % n;
+	unsigned m = unsigned(std::rand() % 10 + 1);
+	unsigned n = unsigned(std::rand() % 10 + 1);
+	unsigned i = unsigned(std::rand()) % m;
+	unsigned j = unsigned(std::rand()) % n;
 
 	auto p = eagine::math::screen_stretch<eagine::math::matrix<T,4,4,RM>>
 		::tile(i, j, m, n);
