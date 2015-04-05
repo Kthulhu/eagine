@@ -18,7 +18,7 @@
 #include <eagine/unit/quantity.hpp>
 #include <eagine/unit/si.hpp>
 
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 
 #include <cstdlib>
 

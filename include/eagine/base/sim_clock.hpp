@@ -11,7 +11,7 @@
 #ifndef EAGINE_BASE_SIM_CLOCK_1308281038_HPP
 #define EAGINE_BASE_SIM_CLOCK_1308281038_HPP
 
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <cassert>
 
 namespace eagine {

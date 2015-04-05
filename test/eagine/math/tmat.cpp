@@ -13,7 +13,7 @@
 
 #include <eagine/math/tmat.hpp>
 #include <eagine/math/tvec.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <type_traits>
 #include <cstdlib>
 #include "common.hpp"

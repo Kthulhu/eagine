@@ -13,7 +13,7 @@
 #include <eagine/unit/fwd.hpp>
 #include <eagine/unit/traits.hpp>
 #include <eagine/unit/dimensionless.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <eagine/meta/type_traits.hpp>
 
 namespace eagine {

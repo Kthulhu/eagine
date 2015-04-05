@@ -8,7 +8,7 @@ include(./testing.cmake)
 
 eagine_test_dir()
 
-eagine_exec_test(math_close_to)
+eagine_exec_test(math_difference)
 
 add_subdirectory(base)
 add_subdirectory(vect)

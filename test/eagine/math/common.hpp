@@ -8,7 +8,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <boost/test/unit_test.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 
 template <typename T>
 inline

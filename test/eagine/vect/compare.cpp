@@ -12,7 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/vect/compare.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <cstdlib>
 
 BOOST_AUTO_TEST_SUITE(vect_compare)

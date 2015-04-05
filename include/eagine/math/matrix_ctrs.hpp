@@ -11,7 +11,6 @@
 #define EAGINE_MATH_MATRIX_CTRS_1308281038_HPP
 
 #include <eagine/math/matrix.hpp>
-#include <eagine/math/close_to.hpp>
 
 namespace eagine {
 namespace math {

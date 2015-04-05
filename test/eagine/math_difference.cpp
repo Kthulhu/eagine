@@ -11,11 +11,35 @@
 #define BOOST_TEST_MODULE eagine_math_close_to
 #include <boost/test/unit_test.hpp>
 
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <cstdlib>
 #include <cmath>
 
 BOOST_AUTO_TEST_SUITE(math_close_to)
+
+template <typename T>
+void test_math_difference_to_1(void)
+{
+	T a = T(std::rand()-std::rand())/T(11);
+	T b = T(std::rand()-std::rand())/T(11);
+
+	using std::abs;
+	using eagine::math::to;
+	BOOST_ASSERT(not((a <<to>> b) < T(abs(a-b))));
+	BOOST_ASSERT(not((a <<to>> b) > T(abs(a-b))));
+}
+
+BOOST_AUTO_TEST_CASE(math_difference_to_1)
+{
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_difference_to_1<short>();
+		test_math_difference_to_1<int>();
+		test_math_difference_to_1<long>();
+		test_math_difference_to_1<float>();
+		test_math_difference_to_1<double>();
+	}
+}
 
 template <typename T>
 void test_math_equal_to_1(void)

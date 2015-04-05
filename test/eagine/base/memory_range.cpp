@@ -12,7 +12,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <eagine/base/memory_range.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 
 BOOST_AUTO_TEST_SUITE(base_memory_range)
 

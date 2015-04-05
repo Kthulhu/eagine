@@ -13,7 +13,7 @@
 
 #include <eagine/math/matrix.hpp>
 #include <eagine/math/inverse.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <cstdlib>
 #include <cmath>
 #include "common.hpp"

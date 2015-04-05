@@ -1,5 +1,5 @@
 /**
- *  @file eagine/math/close_to.hpp
+ *  @file eagine/math/difference.hpp
  *
  *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
@@ -7,14 +7,86 @@
  */
 #pragma once
 
-#ifndef EAGINE_MATH_CLOSE_TO_1308281038_HPP
-#define EAGINE_MATH_CLOSE_TO_1308281038_HPP
+#ifndef EAGINE_MATH_DIFFERENCE_1308281038_HPP
+#define EAGINE_MATH_DIFFERENCE_1308281038_HPP
 
 #include <limits>
 #include <cmath>
 
 namespace eagine {
 namespace math {
+
+// difference_op
+template <typename T>
+struct difference_op
+{
+	T _l, _r;
+
+	template <typename X>
+	static constexpr inline
+	X _abs(X value)
+	noexcept
+	{
+		return (value>=X(0))?value:-value;
+	}
+
+	constexpr inline
+	auto get(void) const
+	noexcept
+	{
+		return _abs(_r-_l);
+	}
+
+	constexpr inline
+	operator T (void) const
+	noexcept
+	{
+		return T(get());
+	}
+};
+
+// difference
+template <typename T>
+static constexpr inline
+difference_op<T> difference(T a, T b)
+noexcept
+{
+	return {a, b};
+}
+
+// difference_operator fwd.
+struct difference_operator { };
+
+// half_difference_op
+template <typename T>
+struct half_difference_op
+{
+	T _l;
+};
+
+// operator << 
+template <typename T>
+static constexpr inline
+half_difference_op<T>
+operator << (T l, const difference_operator&)
+noexcept
+{
+	return {l};
+}
+
+// operator >> 
+template <typename T, typename U>
+static constexpr inline
+difference_op<T>
+operator >> (half_difference_op<T> op, U r)
+noexcept
+{
+	return {op._l, T(r)};
+}
+
+// operator <<to>>
+static constexpr difference_operator to = {};
+
 
 struct operator_equal_to;
 struct operator_close_to;

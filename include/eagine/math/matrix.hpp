@@ -12,7 +12,7 @@
 
 #include <eagine/math/config.hpp>
 #include <eagine/math/vector.hpp>
-#include <eagine/math/close_to.hpp>
+#include <eagine/math/difference.hpp>
 #include <eagine/meta/type_traits.hpp>
 #include <eagine/meta/int_sequence.hpp>
 #include <cassert>
