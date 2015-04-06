@@ -21,12 +21,11 @@ template <typename T>
 void test_math_difference_to_1(void)
 {
 	T a = T(std::rand()-std::rand())/T(11);
-	T b = T(std::rand()-std::rand())/T(11);
 
-	using std::abs;
 	using eagine::math::to;
-	BOOST_ASSERT(not((a <<to>> b) < T(abs(a-b))));
-	BOOST_ASSERT(not((a <<to>> b) > T(abs(a-b))));
+	using namespace eagine::math::cmp;
+
+	(a <<to>> a <<less_than>> eps());
 }
 
 BOOST_AUTO_TEST_CASE(math_difference_to_1)
@@ -38,6 +37,32 @@ BOOST_AUTO_TEST_CASE(math_difference_to_1)
 		test_math_difference_to_1<long>();
 		test_math_difference_to_1<float>();
 		test_math_difference_to_1<double>();
+	}
+}
+
+template <typename T>
+void test_math_difference_to_2(void)
+{
+	T a = T(std::rand()-std::rand())/T(11);
+	T b = T(std::rand()-std::rand())/T(11);
+
+	using std::abs;
+	using eagine::math::to;
+	using namespace eagine::math::cmp;
+
+	BOOST_ASSERT(not((a <<to>> b) < T(abs(a-b))));
+	BOOST_ASSERT(not((a <<to>> b) > T(abs(a-b))));
+}
+
+BOOST_AUTO_TEST_CASE(math_difference_to_2)
+{
+	for(unsigned i=0; i<1000; ++i)
+	{
+		test_math_difference_to_2<short>();
+		test_math_difference_to_2<int>();
+		test_math_difference_to_2<long>();
+		test_math_difference_to_2<float>();
+		test_math_difference_to_2<double>();
 	}
 }
 

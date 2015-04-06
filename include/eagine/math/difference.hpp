@@ -51,7 +51,7 @@ static constexpr inline
 difference_op<T> difference(T a, T b)
 noexcept
 {
-	return {a, b};
+	return difference_op<T>{a, b};
 }
 
 // difference_operator fwd.
@@ -71,7 +71,7 @@ half_difference_op<T>
 operator << (T l, const difference_operator&)
 noexcept
 {
-	return {l};
+	return half_difference_op<T>{l};
 }
 
 // operator >> 
@@ -81,11 +81,83 @@ difference_op<T>
 operator >> (half_difference_op<T> op, U r)
 noexcept
 {
-	return {op._l, T(r)};
+	return difference_op<T>{op._l, T(r)};
 }
 
 // operator <<to>>
 static constexpr difference_operator to = {};
+
+namespace cmp {
+
+struct cmp_less_than
+{
+	template <typename L, typename R>
+	constexpr inline
+	bool operator()(L l, R r) const
+	noexcept
+	{
+		return l < r;
+	}
+};
+
+struct cmp_greater_than
+{
+	template <typename L, typename R>
+	constexpr inline
+	bool operator()(L l, R r) const
+	noexcept
+	{
+		return l > r;
+	}
+};
+
+template <typename Cmp>
+struct operator_ : Cmp
+{ };
+
+static constexpr operator_<cmp_less_than> less_than = {};
+static constexpr operator_<cmp_greater_than> greater_than = {};
+
+struct eps { };
+
+template <typename T, typename Op>
+struct difference_cmp;
+
+template <typename T, typename Cmp>
+struct difference_cmp<T, operator_<Cmp>>
+{
+	T _l, _r;
+
+	constexpr inline
+	bool operator()(eps) const
+	noexcept
+	{
+		return Cmp()(
+			difference(_l, _r).get(),
+			std::numeric_limits<T>::epsilon()
+		);
+	}
+};
+
+template <typename T, typename Cmp>
+static constexpr inline
+difference_cmp<T, operator_<Cmp>>
+operator << (difference_op<T> op, operator_<Cmp>)
+noexcept
+{
+	return difference_cmp<T, operator_<Cmp>>{op._l, op._r};
+}
+
+template <typename T, typename Cmp, typename M>
+static constexpr inline
+bool
+operator >> (difference_cmp<T, operator_<Cmp>> op, M margin)
+noexcept
+{
+	return op(margin);
+}
+
+} // namespace cmp
 
 
 struct operator_equal_to;
