@@ -16,7 +16,7 @@
 
 BOOST_AUTO_TEST_SUITE(base_tribool)
 
-BOOST_AUTO_TEST_CASE(base_guid_tribool)
+BOOST_AUTO_TEST_CASE(base_tribool_default_construction)
 {
 	eagine::base::tribool b;
 	(void)b;

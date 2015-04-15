@@ -4,6 +4,12 @@
 #
 cmake_minimum_required(VERSION 2.8)
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	set(CMAKE_BUILD_TYPE Debug)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 include(./testing.cmake)
 
 eagine_test_dir()

@@ -82,7 +82,7 @@ inline
 bool valid_utf8(const char* begin, const char* end)
 noexcept
 {
-#if !EAGINE_NO_UTF8_CHECKS
+#if !defined(EAGINE_NO_UTF8_CHECKS) || !EAGINE_NO_UTF8_CHECKS
 	return utf8_validator::validate(begin, end) == end;
 #else
 	(void)begin;
