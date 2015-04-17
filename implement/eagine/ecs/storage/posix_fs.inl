@@ -9,6 +9,7 @@
 #include <eagine/eagine_config.hpp>
 #include <eagine/base/string_algo.hpp>
 #include <eagine/ecs/entity.hpp>
+#include <eagine/base/assert.hpp>
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/format.hpp>
@@ -780,7 +781,10 @@ const Component*
 posix_fs_component_storage<Entity, Component>::
 read(const Entity& ent, iter_t* pos)
 {
-	assert(!"Pointing to filesystem-stored components is not supported!");
+	EAGINE_ABORT(
+		"Pointing to filesystem-stored "
+		"components is not supported!"
+	);
 	return nullptr;
 }
 //------------------------------------------------------------------------------
@@ -792,7 +796,10 @@ Component*
 posix_fs_component_storage<Entity, Component>::
 write(const Entity& ent, iter_t* pos)
 {
-	assert(!"Pointing to filesystem-stored components is not supported!");
+	EAGINE_ABORT(
+		"Pointing to filesystem-stored "
+		"components is not supported!"
+	);
 	return nullptr;
 }
 //------------------------------------------------------------------------------
@@ -829,7 +836,7 @@ bool
 posix_fs_component_storage<Entity, Component>::
 _fetch(Component& dst, const Entity& ent, iter_t* pos, meta::false_type)
 {
-	assert(!"Fetching non assignable components is not supported!");
+	EAGINE_ABORT("Fetching non assignable components is not supported!");
 	return false;
 }
 //------------------------------------------------------------------------------

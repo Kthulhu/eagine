@@ -2,7 +2,7 @@
  *  @file eagine/base/expand_alloc.hpp
  *  @brief Buffer-backed byte allocator
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -13,6 +13,7 @@
 
 #include <eagine/base/alloc.hpp>
 #include <eagine/base/function.hpp>
+#include <eagine/base/assert.hpp>
 
 namespace eagine {
 namespace base {
@@ -142,10 +143,7 @@ public:
 			assert(_tail_alloc);
 			_tail_alloc.deallocate(p, n, a);
 		}
-		else
-		{
-			assert(!"Pointer not allocated by this allocator!");
-		}
+		else EAGINE_ABORT("Pointer not allocated by this allocator!");
 	}
 };
 

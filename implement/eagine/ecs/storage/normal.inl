@@ -7,6 +7,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/eagine_config.hpp>
+#include <eagine/base/assert.hpp>
 
 namespace eagine {
 namespace ecs {
@@ -199,7 +200,7 @@ bool
 normal_base_storage<Entity>::
 hide(const Entity& ent, iter_t* pos)
 {
-	assert(!"Hiding is currently not supported!"); // TODO
+	EAGINE_ABORT("Hiding is currently not supported!"); // TODO
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -211,7 +212,7 @@ bool
 normal_base_storage<Entity>::
 show(const Entity& ent, iter_t* pos)
 {
-	assert(!"Showing is currently not supported!"); // TODO
+	EAGINE_ABORT("Showing is currently not supported!"); // TODO
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -502,7 +503,7 @@ bool
 normal_component_storage<Entity, Component>::
 _fetch(Component& dst, const Entity& ent, iter_t* pos, meta::false_type)
 {
-	assert(!"Fetching non assignable components is not supported!");
+	EAGINE_ABORT("Fetching non assignable components is not supported!");
 	return false;
 }
 //------------------------------------------------------------------------------

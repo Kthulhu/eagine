@@ -8,6 +8,7 @@
  */
 #include <eagine/eagine_config.hpp>
 #include <eagine/base/array.hpp>
+#include <eagine/base/assert.hpp>
 
 #if !EAGINE_LINK_LIBRARY || defined(EAGINE_IMPLEMENTING_LIBRARY)
 #include <eagine/base/format.hpp>
@@ -79,7 +80,7 @@ _find_storage(void)
 	{
 		base::string(*get_name)(void) = _cmp_name_getter<Component>();
 		detail::mgr_handle_cmp_not_reg(get_name());
-		assert(!"Logic error!");
+		EAGINE_ABORT("Logic error!");
 	}
 	return *ct_storage;
 }
@@ -631,7 +632,7 @@ protected:
 	void _handle_unsupported_storage_op(void)
 	noexcept
 	{
-		assert(!"Storage does not support requested operation!");
+		EAGINE_ABORT("Storage does not support requested operation!");
 	}
 public:
 	~_manager_for_each_m_hlp_base(void)

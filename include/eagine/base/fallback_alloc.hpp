@@ -2,7 +2,7 @@
  *  @file eagine/base/fallback_alloc.hpp
  *  @brief Allocator with fallback.
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -12,6 +12,7 @@
 #define EAGINE_BASE_FALLBACK_ALLOC_1308281038_HPP
 
 #include <eagine/base/alloc.hpp>
+#include <eagine/base/assert.hpp>
 
 namespace eagine {
 namespace base {
@@ -106,10 +107,7 @@ public:
 			_fbk_size -= n;
 			_fbk.deallocate(p, n, a);
 		}
-		else
-		{
-			assert(!"Pointer not allocated by this allocator!");
-		}
+		else EAGINE_ABORT("Pointer not allocated by this allocator!");
 	}
 };
 

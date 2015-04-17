@@ -7,6 +7,7 @@
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/eagine_config.hpp>
+#include <eagine/base/assert.hpp>
 
 namespace eagine {
 namespace ecs {
@@ -213,7 +214,7 @@ bool
 immutable_base_storage<Entity>::
 hide(const Entity& ent, iter_t* pos)
 {
-	assert(!"Hiding is currently not supported!"); // TODO
+	EAGINE_ABORT("Hiding is currently not supported!"); // TODO
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -225,7 +226,7 @@ bool
 immutable_base_storage<Entity>::
 show(const Entity& ent, iter_t* pos)
 {
-	assert(!"Showing is currently not supported!"); // TODO
+	EAGINE_ABORT("Showing is currently not supported!"); // TODO
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -237,7 +238,7 @@ void
 immutable_base_storage<Entity>::
 swap(const Entity& e1, const Entity& e2)
 {
-	assert(!"Swap is not supported by this component storage!");
+	EAGINE_ABORT("Swap is not supported by this component storage!");
 }
 //------------------------------------------------------------------------------
 // immutable_component_storage
@@ -328,7 +329,7 @@ void
 immutable_component_storage<Entity, Component>::
 reserve(std::size_t)
 {
-	assert(!"Reserve is not supported by this component storage!");
+	EAGINE_ABORT("Reserve is not supported by this component storage!");
 }
 //------------------------------------------------------------------------------
 // immutable_component_storage::remove_if
@@ -343,7 +344,7 @@ remove_if(
 	>&
 )
 {
-	assert(!"Remove-if is not supported by this component storage!");
+	EAGINE_ABORT("Remove-if is not supported by this component storage!");
 }
 //------------------------------------------------------------------------------
 // immutable_component_storage::store
@@ -354,7 +355,7 @@ void
 immutable_component_storage<Entity, Component>::
 store(Component&&, const Entity&, iter_t*, iter_t*)
 {
-	assert(!"Store is not supported by this component storage!");
+	EAGINE_ABORT("Store is not supported by this component storage!");
 }
 //------------------------------------------------------------------------------
 // immutable_component_storage::copy
@@ -365,7 +366,7 @@ bool
 immutable_component_storage<Entity, Component>::
 copy(const Entity&, const Entity&, iter_t*, iter_t*)
 {
-	assert(!"Copy is not supported by this component storage!");
+	EAGINE_ABORT("Copy is not supported by this component storage!");
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -377,7 +378,7 @@ bool
 immutable_component_storage<Entity, Component>::
 remove(const Entity&, iter_t*)
 {
-	assert(!"Remove is not supported by this component storage!");
+	EAGINE_ABORT("Remove is not supported by this component storage!");
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -408,7 +409,7 @@ Component*
 immutable_component_storage<Entity, Component>::
 write(const Entity& ent, iter_t* pos)
 {
-	assert(!"Write is not supported by this component storage!");
+	EAGINE_ABORT("Write is not supported by this component storage!");
 	return nullptr;
 }
 //------------------------------------------------------------------------------
@@ -440,7 +441,7 @@ bool
 immutable_component_storage<Entity, Component>::
 _fetch(Component& dst, const Entity& ent, iter_t* pos, meta::false_type)
 {
-	assert(!"Fetching non assignable components is not supported!");
+	EAGINE_ABORT("Fetching non assignable components is not supported!");
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -494,7 +495,7 @@ for_single(
 	iter_t* pos
 )
 {
-	assert(!"for_single with non const components is not supported!");
+	EAGINE_ABORT("for_single with non const components is not supported!");
 	return false;
 }
 //------------------------------------------------------------------------------
@@ -529,7 +530,7 @@ void
 immutable_component_storage<Entity, Component>::
 for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
 {
-	assert(!"for_each with non const components is not supported!");
+	EAGINE_ABORT("for_each with non const components is not supported!");
 }
 //------------------------------------------------------------------------------
 // immutable_component_storage::parallel_for_each
@@ -575,7 +576,10 @@ parallel_for_each(
 	base::execution_params& param
 )
 {
-	assert(!"parallel_for_each with non const components is not supported!");
+	EAGINE_ABORT(
+		"parallel_for_each with non const "
+		"components is not supported!"
+	);
 }
 //------------------------------------------------------------------------------
 } // namespace ecs

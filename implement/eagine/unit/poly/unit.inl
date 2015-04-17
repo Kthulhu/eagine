@@ -1,11 +1,12 @@
 /**
  *  @file eagine/unit/poly/unit.inl
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 #include <eagine/eagine_config.hpp>
+#include <eagine/base/assert.hpp>
 #include <typeinfo>
 #include <typeindex>
 
@@ -209,7 +210,7 @@ operator + (const unit& a, const unit& b)
 {
 	if((a.dim() != b.dim()) || (a.sys() != b.sys()))
 	{
-		assert(!"Adding incompatible units"); // TODO exception
+		EAGINE_ABORT("Adding incompatible units"); // TODO exception
 	}
 
 	return a.base_unit();
@@ -223,7 +224,7 @@ operator - (const unit& a, const unit& b)
 {
 	if((a.dim() != b.dim()) || (a.sys() != b.sys()))
 	{
-		assert(!"Subtracting incompatible units"); // TODO exception
+		EAGINE_ABORT("Subtracting incompatible units"); // TODO exception
 	}
 
 	return a.base_unit();
@@ -237,7 +238,7 @@ operator * (const unit& a, const unit& b)
 {
 	if((a.sys() != b.sys()))
 	{
-		assert(!"Multiplying incompatible units"); // TODO exception
+		EAGINE_ABORT("Multiplying incompatible units"); // TODO exception
 	}
 
 	return unit(
@@ -254,7 +255,7 @@ operator / (const unit& a, const unit& b)
 {
 	if((a.sys() != b.sys()))
 	{
-		assert(!"Dividing incompatible units"); // TODO exception
+		EAGINE_ABORT("Dividing incompatible units"); // TODO exception
 	}
 
 	return unit(
