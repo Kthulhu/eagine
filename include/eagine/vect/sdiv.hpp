@@ -15,11 +15,11 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct sdiv
 {
-	typedef typename data<T, N>::type _dT;
-	typedef typename data_param<T, N>::type _dpT;
+	typedef typename data<T, N, V>::type _dT;
+	typedef typename data_param<T, N, V>::type _dpT;
 
 	static constexpr inline
 	_dT apply(_dpT a, _dpT b)
@@ -32,11 +32,11 @@ struct sdiv
 #if EAGINE_USE_SIMD
 #if defined(__GNUC__) || defined(__clang__)
 
-template <typename T>
-struct sdiv<T, 3>
+template <typename T, bool V>
+struct sdiv<T, 3, V>
 {
-	typedef typename data<T, 3>::type _dT;
-	typedef typename data_param<T, 3>::type _dpT;
+	typedef typename data<T, 3, V>::type _dT;
+	typedef typename data_param<T, 3, V>::type _dpT;
 
 	static constexpr inline
 	_dT _hlp(_dpT a, _dpT b, meta::true_type)
@@ -54,7 +54,7 @@ struct sdiv<T, 3>
 	_dT apply(_dpT a, _dpT b)
 	noexcept
 	{
-		return _hlp(a, b, typename _has_vec_data<T, 3>::type());
+		return _hlp(a, b, has_vect_data<T, 3, V>());
 	}
 };
 

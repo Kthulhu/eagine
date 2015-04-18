@@ -15,15 +15,15 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct fill
 {
 	static
-	typename data<T, N>::type
+	typename data<T, N, V>::type
 	apply(T v)
 	noexcept
 	{
-		typename data<T, N>::type r;
+		typename data<T, N, V>::type r;
 		for(unsigned i=0; i<N; ++i)
 		{
 			r[i] = v;
@@ -32,11 +32,11 @@ struct fill
 	}
 };
 
-template <typename T>
-struct fill<T, 0>
+template <typename T, bool V>
+struct fill<T, 0, V>
 {
 	static constexpr
-	typename data<T, 0>::type
+	typename data<T, 0, V>::type
 	apply(T)
 	noexcept
 	{
@@ -44,67 +44,67 @@ struct fill<T, 0>
 	}
 };
 
-template <typename T>
-struct fill<T, 1>
+template <typename T, bool V>
+struct fill<T, 1, V>
 {
 	static constexpr
-	typename data<T, 1>::type
+	typename data<T, 1, V>::type
 	apply(T v)
 	noexcept
 	{
-		return typename data<T, 1>::type
+		return typename data<T, 1, V>::type
 			{v};
 	}
 };
 
-template <typename T>
-struct fill<T, 2>
+template <typename T, bool V>
+struct fill<T, 2, V>
 {
 	static constexpr
-	typename data<T, 2>::type
+	typename data<T, 2, V>::type
 	apply(T v)
 	noexcept
 	{
-		return typename data<T, 2>::type
+		return typename data<T, 2, V>::type
 			{v,v};
 	}
 };
 
-template <typename T>
-struct fill<T, 3>
+template <typename T, bool V>
+struct fill<T, 3, V>
 {
 	static constexpr
-	typename data<T, 3>::type
+	typename data<T, 3, V>::type
 	apply(T v)
 	noexcept
 	{
-		return typename data<T, 3>::type
+		return typename data<T, 3, V>::type
 			{v,v,v};
 	}
 };
 
-template <typename T>
-struct fill<T, 4>
+template <typename T, bool V>
+struct fill<T, 4, V>
 {
 	static constexpr
-	typename data<T, 4>::type
+	typename data<T, 4, V>::type
 	apply(T v)
 	noexcept
 	{
-		return typename data<T, 4>::type
+		return typename data<T, 4, V>::type
 			{v,v,v,v};
 	}
 };
 
-template <typename T>
-struct fill<T, 8>
+template <typename T, bool V>
+struct fill<T, 8, V>
 {
 	static constexpr
-	typename data<T, 8>::type
+	typename data<T, 8, V>::type
 	apply(T v)
 	noexcept
 	{
-		return typename data<T, 8>::type
+		return typename data<T, 8, V>::type
 			{v,v,v,v,v,v,v,v};
 	}
 };

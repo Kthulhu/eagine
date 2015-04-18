@@ -17,15 +17,15 @@ namespace eagine {
 namespace math {
 
 // tvec
-template <typename T, unsigned N>
-struct tvec : vector<T, N>
+template <typename T, unsigned N, bool V>
+struct tvec : vector<T, N, V>
 {
-	template <typename U, unsigned M>
+	template <typename U, unsigned M, bool W>
 	struct rebind
-	 : tvec<U,M>
+	 : tvec<U,M,W>
 	{ };
 
-	typedef vector<T, N> _base;
+	typedef vector<T, N, V> _base;
 
 	constexpr inline
 	tvec(void)
@@ -46,7 +46,7 @@ struct tvec : vector<T, N>
 	{ }
 
 	constexpr inline
-	tvec(const scalar<T, N>& s)
+	tvec(const scalar<T, N, V>& s)
 	noexcept
 	 : _base{s._v}
 	{ }

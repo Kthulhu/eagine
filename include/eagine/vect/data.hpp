@@ -344,10 +344,10 @@ struct _has_vec_data<double, N>
 #endif // EAGINE_USE_SIMD
 
 // data
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct data
  : meta::conditional<
-	_has_vec_data<T, N>::value,
+	_has_vec_data<T, N>::value && V,
 	_vec_data<T, N>,
 	_ary_data<T, N>
 >::type
@@ -356,11 +356,18 @@ struct data
 	static constexpr unsigned size = N;
 };
 
+
+// has_vect_data
+template <typename T, unsigned N, bool V>
+struct has_vect_data
+ : meta::boolean_constant<V && _has_vec_data<T, N>::value>
+{ };
+
 // data_param
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct data_param
  : meta::conditional<
-	_has_vec_data<T, N>::value,
+	_has_vec_data<T, N>::value && V,
 	_vec_data<T, N>,
 	_ary_cref<T, N>
 >::type
@@ -370,9 +377,9 @@ struct data_param
 template <typename Data>
 struct param;
 
-template <typename T, unsigned N>
-struct param<data<T, N>>
- : data_param<T, N>
+template <typename T, unsigned N, bool V>
+struct param<data<T, N, V>>
+ : data_param<T, N, V>
 { };
 
 } // namespace vect

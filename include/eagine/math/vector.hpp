@@ -62,35 +62,41 @@ struct swizzle_mask
 };
 
 // has_swizzle
-template <typename T, unsigned N, unsigned ...I>
-struct has_swizzle<vector<T, N>, I...>
+template <typename T, unsigned N, bool V, unsigned ...I>
+struct has_swizzle<vector<T, N, V>, I...>
  : meta::boolean_constant<meta::max_constant<unsigned, I...>::value<=N>
 { };
 
-template <typename T, unsigned N, unsigned ...I>
-struct has_swizzle<tvec<T, N>, I...>
+template <typename T, unsigned N, bool V, unsigned ...I>
+struct has_swizzle<tvec<T, N, V>, I...>
  : meta::boolean_constant<meta::max_constant<unsigned, I...>::value<=N>
 { };
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct scalar
 {
-	template <typename U, unsigned M>
+	template <typename U, unsigned M, bool W>
 	struct rebind
-	 : scalar<U,M>
+	 : scalar<U,M,W>
 	{ };
 
 	typedef scalar type;
 	typedef T value_type;
 
-	typedef typename vect::_has_vec_data<T, N>::type _vdB;
+	typedef meta::boolean_constant<
+		V && vect::_has_vec_data<T, N>::value
+	> is_vectorized;
 
 	typedef typename meta::conditional<
-		_vdB::value, vect::data<T, N>, meta::identity<T>
+		is_vectorized::value,
+		vect::data<T, N>,
+		meta::identity<T>
 	>::type::type data_type;
 
 	typedef typename meta::conditional<
-		_vdB::value, const scalar&, scalar
+		is_vectorized::value,
+		const scalar&,
+		scalar
 	>::type _cpT;
 
 	data_type _v;
@@ -113,7 +119,7 @@ struct scalar
 	scalar make(T v)
 	noexcept
 	{
-		return _make(v, _vdB());
+		return _make(v, is_vectorized());
 	}
 
 	constexpr inline
@@ -134,7 +140,7 @@ struct scalar
 	operator T (void) const
 	noexcept
 	{
-		return _get(_vdB());
+		return _get(is_vectorized());
 	}
 
 	inline
@@ -162,35 +168,39 @@ struct scalar
 	bool operator == (_cpT a, _cpT b)
 	noexcept
 	{
-		return _equal(a, b, _vdB());
+		return _equal(a, b, is_vectorized());
 	}
 
 	friend
 	bool operator != (_cpT a, _cpT b)
 	noexcept
 	{
-		return !_equal(a, b, _vdB());
+		return !_equal(a, b, is_vectorized());
 	}
 };
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct vector
 {
-	template <typename U, unsigned M>
+	template <typename U, unsigned M, bool W>
 	struct rebind
-	 : vector<U,M>
+	 : vector<U,M,W>
 	{ };
 
 	typedef vector type;
-	typedef scalar<T, N> scalar_type;
+	typedef scalar<T, N, V> scalar_type;
+
+	typedef meta::boolean_constant<
+		V && vect::_has_vec_data<T, N>::value
+	> is_vectorized;
 
 	typedef T value_type;
 
-	typedef typename vect::data<T, N>::type _vT;
+	typedef typename vect::data<T, N, V>::type _vT;
 	typedef _vT data_type;
 
 	typedef const vector& _cpT;
-	typedef const scalar<T, N>& _cspT;
+	typedef const scalar<T, N, V>& _cspT;
 
 	_vT _v;
 
@@ -456,26 +466,26 @@ struct vector
 		return *this;
 	}
 
-	template <typename V = vector>
+	template <typename Vec = vector>
 	friend constexpr
-	typename meta::enable_if<scalar_type::_vdB::value, V>::type
+	typename meta::enable_if<scalar_type::is_vectorized::value, Vec>::type
 	operator * (_cspT c, _cpT a)
 	noexcept
 	{
 		return vector{c._v*a._v};
 	}
 
-	template <typename V = vector>
+	template <typename Vec = vector>
 	friend constexpr
-	typename meta::enable_if<scalar_type::_vdB::value, V>::type
+	typename meta::enable_if<scalar_type::is_vectorized::value, Vec>::type
 	operator * (_cpT a, _cspT c)
 	noexcept
 	{
 		return vector{a._v*c._v};
 	}
 
-	template <typename V = vector>
-	typename meta::enable_if<scalar_type::_vdB::value, V>::type&
+	template <typename Vec = vector>
+	typename meta::enable_if<scalar_type::is_vectorized::value, Vec>::type&
 	operator *= (_cspT c)
 	noexcept
 	{
@@ -511,18 +521,18 @@ struct vector
 		return vector{vect::sdiv<T, N>::apply(a._v, b._v)};
 	}
 
-	template <typename V = vector>
+	template <typename Vec = vector>
 	friend constexpr
-	typename meta::enable_if<scalar_type::_vdB::value, V>::type
+	typename meta::enable_if<scalar_type::is_vectorized::value, Vec>::type
 	operator / (_cspT c, _cpT a)
 	noexcept
 	{
 		return vector{vect::sdiv<T, N>::apply(c._v, a._v)};
 	}
 
-	template <typename V = vector>
+	template <typename Vec = vector>
 	friend constexpr
-	typename meta::enable_if<scalar_type::_vdB::value, V>::type
+	typename meta::enable_if<scalar_type::is_vectorized::value, Vec>::type
 	operator / (_cpT a, _cspT c)
 	noexcept
 	{
@@ -571,31 +581,31 @@ struct vector
 	}
 
 	friend constexpr
-	scalar<T, N> _dot(_cpT a, _cpT b, meta::true_type)
+	scalar<T, N, V> _dot(_cpT a, _cpT b, meta::true_type)
 	noexcept
 	{
-		return scalar<T, N>{vect::hsum<T, N>::apply(a._v * b._v)};
+		return scalar<T, N, V>{vect::hsum<T, N>::apply(a._v * b._v)};
 	}
 
 	friend constexpr
-	scalar<T, N> _dot(_cpT a, _cpT b, meta::false_type)
+	scalar<T, N, V> _dot(_cpT a, _cpT b, meta::false_type)
 	noexcept
 	{
-		return scalar<T, N>{vect::esum<T, N>::apply(a._v * b._v)};
+		return scalar<T, N, V>{vect::esum<T, N>::apply(a._v * b._v)};
 	}
 
 	friend constexpr
-	scalar<T, N> dot(_cpT a, _cpT b)
+	scalar<T, N, V> dot(_cpT a, _cpT b)
 	noexcept
 	{
-		return _dot(a, b, typename scalar_type::_vdB());
+		return _dot(a, b, is_vectorized());
 	}
 
 	friend constexpr
-	scalar<T, N> _mag(_cpT a, meta::true_type)
+	scalar<T, N, V> _mag(_cpT a, meta::true_type)
 	noexcept
 	{
-		return scalar<T, N>{
+		return scalar<T, N, V>{
 			vect::sqrt<T, N>::apply(
 				vect::hsum<T, N>::apply(a._v * a._v)
 			)
@@ -603,30 +613,30 @@ struct vector
 	}
 
 	friend constexpr
-	scalar<T, N> _mag(_cpT a, meta::false_type)
+	scalar<T, N, V> _mag(_cpT a, meta::false_type)
 	noexcept
 	{
 		using std::sqrt;
-		return scalar<T, N>
+		return scalar<T, N, V>
 			{T(sqrt(vect::esum<T, N>::apply(a._v * a._v)))};
 	}
 
 	friend constexpr
-	scalar<T, N> magnitude(_cpT a)
+	scalar<T, N, V> magnitude(_cpT a)
 	noexcept
 	{
-		return _mag(a, typename scalar_type::_vdB());
+		return _mag(a, is_vectorized());
 	}
 
 	friend constexpr
-	scalar<T, N> length(_cpT a)
+	scalar<T, N, V> length(_cpT a)
 	noexcept
 	{
 		return magnitude(a);
 	}
 
 	friend constexpr
-	scalar<T, N> distance(_cpT a, _cpT b)
+	scalar<T, N, V> distance(_cpT a, _cpT b)
 	noexcept
 	{
 		return magnitude(a-b);

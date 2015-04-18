@@ -15,10 +15,10 @@
 namespace eagine {
 namespace math {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V = true>
 struct vector;
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V = true>
 struct tvec;
 
 template <typename V, unsigned ... I>
@@ -27,20 +27,20 @@ struct has_swizzle;
 template <typename Composite>
 class composite_data_ref;
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V = true>
 static
-composite_data_ref<vector<T, N>> data(const vector<T, N>&)
+composite_data_ref<vector<T, N, V>> data(const vector<T, N, V>&)
 noexcept;
 
-template <typename T, unsigned R, unsigned C, bool RowMajor>
+template <typename T, unsigned R, unsigned C, bool RowMajor, bool V = true>
 struct matrix;
 
-template <typename T, unsigned R, unsigned C, bool RowMajor>
+template <typename T, unsigned R, unsigned C, bool RowMajor, bool V = true>
 struct tmat;
 
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static
-composite_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>&)
+composite_data_ref<matrix<T, R, C, RM, V>> data(const matrix<T, R, C, RM, V>&)
 noexcept;
 
 } // namespace math

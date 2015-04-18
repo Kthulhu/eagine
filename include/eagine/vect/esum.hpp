@@ -15,11 +15,11 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct esum
 {
 private:
-	typedef typename data_param<T, N>::type _dpT;
+	typedef typename data_param<T, N, V>::type _dpT;
 
 	template <unsigned M, bool B>
 	static inline
@@ -59,7 +59,7 @@ public:
 		return _hlp(
 			v,
 			meta::unsigned_constant<N>(),
-			_has_vec_data<T, N>()
+			has_vect_data<T, N, V>()
 		);
 	}
 };

@@ -17,15 +17,15 @@
 
 BOOST_AUTO_TEST_SUITE(vect_fill)
 
-template <typename T, unsigned N>
-void test_vect_fill_apply(void)
+template <typename T, unsigned N, bool V>
+void test_vect_fill_apply_TNV(void)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
 		T a = std::rand() / T(3);
 
-		typename eagine::vect::data<T, N>::type v =
-			eagine::vect::fill<T, N>::apply(a);
+		typename eagine::vect::data<T, N, V>::type v =
+			eagine::vect::fill<T, N, V>::apply(a);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -35,26 +35,30 @@ void test_vect_fill_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_fill_apply_TV(void)
+{
+	test_vect_fill_apply_TNV<T, 2, V>();
+	test_vect_fill_apply_TNV<T, 3, V>();
+	test_vect_fill_apply_TNV<T, 4, V>();
+	test_vect_fill_apply_TNV<T, 5, V>();
+	test_vect_fill_apply_TNV<T, 6, V>();
+	test_vect_fill_apply_TNV<T, 7, V>();
+	test_vect_fill_apply_TNV<T, 8, V>();
+}
+
+template <typename T>
+void test_vect_fill_apply_T(void)
+{
+	test_vect_fill_apply_TV<T, true>();
+	test_vect_fill_apply_TV<T,false>();
+}
+
 BOOST_AUTO_TEST_CASE(vect_fill_apply)
 {
-
-	test_vect_fill_apply<int, 2>();
-	test_vect_fill_apply<int, 3>();
-	test_vect_fill_apply<int, 4>();
-	test_vect_fill_apply<int, 5>();
-	test_vect_fill_apply<int, 8>();
-
-	test_vect_fill_apply<float, 2>();
-	test_vect_fill_apply<float, 3>();
-	test_vect_fill_apply<float, 4>();
-	test_vect_fill_apply<float, 5>();
-	test_vect_fill_apply<float, 8>();
-
-	test_vect_fill_apply<double, 2>();
-	test_vect_fill_apply<double, 3>();
-	test_vect_fill_apply<double, 4>();
-	test_vect_fill_apply<double, 5>();
-	test_vect_fill_apply<double, 8>();
+	test_vect_fill_apply_T<int>();
+	test_vect_fill_apply_T<float>();
+	test_vect_fill_apply_T<double>();
 }
 
 
