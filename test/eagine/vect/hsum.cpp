@@ -18,14 +18,14 @@
 
 BOOST_AUTO_TEST_SUITE(vect_hsum)
 
-template <typename T, unsigned N>
-void test_vect_hsum_apply(void)
+template <typename T, unsigned N, bool V>
+void test_vect_hsum_TNV(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
 		T s = T(0);
 
-		typename eagine::vect::data<T, N>::type v = {};
+		typename eagine::vect::data<T, N, V>::type v = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -34,8 +34,8 @@ void test_vect_hsum_apply(void)
 			s += n;
 		}
 
-		typename eagine::vect::data<T, N>::type r =
-			eagine::vect::hsum<T, N>::apply(v);
+		typename eagine::vect::data<T, N, V>::type r =
+			eagine::vect::hsum<T, N, V>::apply(v);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -44,35 +44,42 @@ void test_vect_hsum_apply(void)
 	}
 }
 
-template <typename T>
-void test_vect_hsum_apply_t(void)
+template <typename T, bool V>
+void test_vect_hsum_TV(void)
 {
-	test_vect_hsum_apply<T, 2>();
-	test_vect_hsum_apply<T, 3>();
-	test_vect_hsum_apply<T, 4>();
-	test_vect_hsum_apply<T, 5>();
-	test_vect_hsum_apply<T, 6>();
-	test_vect_hsum_apply<T, 7>();
-	test_vect_hsum_apply<T, 8>();
+	test_vect_hsum_TNV<T, 2, V>();
+	test_vect_hsum_TNV<T, 3, V>();
+	test_vect_hsum_TNV<T, 4, V>();
+	test_vect_hsum_TNV<T, 5, V>();
+	test_vect_hsum_TNV<T, 6, V>();
+	test_vect_hsum_TNV<T, 7, V>();
+	test_vect_hsum_TNV<T, 8, V>();
 
-	test_vect_hsum_apply<T, 11>();
-	test_vect_hsum_apply<T, 17>();
-	test_vect_hsum_apply<T, 23>();
+	test_vect_hsum_TNV<T, 11, V>();
+	test_vect_hsum_TNV<T, 17, V>();
+	test_vect_hsum_TNV<T, 23, V>();
+}
+
+template <typename T>
+void test_vect_hsum_T(void)
+{
+	test_vect_hsum_TV<T, true>();
+	test_vect_hsum_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(vect_hsum_apply_int)
 {
-	test_vect_hsum_apply_t<int>();
+	test_vect_hsum_T<int>();
 }
 
 BOOST_AUTO_TEST_CASE(vect_hsum_apply_float)
 {
-	test_vect_hsum_apply_t<float>();
+	test_vect_hsum_T<float>();
 }
 
 BOOST_AUTO_TEST_CASE(vect_hsum_apply_double)
 {
-	test_vect_hsum_apply_t<double>();
+	test_vect_hsum_T<double>();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

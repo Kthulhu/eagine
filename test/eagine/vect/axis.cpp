@@ -17,15 +17,15 @@
 
 BOOST_AUTO_TEST_SUITE(vect_axis)
 
-template <typename T, unsigned I, unsigned N>
-void test_vect_axis_apply(void)
+template <typename T, unsigned I, unsigned N, bool V>
+void test_vect_axis_apply_TINV(void)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
 		T a = std::rand();
 
-		typename eagine::vect::data<T, N>::type v =
-			eagine::vect::axis<T, N, I>::apply(a);
+		typename eagine::vect::data<T, N, V>::type v =
+			eagine::vect::axis<T, N, I, V>::apply(a);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -35,89 +35,71 @@ void test_vect_axis_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_axis_apply_TV(void)
+{
+	test_vect_axis_apply_TINV<T, 0, 2, V>();
+	test_vect_axis_apply_TINV<T, 1, 2, V>();
+	test_vect_axis_apply_TINV<T, 2, 2, V>();
+
+	test_vect_axis_apply_TINV<T, 0, 3, V>();
+	test_vect_axis_apply_TINV<T, 1, 3, V>();
+	test_vect_axis_apply_TINV<T, 2, 3, V>();
+	test_vect_axis_apply_TINV<T, 3, 3, V>();
+
+	test_vect_axis_apply_TINV<T, 0, 4, V>();
+	test_vect_axis_apply_TINV<T, 1, 4, V>();
+	test_vect_axis_apply_TINV<T, 2, 4, V>();
+	test_vect_axis_apply_TINV<T, 3, 4, V>();
+	test_vect_axis_apply_TINV<T, 4, 4, V>();
+
+	test_vect_axis_apply_TINV<T, 0, 5, V>();
+	test_vect_axis_apply_TINV<T, 1, 5, V>();
+	test_vect_axis_apply_TINV<T, 2, 5, V>();
+	test_vect_axis_apply_TINV<T, 3, 5, V>();
+	test_vect_axis_apply_TINV<T, 4, 5, V>();
+	test_vect_axis_apply_TINV<T, 5, 5, V>();
+
+	test_vect_axis_apply_TINV<T, 0, 6, V>();
+	test_vect_axis_apply_TINV<T, 1, 6, V>();
+	test_vect_axis_apply_TINV<T, 2, 6, V>();
+	test_vect_axis_apply_TINV<T, 3, 6, V>();
+	test_vect_axis_apply_TINV<T, 4, 6, V>();
+	test_vect_axis_apply_TINV<T, 5, 6, V>();
+	test_vect_axis_apply_TINV<T, 6, 6, V>();
+
+	test_vect_axis_apply_TINV<T, 0, 7, V>();
+	test_vect_axis_apply_TINV<T, 1, 7, V>();
+	test_vect_axis_apply_TINV<T, 2, 7, V>();
+	test_vect_axis_apply_TINV<T, 3, 7, V>();
+	test_vect_axis_apply_TINV<T, 4, 7, V>();
+	test_vect_axis_apply_TINV<T, 5, 7, V>();
+	test_vect_axis_apply_TINV<T, 6, 7, V>();
+	test_vect_axis_apply_TINV<T, 7, 7, V>();
+
+	test_vect_axis_apply_TINV<T, 0, 8, V>();
+	test_vect_axis_apply_TINV<T, 1, 8, V>();
+	test_vect_axis_apply_TINV<T, 2, 8, V>();
+	test_vect_axis_apply_TINV<T, 3, 8, V>();
+	test_vect_axis_apply_TINV<T, 4, 8, V>();
+	test_vect_axis_apply_TINV<T, 5, 8, V>();
+	test_vect_axis_apply_TINV<T, 6, 8, V>();
+	test_vect_axis_apply_TINV<T, 7, 8, V>();
+	test_vect_axis_apply_TINV<T, 8, 8, V>();
+}
+
+template <typename T>
+void test_vect_axis_apply_T(void)
+{
+	test_vect_axis_apply_TV<T, true>();
+	test_vect_axis_apply_TV<T,false>();
+}
+
 BOOST_AUTO_TEST_CASE(vect_axis_apply)
 {
-
-	test_vect_axis_apply<int, 0, 2>();
-	test_vect_axis_apply<int, 1, 2>();
-
-	test_vect_axis_apply<int, 0, 3>();
-	test_vect_axis_apply<int, 1, 3>();
-	test_vect_axis_apply<int, 2, 3>();
-
-	test_vect_axis_apply<int, 0, 4>();
-	test_vect_axis_apply<int, 1, 4>();
-	test_vect_axis_apply<int, 2, 4>();
-	test_vect_axis_apply<int, 3, 4>();
-
-	test_vect_axis_apply<int, 0, 5>();
-	test_vect_axis_apply<int, 1, 5>();
-	test_vect_axis_apply<int, 2, 5>();
-	test_vect_axis_apply<int, 3, 5>();
-	test_vect_axis_apply<int, 4, 5>();
-
-	test_vect_axis_apply<int, 0, 8>();
-	test_vect_axis_apply<int, 1, 8>();
-	test_vect_axis_apply<int, 2, 8>();
-	test_vect_axis_apply<int, 3, 8>();
-	test_vect_axis_apply<int, 4, 8>();
-	test_vect_axis_apply<int, 5, 8>();
-	test_vect_axis_apply<int, 6, 8>();
-	test_vect_axis_apply<int, 7, 8>();
-
-	test_vect_axis_apply<float, 0, 2>();
-	test_vect_axis_apply<float, 1, 2>();
-
-	test_vect_axis_apply<float, 0, 3>();
-	test_vect_axis_apply<float, 1, 3>();
-	test_vect_axis_apply<float, 2, 3>();
-
-	test_vect_axis_apply<float, 0, 4>();
-	test_vect_axis_apply<float, 1, 4>();
-	test_vect_axis_apply<float, 2, 4>();
-	test_vect_axis_apply<float, 3, 4>();
-
-	test_vect_axis_apply<float, 0, 5>();
-	test_vect_axis_apply<float, 1, 5>();
-	test_vect_axis_apply<float, 2, 5>();
-	test_vect_axis_apply<float, 3, 5>();
-	test_vect_axis_apply<float, 4, 5>();
-
-	test_vect_axis_apply<float, 0, 8>();
-	test_vect_axis_apply<float, 1, 8>();
-	test_vect_axis_apply<float, 2, 8>();
-	test_vect_axis_apply<float, 3, 8>();
-	test_vect_axis_apply<float, 4, 8>();
-	test_vect_axis_apply<float, 5, 8>();
-	test_vect_axis_apply<float, 6, 8>();
-	test_vect_axis_apply<float, 7, 8>();
-
-	test_vect_axis_apply<double, 0, 2>();
-	test_vect_axis_apply<double, 1, 2>();
-
-	test_vect_axis_apply<double, 0, 3>();
-	test_vect_axis_apply<double, 1, 3>();
-	test_vect_axis_apply<double, 2, 3>();
-
-	test_vect_axis_apply<double, 0, 4>();
-	test_vect_axis_apply<double, 1, 4>();
-	test_vect_axis_apply<double, 2, 4>();
-	test_vect_axis_apply<double, 3, 4>();
-
-	test_vect_axis_apply<double, 0, 5>();
-	test_vect_axis_apply<double, 1, 5>();
-	test_vect_axis_apply<double, 2, 5>();
-	test_vect_axis_apply<double, 3, 5>();
-	test_vect_axis_apply<double, 4, 5>();
-
-	test_vect_axis_apply<double, 0, 8>();
-	test_vect_axis_apply<double, 1, 8>();
-	test_vect_axis_apply<double, 2, 8>();
-	test_vect_axis_apply<double, 3, 8>();
-	test_vect_axis_apply<double, 4, 8>();
-	test_vect_axis_apply<double, 5, 8>();
-	test_vect_axis_apply<double, 6, 8>();
-	test_vect_axis_apply<double, 7, 8>();
+	test_vect_axis_apply_T<int>();
+	test_vect_axis_apply_T<float>();
+	test_vect_axis_apply_T<double>();
 }
 
 

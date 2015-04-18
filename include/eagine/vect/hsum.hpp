@@ -1,7 +1,7 @@
 /**
  *  @file eagine/vect/hsum.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -15,13 +15,13 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct hsum
 {
 private:
-	typedef typename data<T, N>::type _dT;
-	typedef typename data_param<T, 1>::type _dpT;
-	typedef shuffle<T, N> _sh;
+	typedef typename data<T, N, V>::type _dT;
+	typedef typename data_param<T, 1, V>::type _dpT;
+	typedef shuffle<T, N, V> _sh;
 
 	template <bool B>
 	static constexpr inline
@@ -138,7 +138,7 @@ public:
 		return _hlp(
 			v,
 			meta::unsigned_constant<N>(),
-			_has_vec_data<T,N>()
+			has_vect_data<T,N,V>()
 		);
 	}
 };

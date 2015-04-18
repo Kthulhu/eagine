@@ -18,8 +18,8 @@
 
 BOOST_AUTO_TEST_SUITE(vect_shuffle)
 
-template <typename T, unsigned N, int ... I>
-void test_vect_shuffle_apply(void)
+template <typename T, unsigned N, bool V, int ... I>
+void test_vect_shuffle_TNVI(void)
 {
 	std::array<int, N> n = {{I...}};
 
@@ -27,17 +27,17 @@ void test_vect_shuffle_apply(void)
 	{
 		T a[N];
 
-		typename eagine::vect::data<T, N>::type v = {};
+		typename eagine::vect::data<T, N, V>::type v = {};
 		typename eagine::vect::shuffle_mask<I...> m = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
-			a[i] = std::rand() / T(2);
+			a[i] = std::rand() / T(11);
 			v[i] = a[i];
 		}
 
-		typename eagine::vect::data<T, N>::type u =
-			eagine::vect::shuffle<T, N>::apply(v, m);
+		typename eagine::vect::data<T, N, V>::type u =
+			eagine::vect::shuffle<T, N, V>::apply(v, m);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -47,185 +47,192 @@ void test_vect_shuffle_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_shuffle_TV(void)
+{
+	test_vect_shuffle_TNVI<T, 2, V, 0, 0>();
+	test_vect_shuffle_TNVI<T, 2, V, 0, 1>();
+	test_vect_shuffle_TNVI<T, 2, V, 1, 0>();
+	test_vect_shuffle_TNVI<T, 2, V, 1, 1>();
+
+	test_vect_shuffle_TNVI<T, 3, V, 0, 1, 2>();
+	test_vect_shuffle_TNVI<T, 3, V, 1, 0, 2>();
+	test_vect_shuffle_TNVI<T, 3, V, 1, 2, 0>();
+	test_vect_shuffle_TNVI<T, 3, V, 0, 2, 1>();
+	test_vect_shuffle_TNVI<T, 3, V, 2, 0, 1>();
+	test_vect_shuffle_TNVI<T, 3, V, 2, 1, 0>();
+
+	test_vect_shuffle_TNVI<T, 4, V, 0, 1, 2, 3>();
+	test_vect_shuffle_TNVI<T, 4, V, 1, 0, 2, 3>();
+	test_vect_shuffle_TNVI<T, 4, V, 1, 2, 0, 3>();
+	test_vect_shuffle_TNVI<T, 4, V, 1, 2, 3, 0>();
+	test_vect_shuffle_TNVI<T, 4, V, 0, 2, 1, 3>();
+	test_vect_shuffle_TNVI<T, 4, V, 2, 0, 1, 3>();
+	test_vect_shuffle_TNVI<T, 4, V, 2, 1, 0, 3>();
+	test_vect_shuffle_TNVI<T, 4, V, 2, 1, 3, 0>();
+	test_vect_shuffle_TNVI<T, 4, V, 0, 2, 3, 1>();
+	test_vect_shuffle_TNVI<T, 4, V, 2, 0, 3, 1>();
+	test_vect_shuffle_TNVI<T, 4, V, 2, 3, 0, 1>();
+	test_vect_shuffle_TNVI<T, 4, V, 2, 3, 1, 0>();
+	test_vect_shuffle_TNVI<T, 4, V, 0, 1, 3, 2>();
+	test_vect_shuffle_TNVI<T, 4, V, 1, 0, 3, 2>();
+	test_vect_shuffle_TNVI<T, 4, V, 1, 3, 0, 2>();
+	test_vect_shuffle_TNVI<T, 4, V, 1, 3, 2, 0>();
+	test_vect_shuffle_TNVI<T, 4, V, 0, 3, 1, 2>();
+	test_vect_shuffle_TNVI<T, 4, V, 3, 0, 1, 2>();
+	test_vect_shuffle_TNVI<T, 4, V, 3, 1, 0, 2>();
+	test_vect_shuffle_TNVI<T, 4, V, 3, 1, 2, 0>();
+	test_vect_shuffle_TNVI<T, 4, V, 0, 3, 2, 1>();
+	test_vect_shuffle_TNVI<T, 4, V, 3, 0, 2, 1>();
+	test_vect_shuffle_TNVI<T, 4, V, 3, 2, 0, 1>();
+	test_vect_shuffle_TNVI<T, 4, V, 3, 2, 1, 0>();
+
+	test_vect_shuffle_TNVI<T, 5, V, 0, 1, 2, 3, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 0, 2, 3, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 2, 0, 3, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 2, 3, 0, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 2, 3, 4, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 2, 1, 3, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 0, 1, 3, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 1, 0, 3, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 1, 3, 0, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 1, 3, 4, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 2, 3, 1, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 0, 3, 1, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 3, 0, 1, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 3, 1, 0, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 3, 1, 4, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 2, 3, 4, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 0, 3, 4, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 3, 0, 4, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 3, 4, 0, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 3, 4, 1, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 1, 3, 2, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 0, 3, 2, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 3, 0, 2, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 3, 2, 0, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 3, 2, 4, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 3, 1, 2, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 0, 1, 2, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 1, 0, 2, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 1, 2, 0, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 1, 2, 4, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 3, 2, 1, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 0, 2, 1, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 2, 0, 1, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 2, 1, 0, 4>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 2, 1, 4, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 3, 2, 4, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 0, 2, 4, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 2, 0, 4, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 2, 4, 0, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 2, 4, 1, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 1, 3, 4, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 0, 3, 4, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 3, 0, 4, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 3, 4, 0, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 3, 4, 2, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 3, 1, 4, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 0, 1, 4, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 1, 0, 4, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 1, 4, 0, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 1, 4, 2, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 3, 4, 1, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 0, 4, 1, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 4, 0, 1, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 4, 1, 0, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 4, 1, 2, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 3, 4, 2, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 0, 4, 2, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 4, 0, 2, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 4, 2, 0, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 3, 4, 2, 1, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 1, 2, 4, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 0, 2, 4, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 2, 0, 4, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 2, 4, 0, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 2, 4, 3, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 2, 1, 4, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 0, 1, 4, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 1, 0, 4, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 1, 4, 0, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 1, 4, 3, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 2, 4, 1, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 0, 4, 1, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 4, 0, 1, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 4, 1, 0, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 4, 1, 3, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 2, 4, 3, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 0, 4, 3, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 4, 0, 3, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 4, 3, 0, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 2, 4, 3, 1, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 1, 4, 2, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 0, 4, 2, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 4, 0, 2, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 4, 2, 0, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 4, 2, 3, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 4, 1, 2, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 0, 1, 2, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 1, 0, 2, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 1, 2, 0, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 1, 2, 3, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 4, 2, 1, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 0, 2, 1, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 2, 0, 1, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 2, 1, 0, 3>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 2, 1, 3, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 4, 2, 3, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 0, 2, 3, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 2, 0, 3, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 2, 3, 0, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 2, 3, 1, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 1, 4, 3, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 0, 4, 3, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 4, 0, 3, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 4, 3, 0, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 1, 4, 3, 2, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 4, 1, 3, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 0, 1, 3, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 1, 0, 3, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 1, 3, 0, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 1, 3, 2, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 4, 3, 1, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 0, 3, 1, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 3, 0, 1, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 3, 1, 0, 2>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 3, 1, 2, 0>();
+	test_vect_shuffle_TNVI<T, 5, V, 0, 4, 3, 2, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 0, 3, 2, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 3, 0, 2, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 3, 2, 0, 1>();
+	test_vect_shuffle_TNVI<T, 5, V, 4, 3, 2, 1, 0>();
+}
+
 template <typename T>
-void test_vect_shuffle_apply_t(void)
+void test_vect_shuffle_T(void)
 {
-	test_vect_shuffle_apply<T, 2, 0, 0>();
-	test_vect_shuffle_apply<T, 2, 0, 1>();
-	test_vect_shuffle_apply<T, 2, 1, 0>();
-	test_vect_shuffle_apply<T, 2, 1, 1>();
-
-	test_vect_shuffle_apply<T, 3, 0, 1, 2>();
-	test_vect_shuffle_apply<T, 3, 1, 0, 2>();
-	test_vect_shuffle_apply<T, 3, 1, 2, 0>();
-	test_vect_shuffle_apply<T, 3, 0, 2, 1>();
-	test_vect_shuffle_apply<T, 3, 2, 0, 1>();
-	test_vect_shuffle_apply<T, 3, 2, 1, 0>();
-
-	test_vect_shuffle_apply<T, 4, 0, 1, 2, 3>();
-	test_vect_shuffle_apply<T, 4, 1, 0, 2, 3>();
-	test_vect_shuffle_apply<T, 4, 1, 2, 0, 3>();
-	test_vect_shuffle_apply<T, 4, 1, 2, 3, 0>();
-	test_vect_shuffle_apply<T, 4, 0, 2, 1, 3>();
-	test_vect_shuffle_apply<T, 4, 2, 0, 1, 3>();
-	test_vect_shuffle_apply<T, 4, 2, 1, 0, 3>();
-	test_vect_shuffle_apply<T, 4, 2, 1, 3, 0>();
-	test_vect_shuffle_apply<T, 4, 0, 2, 3, 1>();
-	test_vect_shuffle_apply<T, 4, 2, 0, 3, 1>();
-	test_vect_shuffle_apply<T, 4, 2, 3, 0, 1>();
-	test_vect_shuffle_apply<T, 4, 2, 3, 1, 0>();
-	test_vect_shuffle_apply<T, 4, 0, 1, 3, 2>();
-	test_vect_shuffle_apply<T, 4, 1, 0, 3, 2>();
-	test_vect_shuffle_apply<T, 4, 1, 3, 0, 2>();
-	test_vect_shuffle_apply<T, 4, 1, 3, 2, 0>();
-	test_vect_shuffle_apply<T, 4, 0, 3, 1, 2>();
-	test_vect_shuffle_apply<T, 4, 3, 0, 1, 2>();
-	test_vect_shuffle_apply<T, 4, 3, 1, 0, 2>();
-	test_vect_shuffle_apply<T, 4, 3, 1, 2, 0>();
-	test_vect_shuffle_apply<T, 4, 0, 3, 2, 1>();
-	test_vect_shuffle_apply<T, 4, 3, 0, 2, 1>();
-	test_vect_shuffle_apply<T, 4, 3, 2, 0, 1>();
-	test_vect_shuffle_apply<T, 4, 3, 2, 1, 0>();
-
-	test_vect_shuffle_apply<T, 5, 0, 1, 2, 3, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 0, 2, 3, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 2, 0, 3, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 2, 3, 0, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 2, 3, 4, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 2, 1, 3, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 0, 1, 3, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 1, 0, 3, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 1, 3, 0, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 1, 3, 4, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 2, 3, 1, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 0, 3, 1, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 3, 0, 1, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 3, 1, 0, 4>();
-	test_vect_shuffle_apply<T, 5, 2, 3, 1, 4, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 2, 3, 4, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 0, 3, 4, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 3, 0, 4, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 3, 4, 0, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 3, 4, 1, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 1, 3, 2, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 0, 3, 2, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 3, 0, 2, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 3, 2, 0, 4>();
-	test_vect_shuffle_apply<T, 5, 1, 3, 2, 4, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 3, 1, 2, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 0, 1, 2, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 1, 0, 2, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 1, 2, 0, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 1, 2, 4, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 3, 2, 1, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 0, 2, 1, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 2, 0, 1, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 2, 1, 0, 4>();
-	test_vect_shuffle_apply<T, 5, 3, 2, 1, 4, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 3, 2, 4, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 0, 2, 4, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 2, 0, 4, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 2, 4, 0, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 2, 4, 1, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 1, 3, 4, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 0, 3, 4, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 3, 0, 4, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 3, 4, 0, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 3, 4, 2, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 3, 1, 4, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 0, 1, 4, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 1, 0, 4, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 1, 4, 0, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 1, 4, 2, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 3, 4, 1, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 0, 4, 1, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 4, 0, 1, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 4, 1, 0, 2>();
-	test_vect_shuffle_apply<T, 5, 3, 4, 1, 2, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 3, 4, 2, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 0, 4, 2, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 4, 0, 2, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 4, 2, 0, 1>();
-	test_vect_shuffle_apply<T, 5, 3, 4, 2, 1, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 1, 2, 4, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 0, 2, 4, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 2, 0, 4, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 2, 4, 0, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 2, 4, 3, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 2, 1, 4, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 0, 1, 4, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 1, 0, 4, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 1, 4, 0, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 1, 4, 3, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 2, 4, 1, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 0, 4, 1, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 4, 0, 1, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 4, 1, 0, 3>();
-	test_vect_shuffle_apply<T, 5, 2, 4, 1, 3, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 2, 4, 3, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 0, 4, 3, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 4, 0, 3, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 4, 3, 0, 1>();
-	test_vect_shuffle_apply<T, 5, 2, 4, 3, 1, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 1, 4, 2, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 0, 4, 2, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 4, 0, 2, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 4, 2, 0, 3>();
-	test_vect_shuffle_apply<T, 5, 1, 4, 2, 3, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 4, 1, 2, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 0, 1, 2, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 1, 0, 2, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 1, 2, 0, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 1, 2, 3, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 4, 2, 1, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 0, 2, 1, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 2, 0, 1, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 2, 1, 0, 3>();
-	test_vect_shuffle_apply<T, 5, 4, 2, 1, 3, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 4, 2, 3, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 0, 2, 3, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 2, 0, 3, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 2, 3, 0, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 2, 3, 1, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 1, 4, 3, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 0, 4, 3, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 4, 0, 3, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 4, 3, 0, 2>();
-	test_vect_shuffle_apply<T, 5, 1, 4, 3, 2, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 4, 1, 3, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 0, 1, 3, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 1, 0, 3, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 1, 3, 0, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 1, 3, 2, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 4, 3, 1, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 0, 3, 1, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 3, 0, 1, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 3, 1, 0, 2>();
-	test_vect_shuffle_apply<T, 5, 4, 3, 1, 2, 0>();
-	test_vect_shuffle_apply<T, 5, 0, 4, 3, 2, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 0, 3, 2, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 3, 0, 2, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 3, 2, 0, 1>();
-	test_vect_shuffle_apply<T, 5, 4, 3, 2, 1, 0>();
+	test_vect_shuffle_TV<T, true>();
+	test_vect_shuffle_TV<T,false>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_shuffle_apply_int)
+BOOST_AUTO_TEST_CASE(vect_shuffle_int)
 {
-	test_vect_shuffle_apply_t<int>();
+	test_vect_shuffle_T<int>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_shuffle_apply_float)
+BOOST_AUTO_TEST_CASE(vect_shuffle_float)
 {
-	test_vect_shuffle_apply_t<float>();
+	test_vect_shuffle_T<float>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_shuffle_apply_double)
+BOOST_AUTO_TEST_CASE(vect_shuffle_double)
 {
-	test_vect_shuffle_apply_t<double>();
+	test_vect_shuffle_T<double>();
 }
 
-template <typename T, unsigned N, int ... I>
-void test_vect_shuffle2_apply(void)
+template <typename T, unsigned N, bool V, int ... I>
+void test_vect_shuffle2_TNVI(void)
 {
 	std::array<int, N> n = {{I...}};
 
@@ -233,7 +240,7 @@ void test_vect_shuffle2_apply(void)
 	{
 		T a[N*2];
 
-		typename eagine::vect::data<T, N>::type v = {}, u = {};
+		typename eagine::vect::data<T, N, V>::type v = {}, u = {};
 		typename eagine::vect::shuffle_mask<I...> m = {};
 
 		for(unsigned i=0; i<N*2; ++i)
@@ -246,8 +253,8 @@ void test_vect_shuffle2_apply(void)
 			u[i] = a[N+i];
 		}
 
-		typename eagine::vect::data<T, N>::type w =
-			eagine::vect::shuffle2<T, N>::apply(v, u, m);
+		typename eagine::vect::data<T, N, V>::type w =
+			eagine::vect::shuffle2<T, N, V>::apply(v, u, m);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -257,79 +264,86 @@ void test_vect_shuffle2_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_shuffle2_TV(void)
+{
+	test_vect_shuffle2_TNVI<T, 2, V, 0, 2>();
+	test_vect_shuffle2_TNVI<T, 2, V, 1, 2>();
+	test_vect_shuffle2_TNVI<T, 2, V, 1, 0>();
+	test_vect_shuffle2_TNVI<T, 2, V, 1, 3>();
+	test_vect_shuffle2_TNVI<T, 2, V, 0, 1>();
+	test_vect_shuffle2_TNVI<T, 2, V, 2, 1>();
+	test_vect_shuffle2_TNVI<T, 2, V, 2, 0>();
+	test_vect_shuffle2_TNVI<T, 2, V, 2, 3>();
+	test_vect_shuffle2_TNVI<T, 2, V, 0, 3>();
+	test_vect_shuffle2_TNVI<T, 2, V, 2, 3>();
+	test_vect_shuffle2_TNVI<T, 2, V, 2, 1>();
+	test_vect_shuffle2_TNVI<T, 2, V, 0, 3>();
+	test_vect_shuffle2_TNVI<T, 2, V, 1, 3>();
+	test_vect_shuffle2_TNVI<T, 2, V, 1, 0>();
+	test_vect_shuffle2_TNVI<T, 2, V, 1, 2>();
+	test_vect_shuffle2_TNVI<T, 2, V, 0, 1>();
+	test_vect_shuffle2_TNVI<T, 2, V, 3, 1>();
+	test_vect_shuffle2_TNVI<T, 2, V, 3, 0>();
+	test_vect_shuffle2_TNVI<T, 2, V, 3, 2>();
+	test_vect_shuffle2_TNVI<T, 2, V, 0, 2>();
+	test_vect_shuffle2_TNVI<T, 2, V, 3, 2>();
+	test_vect_shuffle2_TNVI<T, 2, V, 3, 0>();
+	test_vect_shuffle2_TNVI<T, 2, V, 3, 1>();
+
+	test_vect_shuffle2_TNVI<T, 3, V, 0, 2, 4>();
+	test_vect_shuffle2_TNVI<T, 3, V, 1, 3, 5>();
+	test_vect_shuffle2_TNVI<T, 3, V, 5, 4, 3>();
+	test_vect_shuffle2_TNVI<T, 3, V, 1, 2, 3>();
+	test_vect_shuffle2_TNVI<T, 3, V, 1, 1, 1>();
+	test_vect_shuffle2_TNVI<T, 3, V, 4, 4, 4>();
+	test_vect_shuffle2_TNVI<T, 3, V, 2, 3, 1>();
+	test_vect_shuffle2_TNVI<T, 3, V, 0, 1, 2>();
+	test_vect_shuffle2_TNVI<T, 3, V, 3, 4, 5>();
+
+	test_vect_shuffle2_TNVI<T, 4, V, 0, 2, 4, 6>();
+	test_vect_shuffle2_TNVI<T, 4, V, 1, 3, 5, 7>();
+	test_vect_shuffle2_TNVI<T, 4, V, 1, 1, 1, 1>();
+	test_vect_shuffle2_TNVI<T, 4, V, 1, 1, 2, 2>();
+	test_vect_shuffle2_TNVI<T, 4, V, 4, 4, 5, 5>();
+	test_vect_shuffle2_TNVI<T, 4, V, 5, 5, 5, 5>();
+	test_vect_shuffle2_TNVI<T, 4, V, 3, 2, 1, 0>();
+	test_vect_shuffle2_TNVI<T, 4, V, 7, 6, 5, 4>();
+	test_vect_shuffle2_TNVI<T, 4, V, 6, 2, 4, 0>();
+	test_vect_shuffle2_TNVI<T, 4, V, 7, 1, 5, 3>();
+
+	test_vect_shuffle2_TNVI<T, 5, V, 0, 2, 4, 6, 8>();
+	test_vect_shuffle2_TNVI<T, 5, V, 1, 3, 5, 7, 9>();
+	test_vect_shuffle2_TNVI<T, 5, V, 8, 6, 4, 2, 0>();
+	test_vect_shuffle2_TNVI<T, 5, V, 9, 7, 5, 3, 1>();
+	test_vect_shuffle2_TNVI<T, 5, V, 0, 1, 2, 3, 4>();
+	test_vect_shuffle2_TNVI<T, 5, V, 5, 6, 7, 8, 9>();
+	test_vect_shuffle2_TNVI<T, 5, V, 2, 3, 4, 5, 6>();
+	test_vect_shuffle2_TNVI<T, 5, V, 0, 1, 2, 7, 9>();
+	test_vect_shuffle2_TNVI<T, 5, V, 2, 2, 2, 2, 2>();
+	test_vect_shuffle2_TNVI<T, 5, V, 7, 7, 7, 7, 7>();
+}
+
 template <typename T>
-void test_vect_shuffle2_apply_t(void)
+void test_vect_shuffle2_T(void)
 {
-	test_vect_shuffle2_apply<T, 2, 0, 2>();
-	test_vect_shuffle2_apply<T, 2, 1, 2>();
-	test_vect_shuffle2_apply<T, 2, 1, 0>();
-	test_vect_shuffle2_apply<T, 2, 1, 3>();
-	test_vect_shuffle2_apply<T, 2, 0, 1>();
-	test_vect_shuffle2_apply<T, 2, 2, 1>();
-	test_vect_shuffle2_apply<T, 2, 2, 0>();
-	test_vect_shuffle2_apply<T, 2, 2, 3>();
-	test_vect_shuffle2_apply<T, 2, 0, 3>();
-	test_vect_shuffle2_apply<T, 2, 2, 3>();
-	test_vect_shuffle2_apply<T, 2, 2, 1>();
-	test_vect_shuffle2_apply<T, 2, 0, 3>();
-	test_vect_shuffle2_apply<T, 2, 1, 3>();
-	test_vect_shuffle2_apply<T, 2, 1, 0>();
-	test_vect_shuffle2_apply<T, 2, 1, 2>();
-	test_vect_shuffle2_apply<T, 2, 0, 1>();
-	test_vect_shuffle2_apply<T, 2, 3, 1>();
-	test_vect_shuffle2_apply<T, 2, 3, 0>();
-	test_vect_shuffle2_apply<T, 2, 3, 2>();
-	test_vect_shuffle2_apply<T, 2, 0, 2>();
-	test_vect_shuffle2_apply<T, 2, 3, 2>();
-	test_vect_shuffle2_apply<T, 2, 3, 0>();
-	test_vect_shuffle2_apply<T, 2, 3, 1>();
-
-	test_vect_shuffle2_apply<T, 3, 0, 2, 4>();
-	test_vect_shuffle2_apply<T, 3, 1, 3, 5>();
-	test_vect_shuffle2_apply<T, 3, 5, 4, 3>();
-	test_vect_shuffle2_apply<T, 3, 1, 2, 3>();
-	test_vect_shuffle2_apply<T, 3, 1, 1, 1>();
-	test_vect_shuffle2_apply<T, 3, 4, 4, 4>();
-	test_vect_shuffle2_apply<T, 3, 2, 3, 1>();
-	test_vect_shuffle2_apply<T, 3, 0, 1, 2>();
-	test_vect_shuffle2_apply<T, 3, 3, 4, 5>();
-
-	test_vect_shuffle2_apply<T, 4, 0, 2, 4, 6>();
-	test_vect_shuffle2_apply<T, 4, 1, 3, 5, 7>();
-	test_vect_shuffle2_apply<T, 4, 1, 1, 1, 1>();
-	test_vect_shuffle2_apply<T, 4, 1, 1, 2, 2>();
-	test_vect_shuffle2_apply<T, 4, 4, 4, 5, 5>();
-	test_vect_shuffle2_apply<T, 4, 5, 5, 5, 5>();
-	test_vect_shuffle2_apply<T, 4, 3, 2, 1, 0>();
-	test_vect_shuffle2_apply<T, 4, 7, 6, 5, 4>();
-	test_vect_shuffle2_apply<T, 4, 6, 2, 4, 0>();
-	test_vect_shuffle2_apply<T, 4, 7, 1, 5, 3>();
-
-	test_vect_shuffle2_apply<T, 5, 0, 2, 4, 6, 8>();
-	test_vect_shuffle2_apply<T, 5, 1, 3, 5, 7, 9>();
-	test_vect_shuffle2_apply<T, 5, 8, 6, 4, 2, 0>();
-	test_vect_shuffle2_apply<T, 5, 9, 7, 5, 3, 1>();
-	test_vect_shuffle2_apply<T, 5, 0, 1, 2, 3, 4>();
-	test_vect_shuffle2_apply<T, 5, 5, 6, 7, 8, 9>();
-	test_vect_shuffle2_apply<T, 5, 2, 3, 4, 5, 6>();
-	test_vect_shuffle2_apply<T, 5, 0, 1, 2, 7, 9>();
-	test_vect_shuffle2_apply<T, 5, 2, 2, 2, 2, 2>();
-	test_vect_shuffle2_apply<T, 5, 7, 7, 7, 7, 7>();
+	test_vect_shuffle2_TV<T, true>();
+	test_vect_shuffle2_TV<T,false>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_shuffle2_apply_int)
+BOOST_AUTO_TEST_CASE(vect_shuffle2_int)
 {
-	test_vect_shuffle2_apply_t<int>();
+	test_vect_shuffle2_T<int>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_shuffle2_apply_float)
+BOOST_AUTO_TEST_CASE(vect_shuffle2_float)
 {
-	test_vect_shuffle2_apply_t<float>();
+	test_vect_shuffle2_T<float>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_shuffle2_apply_double)
+BOOST_AUTO_TEST_CASE(vect_shuffle2_double)
 {
-	test_vect_shuffle2_apply_t<double>();
+	test_vect_shuffle2_T<double>();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -17,8 +17,8 @@
 
 BOOST_AUTO_TEST_SUITE(vect_from)
 
-template <typename T, unsigned N>
-void test_vect_from_array_apply_T(void)
+template <typename T, unsigned N, bool V>
+void test_vect_from_array_TNV(void)
 {
 	T a[N];
 	for(unsigned i=0; i<N; ++i)
@@ -26,8 +26,8 @@ void test_vect_from_array_apply_T(void)
 		a[i] = std::rand() / T(3);
 	}
 
-	typename eagine::vect::data<T, N>::type v =
-		eagine::vect::from_array<T, N>::apply(a, N);
+	typename eagine::vect::data<T, N, V>::type v =
+		eagine::vect::from_array<T, N, V>::apply(a, N);
 
 	for(unsigned i=0; i<N; ++i)
 	{
@@ -36,31 +36,38 @@ void test_vect_from_array_apply_T(void)
 	}
 }
 
-template <typename T>
-void test_vect_from_array_apply(void)
+template <typename T, bool V>
+void test_vect_from_array_TV(void)
 {
-	test_vect_from_array_apply_T<T, 2>();
-	test_vect_from_array_apply_T<T, 3>();
-	test_vect_from_array_apply_T<T, 4>();
-	test_vect_from_array_apply_T<T, 5>();
-	test_vect_from_array_apply_T<T, 6>();
-	test_vect_from_array_apply_T<T, 7>();
-	test_vect_from_array_apply_T<T, 8>();
+	test_vect_from_array_TNV<T, 2, V>();
+	test_vect_from_array_TNV<T, 3, V>();
+	test_vect_from_array_TNV<T, 4, V>();
+	test_vect_from_array_TNV<T, 5, V>();
+	test_vect_from_array_TNV<T, 6, V>();
+	test_vect_from_array_TNV<T, 7, V>();
+	test_vect_from_array_TNV<T, 8, V>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_from_array_apply)
+template <typename T>
+void test_vect_from_array_T(void)
+{
+	test_vect_from_array_TV<T, true>();
+	test_vect_from_array_TV<T,false>();
+}
+
+BOOST_AUTO_TEST_CASE(vect_from_array)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_vect_from_array_apply<int>();
-		test_vect_from_array_apply<float>();
-		test_vect_from_array_apply<double>();
+		test_vect_from_array_T<int>();
+		test_vect_from_array_T<float>();
+		test_vect_from_array_T<double>();
 	}
 }
 
 
-template <typename T, unsigned N, unsigned M>
-void test_vect_from_saafv_apply_T(void)
+template <typename T, unsigned N, unsigned M, bool V>
+void test_vect_from_saafv_TNMV(void)
 {
 	static_assert(M <= N, "");
 
@@ -71,8 +78,8 @@ void test_vect_from_saafv_apply_T(void)
 	}
 	T f = std::rand() / T(3);
 
-	typename eagine::vect::data<T, N>::type v =
-		eagine::vect::from_saafv<T, N>::apply(a, M, f);
+	typename eagine::vect::data<T, N, V>::type v =
+		eagine::vect::from_saafv<T, N, V>::apply(a, M, f);
 
 	for(unsigned i=0; i<M; ++i)
 	{
@@ -86,59 +93,66 @@ void test_vect_from_saafv_apply_T(void)
 	}
 }
 
-template <typename T>
-void test_vect_from_saafv_apply(void)
+template <typename T, bool V>
+void test_vect_from_saafv_TV(void)
 {
-	test_vect_from_saafv_apply_T<T, 2,1>();
-	test_vect_from_saafv_apply_T<T, 2,2>();
+	test_vect_from_saafv_TNMV<T, 2,1,V>();
+	test_vect_from_saafv_TNMV<T, 2,2,V>();
 
-	test_vect_from_saafv_apply_T<T, 3,1>();
-	test_vect_from_saafv_apply_T<T, 3,2>();
-	test_vect_from_saafv_apply_T<T, 3,3>();
+	test_vect_from_saafv_TNMV<T, 3,1,V>();
+	test_vect_from_saafv_TNMV<T, 3,2,V>();
+	test_vect_from_saafv_TNMV<T, 3,3,V>();
 
-	test_vect_from_saafv_apply_T<T, 4,1>();
-	test_vect_from_saafv_apply_T<T, 4,2>();
-	test_vect_from_saafv_apply_T<T, 4,3>();
-	test_vect_from_saafv_apply_T<T, 4,4>();
+	test_vect_from_saafv_TNMV<T, 4,1,V>();
+	test_vect_from_saafv_TNMV<T, 4,2,V>();
+	test_vect_from_saafv_TNMV<T, 4,3,V>();
+	test_vect_from_saafv_TNMV<T, 4,4,V>();
 
-	test_vect_from_saafv_apply_T<T, 5,1>();
-	test_vect_from_saafv_apply_T<T, 5,2>();
-	test_vect_from_saafv_apply_T<T, 5,3>();
-	test_vect_from_saafv_apply_T<T, 5,4>();
-	test_vect_from_saafv_apply_T<T, 5,5>();
+	test_vect_from_saafv_TNMV<T, 5,1,V>();
+	test_vect_from_saafv_TNMV<T, 5,2,V>();
+	test_vect_from_saafv_TNMV<T, 5,3,V>();
+	test_vect_from_saafv_TNMV<T, 5,4,V>();
+	test_vect_from_saafv_TNMV<T, 5,5,V>();
 
-	test_vect_from_saafv_apply_T<T, 6,1>();
-	test_vect_from_saafv_apply_T<T, 6,2>();
-	test_vect_from_saafv_apply_T<T, 6,3>();
-	test_vect_from_saafv_apply_T<T, 6,4>();
-	test_vect_from_saafv_apply_T<T, 6,5>();
-	test_vect_from_saafv_apply_T<T, 6,6>();
+	test_vect_from_saafv_TNMV<T, 6,1,V>();
+	test_vect_from_saafv_TNMV<T, 6,2,V>();
+	test_vect_from_saafv_TNMV<T, 6,3,V>();
+	test_vect_from_saafv_TNMV<T, 6,4,V>();
+	test_vect_from_saafv_TNMV<T, 6,5,V>();
+	test_vect_from_saafv_TNMV<T, 6,6,V>();
 
-	test_vect_from_saafv_apply_T<T, 7,1>();
-	test_vect_from_saafv_apply_T<T, 7,2>();
-	test_vect_from_saafv_apply_T<T, 7,3>();
-	test_vect_from_saafv_apply_T<T, 7,4>();
-	test_vect_from_saafv_apply_T<T, 7,5>();
-	test_vect_from_saafv_apply_T<T, 7,6>();
-	test_vect_from_saafv_apply_T<T, 7,7>();
+	test_vect_from_saafv_TNMV<T, 7,1,V>();
+	test_vect_from_saafv_TNMV<T, 7,2,V>();
+	test_vect_from_saafv_TNMV<T, 7,3,V>();
+	test_vect_from_saafv_TNMV<T, 7,4,V>();
+	test_vect_from_saafv_TNMV<T, 7,5,V>();
+	test_vect_from_saafv_TNMV<T, 7,6,V>();
+	test_vect_from_saafv_TNMV<T, 7,7,V>();
 
-	test_vect_from_saafv_apply_T<T, 8,1>();
-	test_vect_from_saafv_apply_T<T, 8,2>();
-	test_vect_from_saafv_apply_T<T, 8,3>();
-	test_vect_from_saafv_apply_T<T, 8,4>();
-	test_vect_from_saafv_apply_T<T, 8,5>();
-	test_vect_from_saafv_apply_T<T, 8,6>();
-	test_vect_from_saafv_apply_T<T, 8,7>();
-	test_vect_from_saafv_apply_T<T, 8,8>();
+	test_vect_from_saafv_TNMV<T, 8,1,V>();
+	test_vect_from_saafv_TNMV<T, 8,2,V>();
+	test_vect_from_saafv_TNMV<T, 8,3,V>();
+	test_vect_from_saafv_TNMV<T, 8,4,V>();
+	test_vect_from_saafv_TNMV<T, 8,5,V>();
+	test_vect_from_saafv_TNMV<T, 8,6,V>();
+	test_vect_from_saafv_TNMV<T, 8,7,V>();
+	test_vect_from_saafv_TNMV<T, 8,8,V>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_from_saafv_apply)
+template <typename T>
+void test_vect_from_saafv_T(void)
+{
+	test_vect_from_saafv_TV<T, true>();
+	test_vect_from_saafv_TV<T,false>();
+}
+
+BOOST_AUTO_TEST_CASE(vect_from_saafv)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_vect_from_saafv_apply<int>();
-		test_vect_from_saafv_apply<float>();
-		test_vect_from_saafv_apply<double>();
+		test_vect_from_saafv_T<int>();
+		test_vect_from_saafv_T<float>();
+		test_vect_from_saafv_T<double>();
 	}
 }
 
