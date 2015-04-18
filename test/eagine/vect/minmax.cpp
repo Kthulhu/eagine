@@ -19,13 +19,13 @@
 
 BOOST_AUTO_TEST_SUITE(vect_minmax)
 
-template <typename T, unsigned N>
-void test_vect_min_apply(void)
+template <typename T, unsigned N, bool V>
+void test_vect_min_TNV(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u = {};
-		typename eagine::vect::data<T, N>::type v = {};
+		typename eagine::vect::data<T, N, V>::type u = {};
+		typename eagine::vect::data<T, N, V>::type v = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -33,8 +33,8 @@ void test_vect_min_apply(void)
 			v[i] = std::rand() / T(2);
 		}
 
-		typename eagine::vect::data<T, N>::type min =
-			eagine::vect::min<T, N>::apply(u, v);
+		typename eagine::vect::data<T, N, V>::type min =
+			eagine::vect::min<T, N, V>::apply(u, v);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -44,45 +44,53 @@ void test_vect_min_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_min_TV(void)
+{
+	test_vect_min_TNV<T, 1, V>();
+	test_vect_min_TNV<T, 2, V>();
+	test_vect_min_TNV<T, 3, V>();
+	test_vect_min_TNV<T, 4, V>();
+	test_vect_min_TNV<T, 5, V>();
+	test_vect_min_TNV<T, 6, V>();
+	test_vect_min_TNV<T, 7, V>();
+	test_vect_min_TNV<T, 8, V>();
+
+	test_vect_min_TNV<T, 11, V>();
+	test_vect_min_TNV<T, 17, V>();
+	test_vect_min_TNV<T, 23, V>();
+}
+
 template <typename T>
-void test_vect_min_apply_t(void)
+void test_vect_min_T(void)
 {
-	test_vect_min_apply<T, 1>();
-	test_vect_min_apply<T, 2>();
-	test_vect_min_apply<T, 3>();
-	test_vect_min_apply<T, 4>();
-	test_vect_min_apply<T, 5>();
-	test_vect_min_apply<T, 6>();
-	test_vect_min_apply<T, 7>();
-	test_vect_min_apply<T, 8>();
-
-	test_vect_min_apply<T, 11>();
-	test_vect_min_apply<T, 17>();
-	test_vect_min_apply<T, 23>();
+	test_vect_min_TV<T, true>();
+	test_vect_min_TV<T,false>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_min_apply_int)
+BOOST_AUTO_TEST_CASE(vect_min_int)
 {
-	test_vect_min_apply_t<int>();
+	test_vect_min_T<int>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_min_apply_float)
+BOOST_AUTO_TEST_CASE(vect_min_float)
 {
-	test_vect_min_apply_t<float>();
+	test_vect_min_T<float>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_min_apply_double)
+BOOST_AUTO_TEST_CASE(vect_min_double)
 {
-	test_vect_min_apply_t<double>();
+	test_vect_min_T<double>();
 }
 
-template <typename T, unsigned N>
-void test_vect_max_apply(void)
+
+template <typename T, unsigned N, bool V>
+void test_vect_max_TNV(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u = {};
-		typename eagine::vect::data<T, N>::type v = {};
+		typename eagine::vect::data<T, N, V>::type u = {};
+		typename eagine::vect::data<T, N, V>::type v = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -90,8 +98,8 @@ void test_vect_max_apply(void)
 			v[i] = std::rand() / T(2);
 		}
 
-		typename eagine::vect::data<T, N>::type max =
-			eagine::vect::max<T, N>::apply(u, v);
+		typename eagine::vect::data<T, N, V>::type max =
+			eagine::vect::max<T, N, V>::apply(u, v);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -101,52 +109,60 @@ void test_vect_max_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_max_TV(void)
+{
+	test_vect_max_TNV<T, 1, V>();
+	test_vect_max_TNV<T, 2, V>();
+	test_vect_max_TNV<T, 3, V>();
+	test_vect_max_TNV<T, 4, V>();
+	test_vect_max_TNV<T, 5, V>();
+	test_vect_max_TNV<T, 6, V>();
+	test_vect_max_TNV<T, 7, V>();
+	test_vect_max_TNV<T, 8, V>();
+
+	test_vect_max_TNV<T, 11, V>();
+	test_vect_max_TNV<T, 17, V>();
+	test_vect_max_TNV<T, 23, V>();
+}
+
 template <typename T>
-void test_vect_max_apply_t(void)
+void test_vect_max_T(void)
 {
-	test_vect_max_apply<T, 1>();
-	test_vect_max_apply<T, 2>();
-	test_vect_max_apply<T, 3>();
-	test_vect_max_apply<T, 4>();
-	test_vect_max_apply<T, 5>();
-	test_vect_max_apply<T, 6>();
-	test_vect_max_apply<T, 7>();
-	test_vect_max_apply<T, 8>();
-
-	test_vect_max_apply<T, 11>();
-	test_vect_max_apply<T, 17>();
-	test_vect_max_apply<T, 23>();
+	test_vect_max_TV<T, true>();
+	test_vect_max_TV<T,false>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_max_apply_int)
+BOOST_AUTO_TEST_CASE(vect_max_int)
 {
-	test_vect_max_apply_t<int>();
+	test_vect_max_T<int>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_max_apply_float)
+BOOST_AUTO_TEST_CASE(vect_max_float)
 {
-	test_vect_max_apply_t<float>();
+	test_vect_max_T<float>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_max_apply_double)
+BOOST_AUTO_TEST_CASE(vect_max_double)
 {
-	test_vect_max_apply_t<double>();
+	test_vect_max_T<double>();
 }
 
-template <typename T, unsigned N>
-void test_vect_hmin_apply(void)
+
+template <typename T, unsigned N, bool V>
+void test_vect_hmin_TNV(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u = {};
+		typename eagine::vect::data<T, N, V>::type u = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
 			u[i] = std::rand() / T(2);
 		}
 
-		typename eagine::vect::data<T, N>::type min =
-			eagine::vect::hmin<T, N>::apply(u);
+		typename eagine::vect::data<T, N, V>::type min =
+			eagine::vect::hmin<T, N, V>::apply(u);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -163,52 +179,60 @@ void test_vect_hmin_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_hmin_TV(void)
+{
+	test_vect_hmin_TNV<T, 1, V>();
+	test_vect_hmin_TNV<T, 2, V>();
+	test_vect_hmin_TNV<T, 3, V>();
+	test_vect_hmin_TNV<T, 4, V>();
+	test_vect_hmin_TNV<T, 5, V>();
+	test_vect_hmin_TNV<T, 6, V>();
+	test_vect_hmin_TNV<T, 7, V>();
+	test_vect_hmin_TNV<T, 8, V>();
+
+	test_vect_hmin_TNV<T, 11, V>();
+	test_vect_hmin_TNV<T, 17, V>();
+	test_vect_hmin_TNV<T, 23, V>();
+}
+
 template <typename T>
-void test_vect_hmin_apply_t(void)
+void test_vect_hmin_T(void)
 {
-	test_vect_hmin_apply<T, 1>();
-	test_vect_hmin_apply<T, 2>();
-	test_vect_hmin_apply<T, 3>();
-	test_vect_hmin_apply<T, 4>();
-	test_vect_hmin_apply<T, 5>();
-	test_vect_hmin_apply<T, 6>();
-	test_vect_hmin_apply<T, 7>();
-	test_vect_hmin_apply<T, 8>();
-
-	test_vect_hmin_apply<T, 11>();
-	test_vect_hmin_apply<T, 17>();
-	test_vect_hmin_apply<T, 23>();
+	test_vect_hmin_TV<T, true>();
+	test_vect_hmin_TV<T,false>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_hmin_apply_int)
+BOOST_AUTO_TEST_CASE(vect_hmin_int)
 {
-	test_vect_hmin_apply_t<int>();
+	test_vect_hmin_T<int>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_hmin_apply_float)
+BOOST_AUTO_TEST_CASE(vect_hmin_float)
 {
-	test_vect_hmin_apply_t<float>();
+	test_vect_hmin_T<float>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_hmin_apply_double)
+BOOST_AUTO_TEST_CASE(vect_hmin_double)
 {
-	test_vect_hmin_apply_t<double>();
+	test_vect_hmin_T<double>();
 }
 
-template <typename T, unsigned N>
-void test_vect_hmax_apply(void)
+
+template <typename T, unsigned N, bool V>
+void test_vect_hmax_TNV(void)
 {
 	for(unsigned k=0; k<10; ++k)
 	{
-		typename eagine::vect::data<T, N>::type u = {};
+		typename eagine::vect::data<T, N, V>::type u = {};
 
 		for(unsigned i=0; i<N; ++i)
 		{
 			u[i] = std::rand() / T(2);
 		}
 
-		typename eagine::vect::data<T, N>::type max =
-			eagine::vect::hmax<T, N>::apply(u);
+		typename eagine::vect::data<T, N, V>::type max =
+			eagine::vect::hmax<T, N, V>::apply(u);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -225,36 +249,43 @@ void test_vect_hmax_apply(void)
 	}
 }
 
+template <typename T, bool V>
+void test_vect_hmax_TV(void)
+{
+	test_vect_hmax_TNV<T, 1, V>();
+	test_vect_hmax_TNV<T, 2, V>();
+	test_vect_hmax_TNV<T, 3, V>();
+	test_vect_hmax_TNV<T, 4, V>();
+	test_vect_hmax_TNV<T, 5, V>();
+	test_vect_hmax_TNV<T, 6, V>();
+	test_vect_hmax_TNV<T, 7, V>();
+	test_vect_hmax_TNV<T, 8, V>();
+
+	test_vect_hmax_TNV<T, 11, V>();
+	test_vect_hmax_TNV<T, 17, V>();
+	test_vect_hmax_TNV<T, 23, V>();
+}
+
 template <typename T>
-void test_vect_hmax_apply_t(void)
+void test_vect_hmax_T(void)
 {
-	test_vect_hmax_apply<T, 1>();
-	test_vect_hmax_apply<T, 2>();
-	test_vect_hmax_apply<T, 3>();
-	test_vect_hmax_apply<T, 4>();
-	test_vect_hmax_apply<T, 5>();
-	test_vect_hmax_apply<T, 6>();
-	test_vect_hmax_apply<T, 7>();
-	test_vect_hmax_apply<T, 8>();
-
-	test_vect_hmax_apply<T, 11>();
-	test_vect_hmax_apply<T, 17>();
-	test_vect_hmax_apply<T, 23>();
+	test_vect_hmax_TV<T, true>();
+	test_vect_hmax_TV<T,false>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_hmax_apply_int)
+BOOST_AUTO_TEST_CASE(vect_hmax_int)
 {
-	test_vect_hmax_apply_t<int>();
+	test_vect_hmax_T<int>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_hmax_apply_float)
+BOOST_AUTO_TEST_CASE(vect_hmax_float)
 {
-	test_vect_hmax_apply_t<float>();
+	test_vect_hmax_T<float>();
 }
 
-BOOST_AUTO_TEST_CASE(vect_hmax_apply_double)
+BOOST_AUTO_TEST_CASE(vect_hmax_double)
 {
-	test_vect_hmax_apply_t<double>();
+	test_vect_hmax_T<double>();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

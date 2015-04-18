@@ -1,7 +1,7 @@
 /**
- *  @file eagine/vect/array_raf.hpp
+ *  @file eagine/vect/array_ref.hpp
  *
- *  Copyright 2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -47,11 +47,11 @@ struct _ary_ref_hlp
 };
 
 // array_ref
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct array_ref
- : _ary_ref_hlp<typename data<T, N>::type, T, N>
+ : _ary_ref_hlp<typename data<T, N, V>::type, T, N>
 {
-	using _ary_ref_hlp<typename data<T, N>::type, T, N>::_ary_ref_hlp;
+	using _ary_ref_hlp<typename data<T, N, V>::type, T, N>::_ary_ref_hlp;
 
 	inline
 	const T* data(void) const

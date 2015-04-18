@@ -49,7 +49,7 @@ private:
 	noexcept
 	{
 		static_assert(M == N, "");
-		return hsum<T, N>::apply(v)[N-1];
+		return hsum<T, N, V>::apply(v)[N-1];
 	}
 public:
 	static inline

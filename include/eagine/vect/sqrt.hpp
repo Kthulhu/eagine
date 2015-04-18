@@ -16,10 +16,10 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct sqrt
 {
-	typedef typename data<T, N>::type _dT;
+	typedef typename data<T, N, V>::type _dT;
 
 	static
 	_dT apply(_dT v)

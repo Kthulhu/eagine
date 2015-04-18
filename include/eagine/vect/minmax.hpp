@@ -16,11 +16,11 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct min
 {
-	typedef typename data<T,  N>::type _dT;
-	typedef typename data_param<T, N>::type _dpT;
+	typedef typename data<T, N, V>::type _dT;
+	typedef typename data_param<T, N, V>::type _dpT;
 
 	static inline
 	_dT _hlp(_dpT a, _dpT b, meta::true_type)
@@ -50,14 +50,14 @@ struct min
 	_dT apply(_dpT a, _dpT b)
 	noexcept
 	{
-		return _hlp(a, b, typename _has_vec_data<T, N>::type());
+		return _hlp(a, b, has_vect_data<T, N, V>());
 	}
 };
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct hmin
 {
-	typedef typename data<T, N>::type _dT;
+	typedef typename data<T, N, V>::type _dT;
 
 	static
 	_dT apply(_dT v)
@@ -79,10 +79,10 @@ struct hmin
 	}
 };
 
-template <typename T>
-struct hmin<T, 1>
+template <typename T, bool V>
+struct hmin<T, 1, V>
 {
-	typedef typename data<T, 1>::type _dT;
+	typedef typename data<T, 1, V>::type _dT;
 
 	static inline
 	_dT apply(_dT v)
@@ -92,36 +92,36 @@ struct hmin<T, 1>
 	}
 };
 
-template <typename T>
-struct hmin<T, 2>
+template <typename T, bool V>
+struct hmin<T, 2, V>
 {
-	typedef typename data<T, 2>::type _dT;
-	typedef typename data_param<T, 2>::type _dpT;
-	typedef shuffle<T, 2> _sh;
+	typedef typename data<T, 2, V>::type _dT;
+	typedef typename data_param<T, 2, V>::type _dpT;
+	typedef shuffle<T, 2, V> _sh;
 
 	static
 	_dT apply(_dpT v)
 	noexcept
 	{
-		return min<T, 2>::apply(
+		return min<T, 2, V>::apply(
 			v,
 			_sh::template apply<1,0>(v)
 		);
 	}
 };
 
-template <typename T>
-struct hmin<T, 4>
+template <typename T, bool V>
+struct hmin<T, 4, V>
 {
-	typedef typename data<T, 4>::type _dT;
-	typedef typename data_param<T, 4>::type _dpT;
-	typedef shuffle<T, 4> _sh;
+	typedef typename data<T, 4, V>::type _dT;
+	typedef typename data_param<T, 4, V>::type _dpT;
+	typedef shuffle<T, 4, V> _sh;
 
 	static constexpr inline
 	_dT _hlp1(_dpT v)
 	noexcept
 	{
-		return min<T, 4>::apply(
+		return min<T, 4, V>::apply(
 			v,
 			_sh::template apply<1,0,3,2>(v)
 		);
@@ -131,7 +131,7 @@ struct hmin<T, 4>
 	_dT _hlp2(_dpT v)
 	noexcept
 	{
-		return min<T, 4>::apply(
+		return min<T, 4, V>::apply(
 			v,
 			_sh::template apply<2,3,0,1>(v)
 		);
@@ -145,11 +145,11 @@ struct hmin<T, 4>
 	}
 };
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct max
 {
-	typedef typename data<T,  N>::type _dT;
-	typedef typename data_param<T, N>::type _dpT;
+	typedef typename data<T, N, V>::type _dT;
+	typedef typename data_param<T, N, V>::type _dpT;
 
 	static inline
 	_dT _hlp(_dpT a, _dpT b, meta::true_type)
@@ -179,14 +179,14 @@ struct max
 	_dT apply(_dpT a, _dpT b)
 	noexcept
 	{
-		return _hlp(a, b, typename _has_vec_data<T, N>::type());
+		return _hlp(a, b, has_vect_data<T, N, V>());
 	}
 };
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct hmax
 {
-	typedef typename data<T, N>::type _dT;
+	typedef typename data<T, N, V>::type _dT;
 
 	static
 	_dT apply(_dT v)
@@ -208,10 +208,10 @@ struct hmax
 	}
 };
 
-template <typename T>
-struct hmax<T, 1>
+template <typename T, bool V>
+struct hmax<T, 1, V>
 {
-	typedef typename data<T, 1>::type _dT;
+	typedef typename data<T, 1, V>::type _dT;
 
 	static inline
 	_dT apply(_dT v)
@@ -221,36 +221,36 @@ struct hmax<T, 1>
 	}
 };
 
-template <typename T>
-struct hmax<T, 2>
+template <typename T, bool V>
+struct hmax<T, 2, V>
 {
-	typedef typename data<T, 2>::type _dT;
-	typedef typename data_param<T, 2>::type _dpT;
-	typedef shuffle<T, 2> _sh;
+	typedef typename data<T, 2, V>::type _dT;
+	typedef typename data_param<T, 2, V>::type _dpT;
+	typedef shuffle<T, 2, V> _sh;
 
 	static
 	_dT apply(_dT v)
 	noexcept
 	{
-		return max<T, 2>::apply(
+		return max<T, 2, V>::apply(
 			v,
-			shuffle<T, 2>::template apply<1,0>(v)
+			_sh::template apply<1,0>(v)
 		);
 	}
 };
 
-template <typename T>
-struct hmax<T, 4>
+template <typename T, bool V>
+struct hmax<T, 4, V>
 {
-	typedef typename data<T, 4>::type _dT;
-	typedef typename data_param<T, 4>::type _dpT;
-	typedef shuffle<T, 4> _sh;
+	typedef typename data<T, 4, V>::type _dT;
+	typedef typename data_param<T, 4, V>::type _dpT;
+	typedef shuffle<T, 4, V> _sh;
 
 	static constexpr inline
 	_dT _hlp1(_dpT v)
 	noexcept
 	{
-		return max<T, 4>::apply(
+		return max<T, 4, V>::apply(
 			v,
 			_sh::template apply<1,0,3,2>(v)
 		);
@@ -260,7 +260,7 @@ struct hmax<T, 4>
 	_dT _hlp2(_dpT v)
 	noexcept
 	{
-		return max<T, 4>::apply(
+		return max<T, 4, V>::apply(
 			v,
 			_sh::template apply<2,3,0,1>(v)
 		);

@@ -15,10 +15,10 @@
 namespace eagine {
 namespace vect {
 
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 struct equal
 {
-	typedef typename data_param<T,  N>::type _dpT;
+	typedef typename data_param<T, N, V>::type _dpT;
 
 	static
 	bool apply(_dpT a, _dpT b)
@@ -36,6 +36,7 @@ struct equal
 };
 
 // TODO: some optimizations ?
+// TODO: math::difference
 
 } // namespace vect
 } // namespace eagine

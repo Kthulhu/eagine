@@ -83,13 +83,12 @@ struct scalar
 	typedef scalar type;
 	typedef T value_type;
 
-	typedef meta::boolean_constant<
-		V && vect::_has_vec_data<T, N>::value
-	> is_vectorized;
+	typedef typename vect::has_vect_data<T, N, V>::type
+		is_vectorized;
 
 	typedef typename meta::conditional<
 		is_vectorized::value,
-		vect::data<T, N>,
+		vect::data<T, N, V>,
 		meta::identity<T>
 	>::type::type data_type;
 
@@ -105,7 +104,7 @@ struct scalar
 	scalar _make(T v, meta::true_type)
 	noexcept
 	{
-		return scalar{vect::fill<T, N>::apply(v)};
+		return scalar{vect::fill<T, N, V>::apply(v)};
 	}
 
 	static constexpr inline
@@ -154,7 +153,7 @@ struct scalar
 	bool _equal(_cpT a, _cpT b, meta::true_type)
 	noexcept
 	{
-		return vect::equal<T,N>::apply(a._v, b._v);
+		return vect::equal<T,N,V>::apply(a._v, b._v);
 	}
 
 	static constexpr inline
@@ -190,9 +189,8 @@ struct vector
 	typedef vector type;
 	typedef scalar<T, N, V> scalar_type;
 
-	typedef meta::boolean_constant<
-		V && vect::_has_vec_data<T, N>::value
-	> is_vectorized;
+	typedef typename vect::has_vect_data<T, N, V>::type
+		is_vectorized;
 
 	typedef T value_type;
 
@@ -233,35 +231,37 @@ struct vector
 	template <
 		typename P,
 		unsigned M,
+		bool W,
 		typename = typename meta::enable_if<
-			(!meta::is_same<T, P>::value || (N != M))
+			(!meta::is_same<T, P>::value || (N != M) || (V != W))
 		>::type
 	>
 	static constexpr inline
-	vector from(const vector<P, M>& v, T d = T(0))
+	vector from(const vector<P, M, W>& v, T d = T(0))
 	noexcept
 	{
-		return vector{vect::cast<P, M, T, N>::apply(v._v, d)};
+		return vector{vect::cast<P, M, W, T, N, V>::apply(v._v, d)};
 	}
 
-	template <typename P, unsigned M>
+	template <typename P, unsigned M, bool W>
 	static constexpr inline
-	vector from(const vector<P, M>& v, const vector<T, N-M>& u)
+	vector from(const vector<P, M, W>& v, const vector<T, N-M, W>& u)
 	noexcept
 	{
-		return vector{vect::cast<P, M, T, N>::apply(v._v, u._v)};
+		return vector{vect::cast<P, M, W, T, N, V>::apply(v._v, u._v)};
 	}
 
 	template <
 		unsigned ... I,
 		typename P,
 		unsigned M,
+		bool W,
 		typename = typename meta::enable_if<
 			(sizeof...(I) == N)
 		>::type
 	>
 	static constexpr inline
-	vector from(const vector<P, M>& v)
+	vector from(const vector<P, M, W>& v)
 	noexcept
 	{
 		return vector{{T(v._v[I])...}};
@@ -271,28 +271,28 @@ struct vector
 	vector from(const T* dt, std::size_t sz)
 	noexcept
 	{
-		return vector{vect::from_array<T,N>::apply(dt, sz)};
+		return vector{vect::from_array<T,N,V>::apply(dt, sz)};
 	}
 
 	static inline
 	vector from(const T* dt, std::size_t sz, T fv)
 	noexcept
 	{
-		return vector{vect::from_saafv<T,N>::apply(dt, sz, fv)};
+		return vector{vect::from_saafv<T,N,V>::apply(dt, sz, fv)};
 	}
 
 	static inline
 	vector zero(void)
 	noexcept
 	{
-		return vector{vect::fill<T,N>::apply(T(0))};
+		return vector{vect::fill<T,N,V>::apply(T(0))};
 	}
 
 	static inline
 	vector fill(T v)
 	noexcept
 	{
-		return vector{vect::fill<T,N>::apply(v)};
+		return vector{vect::fill<T,N,V>::apply(v)};
 	}
 
 	template <unsigned I>
@@ -300,7 +300,7 @@ struct vector
 	vector axis(void)
 	noexcept
 	{
-		return vector{vect::axis<T,N,I>::apply(T(1))};
+		return vector{vect::axis<T,N,I,V>::apply(T(1))};
 	}
 
 	template <unsigned I>
@@ -308,14 +308,14 @@ struct vector
 	vector axis(T v)
 	noexcept
 	{
-		return vector{vect::axis<T,N,I>::apply(v)};
+		return vector{vect::axis<T,N,I,V>::apply(v)};
 	}
 
 	static inline
 	vector axis(unsigned i, T v)
 	noexcept
 	{
-		vector r{vect::fill<T,N>::apply(T(0))};
+		vector r{vect::fill<T,N,V>::apply(T(0))};
 		r._v[i] = v;
 		return r;
 	}
@@ -497,20 +497,20 @@ struct vector
 	vector operator * (T c, _cpT a)
 	noexcept
 	{
-		return vector{a._v*vect::fill<T, N>::apply(c)};
+		return vector{a._v*vect::fill<T, N, V>::apply(c)};
 	}
 
 	friend constexpr
 	vector operator * (_cpT a, T c)
 	noexcept
 	{
-		return vector{a._v*vect::fill<T, N>::apply(c)};
+		return vector{a._v*vect::fill<T, N, V>::apply(c)};
 	}
 
 	vector& operator *= (T c)
 	noexcept
 	{
-		_v = _v*vect::fill<T, N>::apply(c);
+		_v = _v*vect::fill<T, N, V>::apply(c);
 		return *this;
 	}
 
@@ -518,7 +518,7 @@ struct vector
 	vector operator / (_cpT a, _cpT b)
 	noexcept
 	{
-		return vector{vect::sdiv<T, N>::apply(a._v, b._v)};
+		return vector{vect::sdiv<T, N, V>::apply(a._v, b._v)};
 	}
 
 	template <typename Vec = vector>
@@ -527,7 +527,7 @@ struct vector
 	operator / (_cspT c, _cpT a)
 	noexcept
 	{
-		return vector{vect::sdiv<T, N>::apply(c._v, a._v)};
+		return vector{vect::sdiv<T, N, V>::apply(c._v, a._v)};
 	}
 
 	template <typename Vec = vector>
@@ -536,16 +536,16 @@ struct vector
 	operator / (_cpT a, _cspT c)
 	noexcept
 	{
-		return vector{vect::sdiv<T, N>::apply(a._v, c._v)};
+		return vector{vect::sdiv<T, N, V>::apply(a._v, c._v)};
 	}
 
 	friend constexpr
 	vector operator / (_cpT a, T c)
 	noexcept
 	{
-		return vector{vect::sdiv<T, N>::apply(
+		return vector{vect::sdiv<T, N, V>::apply(
 			a._v,
-			vect::fill<T, N>::apply(c)
+			vect::fill<T, N, V>::apply(c)
 		)};
 	}
 
@@ -553,8 +553,8 @@ struct vector
 	vector operator / (T c, _cpT a)
 	noexcept
 	{
-		return vector{vect::sdiv<T, N>::apply(
-			vect::fill<T, N>::apply(c),
+		return vector{vect::sdiv<T, N, V>::apply(
+			vect::fill<T, N, V>::apply(c),
 			a._v
 		)};
 	}
@@ -563,35 +563,35 @@ struct vector
 	bool operator == (_cpT a, _cpT b)
 	noexcept
 	{
-		return vect::equal<T,N>::apply(a._v, b._v);
+		return vect::equal<T,N,V>::apply(a._v, b._v);
 	}
 
 	friend
 	bool operator != (_cpT a, _cpT b)
 	noexcept
 	{
-		return !vect::equal<T,N>::apply(a._v, b._v);
+		return !vect::equal<T,N,V>::apply(a._v, b._v);
 	}
 
 	friend
 	constexpr vector hsum(_cpT a)
 	noexcept
 	{
-		return vector{vect::hsum<T, N>::apply(a._v)};
+		return vector{vect::hsum<T, N, V>::apply(a._v)};
 	}
 
 	friend constexpr
 	scalar<T, N, V> _dot(_cpT a, _cpT b, meta::true_type)
 	noexcept
 	{
-		return scalar<T, N, V>{vect::hsum<T, N>::apply(a._v * b._v)};
+		return scalar<T, N, V>{vect::hsum<T, N, V>::apply(a._v * b._v)};
 	}
 
 	friend constexpr
 	scalar<T, N, V> _dot(_cpT a, _cpT b, meta::false_type)
 	noexcept
 	{
-		return scalar<T, N, V>{vect::esum<T, N>::apply(a._v * b._v)};
+		return scalar<T, N, V>{vect::esum<T, N, V>::apply(a._v * b._v)};
 	}
 
 	friend constexpr
@@ -606,8 +606,8 @@ struct vector
 	noexcept
 	{
 		return scalar<T, N, V>{
-			vect::sqrt<T, N>::apply(
-				vect::hsum<T, N>::apply(a._v * a._v)
+			vect::sqrt<T, N, V>::apply(
+				vect::hsum<T, N, V>::apply(a._v * a._v)
 			)
 		};
 	}
@@ -618,7 +618,7 @@ struct vector
 	{
 		using std::sqrt;
 		return scalar<T, N, V>
-			{T(sqrt(vect::esum<T, N>::apply(a._v * a._v)))};
+			{T(sqrt(vect::esum<T, N, V>::apply(a._v * a._v)))};
 	}
 
 	friend constexpr
@@ -654,7 +654,7 @@ struct vector
 	{
 		using std::acos;
 		return angle<T>
-			{T(acos(vect::esum<T, N>::apply(a._v * b._v)))};
+			{T(acos(vect::esum<T, N, V>::apply(a._v * b._v)))};
 	}
 
 	friend constexpr
@@ -668,39 +668,39 @@ struct vector
 };
 
 // get(vector)
-template <unsigned I, typename T, unsigned N>
+template <unsigned I, typename T, unsigned N, bool V>
 static constexpr inline
 typename meta::enable_if<(I<N), T>::type
-get(const vector<T,N>& v)
+get(const vector<T,N,V>& v)
 noexcept
 {
 	return v._v[I];
 }
 
 // get(vector) run-time
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 static constexpr inline
-T get(const vector<T,N>& v, unsigned i)
+T get(const vector<T,N,V>& v, unsigned i)
 noexcept
 {
 	return v._v[i];
 }
 
 // set(vector, v)
-template <unsigned I, typename T, unsigned N>
+template <unsigned I, typename T, unsigned N, bool V>
 static inline
 typename meta::enable_if<(I<N)>::type
-set(vector<T,N>& v, T e)
+set(vector<T,N,V>& v, T e)
 noexcept
 {
 	v._v[I] = e;
 }
 
 // set(vector, v) run-time
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 static inline
 void
-set(vector<T,N>& v, unsigned i, T e)
+set(vector<T,N,V>& v, unsigned i, T e)
 noexcept
 {
 	v._v[i] = e;
@@ -710,57 +710,57 @@ noexcept
 using vect::shuffle_mask;
 
 // shuffle
-template <int ... I, typename T, unsigned N>
+template <int ... I, typename T, unsigned N, bool V>
 static inline
 typename meta::enable_if<
 	meta::max_constant<int, I...>::value < N,
-	vector<T, N>
+	vector<T, N, V>
 >::type
 shuffle(
-	const vector<T, N>& v,
+	const vector<T, N, V>& v,
 	shuffle_mask<I...> m = shuffle_mask<I...>()
 ) noexcept
 {
-	return {vect::shuffle<T, N>::apply(v._v, m)};
+	return {vect::shuffle<T, N, V>::apply(v._v, m)};
 }
 
 // shuffle
-template <int ... I, typename T, unsigned N>
+template <int ... I, typename T, unsigned N, bool V>
 static inline
 typename meta::enable_if<
 	meta::max_constant<int, I...>::value < 2*N,
-	vector<T, N>
+	vector<T, N, V>
 >::type
 shuffle(
-	const vector<T, N>& v1,
-	const vector<T, N>& v2,
+	const vector<T, N, V>& v1,
+	const vector<T, N, V>& v2,
 	shuffle_mask<I...> m = shuffle_mask<I...>()
 ) noexcept
 {
-	return vector<T,N>
-		{vect::shuffle2<T, N>::apply(v1._v, v2._v, m)};
+	return vector<T,N,V>
+		{vect::shuffle2<T, N, V>::apply(v1._v, v2._v, m)};
 }
 
 // perpendicular
-template <typename T>
+template <typename T, bool V>
 static inline
-vector<T, 2>
-perpendicular(const vector<T, 2>& a)
+vector<T, 2, V>
+perpendicular(const vector<T, 2, V>& a)
 noexcept
 {
-	return vector<T,2>
+	return vector<T, 2, V>
 		{{-a._v[1], a._v[0]}};
 }
 
 // cross
-template <typename T>
+template <typename T, bool V>
 static inline
-vector<T, 3>
-cross(const vector<T, 3>& a, const vector<T, 3>& b)
+vector<T, 3, V>
+cross(const vector<T, 3, V>& a, const vector<T, 3, V>& b)
 noexcept
 {
-	typedef vect::shuffle<T, 3> _sh;
-	return vector<T,3>{
+	typedef vect::shuffle<T, 3, V> _sh;
+	return vector<T, 3, V>{
 		_sh::template apply<1,2,0>(a._v)*
 		_sh::template apply<2,0,1>(b._v)-
 		_sh::template apply<2,0,1>(a._v)*
@@ -769,18 +769,18 @@ noexcept
 }
 
 // composite_data_ref<vector>
-template <typename T, unsigned N>
-class composite_data_ref<vector<T, N>>
+template <typename T, unsigned N, bool V>
+class composite_data_ref<vector<T, N, V>>
  : public base::crtp_derived_memory_range<
-	composite_data_ref<vector<T, N>>,
+	composite_data_ref<vector<T, N, V>>,
 	base::typed_memory_range<const T>,
 	const T
 >
 {
 private:
-	vect::array_ref<T, N> _ar;
+	vect::array_ref<T, N, V> _ar;
 public:
-	composite_data_ref(const vector<T, N>& v)
+	composite_data_ref(const vector<T, N, V>& v)
 	noexcept
 	 : _ar(v._v)
 	{ }
