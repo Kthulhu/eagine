@@ -21,12 +21,12 @@ namespace eagine {
 namespace math {
 
 // matrix Row-Major/Column-Major
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 struct matrix
 {
 	typedef matrix type;
 
-	typedef typename vect::data<T, RM?C:R>::type _vT;
+	typedef typename vect::data<T, RM?C:R, V>::type _vT;
 
 	_vT _v[RM?R:C];
 
@@ -39,7 +39,7 @@ struct matrix
 	) noexcept
 	{
 		return matrix{{
-			vect::from_array<T, RM?C:R>::apply(
+			vect::from_array<T, RM?C:R, V>::apply(
 				dt+I*(RM?C:R),
 				sz-I*(RM?C:R)
 			)...
@@ -57,28 +57,28 @@ struct matrix
 		);
 	}
 
-	template <typename P, unsigned M, unsigned N, unsigned ... I>
+	template <typename P, unsigned M, unsigned N, bool W, unsigned ... I>
 	static inline
 	matrix _from_hlp(
-		const matrix<P,M,N,RM>& m,
+		const matrix<P,M,N,RM,W>& m,
 		meta::unsigned_sequence<I...>
 	) noexcept
 	{
 		return matrix{{
 			vect::cast<
-				P,(RM?N:M),
-				T,(RM?C:R)
+				P,(RM?N:M),W,
+				T,(RM?C:R),V
 			>::apply(m._v[I],T(0))...
 		}};
 	}
 
-	template <typename P, unsigned M, unsigned N>
+	template <typename P, unsigned M, unsigned N, bool W>
 	static inline
 	typename meta::enable_if<
 		(R<=M)&&(C<=N),
 		matrix
 	>::type
-	from(const matrix<P,M,N,RM>& m)
+	from(const matrix<P,M,N,RM,W>& m)
 	noexcept
 	{
 		return _from_hlp(
@@ -98,8 +98,8 @@ struct matrix
 template <typename X>
 struct is_row_major;
 
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_row_major<matrix<T,R,C,RM>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_row_major<matrix<T,R,C,RM,V>>
  : meta::boolean_constant<RM>
 { };
 
@@ -108,48 +108,48 @@ template <typename X>
 struct reordered_matrix;
 
 // reordered matrix
-template <typename T, unsigned R, unsigned C, bool RM>
-struct reordered_matrix<matrix<T,R,C,RM>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct reordered_matrix<matrix<T,R,C,RM,V>>
  : matrix<T,R,C,!RM>
 { };
 
 // (number of) rows
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-unsigned rows(const matrix<T,R,C,RM>&)
+unsigned rows(const matrix<T,R,C,RM,V>&)
 noexcept
 {
 	return R;
 }
 
 // (number of) columns
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-unsigned columns(const matrix<T,R,C,RM>&)
+unsigned columns(const matrix<T,R,C,RM,V>&)
 noexcept
 {
 	return C;
 }
 
 // (is) row major
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-bool row_major(const matrix<T,R,C,RM>&)
+bool row_major(const matrix<T,R,C,RM,V>&)
 noexcept
 {
 	return RM;
 }
 
 // equality
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
 bool
-operator == (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
+operator == (const matrix<T,R,C,RM,V>& a, const matrix<T,R,C,RM,V>& b)
 noexcept
 {
 	for(unsigned i=0;i<(RM?R:C); ++i)
 	{
-		if(!vect::equal<T, (RM?C:R)>::apply(a._v[i], b._v[i]))
+		if(!vect::equal<T, (RM?C:R), V>::apply(a._v[i], b._v[i]))
 		{
 			return false;
 		}
@@ -158,15 +158,15 @@ noexcept
 }
 
 // non-eqality
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
 bool
-operator != (const matrix<T,R,C,RM>& a, const matrix<T,R,C,RM>& b)
+operator != (const matrix<T,R,C,RM,V>& a, const matrix<T,R,C,RM,V>& b)
 noexcept
 {
 	for(unsigned i=0;i<(RM?R:C); ++i)
 	{
-		if(!vect::equal<T, (RM?C:R)>::apply(a._v[i], b._v[i]))
+		if(!vect::equal<T, (RM?C:R), V>::apply(a._v[i], b._v[i]))
 		{
 			return true;
 		}
@@ -175,118 +175,118 @@ noexcept
 }
 
 // get (Row-major)
-template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
 typename meta::enable_if<(I<R && J<C), T>::type
-get(const matrix<T,R,C,true>& m)
+get(const matrix<T,R,C,true,V>& m)
 noexcept
 {
 	return m._v[I][J];
 }
 
 // get (Column-major)
-template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
 typename meta::enable_if<(I<R && J<C), T>::type
-get(const matrix<T,R,C,false>& m)
+get(const matrix<T,R,C,false,V>& m)
 noexcept
 {
 	return m._v[J][I];
 }
 
 // get (Row-major, run-time)
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-T get(const matrix<T,R,C,true>& m, unsigned i, unsigned j)
+T get(const matrix<T,R,C,true,V>& m, unsigned i, unsigned j)
 noexcept
 {
 	return m._v[i][j];
 }
 
 // get (Column-major, run-time)
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-T get(const matrix<T,R,C,false>& m, unsigned i, unsigned j)
+T get(const matrix<T,R,C,false,V>& m, unsigned i, unsigned j)
 noexcept
 {
 	return m._v[j][i];
 }
 
 // set (Row-major)
-template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C, bool V>
 static inline
 typename meta::enable_if<(I<R && J<C), void>::type
-set(matrix<T,R,C,true>& m, const T& v)
+set(matrix<T,R,C,true,V>& m, const T& v)
 noexcept
 {
 	m._v[I][J] = v;
 }
 
 // set (Column-major)
-template <unsigned I, unsigned J, typename T, unsigned R, unsigned C>
+template <unsigned I, unsigned J, typename T, unsigned R, unsigned C, bool V>
 static inline
 typename meta::enable_if<(I<R && J<C), void>::type
-set(matrix<T,R,C,false>& m, const T& v)
+set(matrix<T,R,C,false,V>& m, const T& v)
 noexcept
 {
 	m._v[J][I] = v;
 }
 
 // set (Row-major, run-time)
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static inline
-void set(matrix<T,R,C,true>& m, unsigned i, unsigned j, const T& v)
+void set(matrix<T,R,C,true,V>& m, unsigned i, unsigned j, const T& v)
 noexcept
 {
 	m._v[i][j] = v;
 }
 
 // set (Column-major, run-time)
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static inline
-void set(matrix<T,R,C,false>& m, unsigned i, unsigned j, const T& v)
+void set(matrix<T,R,C,false,V>& m, unsigned i, unsigned j, const T& v)
 noexcept
 {
 	m._v[j][i] = v;
 }
 
 // transpose_tpl helper 4x4 matrix
-template <bool DstRM, typename T>
+template <bool DstRM, typename T, bool V>
 static constexpr inline
-matrix<T,4,4,DstRM> transpose_tpl_hlp(
-	const typename vect::data<T, 4>::type& q0,
-	const typename vect::data<T, 4>::type& q1,
-	const typename vect::data<T, 4>::type& q2,
-	const typename vect::data<T, 4>::type& q3
+matrix<T,4,4,DstRM,V> transpose_tpl_hlp(
+	const typename vect::data<T, 4, V>::type& q0,
+	const typename vect::data<T, 4, V>::type& q1,
+	const typename vect::data<T, 4, V>::type& q2,
+	const typename vect::data<T, 4, V>::type& q3
 ) noexcept
 {
-	return matrix<T,4,4,DstRM>{{
-		vect::shuffle2<T,4>::template apply<0,2,4,6>(q0, q2),
-		vect::shuffle2<T,4>::template apply<1,3,5,7>(q0, q2),
-		vect::shuffle2<T,4>::template apply<0,2,4,6>(q1, q3),
-		vect::shuffle2<T,4>::template apply<1,3,5,7>(q1, q3)
+	return matrix<T,4,4,DstRM,V>{{
+		vect::shuffle2<T,4,V>::template apply<0,2,4,6>(q0, q2),
+		vect::shuffle2<T,4,V>::template apply<1,3,5,7>(q0, q2),
+		vect::shuffle2<T,4,V>::template apply<0,2,4,6>(q1, q3),
+		vect::shuffle2<T,4,V>::template apply<1,3,5,7>(q1, q3)
 	}};
 }
 
 // transpose_tpl 4x4 matrix
-template <bool DstRM, bool SrcRM, typename T>
+template <bool DstRM, bool SrcRM, typename T, bool V>
 static inline
-matrix<T,4,4,DstRM> transpose_tpl(const matrix<T,4,4,SrcRM>& m)
+matrix<T,4,4,DstRM,V> transpose_tpl(const matrix<T,4,4,SrcRM,V>& m)
 noexcept
 {
 	return transpose_tpl_hlp<DstRM, T>(
-		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[0], m._v[1]),
-		vect::shuffle2<T,4>::template apply<2,3,6,7>(m._v[0], m._v[1]),
-		vect::shuffle2<T,4>::template apply<0,1,4,5>(m._v[2], m._v[3]),
-		vect::shuffle2<T,4>::template apply<2,3,6,7>(m._v[2], m._v[3])
+		vect::shuffle2<T,4,V>::template apply<0,1,4,5>(m._v[0],m._v[1]),
+		vect::shuffle2<T,4,V>::template apply<2,3,6,7>(m._v[0],m._v[1]),
+		vect::shuffle2<T,4,V>::template apply<0,1,4,5>(m._v[2],m._v[3]),
+		vect::shuffle2<T,4,V>::template apply<2,3,6,7>(m._v[2],m._v[3])
 	);
 }
 
 // transpose_tpl matrix
-template <bool DstRM, bool SrcRM, typename T, unsigned R, unsigned C>
+template <bool DstRM, bool SrcRM, typename T, unsigned R, unsigned C, bool V>
 static inline
-matrix<T,(DstRM!=SrcRM?R:C),(DstRM!=SrcRM?C:R),DstRM>
-transpose_tpl(const matrix<T,R,C,SrcRM>& m)
+matrix<T,(DstRM!=SrcRM?R:C),(DstRM!=SrcRM?C:R),DstRM,V>
+transpose_tpl(const matrix<T,R,C,SrcRM,V>& m)
 noexcept
 {
 	static const bool S = (DstRM != SrcRM);
@@ -302,117 +302,123 @@ noexcept
 }
 
 // transpose
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-matrix<T,C,R,RM> transpose(const matrix<T,R,C,RM>& m)
+matrix<T,C,R,RM,V> transpose(const matrix<T,R,C,RM,V>& m)
 noexcept
 {
-	return transpose_tpl<RM, RM, T>(m);
+	return transpose_tpl<RM, RM, T, V>(m);
 }
 
 // reorder
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-matrix<T,R,C,!RM> reorder(const matrix<T,R,C,RM>& m)
+matrix<T,R,C,!RM,V> reorder(const matrix<T,R,C,RM,V>& m)
 noexcept
 {
-	return transpose_tpl<!RM, RM, T>(m);
+	return transpose_tpl<!RM, RM, T, V>(m);
 }
 
 // make_row_major
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-matrix<T,R,C, true> make_row_major(matrix<T,R,C, true> m)
+matrix<T,R,C, true,V> make_row_major(matrix<T,R,C, true,V> m)
 noexcept
 {
 	return m;
 }
 
 // make_row_major
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static inline
-matrix<T,R,C, true> make_row_major(const matrix<T,R,C,false>& m)
+matrix<T,R,C, true,V> make_row_major(const matrix<T,R,C,false,V>& m)
 noexcept
 {
 	return reorder(m);
 }
 
 // make_column_major
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static inline
-matrix<T,R,C,false> make_column_major(const matrix<T,R,C, true>& m)
+matrix<T,R,C,false,V> make_column_major(const matrix<T,R,C, true,V>& m)
 noexcept
 {
 	return reorder(m);
 }
 
 // make_column_major
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-matrix<T,R,C,false> make_column_major(matrix<T,R,C,false> m)
+matrix<T,R,C,false,V> make_column_major(matrix<T,R,C,false,V> m)
 noexcept
 {
 	return m;
 }
 
 // major_vector
-template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
+template <unsigned I, typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-typename meta::enable_if<(I<(RM?R:C)), vector<T, (RM?C:R)>>::type
-major_vector(const matrix<T,R,C,RM>& m)
+typename meta::enable_if<(I<(RM?R:C)), vector<T, (RM?C:R), V>>::type
+major_vector(const matrix<T,R,C,RM,V>& m)
 noexcept
 {
 	return {m._v[I]};
 }
 
 // minor_vector
-template <unsigned I, typename T, unsigned R, unsigned C, bool RM>
+template <unsigned I, typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-typename meta::enable_if<(I<(RM?C:R)), vector<T, (RM?R:C)>>::type
-minor_vector(const matrix<T,R,C,RM>& m)
+typename meta::enable_if<(I<(RM?C:R)), vector<T, (RM?R:C), V>>::type
+minor_vector(const matrix<T,R,C,RM,V>& m)
 noexcept
 {
 	return major_vector<I>(reorder(m));
 }
 
 // minor_vector mat4x4
-template <unsigned I, typename T, bool RM>
+template <unsigned I, typename T, bool RM, bool V>
 static inline
-typename meta::enable_if<(I<4), vector<T, 4>>::type
-minor_vector(const matrix<T,4,4,RM>& m)
+typename meta::enable_if<(I<4), vector<T, 4, V>>::type
+minor_vector(const matrix<T,4,4,RM,V>& m)
 noexcept
 {
-	return {vect::shuffle2<T,4>::template apply<0,1,4,5>(
-		vect::shuffle2<T,4>::template apply<0+I,4+I,-1,-1>(m._v[0], m._v[1]),
-		vect::shuffle2<T,4>::template apply<0+I,4+I,-1,-1>(m._v[2], m._v[3])
+	return {vect::shuffle2<T,4,V>::template apply<0,1,4,5>(
+		vect::shuffle2<T,4,V>::template apply<0+I,4+I,-1,-1>(
+			m._v[0],
+			m._v[1]
+		),
+		vect::shuffle2<T,4,V>::template apply<0+I,4+I,-1,-1>(
+			m._v[2],
+			m._v[3]
+		)
 	)};
 }
 
 // row (Row-Major)
-template <unsigned I, typename T, unsigned R, unsigned C>
+template <unsigned I, typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, C>
-row(const matrix<T,R,C,true>& m)
+vector<T, C, V>
+row(const matrix<T,R,C,true,V>& m)
 noexcept
 {
 	return major_vector<I>(m);
 }
 
 // row (Column-Major)
-template <unsigned I, typename T, unsigned R, unsigned C>
+template <unsigned I, typename T, unsigned R, unsigned C, bool V>
 static inline
-vector<T, C>
-row(const matrix<T,R,C,false>& m)
+vector<T, C, V>
+row(const matrix<T,R,C,false,V>& m)
 noexcept
 {
 	return minor_vector<I>(m);
 }
 
 // row_hlp
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-vector<T, C> row_hlp(
-	const matrix<T,R,C,RM>& m,
+vector<T, C, V> row_hlp(
+	const matrix<T,R,C,RM,V>& m,
 	meta::unsigned_constant<0u>,
 	unsigned i
 ) noexcept
@@ -422,10 +428,10 @@ vector<T, C> row_hlp(
 }
 
 // row_hlp
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static inline
-vector<T, C> row_hlp(
-	const matrix<T,R,C,RM>& m,
+vector<T, C, V> row_hlp(
+	const matrix<T,R,C,RM,V>& m,
 	meta::unsigned_constant<I>,
 	unsigned i
 ) noexcept
@@ -435,10 +441,10 @@ vector<T, C> row_hlp(
 }
 
 // row - run-time
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-vector<T, C>
-row(const matrix<T,R,C,RM>& m, unsigned i)
+vector<T, C, V>
+row(const matrix<T,R,C,RM,V>& m, unsigned i)
 noexcept
 {
 	typedef meta::unsigned_constant<R-1> I;
@@ -446,30 +452,30 @@ noexcept
 }
 
 // column (Column-Major)
-template <unsigned I, typename T, unsigned R, unsigned C>
+template <unsigned I, typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, R>
-column(const matrix<T,R,C,false>& m)
+vector<T, R, V>
+column(const matrix<T,R,C,false,V>& m)
 noexcept
 {
 	return major_vector<I>(m);
 }
 
 // column (Row-Major)
-template <unsigned I, typename T, unsigned R, unsigned C>
+template <unsigned I, typename T, unsigned R, unsigned C, bool V>
 static inline
-vector<T, R>
-column(const matrix<T,R,C,true>& m)
+vector<T, R, V>
+column(const matrix<T,R,C,true,V>& m)
 noexcept
 {
 	return minor_vector<I>(m);
 }
 
 // col_hlp
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-vector<T, R> col_hlp(
-	const matrix<T,R,C,RM>& m,
+vector<T, R, V> col_hlp(
+	const matrix<T,R,C,RM,V>& m,
 	meta::unsigned_constant<0u>,
 	unsigned i
 ) noexcept
@@ -479,10 +485,10 @@ vector<T, R> col_hlp(
 }
 
 // col_hlp
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static inline
-vector<T, R> col_hlp(
-	const matrix<T,R,C,RM>& m,
+vector<T, R, V> col_hlp(
+	const matrix<T,R,C,RM,V>& m,
 	meta::unsigned_constant<I>,
 	unsigned i
 ) noexcept
@@ -492,10 +498,10 @@ vector<T, R> col_hlp(
 }
 
 // column - run-time
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline
-vector<T, R>
-column(const matrix<T,R,C,RM>& m, unsigned i)
+vector<T, R, V>
+column(const matrix<T,R,C,RM,V>& m, unsigned i)
 noexcept
 {
 	typedef meta::unsigned_constant<C-1> I;
@@ -513,15 +519,15 @@ template <typename M1, typename M2>
 struct multiplication_result;
 
 // multipliable_matrices MxV
-template <typename T, unsigned R, unsigned C>
-struct multipliable_matrices<matrix<T,R,C,true>, vector<T,C>>
+template <typename T, unsigned R, unsigned C, bool V>
+struct multipliable_matrices<matrix<T,R,C,true,V>, vector<T,C,V>>
  : meta::true_type
 { };
 
 // multiplication result MxV
-template <typename T, unsigned R, unsigned C>
-struct multiplication_result<matrix<T,R,C,true>, vector<T,C>>
- : vector<T,R>
+template <typename T, unsigned R, unsigned C, bool V>
+struct multiplication_result<matrix<T,R,C,true,V>, vector<T,C,V>>
+ : vector<T,R,V>
 { };
 
 // multiply hlp
@@ -529,30 +535,31 @@ template <
 	unsigned ... I,
 	typename T,
 	unsigned R,
-	unsigned C
+	unsigned C,
+	bool V
 >
 static constexpr inline
-vector<T, R>
+vector<T, R, V>
 _multiply_hlp(
 	meta::unsigned_sequence<I...>,
-	const matrix<T, R, C, true>& m,
-	const vector<T, C>& v
+	const matrix<T, R, C, true, V>& m,
+	const vector<T, C, V>& v
 ) noexcept
 {
-	return vector<T, R>
+	return vector<T, R, V>
 		{{dot(row<I>(m), v)...}};
 }
 
 // multipliable_matrices VxB
-template <typename T, unsigned R, unsigned C>
-struct multipliable_matrices<vector<T,R>, matrix<T,R,C,false>>
+template <typename T, unsigned R, unsigned C, bool V>
+struct multipliable_matrices<vector<T,R,V>, matrix<T,R,C,false,V>>
  : meta::true_type
 { };
 
 // multiplication result VxM
-template <typename T, unsigned R, unsigned C>
-struct multiplication_result<vector<T,R>, matrix<T,R,C,false>>
- : vector<T,C>
+template <typename T, unsigned R, unsigned C, bool V>
+struct multiplication_result<vector<T,R,V>, matrix<T,R,C,false,V>>
+ : vector<T,C,V>
 { };
 
 // multiply hlp
@@ -560,26 +567,27 @@ template <
 	unsigned ... J,
 	typename T,
 	unsigned R,
-	unsigned C
+	unsigned C,
+	bool V
 >
 static constexpr inline
-vector<T, C>
+vector<T, C, V>
 _multiply_hlp(
 	meta::unsigned_sequence<J...>,
-	const vector<T, R>& v,
-	const matrix<T, R, C,false>& m
+	const vector<T, R, V>& v,
+	const matrix<T, R, C,false, V>& m
 ) noexcept
 {
-	return vector<T, C>
+	return vector<T, C, V>
 		{{dot(v, column<J>(m))...}};
 }
 
 // multiply MxV
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, R> multiply(
-	const matrix<T, R, C, true>& m,
-	const vector<T, C>& v
+vector<T, R, V> multiply(
+	const matrix<T, R, C, true, V>& m,
+	const vector<T, C, V>& v
 ) noexcept
 {
 	typedef typename meta::make_unsigned_sequence<R>::type is;
@@ -587,11 +595,11 @@ vector<T, R> multiply(
 }
 
 // multiply VxM
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, C> multiply(
-	const vector<T, R>& v,
-	const matrix<T, R, C,false>& m
+vector<T, C, V> multiply(
+	const vector<T, R, V>& v,
+	const matrix<T, R, C,false, V>& m
 ) noexcept
 {
 	typedef typename meta::make_unsigned_sequence<C>::type is;
@@ -599,33 +607,33 @@ vector<T, C> multiply(
 }
 
 // M * V
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, R> operator * (
-	const matrix<T, R, C, true>& m,
-	const vector<T, C>& v
+vector<T, R, V> operator * (
+	const matrix<T, R, C, true, V>& m,
+	const vector<T, C, V>& v
 ) noexcept
 {
 	return multiply(m, v);
 }
 
 // M * V
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, R> operator * (
-	const matrix<T, R, C,false>& m,
-	const vector<T, C>& v
+vector<T, R, V> operator * (
+	const matrix<T, R, C,false, V>& m,
+	const vector<T, C, V>& v
 ) noexcept
 {
 	return multiply(reorder(m), v);
 }
 
 // V * M
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-vector<T, C> operator * (
-	const vector<T, R>& v,
-	const matrix<T, R, C,false>& m
+vector<T, C, V> operator * (
+	const vector<T, R, V>& v,
+	const matrix<T, R, C,false, V>& m
 ) noexcept
 {
 	return multiply(v, m);
@@ -636,18 +644,19 @@ template <
 	unsigned ... J,
 	typename T,
 	unsigned K,
-	unsigned N
+	unsigned N,
+	bool V
 >
 static constexpr inline
-typename vect::data<T, N>::type
+typename vect::data<T, N, V>::type
 _multiply_hlp2f(
 	meta::unsigned_sequence<J...>,
-	typename vect::data_param<T, K>::type v,
-	const matrix<T, K, N,false>& m
+	typename vect::data_param<T, K, V>::type v,
+	const matrix<T, K, N,false, V>& m
 ) noexcept
 {
-	return typename vect::data<T, N>::type
-		{vect::hsum<T, K>::apply(v * m._v[J])[0]...};
+	return typename vect::data<T, N, V>::type
+		{vect::hsum<T, K, V>::apply(v * m._v[J])[0]...};
 }
 
 // _multiply_hlp2
@@ -655,16 +664,17 @@ template <
 	unsigned ... J,
 	typename T,
 	typename ... P,
-	unsigned N
+	unsigned N,
+	bool V
 >
 static constexpr inline
-typename vect::data<T, N>::type
+typename vect::data<T, N, V>::type
 _multiply_hlp2f(
 	meta::unsigned_sequence<J...> is,
-	typename vect::data_param<T, N>::type v,
-	const matrix<T, N, N,false>& m1,
-	const matrix<T, N, N,false>& m2,
-	const matrix<P, N, N,false>& ... mn
+	typename vect::data_param<T, N, V>::type v,
+	const matrix<T, N, N,false, V>& m1,
+	const matrix<T, N, N,false, V>& m2,
+	const matrix<P, N, N,false, V>& ... mn
 ) noexcept
 {
 	return _multiply_hlp2f(is, _multiply_hlp2f(is, v, m1), m2, mn...);
@@ -675,29 +685,46 @@ template <
 	unsigned ... J,
 	typename T,
 	unsigned K,
-	unsigned N
+	unsigned N,
+	bool V
 >
 static constexpr inline
-typename vect::data<T, N>::type
+typename vect::data<T, N, V>::type
 _multiply_hlp2t(
 	meta::unsigned_sequence<J...>,
-	const vector<T, K>& v,
-	const matrix<T, K, N,true>& m
+	const vector<T, K, V>& v,
+	const matrix<T, K, N,true, V>& m
 ) noexcept
 {
-	return typename vect::data<T, N>::type
+	return typename vect::data<T, N, V>::type
 		{dot(v, column<J>(m))...};
 }
 
 // multipliable_matrices
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
-struct multipliable_matrices<matrix<T,M,K,RM1>, matrix<T,K,N,RM2>>
+template <
+	typename T,
+	unsigned M,
+	unsigned N,
+	unsigned K,
+	bool RM1,
+	bool RM2,
+	bool V
+>
+struct multipliable_matrices<matrix<T,M,K,RM1,V>, matrix<T,K,N,RM2,V>>
  : meta::true_type
 { };
 
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
-struct multiplication_result<matrix<T,M,K,RM1>, matrix<T,K,N,RM2>>
- : matrix<T,M,N,RM1>
+template <
+	typename T,
+	unsigned M,
+	unsigned N,
+	unsigned K,
+	bool RM1,
+	bool RM2,
+	bool V
+>
+struct multiplication_result<matrix<T,M,K,RM1,V>, matrix<T,K,N,RM2,V>>
+ : matrix<T,M,N,RM1,V>
 { };
 
 // multiply hlp
@@ -706,18 +733,19 @@ template <
 	typename T,
 	unsigned M,
 	unsigned N,
-	unsigned K
+	unsigned K,
+	bool V
 >
 static constexpr inline
-matrix<T, M, N, true>
+matrix<T, M, N, true, V>
 _multiply_hlp(
 	meta::unsigned_sequence<I...>,
-	const matrix<T, M, K, true>& m1,
-	const matrix<T, K, N,false>& m2
+	const matrix<T, M, K, true, V>& m1,
+	const matrix<T, K, N,false, V>& m2
 ) noexcept
 {
 	typedef typename meta::make_unsigned_sequence<N>::type is;
-	return matrix<T, M, N, true>
+	return matrix<T, M, N, true, V>
 		{{_multiply_hlp2f(is(), m1._v[I], m2)...}};
 }
 
@@ -726,19 +754,20 @@ template <
 	unsigned ... I,
 	typename T,
 	typename ... P,
-	unsigned N
+	unsigned N,
+	bool V
 >
 static constexpr inline
-matrix<T, N, N, true>
+matrix<T, N, N, true, V>
 _multiply_hlp(
 	meta::unsigned_sequence<I...> is,
-	const matrix<T, N, N, true>& m1,
-	const matrix<T, N, N,false>& m2,
-	const matrix<T, N, N,false>& m3,
-	const matrix<P, N, N,false>& ... mn
+	const matrix<T, N, N, true, V>& m1,
+	const matrix<T, N, N,false, V>& m2,
+	const matrix<T, N, N,false, V>& m3,
+	const matrix<P, N, N,false, V>& ... mn
 ) noexcept
 {
-	return matrix<T, N, N, true>
+	return matrix<T, N, N, true, V>
 		{{_multiply_hlp2f(is, m1._v[I], m2, m3, mn...)...}};
 }
 
@@ -748,27 +777,28 @@ template <
 	typename T,
 	unsigned M,
 	unsigned N,
-	unsigned K
+	unsigned K,
+	bool V
 >
 static constexpr inline
-matrix<T, M, N,false>
+matrix<T, M, N,false, V>
 _multiply_hlp(
 	meta::unsigned_sequence<I...>,
-	const matrix<T, M, K,false>& m1,
-	const matrix<T, K, N, true>& m2
+	const matrix<T, M, K,false, V>& m1,
+	const matrix<T, K, N, true, V>& m2
 ) noexcept
 {
 	typedef typename meta::make_unsigned_sequence<N>::type is;
-	return matrix<T, M, N,false>
+	return matrix<T, M, N,false, V>
 		{{_multiply_hlp2t(is(), row<I>(m1), m2)...}};
 }
 
 // multiply MxM
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM>
+template <typename T, unsigned M, unsigned N, unsigned K, bool RM, bool V>
 static constexpr inline
-matrix<T, M, N, RM> multiply(
-	const matrix<T, M, K, RM>& m1,
-	const matrix<T, K, N,!RM>& m2
+matrix<T, M, N, RM, V> multiply(
+	const matrix<T, M, K, RM, V>& m1,
+	const matrix<T, K, N,!RM, V>& m2
 ) noexcept
 {
 	typedef typename meta::make_unsigned_sequence<M>::type is;
@@ -776,23 +806,23 @@ matrix<T, M, N, RM> multiply(
 }
 
 // multiply MxM
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM>
+template <typename T, unsigned M, unsigned N, unsigned K, bool RM, bool V>
 static constexpr inline
-matrix<T, M, N, RM> multiply(
-	const matrix<T, M, K, RM>& m1,
-	const matrix<T, K, N, RM>& m2
+matrix<T, M, N, RM, V> multiply(
+	const matrix<T, M, K, RM, V>& m1,
+	const matrix<T, K, N, RM, V>& m2
 ) noexcept
 {
 	return multiply(m1, reorder(m2));
 }
 
-template <typename T, typename ... P, unsigned N>
+template <typename T, typename ... P, unsigned N, bool V>
 static inline
-matrix<T, N, N, true> multiply(
-	const matrix<T, N, N, true>& m1,
-	const matrix<T, N, N,false>& m2,
-	const matrix<T, N, N,false>& m3,
-	const matrix<P, N, N,false>& ... mn
+matrix<T, N, N, true, V> multiply(
+	const matrix<T, N, N, true, V>& m1,
+	const matrix<T, N, N,false, V>& m2,
+	const matrix<T, N, N,false, V>& m3,
+	const matrix<P, N, N,false, V>& ... mn
 )
 {
 	typedef typename meta::make_unsigned_sequence<N>::type is;
@@ -800,14 +830,22 @@ matrix<T, N, N, true> multiply(
 }
 
 // trivial_multiply MxM
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+template <
+	typename T,
+	unsigned M,
+	unsigned N,
+	unsigned K,
+	bool RM1,
+	bool RM2,
+	bool V
+>
 static inline
-matrix<T, M, N, RM1> trivial_multiply(
-	const matrix<T, M, K, RM1>& m1,
-	const matrix<T, K, N, RM2>& m2
+matrix<T, M, N, RM1, V> trivial_multiply(
+	const matrix<T, M, K, RM1, V>& m1,
+	const matrix<T, K, N, RM2, V>& m2
 ) noexcept
 {
-	matrix<T, M, N, RM1> m3;
+	matrix<T, M, N, RM1, V> m3;
 
 	for(unsigned i=0; i<M; ++i)
 	for(unsigned j=0; j<N; ++j)
@@ -825,33 +863,49 @@ matrix<T, M, N, RM1> trivial_multiply(
 }
 
 // M * M
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+template <
+	typename T,
+	unsigned M,
+	unsigned N,
+	unsigned K,
+	bool RM1,
+	bool RM2,
+	bool V
+>
 static constexpr inline
-matrix<T, M, N, RM1> operator * (
-	const matrix<T, M, K, RM1>& m1,
-	const matrix<T, K, N, RM2>& m2
+matrix<T, M, N, RM1, V> operator * (
+	const matrix<T, M, K, RM1, V>& m1,
+	const matrix<T, K, N, RM2, V>& m2
 ) noexcept
 {
 	return multiply(m1, m2);
 }
 
 // M | M
-template <typename T, unsigned M, unsigned N, unsigned K, bool RM1, bool RM2>
+template <
+	typename T,
+	unsigned M,
+	unsigned N,
+	unsigned K,
+	bool RM1,
+	bool RM2,
+	bool V
+>
 static constexpr inline
-matrix<T, M, N, RM1> operator | (
-	const matrix<T, M, K, RM1>& m1,
-	const matrix<T, K, N, RM2>& m2
+matrix<T, M, N, RM1, V> operator | (
+	const matrix<T, M, K, RM1, V>& m1,
+	const matrix<T, K, N, RM2, V>& m2
 ) noexcept
 {
 	return trivial_multiply(m1, m2);
 }
 
 // _fast_multiply M * M
-template <typename T, unsigned N, bool RM1, bool RM2>
+template <typename T, unsigned N, bool RM1, bool RM2, bool V>
 static constexpr inline
-matrix<T, N, N, true> _fast_multiply(
-	const matrix<T, N, N, RM1>& m1,
-	const matrix<T, N, N, RM2>& m2,
+matrix<T, N, N, true, V> _fast_multiply(
+	const matrix<T, N, N, RM1, V>& m1,
+	const matrix<T, N, N, RM2, V>& m2,
 	meta::true_type /*trivial */
 ) noexcept
 {
@@ -859,11 +913,11 @@ matrix<T, N, N, true> _fast_multiply(
 }
 
 // _fast_multiply M * M
-template <typename T, unsigned N, bool RM1, bool RM2>
+template <typename T, unsigned N, bool RM1, bool RM2, bool V>
 static constexpr inline
-matrix<T, N, N, true> _fast_multiply(
-	const matrix<T, N, N, RM1>& m1,
-	const matrix<T, N, N, RM2>& m2,
+matrix<T, N, N, true, V> _fast_multiply(
+	const matrix<T, N, N, RM1, V>& m1,
+	const matrix<T, N, N, RM2, V>& m2,
 	meta::false_type /*trivial */
 ) noexcept
 {
@@ -871,11 +925,11 @@ matrix<T, N, N, true> _fast_multiply(
 }
 
 // fast_multiply M * M
-template <typename T, unsigned N, bool RM1, bool RM2>
+template <typename T, unsigned N, bool RM1, bool RM2, bool V>
 static constexpr inline
-matrix<T, N, N, true> fast_multiply(
-	const matrix<T, N, N, RM1>& m1,
-	const matrix<T, N, N, RM2>& m2
+matrix<T, N, N, true, V> fast_multiply(
+	const matrix<T, N, N, RM1, V>& m1,
+	const matrix<T, N, N, RM2, V>& m2
 ) noexcept
 {
 	return _fast_multiply(
@@ -888,12 +942,12 @@ matrix<T, N, N, true> fast_multiply(
 }
 
 // fast_multiply M * ... M
-template <typename T, unsigned N, bool RM1, bool RM2, bool RM3>
+template <typename T, unsigned N, bool RM1, bool RM2, bool RM3, bool V>
 static constexpr inline
-matrix<T, N, N, true> fast_multiply(
-	const matrix<T, N, N, RM1>& m1,
-	const matrix<T, N, N, RM2>& m2,
-	const matrix<T, N, N, RM2>& m3
+matrix<T, N, N, true, V> fast_multiply(
+	const matrix<T, N, N, RM1, V>& m1,
+	const matrix<T, N, N, RM2, V>& m2,
+	const matrix<T, N, N, RM2, V>& m3
 ) noexcept
 {
 	typedef meta::boolean_constant<
@@ -911,15 +965,16 @@ template <
 	bool RM2,
 	bool RM3,
 	bool RM4,
-	bool ... RMn
+	bool ... RMn,
+	bool V
 >
 static constexpr inline
-matrix<T, N, N, true> fast_multiply(
-	const matrix<T, N, N, RM1>& m1,
-	const matrix<T, N, N, RM2>& m2,
-	const matrix<T, N, N, RM3>& m3,
-	const matrix<T, N, N, RM4>& m4,
-	const matrix<T, N, N, RMn>& ... m
+matrix<T, N, N, true, V> fast_multiply(
+	const matrix<T, N, N, RM1, V>& m1,
+	const matrix<T, N, N, RM2, V>& m2,
+	const matrix<T, N, N, RM3, V>& m3,
+	const matrix<T, N, N, RM4, V>& m4,
+	const matrix<T, N, N, RMn, V>& ... m
 ) noexcept
 {
 	typedef meta::boolean_constant<
@@ -930,9 +985,9 @@ matrix<T, N, N, true> fast_multiply(
 }
 
 // row_swap
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 inline
-void row_swap(matrix<T,R,C,true>& a, unsigned m, unsigned n)
+void row_swap(matrix<T,R,C,true,V>& a, unsigned m, unsigned n)
 noexcept
 {
 	using std::swap;
@@ -940,27 +995,27 @@ noexcept
 }
 
 // row_multiply
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 inline
-void row_multiply(matrix<T,R,C,true>& a, unsigned n, T c)
+void row_multiply(matrix<T,R,C,true,V>& a, unsigned n, T c)
 noexcept
 {
-	a._v[n] = a._v[n]*vect::fill<T,C>::apply(c);
+	a._v[n] = a._v[n]*vect::fill<T,C,V>::apply(c);
 }
 
 // row_add
-template <typename T, unsigned R, unsigned C>
+template <typename T, unsigned R, unsigned C, bool V>
 inline
-void row_add(matrix<T,R,C,true>& a, unsigned m, unsigned n, T c)
+void row_add(matrix<T,R,C,true,V>& a, unsigned m, unsigned n, T c)
 noexcept
 {
-	a._v[m] = a._v[m] + a._v[n]*vect::fill<T,C>::apply(c);
+	a._v[m] = a._v[m] + a._v[n]*vect::fill<T,C,V>::apply(c);
 }
 
 // gauss matrix elimination
-template <typename T, unsigned R, unsigned C1, unsigned C2>
+template <typename T, unsigned R, unsigned C1, unsigned C2, bool V>
 inline
-bool gauss(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
+bool gauss(matrix<T,R,C1,true,V>& a, matrix<T,R,C2,true,V>& b)
 noexcept
 {
 	for(unsigned i=0; i<R; ++i)
@@ -1003,9 +1058,9 @@ noexcept
 }
 
 /// gauss_jordan matrix elimination
-template <typename T, unsigned R, unsigned C1, unsigned C2>
+template <typename T, unsigned R, unsigned C1, unsigned C2, bool V>
 inline
-bool gauss_jordan(matrix<T,R,C1,true>& a, matrix<T,R,C2,true>& b)
+bool gauss_jordan(matrix<T,R,C1,true,V>& a, matrix<T,R,C2,true,V>& b)
 noexcept
 {
 	if(!gauss(a, b))
@@ -1046,9 +1101,10 @@ template <
 	typename T,
 	unsigned R,
 	unsigned C,
-	bool RM
-> struct constructed_matrix<MC<matrix<T,R,C,RM>>>
- : matrix<T,R,C,RM>
+	bool RM,
+	bool V
+> struct constructed_matrix<MC<matrix<T,R,C,RM,V>>>
+ : matrix<T,R,C,RM,V>
 { };
 
 // constructed_matrix trait
@@ -1058,9 +1114,10 @@ template <
 	unsigned R,
 	unsigned C,
 	bool RM,
+	bool V,
 	unsigned I
-> struct constructed_matrix<MC<matrix<T,R,C,RM>,I>>
- : matrix<T,R,C,RM>
+> struct constructed_matrix<MC<matrix<T,R,C,RM,V>,I>>
+ : matrix<T,R,C,RM,V>
 { };
 
 // construct_matrix (noop)
@@ -1092,18 +1149,18 @@ noexcept
 }
 
 // construct_matrix (noop)
-template <bool RM, typename T, unsigned R, unsigned C>
+template <bool RM, typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-matrix<T,R,C,RM> construct_matrix(matrix<T,R,C,RM> m)
+matrix<T,R,C,RM,V> construct_matrix(matrix<T,R,C,RM,V> m)
 noexcept
 {
 	return m;
 }
 
 // construct_matrix (reorder)
-template <bool RM, typename T, unsigned R, unsigned C>
+template <bool RM, typename T, unsigned R, unsigned C, bool V>
 static constexpr inline
-matrix<T,R,C,RM> construct_matrix(const matrix<T,R,C,!RM>& m)
+matrix<T,R,C,RM,V> construct_matrix(const matrix<T,R,C,!RM,V>& m)
 noexcept
 {
 	return reorder(m);
@@ -1138,16 +1195,16 @@ noexcept
 }
 
 // matrix * matrix_constructor
-template <typename T, unsigned R, unsigned C, bool RM, typename MC2>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, typename MC2>
 static constexpr inline
 typename meta::enable_if<
 	is_matrix_constructor<MC2>::value &&
 	multipliable_matrices<
-		matrix<T,R,C,RM>,
+		matrix<T,R,C,RM,V>,
 		typename constructed_matrix<MC2>::type
 	>::value,
-	matrix<T,R,C,RM>
->::type operator * (const matrix<T,R,C,RM>& m, const MC2& c2)
+	matrix<T,R,C,RM,V>
+>::type operator * (const matrix<T,R,C,RM,V>& m, const MC2& c2)
 noexcept
 {
 	return multiply(m, construct_matrix<!RM>(c2));
@@ -1220,26 +1277,26 @@ template <typename X>
 struct identity;
 
 // is_matrix_constructor<identity>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<identity<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<identity<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // identity Matrix
-template <typename T, unsigned R, unsigned C, bool RM>
-struct identity<matrix<T,R,C,RM>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct identity<matrix<T,R,C,RM, V>>
 {
 	template <unsigned ... I>
 	static constexpr inline
-	matrix<T,R,C,RM>
+	matrix<T,R,C,RM,V>
 	_identity(meta::unsigned_sequence<I...>)
 	noexcept
 	{
-		return {{vect::axis<T, RM?C:R, I>::apply(1)...}};
+		return {{vect::axis<T, RM?C:R, I, V>::apply(1)...}};
 	}
 
 	constexpr inline
-	matrix<T,R,C,RM> operator()(void) const
+	matrix<T,R,C,RM,V> operator()(void) const
 	noexcept
 	{
 		typedef typename 
@@ -1248,7 +1305,7 @@ struct identity<matrix<T,R,C,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,R,C,RM> (void) const
+	operator matrix<T,R,C,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1256,9 +1313,9 @@ struct identity<matrix<T,R,C,RM>>
 };
 
 // identity * T
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-identity<matrix<T,R,C,RM>> operator * (identity<matrix<T,R,C,RM>> i, T)
+identity<matrix<T,R,C,RM,V>> operator * (identity<matrix<T,R,C,RM,V>> i, T)
 noexcept
 {
 	return i;
@@ -1274,25 +1331,25 @@ noexcept
 }
 
 // reorder_mat_ctr(identity)
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-identity<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const identity<matrix<T,R,C,RM>>&)
+identity<matrix<T,R,C,!RM,V>>
+reorder_mat_ctr(const identity<matrix<T,R,C,RM,V>>&)
 noexcept
 { return {}; }
 
 // composite_data_ref<matrix>
-template <typename T, unsigned R, unsigned C, bool RM>
-class composite_data_ref<matrix<T, R, C, RM>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+class composite_data_ref<matrix<T, R, C, RM, V>>
  : public base::crtp_derived_memory_range<
-	composite_data_ref<matrix<T, R, C, RM>>,
+	composite_data_ref<matrix<T, R, C, RM, V>>,
 	base::typed_memory_range<const T>,
 	const T
 >
 {
 private:
 	typedef meta::boolean_constant<
-		sizeof(T[R*C]) == sizeof(typename matrix<T,R,C,RM>::_vT)
+		sizeof(T[R*C]) == sizeof(typename matrix<T,R,C,RM,V>::_vT)
 	> _alias;
 
 	typedef typename meta::conditional<
@@ -1321,7 +1378,7 @@ private:
 		}
 	}
 public:
-	composite_data_ref(const matrix<T,R,C,RM>& m)
+	composite_data_ref(const matrix<T,R,C,RM,V>& m)
 	noexcept
 	{
 		_init(m, _alias());
@@ -1349,9 +1406,9 @@ public:
 };
 
 // data
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static inline 
-composite_data_ref<matrix<T, R, C, RM>> data(const matrix<T, R, C, RM>& m)
+composite_data_ref<matrix<T, R, C, RM, V>> data(const matrix<T, R, C, RM, V>& m)
 noexcept
 {
 	return m;
