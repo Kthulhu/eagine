@@ -274,7 +274,7 @@ static inline
 matrix<T,4,4,DstRM,V> transpose_tpl(const matrix<T,4,4,SrcRM,V>& m)
 noexcept
 {
-	return transpose_tpl_hlp<DstRM, T>(
+	return transpose_tpl_hlp<DstRM, T, V>(
 		vect::shuffle2<T,4,V>::template apply<0,1,4,5>(m._v[0],m._v[1]),
 		vect::shuffle2<T,4,V>::template apply<2,3,6,7>(m._v[0],m._v[1]),
 		vect::shuffle2<T,4,V>::template apply<0,1,4,5>(m._v[2],m._v[3]),
@@ -307,7 +307,7 @@ static inline
 matrix<T,C,R,RM,V> transpose(const matrix<T,R,C,RM,V>& m)
 noexcept
 {
-	return transpose_tpl<RM, RM, T, V>(m);
+	return transpose_tpl<RM, RM, T>(m);
 }
 
 // reorder
@@ -316,7 +316,7 @@ static inline
 matrix<T,R,C,!RM,V> reorder(const matrix<T,R,C,RM,V>& m)
 noexcept
 {
-	return transpose_tpl<!RM, RM, T, V>(m);
+	return transpose_tpl<!RM, RM, T>(m);
 }
 
 // make_row_major

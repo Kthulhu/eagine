@@ -86,16 +86,16 @@ template <typename X>
 struct translation;
 
 // is_matrix_constructor<translation>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<translation<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<translation<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // translation matrix 4x4 row-major
-template <typename T>
-struct translation<matrix<T,4,4, true>>
+template <typename T, bool V>
+struct translation<matrix<T,4,4, true,V>>
 {
-	typedef typename vect::data<T, 3>::type _dT;
+	typedef typename vect::data<T, 3, V>::type _dT;
 	_dT _d;
 
 	constexpr
@@ -111,10 +111,10 @@ struct translation<matrix<T,4,4, true>>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4, true> operator()(void) const
+	matrix<T,4,4, true,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{ T(1), T(0), T(0),_d[0]},
 			{ T(0), T(1), T(0),_d[1]},
 			{ T(0), T(0), T(1),_d[2]},
@@ -123,7 +123,7 @@ struct translation<matrix<T,4,4, true>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	operator matrix<T,4,4, true,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -131,10 +131,10 @@ struct translation<matrix<T,4,4, true>>
 };
 
 // translation matrix 4x4 column-major
-template <typename T>
-struct translation<matrix<T,4,4,false>>
+template <typename T, bool V>
+struct translation<matrix<T,4,4,false,V>>
 {
-	typedef typename vect::data<T, 3>::type _dT;
+	typedef typename vect::data<T, 3, V>::type _dT;
 	_dT _d;
 
 	constexpr
@@ -150,10 +150,10 @@ struct translation<matrix<T,4,4,false>>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4,false> operator()(void) const
+	matrix<T,4,4,false,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4,false>{{
+		return matrix<T,4,4,false,V>{{
 			{ T(1), T(0), T(0), T(0)},
 			{ T(0), T(1), T(0), T(0)},
 			{ T(0), T(0), T(1), T(0)},
@@ -162,7 +162,7 @@ struct translation<matrix<T,4,4,false>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,false> (void) const
+	operator matrix<T,4,4,false,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -170,32 +170,32 @@ struct translation<matrix<T,4,4,false>>
 };
 
 // translation * T
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-translation<matrix<T,R,C,RM>>
-operator * (const translation<matrix<T,R,C,RM>>& c, T t)
+translation<matrix<T,R,C,RM,V>>
+operator * (const translation<matrix<T,R,C,RM,V>>& c, T t)
 noexcept
 {
-	return {c._d*vect::fill<T,R-1>::apply(t)};
+	return {c._d*vect::fill<T,R-1,V>::apply(t)};
 }
 
 // translation + translation
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-translation<matrix<T,R,C,RM>>
+translation<matrix<T,R,C,RM,V>>
 operator * (
-	const translation<matrix<T,R,C,RM>>& c1,
-	const translation<matrix<T,R,C,RM>>& c2
+	const translation<matrix<T,R,C,RM,V>>& c1,
+	const translation<matrix<T,R,C,RM,V>>& c2
 ) noexcept
 {
 	return {c1._d+c2._d};
 }
 
 // reorder_mat_ctr(translation)
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
 translation<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const translation<matrix<T,R,C,RM>>& t)
+reorder_mat_ctr(const translation<matrix<T,R,C,RM,V>>& t)
 noexcept
 {
 	return {t._d};
@@ -284,32 +284,32 @@ struct translation_I<matrix<T,4,4,false>, I>
 };
 
 // translation_I * T
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-translation_I<matrix<T,R,C,RM>, I>
-operator * (const translation_I<matrix<T,R,C,RM>, I>& c, T t)
+translation_I<matrix<T,R,C,RM,V>, I>
+operator * (const translation_I<matrix<T,R,C,RM,V>, I>& c, T t)
 noexcept
 {
 	return {c._d*t};
 }
 
 // translation_I * translation_I
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-translation_I<matrix<T,R,C,RM>, I>
+translation_I<matrix<T,R,C,RM,V>, I>
 operator * (
-	const translation_I<matrix<T,R,C,RM>, I>& c1,
-	const translation_I<matrix<T,R,C,RM>, I>& c2
+	const translation_I<matrix<T,R,C,RM,V>, I>& c1,
+	const translation_I<matrix<T,R,C,RM,V>, I>& c2
 ) noexcept
 {
 	return {c1._d+c2._d};
 }
 
 // reorder_mat_ctr(translation_I)
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
 translation_I<matrix<T,R,C,!RM>, I>
-reorder_mat_ctr(const translation_I<matrix<T,R,C,RM>, I>& t)
+reorder_mat_ctr(const translation_I<matrix<T,R,C,RM,V>, I>& t)
 noexcept
 {
 	return {t._d};
@@ -320,8 +320,8 @@ template <typename M>
 using translation_x = translation_I<M, 0>;
 
 // is_matrix_constructor<translation_x>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<translation_x<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<translation_x<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -330,8 +330,8 @@ template <typename M>
 using translation_y = translation_I<M, 1>;
 
 // is_matrix_constructor<translation_y>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<translation_y<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<translation_y<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -340,8 +340,8 @@ template <typename M>
 using translation_z = translation_I<M, 2>;
 
 // is_matrix_constructor<translation_z>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<translation_z<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<translation_z<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -350,14 +350,14 @@ template <typename X, unsigned I>
 struct rotation_I;
 
 // is_matrix_constructor<rotation_I>
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
-struct is_matrix_constructor<rotation_I<matrix<T,R,C,RM>, I>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
+struct is_matrix_constructor<rotation_I<matrix<T,R,C,RM,V>, I>>
  : meta::true_type
 { };
 
 // rotation around I-th-axis matrix 4x4
-template <typename T, bool RM, unsigned I>
-struct rotation_I<matrix<T,4,4, RM>, I>
+template <typename T, bool RM, bool V, unsigned I>
+struct rotation_I<matrix<T,4,4,RM,V>, I>
 {
 	angle<T> _a;
 
@@ -372,10 +372,10 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	typedef meta::unsigned_constant<2> _z;
 
 	static constexpr inline
-	matrix<T,4,4, RM> _make(T cx, T sx, _x)
+	matrix<T,4,4,RM,V> _make(T cx, T sx, _x)
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{T(1),T(0),T(0),T(0)},
 			{T(0),  cx, -sx,T(0)},
 			{T(0),  sx,  cx,T(0)},
@@ -384,10 +384,10 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	}
 
 	static constexpr inline
-	matrix<T,4,4, RM> _make(T cx, T sx, _y)
+	matrix<T,4,4,RM,V> _make(T cx, T sx, _y)
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{  cx,T(0),  sx,T(0)},
 			{T(0),T(1),T(0),T(0)},
 			{ -sx,T(0),  cx,T(0)},
@@ -396,10 +396,10 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	}
 
 	static constexpr inline
-	matrix<T,4,4, RM> _make(T cx, T sx, _z)
+	matrix<T,4,4,RM,V> _make(T cx, T sx, _z)
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{  cx, -sx,T(0),T(0)},
 			{  sx,  cx,T(0),T(0)},
 			{T(0),T(0),T(1),T(0)},
@@ -408,7 +408,7 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	}
 
 	constexpr inline
-	matrix<T,4,4, RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		typedef meta::unsigned_constant<I> _axis;
@@ -416,7 +416,7 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -424,22 +424,22 @@ struct rotation_I<matrix<T,4,4, RM>, I>
 };
 
 // rotation_I * rotation_I
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-rotation_I<matrix<T,R,C,RM>, I>
+rotation_I<matrix<T,R,C,RM,V>, I>
 operator * (
-	const rotation_I<matrix<T,R,C,RM>, I>& c1,
-	const rotation_I<matrix<T,R,C,RM>, I>& c2
+	const rotation_I<matrix<T,R,C,RM,V>, I>& c1,
+	const rotation_I<matrix<T,R,C,RM,V>, I>& c2
 ) noexcept
 {
 	return {c1._a+c2._a};
 }
 
 // reorder_mat_ctr(rotation_I)
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
 rotation_I<matrix<T,R,C,!RM>, I>
-reorder_mat_ctr(const rotation_I<matrix<T,R,C,RM>, I>& r)
+reorder_mat_ctr(const rotation_I<matrix<T,R,C,RM,V>, I>& r)
 noexcept
 {
 	return {r._a};
@@ -450,8 +450,8 @@ template <typename M>
 using rotation_x = rotation_I<M, 0>;
 
 // is_matrix_constructor<rotation_x>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<rotation_x<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<rotation_x<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -464,8 +464,8 @@ template <typename M>
 using rotation_y = rotation_I<M, 1>;
 
 // is_matrix_constructor<rotation_y>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<rotation_y<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<rotation_y<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -478,8 +478,8 @@ template <typename M>
 using rotation_z = rotation_I<M, 2>;
 
 // is_matrix_constructor<rotation_z>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<rotation_z<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<rotation_z<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -492,14 +492,14 @@ template <typename X>
 struct rotation_a;
 
 // is_matrix_constructor<rotation_x>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<rotation_a<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<rotation_a<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // rotation around arbitrary axis matrix 4x4
-template <typename T, bool RM>
-struct rotation_a<matrix<T,4,4, RM>>
+template <typename T, bool RM, bool V>
+struct rotation_a<matrix<T,4,4,RM,V>>
 {
 	typedef vector<T,4> _vT;
 
@@ -521,10 +521,10 @@ struct rotation_a<matrix<T,4,4, RM>>
 	{ }
 
 	static constexpr inline
-	matrix<T,4,4, RM> _make(T ca, T sa, const _vT& v, const _vT& u)
+	matrix<T,4,4,RM,V> _make(T ca, T sa, const _vT& v, const _vT& u)
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			(
 				_vT::fill(u[0])*v+
 				_vT::make( ca*T(1),-sa*v[2], sa*v[1],0)
@@ -542,21 +542,21 @@ struct rotation_a<matrix<T,4,4, RM>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4, RM> _make(T ca, T sa, const _vT& v)
+	matrix<T,4,4,RM,V> _make(T ca, T sa, const _vT& v)
 	noexcept
 	{
 		return _make(ca, sa, v, v*(1-ca));
 	}
 
 	constexpr inline
-	matrix<T,4,4, RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(cos(_a), sin(_a)*(RM?1:-1), _v);
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -564,10 +564,10 @@ struct rotation_a<matrix<T,4,4, RM>>
 };
 
 // reorder_mat_ctr(rotation_a)
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
 rotation_a<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const rotation_a<matrix<T,R,C,RM>>& r)
+reorder_mat_ctr(const rotation_a<matrix<T,R,C,RM,V>>& r)
 noexcept
 {
 	return {r._v, r._a};
@@ -578,16 +578,16 @@ template <typename X>
 struct scale;
 
 // is_matrix_constructor<scale>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<scale<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<scale<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // scale matrix 4x4 row-major
-template <typename T, bool RM>
-struct scale<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct scale<matrix<T,4,4,RM,V>>
 {
-	typedef typename vect::data<T, 3>::type _dT;
+	typedef typename vect::data<T, 3, V>::type _dT;
 	_dT _s;
 
 	constexpr
@@ -603,10 +603,10 @@ struct scale<matrix<T,4,4,RM>>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{_s[0], T(0), T(0), T(0)},
 			{ T(0),_s[1], T(0), T(0)},
 			{ T(0), T(0),_s[2], T(0)},
@@ -615,7 +615,7 @@ struct scale<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -623,32 +623,32 @@ struct scale<matrix<T,4,4,RM>>
 };
 
 // scale * T
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-scale<matrix<T,R,C,RM>>
-operator * (const scale<matrix<T,R,C,RM>>& c, T t)
+scale<matrix<T,R,C,RM,V>>
+operator * (const scale<matrix<T,R,C,RM,V>>& c, T t)
 noexcept
 {
-	return {c._s*vect::fill<T,(R>C?R:C)-1>::apply(t)};
+	return {c._s*vect::fill<T,(R>C?R:C)-1,V>::apply(t)};
 }
 
 // scale + scale
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-scale<matrix<T,R,C,RM>>
+scale<matrix<T,R,C,RM,V>>
 operator * (
-	const scale<matrix<T,R,C,RM>>& c1,
-	const scale<matrix<T,R,C,RM>>& c2
+	const scale<matrix<T,R,C,RM,V>>& c1,
+	const scale<matrix<T,R,C,RM,V>>& c2
 ) noexcept
 {
 	return {c1._s*c2._s};
 }
 
 // reorder_mat_ctr(scale)
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
 scale<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const scale<matrix<T,R,C,RM>>& s)
+reorder_mat_ctr(const scale<matrix<T,R,C,RM,V>>& s)
 noexcept
 {
 	return {s._s};
@@ -659,8 +659,8 @@ template <typename X, unsigned I>
 struct scale_I;
 
 // scale along the I-th axis matrix 4x4
-template <typename T, unsigned I, bool RM>
-struct scale_I<matrix<T,4,4,RM>, I>
+template <typename T, unsigned I, bool RM, bool V>
+struct scale_I<matrix<T,4,4,RM,V>, I>
 {
 	T _s;
 
@@ -678,10 +678,10 @@ struct scale_I<matrix<T,4,4,RM>, I>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4,RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{v(0),T(0),T(0),T(0)},
 			{T(0),v(1),T(0),T(0)},
 			{T(0),T(0),v(2),T(0)},
@@ -690,7 +690,7 @@ struct scale_I<matrix<T,4,4,RM>, I>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -698,32 +698,32 @@ struct scale_I<matrix<T,4,4,RM>, I>
 };
 
 // scale_I * T
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-scale_I<matrix<T,R,C,RM>, I>
-operator * (const scale_I<matrix<T,R,C,RM>, I>& c, T t)
+scale_I<matrix<T,R,C,RM,V>, I>
+operator * (const scale_I<matrix<T,R,C,RM,V>, I>& c, T t)
 noexcept
 {
 	return {c._s*t};
 }
 
 // scale_I + scale_I
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-scale_I<matrix<T,R,C,RM>, I>
+scale_I<matrix<T,R,C,RM,V>, I>
 operator * (
-	const scale_I<matrix<T,R,C,RM>, I>& c1,
-	const scale_I<matrix<T,R,C,RM>, I>& c2
+	const scale_I<matrix<T,R,C,RM,V>, I>& c1,
+	const scale_I<matrix<T,R,C,RM,V>, I>& c2
 ) noexcept
 {
 	return {c1._s*c2._s};
 }
 
 // reorder_mat_ctr(scale_I)
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
 scale_I<matrix<T,R,C,!RM>, I>
-reorder_mat_ctr(const scale_I<matrix<T,R,C,RM>, I>& t)
+reorder_mat_ctr(const scale_I<matrix<T,R,C,RM,V>, I>& t)
 noexcept
 {
 	return {t._s};
@@ -734,8 +734,8 @@ template <typename M>
 using scale_x = scale_I<M, 0>;
 
 // is_matrix_constructor<scale_x>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<scale_x<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<scale_x<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -744,8 +744,8 @@ template <typename M>
 using scale_y = scale_I<M, 1>;
 
 // is_matrix_constructor<scale_y>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<scale_y<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<scale_y<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -754,8 +754,8 @@ template <typename M>
 using scale_z = scale_I<M, 2>;
 
 // is_matrix_constructor<scale_z>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<scale_z<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<scale_z<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -765,14 +765,14 @@ template <typename X>
 struct uniform_scale;
 
 // is_matrix_constructor<uniform_scale>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<uniform_scale<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<uniform_scale<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // uniform_scale matrix 4x4 row-major
-template <typename T, bool RM>
-struct uniform_scale<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct uniform_scale<matrix<T,4,4,RM,V>>
 {
 	T _s;
 
@@ -783,10 +783,10 @@ struct uniform_scale<matrix<T,4,4,RM>>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{  _s,T(0),T(0),T(0)},
 			{T(0),  _s,T(0),T(0)},
 			{T(0),T(0),  _s,T(0)},
@@ -795,7 +795,7 @@ struct uniform_scale<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -803,32 +803,32 @@ struct uniform_scale<matrix<T,4,4,RM>>
 };
 
 // uniform_scale * T
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-uniform_scale<matrix<T,R,C,RM>>
-operator * (const uniform_scale<matrix<T,R,C,RM>>& c, T t)
+uniform_scale<matrix<T,R,C,RM,V>>
+operator * (const uniform_scale<matrix<T,R,C,RM,V>>& c, T t)
 noexcept
 {
 	return {c._s*t};
 }
 
 // uniform_scale * uniform_scale 
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-uniform_scale<matrix<T,R,C,RM>>
+uniform_scale<matrix<T,R,C,RM,V>>
 operator * (
-	const uniform_scale<matrix<T,R,C,RM>>& c1,
-	const uniform_scale<matrix<T,R,C,RM>>& c2
+	const uniform_scale<matrix<T,R,C,RM,V>>& c1,
+	const uniform_scale<matrix<T,R,C,RM,V>>& c2
 ) noexcept
 {
 	return {c1._s*c2._s};
 }
 
 // reorder_mat_ctr(uniform_scale)
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
 uniform_scale<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const uniform_scale<matrix<T,R,C,RM>>& us)
+reorder_mat_ctr(const uniform_scale<matrix<T,R,C,RM,V>>& us)
 noexcept
 {
 	return {us._s};
@@ -839,14 +839,14 @@ template <typename X, unsigned I>
 struct reflection_I;
 
 // is_matrix_constructor<reflection_I>
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
-struct is_matrix_constructor<reflection_I<matrix<T,R,C,RM>, I>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
+struct is_matrix_constructor<reflection_I<matrix<T,R,C,RM,V>, I>>
  : meta::true_type
 { };
 
 // reflection_I matrix 4x4
-template <typename T, bool RM, unsigned I>
-struct reflection_I<matrix<T,4,4,RM>, I>
+template <typename T, bool RM, bool V, unsigned I>
+struct reflection_I<matrix<T,4,4,RM,V>, I>
 {
 	T _r;
 
@@ -864,10 +864,10 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 	}
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4, RM>{{
+		return matrix<T,4,4,RM,V>{{
 			{v(0),T(0),T(0),T(0)},
 			{T(0),v(1),T(0),T(0)},
 			{T(0),T(0),v(2),T(0)},
@@ -876,7 +876,7 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -884,22 +884,22 @@ struct reflection_I<matrix<T,4,4,RM>, I>
 };
 
 // reflection_I + reflection_I
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-reflection_I<matrix<T,R,C,RM>, I>
+reflection_I<matrix<T,R,C,RM,V>, I>
 operator * (
-	const reflection_I<matrix<T,R,C,RM>, I>& c1,
-	const reflection_I<matrix<T,R,C,RM>, I>& c2
+	const reflection_I<matrix<T,R,C,RM,V>, I>& c1,
+	const reflection_I<matrix<T,R,C,RM,V>, I>& c2
 ) noexcept
 {
 	return {not(c1._r <<equal_to>> c2._r)};
 }
 
 // reorder_mat_ctr(reflection_I)
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I>
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
 reflection_I<matrix<T,R,C,!RM>, I>
-reorder_mat_ctr(const reflection_I<matrix<T,R,C,RM>, I>& r)
+reorder_mat_ctr(const reflection_I<matrix<T,R,C,RM,V>, I>& r)
 noexcept
 {
 	return {r._r<T(0)};
@@ -910,8 +910,8 @@ template <typename M>
 using reflection_x = reflection_I<M, 0>;
 
 // is_matrix_constructor<reflection_x>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<reflection_x<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<reflection_x<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -920,8 +920,8 @@ template <typename M>
 using reflection_y = reflection_I<M, 1>;
 
 // is_matrix_constructor<reflection_y>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<reflection_y<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<reflection_y<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -930,8 +930,8 @@ template <typename M>
 using reflection_z = reflection_I<M, 2>;
 
 // is_matrix_constructor<reflection_z>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<reflection_z<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<reflection_z<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
@@ -940,16 +940,16 @@ template <typename X>
 struct shear;
 
 // is_matrix_constructor<shear>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<shear<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<shear<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // shear matrix 4x4 row-major
-template <typename T>
-struct shear<matrix<T,4,4, true>>
+template <typename T, bool V>
+struct shear<matrix<T,4,4, true,V>>
 {
-	typedef typename vect::data<T, 3>::type _dT;
+	typedef typename vect::data<T, 3, V>::type _dT;
 	_dT _s;
 
 	constexpr
@@ -965,10 +965,10 @@ struct shear<matrix<T,4,4, true>>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4, true> operator()(void) const
+	matrix<T,4,4, true,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{ T(1),_s[0],_s[0], T(0)},
 			{_s[1], T(1),_s[1], T(0)},
 			{_s[2],_s[2], T(1), T(0)},
@@ -977,7 +977,7 @@ struct shear<matrix<T,4,4, true>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	operator matrix<T,4,4, true,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -985,10 +985,10 @@ struct shear<matrix<T,4,4, true>>
 };
 
 // shear matrix 4x4 column-major
-template <typename T>
-struct shear<matrix<T,4,4,false>>
+template <typename T, bool V>
+struct shear<matrix<T,4,4,false,V>>
 {
-	typedef typename vect::data<T, 3>::type _dT;
+	typedef typename vect::data<T, 3, V>::type _dT;
 	_dT _s;
 
 	constexpr
@@ -1004,10 +1004,10 @@ struct shear<matrix<T,4,4,false>>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4,false> operator()(void) const
+	matrix<T,4,4,false,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4,false>{{
+		return matrix<T,4,4,false,V>{{
 			{ T(1),_s[1],_s[2], T(0)},
 			{_s[0], T(1),_s[2], T(0)},
 			{_s[0],_s[1], T(1), T(0)},
@@ -1016,7 +1016,7 @@ struct shear<matrix<T,4,4,false>>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,false> (void) const
+	operator matrix<T,4,4,false,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1024,22 +1024,22 @@ struct shear<matrix<T,4,4,false>>
 };
 
 // shear * shear 
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-shear<matrix<T,R,C,RM>>
+shear<matrix<T,R,C,RM,V>>
 operator * (
-	const shear<matrix<T,R,C,RM>>& c1,
-	const shear<matrix<T,R,C,RM>>& c2
+	const shear<matrix<T,R,C,RM,V>>& c1,
+	const shear<matrix<T,R,C,RM,V>>& c2
 ) noexcept
 {
 	return {c1._s+c2._s};
 }
 
 // reorder_mat_ctr(shear)
-template <typename T, unsigned R, unsigned C, bool RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
 shear<matrix<T,R,C,!RM>>
-reorder_mat_ctr(const shear<matrix<T,R,C,RM>>& s)
+reorder_mat_ctr(const shear<matrix<T,R,C,RM,V>>& s)
 noexcept
 {
 	return {s._s};
@@ -1050,16 +1050,16 @@ template <typename X>
 struct ortho;
 
 // is_matrix_constructor<ortho>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<ortho<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<ortho<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // ortho matrix 4x4
-template <typename T, bool RM>
-struct ortho<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct ortho<matrix<T,4,4,RM,V>>
 {
-	typedef typename vect::data<T, 6>::type _dT;
+	typedef typename vect::data<T, 6, V>::type _dT;
 	_dT _s;
 
 	constexpr
@@ -1153,14 +1153,14 @@ struct ortho<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	matrix<T,4,4, RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1168,10 +1168,10 @@ struct ortho<matrix<T,4,4,RM>>
 };
 
 // reorder_mat_ctr(ortho)
-template <typename T, bool RM>
+template <typename T, bool RM, bool V>
 static constexpr inline
 ortho<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const ortho<matrix<T,4,4,RM>>& c)
+reorder_mat_ctr(const ortho<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
 	return {c._s};
@@ -1182,14 +1182,14 @@ template <typename X>
 struct looking_at_y_up;
 
 // is_matrix_constructor<looking_at_y_up>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<looking_at_y_up<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<looking_at_y_up<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // looking_at_y_up matrix 4x4
-template <typename T, bool RM>
-struct looking_at_y_up<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct looking_at_y_up<matrix<T,4,4,RM,V>>
 {
 	typedef vector<T,3> _dT;
 
@@ -1255,14 +1255,14 @@ struct looking_at_y_up<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1270,10 +1270,10 @@ struct looking_at_y_up<matrix<T,4,4,RM>>
 };
 
 // reorder_mat_ctr(looking_at_y_up)
-template <typename T, bool RM>
+template <typename T, bool RM, bool V>
 static constexpr inline
 looking_at_y_up<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const looking_at_y_up<matrix<T,4,4,RM>>& c)
+reorder_mat_ctr(const looking_at_y_up<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
 	return {c._e,c._t};
@@ -1284,14 +1284,14 @@ template <typename X>
 struct looking_at;
 
 // is_matrix_constructor<looking_at>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<looking_at<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<looking_at<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // looking_at matrix 4x4
-template <typename T, bool RM>
-struct looking_at<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct looking_at<matrix<T,4,4,RM,V>>
 {
 	typedef vector<T,3> _dT;
 
@@ -1329,8 +1329,13 @@ struct looking_at<matrix<T,4,4,RM>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4,true>
-	_make2(const _dT& e, const _dT& u, const _dT& z, const scalar<T,3>& dzu)
+	matrix<T,4,4,true,V>
+	_make2(
+		const _dT& e,
+		const _dT& u,
+		const _dT& z,
+		const scalar<T,3,V>& dzu
+	)
 	noexcept
 	{
 		return _make3(
@@ -1341,7 +1346,7 @@ struct looking_at<matrix<T,4,4,RM>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make1(const _dT& e, const _dT& u, const _dT& z)
 	noexcept
 	{
@@ -1349,28 +1354,28 @@ struct looking_at<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,true> _make(meta::true_type) const
+	matrix<T,4,4,true,V> _make(meta::true_type) const
 	noexcept
 	{
 		return _make1(_e, _u, normalized(_e-_t));
 	}
 
 	constexpr inline
-	matrix<T,4,4,false> _make(meta::false_type) const
+	matrix<T,4,4,false,V> _make(meta::false_type) const
 	noexcept
 	{
 		return reorder(_make(meta::true_type()));
 	}
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1378,10 +1383,10 @@ struct looking_at<matrix<T,4,4,RM>>
 };
 
 // reorder_mat_ctr(looking_at)
-template <typename T, bool RM>
+template <typename T, bool RM, bool V>
 static constexpr inline
 looking_at<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const looking_at<matrix<T,4,4,RM>>& c)
+reorder_mat_ctr(const looking_at<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
 	return {c._e,c._t,c._u};
@@ -1392,14 +1397,14 @@ template <typename X>
 struct orbiting_y_up;
 
 // is_matrix_constructor<orbiting_y_up>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<orbiting_y_up<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<orbiting_y_up<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // orbiting_y_up matrix 4x4
-template <typename T, bool RM>
-struct orbiting_y_up<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct orbiting_y_up<matrix<T,4,4,RM,V>>
 {
 	vector<T,3> _t;
 	vector<T,3> _x, _z, _y;
@@ -1470,14 +1475,14 @@ struct orbiting_y_up<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1485,10 +1490,10 @@ struct orbiting_y_up<matrix<T,4,4,RM>>
 };
 
 // reorder_mat_ctr(orbiting_y_up)
-template <typename T, bool RM>
+template <typename T, bool RM, bool V>
 static constexpr inline
 orbiting_y_up<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const orbiting_y_up<matrix<T,4,4,RM>>& c)
+reorder_mat_ctr(const orbiting_y_up<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
 	return {c._t,c._x,c._y,c._z,c._r};
@@ -1499,16 +1504,16 @@ template <typename X>
 struct perspective;
 
 // is_matrix_constructor<perspective>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<perspective<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<perspective<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // perspective matrix 4x4 row-major
-template <typename T, bool RM>
-struct perspective<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct perspective<matrix<T,4,4,RM,V>>
 {
-	typedef typename vect::data<T, 6>::type _dT;
+	typedef typename vect::data<T, 6, V>::type _dT;
 	_dT _s;
 
 	constexpr
@@ -1687,14 +1692,14 @@ struct perspective<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1702,10 +1707,10 @@ struct perspective<matrix<T,4,4,RM>>
 };
 
 // reorder_mat_ctr(perspective)
-template <typename T, bool RM>
+template <typename T, bool RM, bool V>
 static constexpr inline
 perspective<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const perspective<matrix<T,4,4,RM>>& c)
+reorder_mat_ctr(const perspective<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
 	return {c._s};
@@ -1716,16 +1721,16 @@ template <typename X>
 struct screen_stretch;
 
 // is_matrix_constructor<screen_stretch>
-template <typename T, unsigned R, unsigned C, bool RM>
-struct is_matrix_constructor<screen_stretch<matrix<T,R,C,RM>>>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct is_matrix_constructor<screen_stretch<matrix<T,R,C,RM,V>>>
  : meta::true_type
 { };
 
 // screen_stretch matrix 4x4
-template <typename T, bool RM>
-struct screen_stretch<matrix<T,4,4,RM>>
+template <typename T, bool RM, bool V>
+struct screen_stretch<matrix<T,4,4,RM,V>>
 {
-	typedef typename vect::data<T, 4>::type _dT;
+	typedef typename vect::data<T, 4, V>::type _dT;
 	_dT _s;
 
 	constexpr screen_stretch(const _dT& s)
@@ -1831,14 +1836,14 @@ struct screen_stretch<matrix<T,4,4,RM>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,RM> operator()(void) const
+	matrix<T,4,4,RM,V> operator()(void) const
 	noexcept
 	{
 		return _make(meta::boolean_constant<RM>());
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,RM> (void) const
+	operator matrix<T,4,4,RM,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -1846,10 +1851,10 @@ struct screen_stretch<matrix<T,4,4,RM>>
 };
 
 // reorder_mat_ctr(screen_stretch)
-template <typename T, bool RM>
+template <typename T, bool RM, bool V>
 static constexpr inline
 screen_stretch<matrix<T,4,4,!RM>>
-reorder_mat_ctr(const screen_stretch<matrix<T,4,4,RM>>& c)
+reorder_mat_ctr(const screen_stretch<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
 	return {c._s};

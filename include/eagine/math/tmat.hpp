@@ -18,11 +18,11 @@ namespace eagine {
 namespace math {
 
 // tmat
-template <typename T, unsigned R, unsigned C, bool RM>
-struct tmat : matrix<T, R, C, RM>
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+struct tmat : matrix<T, R, C, RM, V>
 {
 private:
-	typedef matrix<T, R, C, RM> _base;
+	typedef matrix<T, R, C, RM, V> _base;
 
 public:
 	constexpr inline
