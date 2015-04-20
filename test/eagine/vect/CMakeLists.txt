@@ -20,3 +20,5 @@ eagine_vect_exec_test(hsum)
 eagine_vect_exec_test(compare)
 eagine_vect_exec_test(minmax)
 eagine_vect_exec_test(lerp)
+
+eagine_vect_exec_test(array_ref)

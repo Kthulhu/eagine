@@ -19,14 +19,26 @@ template <typename D, typename T, unsigned N>
 struct _ary_ref_hlp;
 
 template <typename T, unsigned N>
-struct _ary_ref_hlp<_ary_data<T, N>, T, N>
+struct _ary_ref_hlp<typename _ary_data<T, N>::type, T, N>
 {
 	const T* _v;
 
 	inline
-	_ary_ref_hlp(const _ary_data<T, N>& d)
+	_ary_ref_hlp(const typename _ary_data<T, N>::type& d)
 	noexcept
 	 : _v(d._v)
+	{ }
+};
+
+template <typename T, unsigned N>
+struct _ary_ref_hlp<typename _vec_data<T, N>::type, T, N>
+{
+	const T* _v;
+
+	inline
+	_ary_ref_hlp(const typename _vec_data<T, N>::type& d)
+	noexcept
+	 : _v(reinterpret_cast<const T*>(&d))
 	{ }
 };
 
