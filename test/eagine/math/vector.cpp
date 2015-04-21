@@ -440,101 +440,73 @@ BOOST_AUTO_TEST_CASE(math_vector_make)
 	}
 }
 
+template <typename T, bool V>
+void test_math_vector_from1_TV(eagine::math::vector<int, 8> x)
+{
+	auto v8 = eagine::math::vector<T, 8, V>::template from<0,1,2,3,4,5,6,7>(x);
+	auto v7 = eagine::math::vector<T, 7, V>::template from<0,1,2,3,4,5,6>(x);
+	auto v6 = eagine::math::vector<T, 6, V>::template from<0,1,2,3,4,5>(x);
+	auto v5 = eagine::math::vector<T, 5, V>::template from<0,1,2,3,4>(x);
+	auto v4 = eagine::math::vector<T, 4, V>::template from<0,1,2,3>(x);
+	auto v3 = eagine::math::vector<T, 3, V>::template from<0,1,2>(x);
+	auto v2 = eagine::math::vector<T, 2, V>::template from<0,1>(x);
+	auto v1 = eagine::math::vector<T, 1, V>::template from<0>(x);
+
+	(void)v1; (void)v2; (void)v3; (void)v4; (void)v5; (void)v6; (void)v7; (void)v8;
+}
+
+template <typename T>
+void test_math_vector_from1_T(eagine::math::vector<int, 8> x)
+{
+	test_math_vector_from1_TV<T, true>(x);
+	test_math_vector_from1_TV<T,false>(x);
+}
+
 BOOST_AUTO_TEST_CASE(math_vector_from1)
 {
 	eagine::math::vector<int, 8> via8 = {{1, 2, 3, 4, 5, 6, 7, 8}};
 
-	auto vi8 = eagine::math::vector<int, 8>::from<0,1,2,3,4,5,6,7>(via8);
-	auto vi7 = eagine::math::vector<int, 7>::from<0,1,2,3,4,5,6>(via8);
-	auto vi6 = eagine::math::vector<int, 6>::from<0,1,2,3,4,5>(via8);
-	auto vi5 = eagine::math::vector<int, 5>::from<0,1,2,3,4>(via8);
-	auto vi4 = eagine::math::vector<int, 4>::from<0,1,2,3>(via8);
-	auto vi3 = eagine::math::vector<int, 3>::from<0,1,2>(via8);
-	auto vi2 = eagine::math::vector<int, 2>::from<0,1>(via8);
-	auto vi1 = eagine::math::vector<int, 1>::from<0>(via8);
+	test_math_vector_from1_T<int>(via8);
+	test_math_vector_from1_T<float>(via8);
+	test_math_vector_from1_T<double>(via8);
+}
 
-	auto vf8 = eagine::math::vector<float, 8>::from<0,1,2,3,4,5,6,7>(via8);
-	auto vf7 = eagine::math::vector<float, 7>::from<0,1,2,3,4,5,6>(via8);
-	auto vf6 = eagine::math::vector<float, 6>::from<0,1,2,3,4,5>(via8);
-	auto vf5 = eagine::math::vector<float, 5>::from<0,1,2,3,4>(via8);
-	auto vf4 = eagine::math::vector<float, 4>::from<0,1,2,3>(via8);
-	auto vf3 = eagine::math::vector<float, 3>::from<0,1,2>(via8);
-	auto vf2 = eagine::math::vector<float, 2>::from<0,1>(via8);
-	auto vf1 = eagine::math::vector<float, 1>::from<0>(via8);
+template <typename T, bool V>
+void test_math_vector_from2_TV(void)
+{
+	eagine::math::vector<T, 1, V> va1 = {{T(1)}};
+	eagine::math::vector<T, 2, V> va2 = {{T(1), T(2)}};
+	eagine::math::vector<T, 3, V> va3 = {{T(1), T(2), T(3)}};
+	eagine::math::vector<T, 4, V> va4 = {{T(1), T(2), T(3), T(4)}};
+	eagine::math::vector<T, 5, V> va5 = {{T(1), T(2), T(3), T(4), T(5)}};
+	eagine::math::vector<T, 6, V> va6 = {{T(1), T(2), T(3), T(4), T(5), T(6)}};
+	eagine::math::vector<T, 7, V> va7 = {{T(1), T(2), T(3), T(4), T(5), T(6), T(7)}};
+	eagine::math::vector<T, 8, V> va8 = {{T(1), T(2), T(3), T(4), T(5), T(6), T(7), T(8)}};
 
-	auto vd8 = eagine::math::vector<double, 8>::from<0,1,2,3,4,5,6,7>(via8);
-	auto vd7 = eagine::math::vector<double, 7>::from<0,1,2,3,4,5,6>(via8);
-	auto vd6 = eagine::math::vector<double, 6>::from<0,1,2,3,4,5>(via8);
-	auto vd5 = eagine::math::vector<double, 5>::from<0,1,2,3,4>(via8);
-	auto vd4 = eagine::math::vector<double, 4>::from<0,1,2,3>(via8);
-	auto vd3 = eagine::math::vector<double, 3>::from<0,1,2>(via8);
-	auto vd2 = eagine::math::vector<double, 2>::from<0,1>(via8);
-	auto vd1 = eagine::math::vector<double, 1>::from<0>(via8);
+	auto vb1 = eagine::math::vector<T, 1, V>::template from<0>(va1);
+	auto vb2 = eagine::math::vector<T, 2, V>::template from<1, 0>(va2);
+	auto vb3 = eagine::math::vector<T, 3, V>::template from<2, 1, 0>(va3);
+	auto vb4 = eagine::math::vector<T, 4, V>::template from<3, 2, 1, 0>(va4);
+	auto vb5 = eagine::math::vector<T, 5, V>::template from<4, 3, 2, 1, 0>(va5);
+	auto vb6 = eagine::math::vector<T, 6, V>::template from<5, 4, 3, 2, 1, 0>(va6);
+	auto vb7 = eagine::math::vector<T, 7, V>::template from<6, 5, 4, 3, 2, 1, 0>(va7);
+	auto vb8 = eagine::math::vector<T, 8, V>::template from<7, 6, 5, 4, 3, 2, 1, 0>(va8);
 
-	(void)vi1; (void)vi2; (void)vi3; (void)vi4; (void)vi5; (void)vi6; (void)vi7; (void)vi8;
-	(void)vf1; (void)vf2; (void)vf3; (void)vf4; (void)vf5; (void)vf6; (void)vf7; (void)vf8;
-	(void)vd1; (void)vd2; (void)vd3; (void)vd4; (void)vd5; (void)vd6; (void)vd7; (void)vd8;
+	(void)vb1; (void)vb2; (void)vb3; (void)vb4; (void)vb5; (void)vb6; (void)vb7; (void)vb8;
+}
+
+template <typename T>
+void test_math_vector_from2_T(void)
+{
+	test_math_vector_from2_TV<T, true>();
+	test_math_vector_from2_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_vector_from2)
 {
-	eagine::math::vector<int, 1> via1 = {{1}};
-	eagine::math::vector<int, 2> via2 = {{1, 2}};
-	eagine::math::vector<int, 3> via3 = {{1, 2, 3}};
-	eagine::math::vector<int, 4> via4 = {{1, 2, 3, 4}};
-	eagine::math::vector<int, 5> via5 = {{1, 2, 3, 4, 5}};
-	eagine::math::vector<int, 6> via6 = {{1, 2, 3, 4, 5, 6}};
-	eagine::math::vector<int, 7> via7 = {{1, 2, 3, 4, 5, 6, 7}};
-	eagine::math::vector<int, 8> via8 = {{1, 2, 3, 4, 5, 6, 7, 8}};
-
-	eagine::math::vector<float, 1> vfa1 = {{1.f}};
-	eagine::math::vector<float, 2> vfa2 = {{1.f, 2.f}};
-	eagine::math::vector<float, 3> vfa3 = {{1.f, 2.f, 3.f}};
-	eagine::math::vector<float, 4> vfa4 = {{1.f, 2.f, 3.f, 4.f}};
-	eagine::math::vector<float, 5> vfa5 = {{1.f, 2.f, 3.f, 4.f, 5.f}};
-	eagine::math::vector<float, 6> vfa6 = {{1.f, 2.f, 3.f, 4.f, 5.f, 6.f}};
-	eagine::math::vector<float, 7> vfa7 = {{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f}};
-	eagine::math::vector<float, 8> vfa8 = {{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f}};
-
-	eagine::math::vector<double, 1> vda1 = {{1.0}};
-	eagine::math::vector<double, 2> vda2 = {{1.0, 2.0}};
-	eagine::math::vector<double, 3> vda3 = {{1.0, 2.0, 3.0}};
-	eagine::math::vector<double, 4> vda4 = {{1.0, 2.0, 3.0, 4.0}};
-	eagine::math::vector<double, 5> vda5 = {{1.0, 2.0, 3.0, 4.0, 5.0}};
-	eagine::math::vector<double, 6> vda6 = {{1.0, 2.0, 3.0, 4.0, 5.0, 6.0}};
-	eagine::math::vector<double, 7> vda7 = {{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0}};
-	eagine::math::vector<double, 8> vda8 = {{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0}};
-
-	auto vi1 = eagine::math::vector<int, 1>::from<0>(via1);
-	auto vi2 = eagine::math::vector<int, 2>::from<1, 0>(via2);
-	auto vi3 = eagine::math::vector<int, 3>::from<2, 1, 0>(via3);
-	auto vi4 = eagine::math::vector<int, 4>::from<3, 2, 1, 0>(via4);
-	auto vi5 = eagine::math::vector<int, 5>::from<4, 3, 2, 1, 0>(via5);
-	auto vi6 = eagine::math::vector<int, 6>::from<5, 4, 3, 2, 1, 0>(via6);
-	auto vi7 = eagine::math::vector<int, 7>::from<6, 5, 4, 3, 2, 1, 0>(via7);
-	auto vi8 = eagine::math::vector<int, 8>::from<7, 6, 5, 4, 3, 2, 1, 0>(via8);
-
-	auto vf1 = eagine::math::vector<float, 1>::from<0>(vfa1);
-	auto vf2 = eagine::math::vector<float, 2>::from<1, 0>(vfa2);
-	auto vf3 = eagine::math::vector<float, 3>::from<2, 1, 0>(vfa3);
-	auto vf4 = eagine::math::vector<float, 4>::from<3, 2, 1, 0>(vfa4);
-	auto vf5 = eagine::math::vector<float, 5>::from<4, 3, 2, 1, 0>(vfa5);
-	auto vf6 = eagine::math::vector<float, 6>::from<5, 4, 3, 2, 1, 0>(vfa6);
-	auto vf7 = eagine::math::vector<float, 7>::from<6, 5, 4, 3, 2, 1, 0>(vfa7);
-	auto vf8 = eagine::math::vector<float, 8>::from<7, 6, 5, 4, 3, 2, 1, 0>(vfa8);
-
-	auto vd1 = eagine::math::vector<double, 1>::from<0>(vda1);
-	auto vd2 = eagine::math::vector<double, 2>::from<1, 0>(vda2);
-	auto vd3 = eagine::math::vector<double, 3>::from<2, 1, 0>(vda3);
-	auto vd4 = eagine::math::vector<double, 4>::from<3, 2, 1, 0>(vda4);
-	auto vd5 = eagine::math::vector<double, 5>::from<4, 3, 2, 1, 0>(vda5);
-	auto vd6 = eagine::math::vector<double, 6>::from<5, 4, 3, 2, 1, 0>(vda6);
-	auto vd7 = eagine::math::vector<double, 7>::from<6, 5, 4, 3, 2, 1, 0>(vda7);
-	auto vd8 = eagine::math::vector<double, 8>::from<7, 6, 5, 4, 3, 2, 1, 0>(vda8);
-
-	(void)vi1; (void)vi2; (void)vi3; (void)vi4; (void)vi5; (void)vi6; (void)vi7; (void)vi8;
-	(void)vf1; (void)vf2; (void)vf3; (void)vf4; (void)vf5; (void)vf6; (void)vf7; (void)vf8;
-	(void)vd1; (void)vd2; (void)vd3; (void)vd4; (void)vd5; (void)vd6; (void)vd7; (void)vd8;
+	test_math_vector_from2_T<int>();
+	test_math_vector_from2_T<float>();
+	test_math_vector_from2_T<double>();
 }
 
 #define EAGINE_TEST_RAND_INT(N) \
@@ -545,8 +517,8 @@ BOOST_AUTO_TEST_CASE(math_vector_from2)
 		__LINE__ \
 	) % N)
 
-template <typename T, unsigned ... I>
-void test_math_vector_from3_T(void)
+template <typename T, bool V, unsigned ... I>
+void test_math_vector_from3_TVI(void)
 {
 	static const unsigned M = sizeof...(I);
 	unsigned j[M] = {I...};
@@ -559,9 +531,9 @@ void test_math_vector_from3_T(void)
 		a[i] = std::rand() / T(3);
 	}
 
-	eagine::math::vector<T, 8> v = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]}};
+	eagine::math::vector<T, 8, V> v = {{a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]}};
 
-	auto u = eagine::math::vector<T, M>::template from<I...>(v);
+	auto u = eagine::math::vector<T, M, V>::template from<I...>(v);
 
 	for(unsigned i=0; i<M; ++i)
 	{
@@ -570,57 +542,53 @@ void test_math_vector_from3_T(void)
 	}
 }
 
-template <typename T>
-void test_math_vector_from3(void)
+template <typename T, unsigned ... I>
+void test_math_vector_from3_TI(void)
 {
-	test_math_vector_from3_T<
+	test_math_vector_from3_TVI<T, true, I...>();
+	test_math_vector_from3_TVI<T,false, I...>();
+}
+
+template <typename T>
+void test_math_vector_from3_T(void)
+{
+	test_math_vector_from3_TI<
 		T,
 		EAGINE_TEST_RAND_INT(8)
 	>();
 
-	test_math_vector_from3_T<
+	test_math_vector_from3_TI<
 		T,
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8)
 	>();
 
-	test_math_vector_from3_T<
+	test_math_vector_from3_TI<
 		T,
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8)
-	>();
-
-	test_math_vector_from3_T<
-		T,
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8)
-	>();
-
-	test_math_vector_from3_T<
-		T,
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8)
 	>();
 
-	test_math_vector_from3_T<
+	test_math_vector_from3_TI<
 		T,
-		EAGINE_TEST_RAND_INT(8),
-		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8)
 	>();
 
-	test_math_vector_from3_T<
+	test_math_vector_from3_TI<
 		T,
 		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_TI<
+		T,
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
@@ -629,7 +597,18 @@ void test_math_vector_from3(void)
 		EAGINE_TEST_RAND_INT(8)
 	>();
 
-	test_math_vector_from3_T<
+	test_math_vector_from3_TI<
+		T,
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8),
+		EAGINE_TEST_RAND_INT(8)
+	>();
+
+	test_math_vector_from3_TI<
 		T,
 		EAGINE_TEST_RAND_INT(8),
 		EAGINE_TEST_RAND_INT(8),
@@ -644,13 +623,13 @@ void test_math_vector_from3(void)
 
 BOOST_AUTO_TEST_CASE(math_vector_from3)
 {
-	test_math_vector_from3<int>();
-	test_math_vector_from3<float>();
-	test_math_vector_from3<double>();
+	test_math_vector_from3_T<int>();
+	test_math_vector_from3_T<float>();
+	test_math_vector_from3_T<double>();
 }
 
-template <typename T, unsigned N>
-void test_math_vector_from4_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_vector_from4_TNV(void)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
@@ -660,7 +639,7 @@ void test_math_vector_from4_T(void)
 			a[i] = std::rand() / T(3);
 		}
 
-		auto v = eagine::math::vector<T, N>::from(a, N);
+		auto v = eagine::math::vector<T, N, V>::from(a, N);
 
 		for(unsigned i=0; i<N; ++i)
 		{
@@ -671,28 +650,35 @@ void test_math_vector_from4_T(void)
 	}
 }
 
-template <typename T>
-void test_math_vector_from4(void)
+template <typename T, bool V>
+void test_math_vector_from4_TV(void)
 {
-	test_math_vector_from4_T<T, 1>();
-	test_math_vector_from4_T<T, 2>();
-	test_math_vector_from4_T<T, 3>();
-	test_math_vector_from4_T<T, 4>();
-	test_math_vector_from4_T<T, 5>();
-	test_math_vector_from4_T<T, 6>();
-	test_math_vector_from4_T<T, 7>();
-	test_math_vector_from4_T<T, 8>();
+	test_math_vector_from4_TNV<T, 1, V>();
+	test_math_vector_from4_TNV<T, 2, V>();
+	test_math_vector_from4_TNV<T, 3, V>();
+	test_math_vector_from4_TNV<T, 4, V>();
+	test_math_vector_from4_TNV<T, 5, V>();
+	test_math_vector_from4_TNV<T, 6, V>();
+	test_math_vector_from4_TNV<T, 7, V>();
+	test_math_vector_from4_TNV<T, 8, V>();
+}
+
+template <typename T>
+void test_math_vector_from4_T(void)
+{
+	test_math_vector_from4_TV<T, true>();
+	test_math_vector_from4_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_vector_from4)
 {
-	test_math_vector_from4<int>();
-	test_math_vector_from4<float>();
-	test_math_vector_from4<double>();
+	test_math_vector_from4_T<int>();
+	test_math_vector_from4_T<float>();
+	test_math_vector_from4_T<double>();
 }
 
-template <typename T, unsigned N>
-void test_math_vector_get_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_vector_get_TNV(void)
 {
 	T a[N];
 
@@ -701,7 +687,7 @@ void test_math_vector_get_T(void)
 		a[i] = std::rand() / T(3);
 	}
 
-	auto va = eagine::math::vector<T, N>::from(a, N);
+	auto va = eagine::math::vector<T, N, V>::from(a, N);
 
 	for(unsigned i=0; i<N; ++i)
 	{
@@ -710,33 +696,40 @@ void test_math_vector_get_T(void)
 	}
 }
 
-template <typename T>
-void test_math_vector_get(void)
+template <typename T, bool V>
+void test_math_vector_get_TV(void)
 {
-	test_math_vector_get_T<T, 1>();
-	test_math_vector_get_T<T, 2>();
-	test_math_vector_get_T<T, 3>();
-	test_math_vector_get_T<T, 4>();
-	test_math_vector_get_T<T, 5>();
-	test_math_vector_get_T<T, 6>();
-	test_math_vector_get_T<T, 7>();
-	test_math_vector_get_T<T, 8>();
+	test_math_vector_get_TNV<T, 1, V>();
+	test_math_vector_get_TNV<T, 2, V>();
+	test_math_vector_get_TNV<T, 3, V>();
+	test_math_vector_get_TNV<T, 4, V>();
+	test_math_vector_get_TNV<T, 5, V>();
+	test_math_vector_get_TNV<T, 6, V>();
+	test_math_vector_get_TNV<T, 7, V>();
+	test_math_vector_get_TNV<T, 8, V>();
+}
+
+template <typename T>
+void test_math_vector_get_T(void)
+{
+	test_math_vector_get_TV<T, true>();
+	test_math_vector_get_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_vector_get)
 {
 	for(unsigned i=0; i<100; ++i)
 	{
-		test_math_vector_get<int>();
-		test_math_vector_get<float>();
-		test_math_vector_get<double>();
+		test_math_vector_get_T<int>();
+		test_math_vector_get_T<float>();
+		test_math_vector_get_T<double>();
 	}
 }
 
-template <typename T, unsigned N>
-void test_math_vector_set_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_vector_set_TNV(void)
 {
-	eagine::math::vector<T, N> va;
+	eagine::math::vector<T, N, V> va;
 
 	for(unsigned k=0; k<10; ++k)
 	{
@@ -752,26 +745,33 @@ void test_math_vector_set_T(void)
 	}
 }
 
-template <typename T>
-void test_math_vector_set(void)
+template <typename T, bool V>
+void test_math_vector_set_TV(void)
 {
-	test_math_vector_set_T<T, 1>();
-	test_math_vector_set_T<T, 2>();
-	test_math_vector_set_T<T, 3>();
-	test_math_vector_set_T<T, 4>();
-	test_math_vector_set_T<T, 5>();
-	test_math_vector_set_T<T, 6>();
-	test_math_vector_set_T<T, 7>();
-	test_math_vector_set_T<T, 8>();
+	test_math_vector_set_TNV<T, 1, V>();
+	test_math_vector_set_TNV<T, 2, V>();
+	test_math_vector_set_TNV<T, 3, V>();
+	test_math_vector_set_TNV<T, 4, V>();
+	test_math_vector_set_TNV<T, 5, V>();
+	test_math_vector_set_TNV<T, 6, V>();
+	test_math_vector_set_TNV<T, 7, V>();
+	test_math_vector_set_TNV<T, 8, V>();
+}
+
+template <typename T>
+void test_math_vector_set_T(void)
+{
+	test_math_vector_set_TV<T, true>();
+	test_math_vector_set_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_vector_set)
 {
 	for(unsigned i=0; i<100; ++i)
 	{
-		test_math_vector_set<int>();
-		test_math_vector_set<float>();
-		test_math_vector_set<double>();
+		test_math_vector_set_T<int>();
+		test_math_vector_set_T<float>();
+		test_math_vector_set_T<double>();
 	}
 }
 
