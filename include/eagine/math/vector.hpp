@@ -385,8 +385,8 @@ struct vector
 	template <unsigned ... I>
 	constexpr inline
 	typename meta::enable_if<
-		has_swizzle<vector<T,N>, I...>::value,
-		vector<T, sizeof...(I)>
+		has_swizzle<vector<T,N,V>, I...>::value,
+		vector<T, sizeof...(I), V>
 	>::type
 	swizzle_by(swizzle_mask<T, I...> m) const
 	noexcept
@@ -397,8 +397,8 @@ struct vector
 	template <unsigned ... I>
 	constexpr inline
 	typename meta::enable_if<
-		has_swizzle<vector<T,N>, I...>::value,
-		vector<T, sizeof...(I)>
+		has_swizzle<vector<T,N,V>, I...>::value,
+		vector<T, sizeof...(I), V>
 	>::type
 	swizzle(T c = T(0)) const
 	noexcept

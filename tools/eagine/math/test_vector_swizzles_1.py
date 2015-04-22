@@ -26,7 +26,7 @@ def generate(coord_str):
 		for comb in itertools.product(coords, repeat=n):
 			name = str("").join(comb)
 			if name != n * coords[0]:
-				print("BOOST_ASSERT((v.%(name)s(c) == eagine::math::tvec<T,%(N)d>(%(gets)s)));" % {
+				print("BOOST_ASSERT((v.%(name)s(c) == eagine::math::tvec<T,%(N)d,V>(%(gets)s)));" % {
 					"name": name,
 					"gets": str(", ").join([str(getters[index[x]]) for x in comb]),
 					"N" : len(comb)

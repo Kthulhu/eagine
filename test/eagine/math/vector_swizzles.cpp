@@ -18,10 +18,10 @@
 
 BOOST_AUTO_TEST_SUITE(math_vector_swizzles)
 
-template <typename T>
-void test_math_vector_swizzles_1_T(void)
+template <typename T, bool V>
+void test_math_vector_swizzles_1_TV(void)
 {
-	eagine::math::tvec<T,4> v(
+	eagine::math::tvec<T,4,V> v(
 		std::rand() / T(111), 
 		std::rand() / T(111), 
 		std::rand() / T(111), 
@@ -31,6 +31,13 @@ void test_math_vector_swizzles_1_T(void)
 
 
 #include "vector_swizzles.ipp"
+}
+
+template <typename T>
+void test_math_vector_swizzles_1_T(void)
+{
+	test_math_vector_swizzles_1_TV<T, true>();
+	test_math_vector_swizzles_1_TV<T,false>();
 }
 
 void test_math_vector_swizzles_1(void)
