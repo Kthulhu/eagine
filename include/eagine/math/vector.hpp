@@ -799,9 +799,9 @@ public:
 };
 
 // data
-template <typename T, unsigned N>
+template <typename T, unsigned N, bool V>
 static inline
-composite_data_ref<vector<T, N>> data(const vector<T, N>& v)
+composite_data_ref<vector<T, N, V>> data(const vector<T, N, V>& v)
 noexcept
 {
 	return v;
