@@ -290,7 +290,7 @@ transpose_tpl(const matrix<T,R,C,SrcRM,V>& m)
 noexcept
 {
 	static const bool S = (DstRM != SrcRM);
-	matrix<T,(S?R:C),(S?C:R),DstRM> r;
+	matrix<T,(S?R:C),(S?C:R),DstRM,V> r;
 
 	for(unsigned i=0; i<R; ++i)
 	for(unsigned j=0; j<C; ++j)
