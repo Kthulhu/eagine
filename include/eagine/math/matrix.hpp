@@ -88,10 +88,10 @@ struct matrix
 	}
 
 	inline
-	const vector<T, RM?C:R> operator [] (unsigned i) const
+	const vector<T, RM?C:R, V> operator [] (unsigned i) const
 	noexcept
 	{
-		return vector<T, RM?C:R>{_v[i]};
+		return vector<T, RM?C:R, V>{_v[i]};
 	}
 };
 
