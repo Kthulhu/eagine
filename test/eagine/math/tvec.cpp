@@ -329,16 +329,16 @@ BOOST_AUTO_TEST_CASE(math_tvec_init_ctr)
 	}
 }
 
-template <typename T, unsigned M>
-void test_math_tvec_conv_ctr1_T(const eagine::math::tvec<T, M>&)
+template <typename T, unsigned M, bool V>
+void test_math_tvec_conv_ctr1_TMNV(const eagine::math::tvec<T, M, V>&)
 {
 }
 
-template <typename T, unsigned M, unsigned N>
-void test_math_tvec_conv_ctr1_T(const eagine::math::tvec<T, (M>N?N:0)>& v1)
+template <typename T, unsigned M, unsigned N, bool V>
+void test_math_tvec_conv_ctr1_TMNV(const eagine::math::tvec<T, (M>N?N:0), V>& v1)
 {
 	T x = std::rand() / T(11);
-	eagine::math::tvec<T, N+1> v2(v1, x);
+	eagine::math::tvec<T, N+1, V> v2(v1, x);
 
 	using eagine::math::equal_to;
 	for(unsigned i=0; i<N; ++i)
@@ -347,35 +347,42 @@ void test_math_tvec_conv_ctr1_T(const eagine::math::tvec<T, (M>N?N:0)>& v1)
 	}
 	BOOST_ASSERT(x <<equal_to>> v2[N]);
 
-	test_math_tvec_conv_ctr1_T<T, M>(v2);
+	test_math_tvec_conv_ctr1_TMNV<T, M, V>(v2);
+}
+
+template <typename T, bool V>
+void test_math_tvec_conv_ctr1_TV(void)
+{
+	test_math_tvec_conv_ctr1_TMNV<T, 10, V>(
+		eagine::math::tvec<T, 1, V>(std::rand()/T(11))
+	);
 }
 
 template <typename T>
-void test_math_tvec_conv_ctr1(void)
+void test_math_tvec_conv_ctr1_T(void)
 {
-	test_math_tvec_conv_ctr1_T<T, 10>(
-		eagine::math::tvec<T, 1>(std::rand()/T(11))
-	);
+	test_math_tvec_conv_ctr1_TV<T, true>();
+	test_math_tvec_conv_ctr1_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_tvec_conv_ctr1)
 {
 	for(unsigned i=0; i<100; ++i)
 	{
-		test_math_tvec_conv_ctr1<int>();
-		test_math_tvec_conv_ctr1<float>();
-		test_math_tvec_conv_ctr1<double>();
+		test_math_tvec_conv_ctr1_T<int>();
+		test_math_tvec_conv_ctr1_T<float>();
+		test_math_tvec_conv_ctr1_T<double>();
 	}
 }
 
-template <typename T, unsigned N, typename ... P>
-void test_math_tvec_conv_ctr2_TNP(
-	const eagine::math::tvec<T, N>& v1,
+template <typename T, unsigned N, bool V, typename ... P>
+void test_math_tvec_conv_ctr2_TNVP(
+	const eagine::math::tvec<T, N, V>& v1,
 	P ... p
 )
 {
 	T d[sizeof...(P)] = {T(p)...};
-	eagine::math::tvec<T, N+sizeof...(P)> v2(v1, p...);
+	eagine::math::tvec<T, N+sizeof...(P), V> v2(v1, p...);
 
 	using eagine::math::equal_to;
 	for(unsigned i=0; i<N; ++i)
@@ -389,8 +396,8 @@ void test_math_tvec_conv_ctr2_TNP(
 	}
 }
 
-template <typename T, unsigned N, typename ... P>
-void test_math_tvec_conv_ctr2_TN(P ... p)
+template <typename T, unsigned N, bool V, typename ... P>
+void test_math_tvec_conv_ctr2_TNVP(P ... p)
 {
 	T d[N];
 
@@ -399,68 +406,75 @@ void test_math_tvec_conv_ctr2_TN(P ... p)
 		d[i] = std::rand() / T(11);
 	}
 
-	eagine::math::tvec<T, N> v(d, N);
-	test_math_tvec_conv_ctr2_TNP<T, N>(v, p...);
+	eagine::math::tvec<T, N, V> v(d, N);
+	test_math_tvec_conv_ctr2_TNVP<T, N, V>(v, p...);
 }
 
-template <typename T, unsigned N>
-void test_math_tvec_conv_ctr2_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_tvec_conv_ctr2_TNV(void)
 {
-	test_math_tvec_conv_ctr2_TN<T, N>(
+	test_math_tvec_conv_ctr2_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
-	test_math_tvec_conv_ctr2_TN<T, N>(
-		std::rand() / T(11),
-		std::rand() / T(11),
-		std::rand() / T(11)
-	);
-	test_math_tvec_conv_ctr2_TN<T, N>(
-		std::rand() / T(11),
+	test_math_tvec_conv_ctr2_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
-	test_math_tvec_conv_ctr2_TN<T, N>(
-		std::rand() / T(11),
+	test_math_tvec_conv_ctr2_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
-	test_math_tvec_conv_ctr2_TN<T, N>(
-		std::rand() / T(11),
+	test_math_tvec_conv_ctr2_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
+	test_math_tvec_conv_ctr2_TNVP<T, N, V>(
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11)
+	);
+}
+
+template <typename T, bool V>
+void test_math_tvec_conv_ctr2_TV(void)
+{
+	test_math_tvec_conv_ctr2_TNV<T, 2, V>();
+	test_math_tvec_conv_ctr2_TNV<T, 3, V>();
+	test_math_tvec_conv_ctr2_TNV<T, 4, V>();
+	test_math_tvec_conv_ctr2_TNV<T, 5, V>();
+	test_math_tvec_conv_ctr2_TNV<T, 6, V>();
+	test_math_tvec_conv_ctr2_TNV<T, 7, V>();
 }
 
 template <typename T>
-void test_math_tvec_conv_ctr2(void)
+void test_math_tvec_conv_ctr2_T(void)
 {
-	test_math_tvec_conv_ctr2_T<T, 2>();
-	test_math_tvec_conv_ctr2_T<T, 3>();
-	test_math_tvec_conv_ctr2_T<T, 4>();
-	test_math_tvec_conv_ctr2_T<T, 5>();
-	test_math_tvec_conv_ctr2_T<T, 6>();
-	test_math_tvec_conv_ctr2_T<T, 7>();
+	test_math_tvec_conv_ctr2_TV<T, true>();
+	test_math_tvec_conv_ctr2_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_tvec_conv_ctr2)
 {
 	for(unsigned i=0; i<100; ++i)
 	{
-		test_math_tvec_conv_ctr2<int>();
-		test_math_tvec_conv_ctr2<float>();
-		test_math_tvec_conv_ctr2<double>();
+		test_math_tvec_conv_ctr2_T<int>();
+		test_math_tvec_conv_ctr2_T<float>();
+		test_math_tvec_conv_ctr2_T<double>();
 	}
 }
 
-template <typename T, unsigned N, typename ... P>
-void test_math_tvec_conv_ctr3_TN(P ... p)
+template <typename T, unsigned N, bool V, typename ... P>
+void test_math_tvec_conv_ctr3_TNVP(P ... p)
 {
 	T d[N];
 
@@ -469,9 +483,9 @@ void test_math_tvec_conv_ctr3_TN(P ... p)
 		d[i] = std::rand() / T(11);
 	}
 
-	eagine::math::tvec<T, N> v(d, N);
-	eagine::math::tvec<T, sizeof...(P)> u(p...);
-	eagine::math::tvec<T, N+sizeof...(P)> w(v, u);
+	eagine::math::tvec<T, N, V> v(d, N);
+	eagine::math::tvec<T, sizeof...(P), V> u(p...);
+	eagine::math::tvec<T, N+sizeof...(P), V> w(v, u);
 
 	using eagine::math::equal_to;
 	for(unsigned i=0; i<N; ++i)
@@ -485,32 +499,32 @@ void test_math_tvec_conv_ctr3_TN(P ... p)
 	}
 }
 
-template <typename T, unsigned N>
-void test_math_tvec_conv_ctr3_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_tvec_conv_ctr3_TNV(void)
 {
-	test_math_tvec_conv_ctr3_TN<T, N>(
+	test_math_tvec_conv_ctr3_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
-	test_math_tvec_conv_ctr3_TN<T, N>(
-		std::rand() / T(11),
-		std::rand() / T(11),
-		std::rand() / T(11)
-	);
-	test_math_tvec_conv_ctr3_TN<T, N>(
-		std::rand() / T(11),
+	test_math_tvec_conv_ctr3_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
-	test_math_tvec_conv_ctr3_TN<T, N>(
-		std::rand() / T(11),
+	test_math_tvec_conv_ctr3_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11)
 	);
-	test_math_tvec_conv_ctr3_TN<T, N>(
+	test_math_tvec_conv_ctr3_TNVP<T, N, V>(
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11),
+		std::rand() / T(11)
+	);
+	test_math_tvec_conv_ctr3_TNVP<T, N, V>(
 		std::rand() / T(11),
 		std::rand() / T(11),
 		std::rand() / T(11),
@@ -520,29 +534,36 @@ void test_math_tvec_conv_ctr3_T(void)
 	);
 }
 
-template <typename T>
-void test_math_tvec_conv_ctr3(void)
+template <typename T, bool V>
+void test_math_tvec_conv_ctr3_TV(void)
 {
-	test_math_tvec_conv_ctr3_T<T, 2>();
-	test_math_tvec_conv_ctr3_T<T, 3>();
-	test_math_tvec_conv_ctr3_T<T, 4>();
-	test_math_tvec_conv_ctr3_T<T, 5>();
-	test_math_tvec_conv_ctr3_T<T, 6>();
-	test_math_tvec_conv_ctr3_T<T, 7>();
+	test_math_tvec_conv_ctr3_TNV<T, 2, V>();
+	test_math_tvec_conv_ctr3_TNV<T, 3, V>();
+	test_math_tvec_conv_ctr3_TNV<T, 4, V>();
+	test_math_tvec_conv_ctr3_TNV<T, 5, V>();
+	test_math_tvec_conv_ctr3_TNV<T, 6, V>();
+	test_math_tvec_conv_ctr3_TNV<T, 7, V>();
+}
+
+template <typename T>
+void test_math_tvec_conv_ctr3_T(void)
+{
+	test_math_tvec_conv_ctr3_TV<T, true>();
+	test_math_tvec_conv_ctr3_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_tvec_conv_ctr3)
 {
 	for(unsigned i=0; i<100; ++i)
 	{
-		test_math_tvec_conv_ctr3<int>();
-		test_math_tvec_conv_ctr3<float>();
-		test_math_tvec_conv_ctr3<double>();
+		test_math_tvec_conv_ctr3_T<int>();
+		test_math_tvec_conv_ctr3_T<float>();
+		test_math_tvec_conv_ctr3_T<double>();
 	}
 }
 
-template <typename T, unsigned N, unsigned M>
-void test_math_tvec_conv_ctr4_TN(void)
+template <typename T, unsigned N, unsigned M, bool V>
+void test_math_tvec_conv_ctr4_TNMV(void)
 {
 	T d[N];
 
@@ -551,8 +572,8 @@ void test_math_tvec_conv_ctr4_TN(void)
 		d[i] = std::rand() / T(11);
 	}
 
-	eagine::math::tvec<T, N> v(d, N);
-	eagine::math::tvec<T, M> u(v);
+	eagine::math::tvec<T, N, V> v(d, N);
+	eagine::math::tvec<T, M, V> u(v);
 
 	using eagine::math::equal_to;
 	for(unsigned i=0; i<M; ++i)
@@ -561,92 +582,105 @@ void test_math_tvec_conv_ctr4_TN(void)
 	}
 }
 
-template <typename T, unsigned N>
-void test_math_tvec_conv_ctr4_T(std::integral_constant<unsigned, 0>)
+template <typename T, unsigned N, bool V>
+void test_math_tvec_conv_ctr4_TNV(std::integral_constant<unsigned, 0>)
 {
 }
 
-template <typename T, unsigned N, unsigned M = N>
-void test_math_tvec_conv_ctr4_T(std::integral_constant<unsigned, M> = {})
+template <typename T, unsigned N, bool V, unsigned M = N>
+void test_math_tvec_conv_ctr4_TNV(std::integral_constant<unsigned, M> = {})
 {
-	test_math_tvec_conv_ctr4_TN<T, N, M>();
-	test_math_tvec_conv_ctr4_T<T, N>(
+	test_math_tvec_conv_ctr4_TNMV<T, N, M, V>();
+	test_math_tvec_conv_ctr4_TNV<T, N, V>(
 		std::integral_constant<unsigned, M-1>()
 	);
-	
+}
+
+template <typename T, bool V>
+void test_math_tvec_conv_ctr4_TV(void)
+{
+	test_math_tvec_conv_ctr4_TNV<T, 2, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 3, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 4, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 5, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 6, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 7, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 8, V>();
+	test_math_tvec_conv_ctr4_TNV<T, 9, V>();
 }
 
 template <typename T>
-void test_math_tvec_conv_ctr4(void)
+void test_math_tvec_conv_ctr4_T(void)
 {
-	test_math_tvec_conv_ctr4_T<T, 2>();
-	test_math_tvec_conv_ctr4_T<T, 3>();
-	test_math_tvec_conv_ctr4_T<T, 4>();
-	test_math_tvec_conv_ctr4_T<T, 5>();
-	test_math_tvec_conv_ctr4_T<T, 6>();
-	test_math_tvec_conv_ctr4_T<T, 7>();
-	test_math_tvec_conv_ctr4_T<T, 8>();
-	test_math_tvec_conv_ctr4_T<T, 9>();
+	test_math_tvec_conv_ctr4_TV<T, true>();
+	test_math_tvec_conv_ctr4_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_tvec_conv_ctr4)
 {
 	for(unsigned i=0; i<100; ++i)
 	{
-		test_math_tvec_conv_ctr4<int>();
-		test_math_tvec_conv_ctr4<float>();
-		test_math_tvec_conv_ctr4<double>();
+		test_math_tvec_conv_ctr4_T<int>();
+		test_math_tvec_conv_ctr4_T<float>();
+		test_math_tvec_conv_ctr4_T<double>();
 	}
 }
 
 
-template <typename T, unsigned N>
-void test_math_taxis_default_ctr_T_N(std::integral_constant<unsigned, 0>)
+template <typename T, unsigned N, bool V>
+void test_math_taxis_default_ctr_TNVI(std::integral_constant<unsigned, 0>)
 {
 	eagine::math::taxis<T, N, 0> ax;
 }
 
-template <typename T, unsigned N, unsigned I>
-void test_math_taxis_default_ctr_T_N(std::integral_constant<unsigned, I>)
+template <typename T, unsigned N, bool V, unsigned I>
+void test_math_taxis_default_ctr_TNVI(std::integral_constant<unsigned, I>)
 {
-	test_math_taxis_default_ctr_T_N<T, N>(
+	test_math_taxis_default_ctr_TNVI<T, N, V>(
 		std::integral_constant<unsigned, I-1>()
 	);
-	eagine::math::taxis<T, N, I> ax;
+	eagine::math::taxis<T, N, I, V> ax;
 }
 
-template <typename T, unsigned N>
-void test_math_taxis_default_ctr_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_taxis_default_ctr_TNV(void)
 {
-	test_math_taxis_default_ctr_T_N<T, N>(
+	test_math_taxis_default_ctr_TNVI<T, N, V>(
 		std::integral_constant<unsigned, N-1>()
 	);
 }
 
-template <typename T>
-void test_math_taxis_default_ctr(void)
+template <typename T, bool V>
+void test_math_taxis_default_ctr_TV(void)
 {
-	test_math_taxis_default_ctr_T<T, 2>();
-	test_math_taxis_default_ctr_T<T, 3>();
-	test_math_taxis_default_ctr_T<T, 4>();
-	test_math_taxis_default_ctr_T<T, 5>();
-	test_math_taxis_default_ctr_T<T, 6>();
-	test_math_taxis_default_ctr_T<T, 7>();
-	test_math_taxis_default_ctr_T<T, 8>();
-	test_math_taxis_default_ctr_T<T, 9>();
+	test_math_taxis_default_ctr_TNV<T, 2, V>();
+	test_math_taxis_default_ctr_TNV<T, 3, V>();
+	test_math_taxis_default_ctr_TNV<T, 4, V>();
+	test_math_taxis_default_ctr_TNV<T, 5, V>();
+	test_math_taxis_default_ctr_TNV<T, 6, V>();
+	test_math_taxis_default_ctr_TNV<T, 7, V>();
+	test_math_taxis_default_ctr_TNV<T, 8, V>();
+	test_math_taxis_default_ctr_TNV<T, 9, V>();
+}
+
+template <typename T>
+void test_math_taxis_default_ctr_T(void)
+{
+	test_math_taxis_default_ctr_TV<T, true>();
+	test_math_taxis_default_ctr_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_taxis_default_ctr)
 {
-	test_math_taxis_default_ctr<int>();
-	test_math_taxis_default_ctr<float>();
-	test_math_taxis_default_ctr<double>();
+	test_math_taxis_default_ctr_T<int>();
+	test_math_taxis_default_ctr_T<float>();
+	test_math_taxis_default_ctr_T<double>();
 }
 
-template <typename T, unsigned N>
-void test_math_taxis_elem1_T_N(std::integral_constant<unsigned, 0>)
+template <typename T, unsigned N, bool V>
+void test_math_taxis_elem1_TNVI(std::integral_constant<unsigned, 0>)
 {
-	eagine::math::taxis<T, N, 0> aN0;
+	eagine::math::taxis<T, N, 0, V> aN0;
 
 	for(unsigned i=0; i<N; ++i)
 	{
@@ -655,14 +689,14 @@ void test_math_taxis_elem1_T_N(std::integral_constant<unsigned, 0>)
 	}
 }
 
-template <typename T, unsigned N, unsigned I>
-void test_math_taxis_elem1_T_N(std::integral_constant<unsigned, I>)
+template <typename T, unsigned N, bool V, unsigned I>
+void test_math_taxis_elem1_TNVI(std::integral_constant<unsigned, I>)
 {
-	test_math_taxis_elem1_T_N<T, N>(
+	test_math_taxis_elem1_TNVI<T, N, V>(
 		std::integral_constant<unsigned, I-1>()
 	);
 
-	eagine::math::taxis<T, N, I> aNI;
+	eagine::math::taxis<T, N, I, V> aNI;
 
 	for(unsigned i=0; i<N; ++i)
 	{
@@ -671,32 +705,39 @@ void test_math_taxis_elem1_T_N(std::integral_constant<unsigned, I>)
 	}
 }
 
-template <typename T, unsigned N>
-void test_math_taxis_elem1_T(void)
+template <typename T, unsigned N, bool V>
+void test_math_taxis_elem1_TNV(void)
 {
-	test_math_taxis_elem1_T_N<T, N>(
+	test_math_taxis_elem1_TNVI<T, N, V>(
 		std::integral_constant<unsigned, N-1>()
 	);
 }
 
-template <typename T>
-void test_math_taxis_elem1(void)
+template <typename T, bool V>
+void test_math_taxis_elem1_TV(void)
 {
-	test_math_taxis_elem1_T<T, 2>();
-	test_math_taxis_elem1_T<T, 3>();
-	test_math_taxis_elem1_T<T, 4>();
-	test_math_taxis_elem1_T<T, 5>();
-	test_math_taxis_elem1_T<T, 6>();
-	test_math_taxis_elem1_T<T, 7>();
-	test_math_taxis_elem1_T<T, 8>();
-	test_math_taxis_elem1_T<T, 9>();
+	test_math_taxis_elem1_TNV<T, 2, V>();
+	test_math_taxis_elem1_TNV<T, 3, V>();
+	test_math_taxis_elem1_TNV<T, 4, V>();
+	test_math_taxis_elem1_TNV<T, 5, V>();
+	test_math_taxis_elem1_TNV<T, 6, V>();
+	test_math_taxis_elem1_TNV<T, 7, V>();
+	test_math_taxis_elem1_TNV<T, 8, V>();
+	test_math_taxis_elem1_TNV<T, 9, V>();
+}
+
+template <typename T>
+void test_math_taxis_elem1_T(void)
+{
+	test_math_taxis_elem1_TV<T, true>();
+	test_math_taxis_elem1_TV<T,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_taxis_elem1)
 {
-	test_math_taxis_elem1<int>();
-	test_math_taxis_elem1<float>();
-	test_math_taxis_elem1<double>();
+	test_math_taxis_elem1_T<int>();
+	test_math_taxis_elem1_T<float>();
+	test_math_taxis_elem1_T<double>();
 }
 
 // TODO

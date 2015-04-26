@@ -84,20 +84,21 @@ struct tvec : vector<T, N, V>
 	template <
 		typename P,
 		unsigned M,
+		bool W,
 		typename = typename meta::enable_if<
 			!meta::is_same<P, T>::value ||
 			!(M == N)
 		>::type
 	>
 	constexpr inline
-	tvec(const vector<P, M>& v)
+	tvec(const vector<P, M, W>& v)
 	noexcept
 	 : _base(_base::from(v))
 	{ }
 
-	template <typename P, unsigned M>
+	template <typename P, unsigned M, bool W>
 	constexpr inline
-	tvec(const vector<P, M>& v, T d)
+	tvec(const vector<P, M, W>& v, T d)
 	noexcept
 	 : _base(_base::from(v, d))
 	{ }
@@ -105,23 +106,24 @@ struct tvec : vector<T, N, V>
 	template <
 		typename P,
 		unsigned M,
+		bool W,
 		typename ... R,
 		typename = typename meta::enable_if<
 			(sizeof...(R) > 1) && (M+sizeof...(R) == N)
 		>::type
 	>
 	constexpr inline
-	tvec(const vector<P, M>& v, R&& ... r)
+	tvec(const vector<P, M, W>& v, R&& ... r)
 	noexcept
 	 : _base(_base::from(
 		v,
-		vector<T, N-M>::make(std::forward<R>(r)...)
+		vector<T, N-M, W>::make(std::forward<R>(r)...)
 	))
 	{ }
 
-	template <typename P, unsigned M>
+	template <typename P, unsigned M, bool W>
 	constexpr inline
-	tvec(const vector<P, M>& v, const vector<T, N-M>& w)
+	tvec(const vector<P, M, W>& v, const vector<T, N-M, W>& w)
 	noexcept
 	 : _base(_base::from(v, w))
 	{ }
@@ -135,10 +137,10 @@ typedef tvec<float, 3> vec3;
 typedef tvec<float, 4> vec4;
 
 // taxis
-template <typename T, unsigned N, unsigned I>
-struct taxis : vector<T, N>
+template <typename T, unsigned N, unsigned I, bool V = true>
+struct taxis : vector<T, N, V>
 {
-	typedef vector<T, N> _base;
+	typedef vector<T, N, V> _base;
 
 	static_assert(I<N, "");
 
