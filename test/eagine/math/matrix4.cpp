@@ -24,8 +24,8 @@ BOOST_AUTO_TEST_SUITE(math_matrix4)
 template <typename ... X>
 void test_eat(X...){ }
 
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I, unsigned J>
-bool test_math_matrix_from_TRCIJ(void)
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I, unsigned J>
+bool test_math_matrix_from_TRCRMVIJ(void)
 {
 	T d[R*C];
 
@@ -34,11 +34,11 @@ bool test_math_matrix_from_TRCIJ(void)
 		d[k] = std::rand() / T(1111);
 	}
 
-	eagine::math::matrix<T,R,C,RM> src =
-		eagine::math::matrix<T,R,C,RM>::from(d, R*C);
+	eagine::math::matrix<T,R,C,RM,V> src =
+		eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
 
-	eagine::math::matrix<T,I+1,J+1,RM> dst =
-		eagine::math::matrix<T,I+1,J+1,RM>::from(src);
+	eagine::math::matrix<T,I+1,J+1,RM,V> dst =
+		eagine::math::matrix<T,I+1,J+1,RM,V>::from(src);
 
 	for(unsigned i=0; i<=I; ++i)
 	for(unsigned j=0; j<=J; ++j)
@@ -50,61 +50,68 @@ bool test_math_matrix_from_TRCIJ(void)
 	return true;
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, unsigned I, unsigned ... J>
-bool test_math_matrix_from_TRCIJ(eagine::meta::unsigned_sequence<J...>)
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I, unsigned ... J>
+bool test_math_matrix_from_TRCRMVIJ(eagine::meta::unsigned_sequence<J...>)
 {
-	test_eat(test_math_matrix_from_TRCIJ<T,R,C,RM,I,J>()...);
+	test_eat(test_math_matrix_from_TRCRMVIJ<T,R,C,RM,V,I,J>()...);
 	return true;
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, unsigned ... I>
-void test_math_matrix_from_TRCI(eagine::meta::unsigned_sequence<I...>)
+template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned ... I>
+void test_math_matrix_from_TRCRMVI(eagine::meta::unsigned_sequence<I...>)
 {
-	test_eat(test_math_matrix_from_TRCIJ<T,R,C,RM,I>(
+	test_eat(test_math_matrix_from_TRCRMVIJ<T,R,C,RM,V,I>(
 		eagine::meta::make_unsigned_sequence<C>()
 	)...);
 }
 
-template <typename T, unsigned R, unsigned C, bool RM>
-void test_math_matrix_from_TRC(void)
+template <typename T, unsigned R, unsigned C, bool RM, bool V>
+void test_math_matrix_from_TRCRMV(void)
 {
-	test_math_matrix_from_TRCI<T,R,C,RM>(
+	test_math_matrix_from_TRCRMVI<T,R,C,RM,V>(
 		eagine::meta::make_unsigned_sequence<R>()
 	);
 }
 
-template <typename T, bool RM>
-void test_math_matrix_from(void)
+template <typename T, bool RM, bool V>
+void test_math_matrix_from_TRMV(void)
 {
-	test_math_matrix_from_TRC<T, 2, 2, RM>();
-	test_math_matrix_from_TRC<T, 2, 3, RM>();
-	test_math_matrix_from_TRC<T, 2, 4, RM>();
-	test_math_matrix_from_TRC<T, 2, 8, RM>();
+	test_math_matrix_from_TRCRMV<T, 2, 2, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 2, 3, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 2, 4, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 2, 8, RM, V>();
 
-	test_math_matrix_from_TRC<T, 3, 2, RM>();
-	test_math_matrix_from_TRC<T, 3, 3, RM>();
-	test_math_matrix_from_TRC<T, 3, 4, RM>();
-	test_math_matrix_from_TRC<T, 3, 8, RM>();
+	test_math_matrix_from_TRCRMV<T, 3, 2, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 3, 3, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 3, 4, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 3, 8, RM, V>();
 
-	test_math_matrix_from_TRC<T, 4, 2, RM>();
-	test_math_matrix_from_TRC<T, 4, 3, RM>();
-	test_math_matrix_from_TRC<T, 4, 4, RM>();
-	test_math_matrix_from_TRC<T, 4, 8, RM>();
+	test_math_matrix_from_TRCRMV<T, 4, 2, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 4, 3, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 4, 4, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 4, 8, RM, V>();
 
-	test_math_matrix_from_TRC<T, 8, 2, RM>();
-	test_math_matrix_from_TRC<T, 8, 3, RM>();
-	test_math_matrix_from_TRC<T, 8, 4, RM>();
-	test_math_matrix_from_TRC<T, 8, 8, RM>();
+	test_math_matrix_from_TRCRMV<T, 8, 2, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 8, 3, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 8, 4, RM, V>();
+	test_math_matrix_from_TRCRMV<T, 8, 8, RM, V>();
+}
+
+template <typename T>
+void test_math_matrix_from_T(void)
+{
+	test_math_matrix_from_TRMV<T, true, true>();
+	test_math_matrix_from_TRMV<T,false, true>();
+	test_math_matrix_from_TRMV<T, true,false>();
+	test_math_matrix_from_TRMV<T,false,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_matrix_from)
 {
 	for(unsigned k=0; k<100; ++k)
 	{
-		test_math_matrix_from<float, true>();
-		test_math_matrix_from<float,false>();
-		test_math_matrix_from<double, true>();
-		test_math_matrix_from<double,false>();
+		test_math_matrix_from_T<float>();
+		test_math_matrix_from_T<double>();
 	}
 }
 
