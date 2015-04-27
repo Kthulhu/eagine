@@ -18,661 +18,352 @@
 
 BOOST_AUTO_TEST_SUITE(math_matrix2)
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_rows_TRCRMV(void)
+template <typename Tester, typename T, bool RM, bool V>
+void do_test_math_matrix_TRMV(void)
 {
-	eagine::math::matrix<T,R,C,RM,V> m;
+	Tester::template apply<T, 1, 1, RM, V>();
+	Tester::template apply<T, 1, 2, RM, V>();
+	Tester::template apply<T, 1, 3, RM, V>();
+	Tester::template apply<T, 1, 4, RM, V>();
+	Tester::template apply<T, 1, 5, RM, V>();
 
-	using eagine::math::rows;
+	Tester::template apply<T, 2, 1, RM, V>();
+	Tester::template apply<T, 2, 2, RM, V>();
+	Tester::template apply<T, 2, 3, RM, V>();
+	Tester::template apply<T, 2, 4, RM, V>();
+	Tester::template apply<T, 2, 5, RM, V>();
 
-	BOOST_ASSERT(rows(m) == R);
+	Tester::template apply<T, 3, 1, RM, V>();
+	Tester::template apply<T, 3, 2, RM, V>();
+	Tester::template apply<T, 3, 3, RM, V>();
+	Tester::template apply<T, 3, 4, RM, V>();
+	Tester::template apply<T, 3, 5, RM, V>();
+
+	Tester::template apply<T, 4, 1, RM, V>();
+	Tester::template apply<T, 4, 2, RM, V>();
+	Tester::template apply<T, 4, 3, RM, V>();
+	Tester::template apply<T, 4, 4, RM, V>();
+	Tester::template apply<T, 4, 5, RM, V>();
+
+	Tester::template apply<T, 5, 1, RM, V>();
+	Tester::template apply<T, 5, 2, RM, V>();
+	Tester::template apply<T, 5, 3, RM, V>();
+	Tester::template apply<T, 5, 4, RM, V>();
+	Tester::template apply<T, 5, 5, RM, V>();
 }
 
-template <typename T, bool RM, bool V>
-void test_math_matrix_rows_TRMV(void)
+template <typename Tester, typename T>
+void do_test_math_matrix_T(void)
 {
-	test_math_matrix_rows_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_rows_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_rows_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_rows_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_rows_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_rows_TRCRMV<T, 5, 5, RM, V>();
+	do_test_math_matrix_TRMV<Tester, T, true, true>();
+	do_test_math_matrix_TRMV<Tester, T,false, true>();
+	do_test_math_matrix_TRMV<Tester, T, true,false>();
+	do_test_math_matrix_TRMV<Tester, T,false,false>();
 }
 
-template <typename T>
-void test_math_matrix_rows_T(void)
+template <typename Tester>
+void do_test_math_matrix(void)
 {
-	test_math_matrix_rows_TRMV<T, true, true>();
-	test_math_matrix_rows_TRMV<T,false, true>();
-	test_math_matrix_rows_TRMV<T, true,false>();
-	test_math_matrix_rows_TRMV<T,false,false>();
+	do_test_math_matrix_T<Tester, float>();
+	do_test_math_matrix_T<Tester,double>();
 }
+
+struct test_math_matrix_rows
+{
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
+	{
+		eagine::math::matrix<T,R,C,RM,V> m;
+
+		using eagine::math::rows;
+
+		BOOST_ASSERT(rows(m) == R);
+	}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_rows)
 {
-	test_math_matrix_rows_T<float>();
-	test_math_matrix_rows_T<double>();
+	do_test_math_matrix<test_math_matrix_rows>();
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_cols_TRCRMV(void)
+struct test_math_matrix_cols
 {
-	eagine::math::matrix<T,R,C,RM,V> m;
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
+	{
+		eagine::math::matrix<T,R,C,RM,V> m;
 
-	using eagine::math::columns;
+		using eagine::math::columns;
 
-	BOOST_ASSERT(columns(m) == C);
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_cols_TRMV(void)
-{
-	test_math_matrix_cols_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_cols_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_cols_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_cols_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_cols_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_cols_TRCRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_cols_T(void)
-{
-	test_math_matrix_cols_TRMV<T, true, true>();
-	test_math_matrix_cols_TRMV<T,false, true>();
-	test_math_matrix_cols_TRMV<T, true,false>();
-	test_math_matrix_cols_TRMV<T,false,false>();
-}
+		BOOST_ASSERT(columns(m) == C);
+	}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_cols)
 {
-	test_math_matrix_cols_T<float>();
-	test_math_matrix_cols_T<double>();
+	do_test_math_matrix<test_math_matrix_cols>();
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_row_major_TRCRMV(void)
+struct test_math_matrix_row_major
 {
-	eagine::math::matrix<T,R,C,RM,V> m;
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
+	{
+		eagine::math::matrix<T,R,C,RM,V> m;
 
-	using eagine::math::row_major;
+		using eagine::math::row_major;
 
-	BOOST_ASSERT(row_major(m) == RM);
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_row_major_TRMV(void)
-{
-	test_math_matrix_row_major_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_row_major_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_row_major_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_row_major_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_row_major_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_row_major_TRCRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_row_major_T(void)
-{
-	test_math_matrix_row_major_TRMV<T, true, true>();
-	test_math_matrix_row_major_TRMV<T,false, true>();
-	test_math_matrix_row_major_TRMV<T, true,false>();
-	test_math_matrix_row_major_TRMV<T,false,false>();
-}
+		BOOST_ASSERT(row_major(m) == RM);
+	}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_row_major)
 {
-	test_math_matrix_row_major_T<float>();
-	test_math_matrix_row_major_T<double>();
+	do_test_math_matrix<test_math_matrix_row_major>();
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_get_TRCRMV(void)
+struct test_math_matrix_get
 {
-	T d[R*C];
-
-	for(unsigned k=0; k<R*C; ++k)
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
 	{
-		d[k] = std::rand() / T(3);
-	}
+		T d[R*C];
 
-	auto m = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
-
-	for(unsigned i=0; i<R; ++i)
-	{
-		for(unsigned j=0; j<C; ++j)
+		for(unsigned k=0; k<R*C; ++k)
 		{
-			unsigned k = RM?(i*C+j):(j*R+i);
+			d[k] = std::rand() / T(3);
+		}
 
-			using eagine::math::equal_to;
-			BOOST_ASSERT(get(m,i,j) <<equal_to>> d[k]);
+		auto m = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
+
+		for(unsigned i=0; i<R; ++i)
+		{
+			for(unsigned j=0; j<C; ++j)
+			{
+				unsigned k = RM?(i*C+j):(j*R+i);
+
+				using eagine::math::equal_to;
+				BOOST_ASSERT(get(m,i,j) <<equal_to>> d[k]);
+			}
 		}
 	}
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_get_TRMV(void)
-{
-	test_math_matrix_get_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_get_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_get_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_get_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_get_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_get_TRCRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_get_T(void)
-{
-	test_math_matrix_get_TRMV<T, true, true>();
-	test_math_matrix_get_TRMV<T,false, true>();
-	test_math_matrix_get_TRMV<T, true,false>();
-	test_math_matrix_get_TRMV<T,false,false>();
-}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_get)
 {
 	for(unsigned k=0; k<100; ++k)
 	{
-		test_math_matrix_get_T<float>();
-		test_math_matrix_get_T<double>();
+		do_test_math_matrix<test_math_matrix_get>();
 	}
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_reorder_TRCRMV(void)
+struct test_math_matrix_reorder
 {
-	T d[R*C];
-
-	for(unsigned k=0; k<R*C; ++k)
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
 	{
-		d[k] = std::rand() / T(3);
-	}
+		T d[R*C];
 
-	auto m1 = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
-
-	using eagine::math::reorder;
-	eagine::math::matrix<T,R,C,!RM,V> m2 = reorder(m1);
-
-	for(unsigned i=0; i<R; ++i)
-	{
-		for(unsigned j=0; j<C; ++j)
+		for(unsigned k=0; k<R*C; ++k)
 		{
-			using eagine::math::equal_to;
-			BOOST_ASSERT(get(m1,i,j) <<equal_to>> get(m2,i,j));
+			d[k] = std::rand() / T(3);
+		}
+
+		auto m1 = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
+
+		using eagine::math::reorder;
+		eagine::math::matrix<T,R,C,!RM,V> m2 = reorder(m1);
+
+		for(unsigned i=0; i<R; ++i)
+		{
+			for(unsigned j=0; j<C; ++j)
+			{
+				using eagine::math::equal_to;
+				BOOST_ASSERT(get(m1,i,j) <<equal_to>> get(m2,i,j));
+			}
 		}
 	}
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_reorder_TRMV(void)
-{
-	test_math_matrix_reorder_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_reorder_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_reorder_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_reorder_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_reorder_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_reorder_TRCRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_reorder_T(void)
-{
-	test_math_matrix_reorder_TRMV<T, true, true>();
-	test_math_matrix_reorder_TRMV<T,false, true>();
-	test_math_matrix_reorder_TRMV<T, true,false>();
-	test_math_matrix_reorder_TRMV<T,false,false>();
-}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_reorder)
 {
 	for(unsigned k=0; k<100; ++k)
 	{
-		test_math_matrix_reorder_T<float>();
-		test_math_matrix_reorder_T<double>();
+		do_test_math_matrix<test_math_matrix_reorder>();
 	}
 }
 
-template <typename T, unsigned M, unsigned N, bool RM, bool V>
-void test_math_matrix_transpose_TMNRMV(void)
+struct test_math_matrix_transpose
 {
-	T d[M*N];
-
-	for(unsigned k=0; k<M*N; ++k)
+	template <typename T, unsigned M, unsigned N, bool RM, bool V>
+	static void apply(void)
 	{
-		d[k] = std::rand() / T(3);
-	}
+		T d[M*N];
 
-	auto m1 = eagine::math::matrix<T,M,N,RM,V>::from(d, M*N);
-
-	using eagine::math::transpose;
-	eagine::math::matrix<T,N,M,RM,V> m2 = transpose(m1);
-
-	for(unsigned i=0; i<M; ++i)
-	{
-		for(unsigned j=0; j<N; ++j)
+		for(unsigned k=0; k<M*N; ++k)
 		{
-			using eagine::math::equal_to;
-			BOOST_ASSERT(get(m1,i,j) <<equal_to>> get(m2,j,i));
+			d[k] = std::rand() / T(3);
+		}
+
+		auto m1 = eagine::math::matrix<T,M,N,RM,V>::from(d, M*N);
+
+		using eagine::math::transpose;
+		eagine::math::matrix<T,N,M,RM,V> m2 = transpose(m1);
+
+		for(unsigned i=0; i<M; ++i)
+		{
+			for(unsigned j=0; j<N; ++j)
+			{
+				using eagine::math::equal_to;
+				BOOST_ASSERT(get(m1,i,j) <<equal_to>> get(m2,j,i));
+			}
 		}
 	}
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_transpose_TRMV(void)
-{
-	test_math_matrix_transpose_TMNRMV<T, 1, 1, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 1, 2, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 1, 3, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 1, 4, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_transpose_TMNRMV<T, 2, 1, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 2, 2, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 2, 3, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 2, 4, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_transpose_TMNRMV<T, 3, 1, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 3, 2, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 3, 3, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 3, 4, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_transpose_TMNRMV<T, 4, 1, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 4, 2, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 4, 3, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 4, 4, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_transpose_TMNRMV<T, 5, 1, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 5, 2, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 5, 3, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 5, 4, RM, V>();
-	test_math_matrix_transpose_TMNRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_transpose_T(void)
-{
-	test_math_matrix_transpose_TRMV<T, true, true>();
-	test_math_matrix_transpose_TRMV<T,false, true>();
-	test_math_matrix_transpose_TRMV<T, true,false>();
-	test_math_matrix_transpose_TRMV<T,false,false>();
-}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_transpose)
 {
 	for(unsigned k=0; k<100; ++k)
 	{
-		test_math_matrix_transpose_T<float>();
-		test_math_matrix_transpose_T<double>();
+		do_test_math_matrix<test_math_matrix_transpose>();
 	}
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_row_TRCRMV(void)
+struct test_math_matrix_row
 {
-	T d[R*C];
-
-	for(unsigned k=0; k<R*C; ++k)
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
 	{
-		d[k] = std::rand() / T(3);
-	}
+		T d[R*C];
 
-	auto m = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
-
-	for(unsigned i=0; i<R; ++i)
-	{
-		using eagine::math::row;
-		eagine::math::vector<T, C, V> r = row(m, i);
-
-		for(unsigned j=0; j<C; ++j)
+		for(unsigned k=0; k<R*C; ++k)
 		{
-			unsigned k = RM?(i*C+j):(j*R+i);
+			d[k] = std::rand() / T(3);
+		}
 
-			using eagine::math::equal_to;
-			BOOST_ASSERT(r[j] <<equal_to>> d[k]);
-			BOOST_ASSERT(r[j] <<equal_to>> get(m,i,j));
+		auto m = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
+
+		for(unsigned i=0; i<R; ++i)
+		{
+			using eagine::math::row;
+			eagine::math::vector<T, C, V> r = row(m, i);
+
+			for(unsigned j=0; j<C; ++j)
+			{
+				unsigned k = RM?(i*C+j):(j*R+i);
+
+				using eagine::math::equal_to;
+				BOOST_ASSERT(r[j] <<equal_to>> d[k]);
+				BOOST_ASSERT(r[j] <<equal_to>> get(m,i,j));
+			}
 		}
 	}
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_row_TRMV(void)
-{
-	test_math_matrix_row_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_row_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_row_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_row_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_row_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_row_TRCRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_row_T(void)
-{
-	test_math_matrix_row_TRMV<T, true, true>();
-	test_math_matrix_row_TRMV<T,false, true>();
-	test_math_matrix_row_TRMV<T, true,false>();
-	test_math_matrix_row_TRMV<T,false,false>();
-}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_row)
 {
 	for(unsigned k=0; k<100; ++k)
 	{
-		test_math_matrix_row_T<float>();
-		test_math_matrix_row_T<double>();
+		do_test_math_matrix<test_math_matrix_row>();
 	}
 }
 
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_col_TRCRMV(void)
+struct test_math_matrix_col
 {
-	T d[R*C];
-
-	for(unsigned k=0; k<R*C; ++k)
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
 	{
-		d[k] = std::rand() / T(3);
-	}
+		T d[R*C];
 
-	auto m = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
-
-	for(unsigned j=0; j<C; ++j)
-	{
-		using eagine::math::column;
-		eagine::math::vector<T, R, V> c = column(m, j);
-
-		for(unsigned i=0; i<R; ++i)
+		for(unsigned k=0; k<R*C; ++k)
 		{
-			unsigned k = RM?(i*C+j):(j*R+i);
+			d[k] = std::rand() / T(3);
+		}
 
-			using eagine::math::equal_to;
-			BOOST_ASSERT(c[i] <<equal_to>> d[k]);
-			BOOST_ASSERT(c[i] <<equal_to>> get(m,i,j));
+		auto m = eagine::math::matrix<T,R,C,RM,V>::from(d, R*C);
+
+		for(unsigned j=0; j<C; ++j)
+		{
+			using eagine::math::column;
+			eagine::math::vector<T, R, V> c = column(m, j);
+
+			for(unsigned i=0; i<R; ++i)
+			{
+				unsigned k = RM?(i*C+j):(j*R+i);
+
+				using eagine::math::equal_to;
+				BOOST_ASSERT(c[i] <<equal_to>> d[k]);
+				BOOST_ASSERT(c[i] <<equal_to>> get(m,i,j));
+			}
 		}
 	}
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_col_TRMV(void)
-{
-	test_math_matrix_col_TRCRMV<T, 1, 1, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 1, 2, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 1, 3, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 1, 4, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 1, 5, RM, V>();
-
-	test_math_matrix_col_TRCRMV<T, 2, 1, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 2, 2, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 2, 3, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 2, 4, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 2, 5, RM, V>();
-
-	test_math_matrix_col_TRCRMV<T, 3, 1, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 3, 2, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 3, 3, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 3, 4, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 3, 5, RM, V>();
-
-	test_math_matrix_col_TRCRMV<T, 4, 1, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 4, 2, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 4, 3, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 4, 4, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 4, 5, RM, V>();
-
-	test_math_matrix_col_TRCRMV<T, 5, 1, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 5, 2, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 5, 3, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 5, 4, RM, V>();
-	test_math_matrix_col_TRCRMV<T, 5, 5, RM, V>();
-}
-
-template <typename T>
-void test_math_matrix_col_T(void)
-{
-	test_math_matrix_col_TRMV<T, true, true>();
-	test_math_matrix_col_TRMV<T,false, true>();
-	test_math_matrix_col_TRMV<T, true,false>();
-	test_math_matrix_col_TRMV<T,false,false>();
-}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_col)
 {
 	for(unsigned k=0; k<100; ++k)
 	{
-		test_math_matrix_col_T<float>();
-		test_math_matrix_col_T<double>();
+		do_test_math_matrix<test_math_matrix_col>();
 	}
 }
 
-template <typename T, unsigned N, typename Range>
-void test_math_matrix_data_range_TNR(const T(&a)[N], Range& r)
+struct test_math_matrix_data
 {
-	BOOST_ASSERT(r.addr() != nullptr);
-	BOOST_ASSERT(r.size() == N);
-
-	const T* b = r.begin();
-	const T* e = r.end();
-
-	BOOST_ASSERT(b != e);
-
-	for(unsigned i=0; i<N; ++i)
+	template <typename T, unsigned N, typename Range>
+	static void test_data_range(const T(&a)[N], Range& r)
 	{
-		const T* o = r.offs(i);
+		BOOST_ASSERT(r.addr() != nullptr);
+		BOOST_ASSERT(r.size() == N);
 
-		using eagine::math::equal_to;
-		BOOST_ASSERT(r[i] <<equal_to>> a[i]);
-		BOOST_ASSERT(*o  <<equal_to>> a[i]);
+		const T* b = r.begin();
+		const T* e = r.end();
+
+		BOOST_ASSERT(b != e);
+
+		for(unsigned i=0; i<N; ++i)
+		{
+			const T* o = r.offs(i);
+
+			using eagine::math::equal_to;
+			BOOST_ASSERT(r[i] <<equal_to>> a[i]);
+			BOOST_ASSERT(*o  <<equal_to>> a[i]);
+		}
+
+		for(T x : r) { (void)x; }
+
+		for(unsigned i=0; i<N; ++i)
+		{
+			auto s = r.slice(i);
+			BOOST_ASSERT(s.size() == N-i);
+		}
 	}
 
-	for(T x : r) { (void)x; }
-
-	for(unsigned i=0; i<N; ++i)
+	template <typename T, unsigned R, unsigned C, bool RM, bool V>
+	static void apply(void)
 	{
-		auto s = r.slice(i);
-		BOOST_ASSERT(s.size() == N-i);
+		T a[R*C];
+
+		for(unsigned i=0; i<R*C; ++i)
+		{
+			a[i] = std::rand() / T(R*C);
+		}
+
+		auto ma = eagine::math::matrix<T, R, C, RM, V>::from(a, R*C);
+
+		auto d = data(ma);
+		eagine::base::typed_memory_range<const T> r = d.range();
+
+		test_data_range(a, d);
+		test_data_range(a, r);
 	}
-}
-
-template <typename T, unsigned R, unsigned C, bool RM, bool V>
-void test_math_matrix_data_TRCRMV(void)
-{
-	T a[R*C];
-
-	for(unsigned i=0; i<R*C; ++i)
-	{
-		a[i] = std::rand() / T(R*C);
-	}
-
-	auto ma = eagine::math::matrix<T, R, C, RM, V>::from(a, R*C);
-
-	auto d = data(ma);
-	eagine::base::typed_memory_range<const T> r = d.range();
-
-	test_math_matrix_data_range_TNR(a, d);
-	test_math_matrix_data_range_TNR(a, r);
-}
-
-template <typename T, bool RM, bool V>
-void test_math_matrix_data_TRMV(void)
-{
-	for(unsigned i=0; i<10; ++i)
-	{
-		test_math_matrix_data_TRCRMV<T, 2, 2, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 2, 3, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 2, 4, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 2, 8, RM, V>();
-
-		test_math_matrix_data_TRCRMV<T, 3, 2, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 3, 3, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 3, 4, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 3, 8, RM, V>();
-
-		test_math_matrix_data_TRCRMV<T, 4, 2, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 4, 3, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 4, 4, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 4, 8, RM, V>();
-
-		test_math_matrix_data_TRCRMV<T, 8, 2, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 8, 3, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 8, 4, RM, V>();
-		test_math_matrix_data_TRCRMV<T, 8, 8, RM, V>();
-	}
-}
-
-template <typename T>
-void test_math_matrix_data_T(void)
-{
-	test_math_matrix_data_TRMV<T, true, true>();
-	test_math_matrix_data_TRMV<T,false, true>();
-	test_math_matrix_data_TRMV<T, true,false>();
-	test_math_matrix_data_TRMV<T,false,false>();
-}
+};
 
 BOOST_AUTO_TEST_CASE(math_matrix_data)
 {
-	test_math_matrix_data_T<float>();
-	test_math_matrix_data_T<double>();
+	for(unsigned k=0; k<100; ++k)
+	{
+		do_test_math_matrix<test_math_matrix_data>();
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()
