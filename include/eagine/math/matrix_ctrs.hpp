@@ -308,7 +308,7 @@ operator * (
 // reorder_mat_ctr(translation_I)
 template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-translation_I<matrix<T,R,C,!RM>, I>
+translation_I<matrix<T,R,C,!RM,V>, I>
 reorder_mat_ctr(const translation_I<matrix<T,R,C,RM,V>, I>& t)
 noexcept
 {
@@ -438,7 +438,7 @@ operator * (
 // reorder_mat_ctr(rotation_I)
 template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-rotation_I<matrix<T,R,C,!RM>, I>
+rotation_I<matrix<T,R,C,!RM,V>, I>
 reorder_mat_ctr(const rotation_I<matrix<T,R,C,RM,V>, I>& r)
 noexcept
 {
@@ -501,20 +501,20 @@ struct is_matrix_constructor<rotation_a<matrix<T,R,C,RM,V>>>
 template <typename T, bool RM, bool V>
 struct rotation_a<matrix<T,4,4,RM,V>>
 {
-	typedef vector<T,4> _vT;
+	typedef vector<T,4,V> _vT;
 
-	vector<T,4> _v;
+	vector<T,4,V> _v;
 	angle<T> _a;
 
 	constexpr
-	rotation_a(const vector<T,4>& v, angle<T> a)
+	rotation_a(const vector<T,4,V>& v, angle<T> a)
 	noexcept
 	 : _v(v)
 	 , _a(a)
 	{ }
 
 	constexpr
-	rotation_a(const vector<T,3>& v, angle<T> a)
+	rotation_a(const vector<T,3,V>& v, angle<T> a)
 	noexcept
 	 : _v(_vT::from(normalized(v),T(0)))
 	 , _a(a)
@@ -566,7 +566,7 @@ struct rotation_a<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(rotation_a)
 template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-rotation_a<matrix<T,R,C,!RM>>
+rotation_a<matrix<T,R,C,!RM,V>>
 reorder_mat_ctr(const rotation_a<matrix<T,R,C,RM,V>>& r)
 noexcept
 {
@@ -722,7 +722,7 @@ operator * (
 // reorder_mat_ctr(scale_I)
 template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-scale_I<matrix<T,R,C,!RM>, I>
+scale_I<matrix<T,R,C,!RM,V>, I>
 reorder_mat_ctr(const scale_I<matrix<T,R,C,RM,V>, I>& t)
 noexcept
 {
@@ -827,7 +827,7 @@ operator * (
 // reorder_mat_ctr(uniform_scale)
 template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-uniform_scale<matrix<T,R,C,!RM>>
+uniform_scale<matrix<T,R,C,!RM,V>>
 reorder_mat_ctr(const uniform_scale<matrix<T,R,C,RM,V>>& us)
 noexcept
 {
@@ -898,7 +898,7 @@ operator * (
 // reorder_mat_ctr(reflection_I)
 template <typename T, unsigned R, unsigned C, bool RM, bool V, unsigned I>
 static constexpr inline
-reflection_I<matrix<T,R,C,!RM>, I>
+reflection_I<matrix<T,R,C,!RM,V>, I>
 reorder_mat_ctr(const reflection_I<matrix<T,R,C,RM,V>, I>& r)
 noexcept
 {
@@ -1170,7 +1170,7 @@ struct ortho<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(ortho)
 template <typename T, bool RM, bool V>
 static constexpr inline
-ortho<matrix<T,4,4,!RM>>
+ortho<matrix<T,4,4,!RM,V>>
 reorder_mat_ctr(const ortho<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
@@ -1272,7 +1272,7 @@ struct looking_at_y_up<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(looking_at_y_up)
 template <typename T, bool RM, bool V>
 static constexpr inline
-looking_at_y_up<matrix<T,4,4,!RM>>
+looking_at_y_up<matrix<T,4,4,!RM,V>>
 reorder_mat_ctr(const looking_at_y_up<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
@@ -1385,7 +1385,7 @@ struct looking_at<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(looking_at)
 template <typename T, bool RM, bool V>
 static constexpr inline
-looking_at<matrix<T,4,4,!RM>>
+looking_at<matrix<T,4,4,!RM,V>>
 reorder_mat_ctr(const looking_at<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
@@ -1492,7 +1492,7 @@ struct orbiting_y_up<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(orbiting_y_up)
 template <typename T, bool RM, bool V>
 static constexpr inline
-orbiting_y_up<matrix<T,4,4,!RM>>
+orbiting_y_up<matrix<T,4,4,!RM,V>>
 reorder_mat_ctr(const orbiting_y_up<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
@@ -1709,7 +1709,7 @@ struct perspective<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(perspective)
 template <typename T, bool RM, bool V>
 static constexpr inline
-perspective<matrix<T,4,4,!RM>>
+perspective<matrix<T,4,4,!RM,V>>
 reorder_mat_ctr(const perspective<matrix<T,4,4,RM,V>>& c)
 noexcept
 {

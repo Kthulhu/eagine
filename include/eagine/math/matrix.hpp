@@ -110,7 +110,7 @@ struct reordered_matrix;
 // reordered matrix
 template <typename T, unsigned R, unsigned C, bool RM, bool V>
 struct reordered_matrix<matrix<T,R,C,RM,V>>
- : matrix<T,R,C,!RM>
+ : matrix<T,R,C,!RM,V>
 { };
 
 // (number of) rows
