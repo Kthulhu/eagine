@@ -19,10 +19,10 @@
 
 BOOST_AUTO_TEST_SUITE(math_matrix_ctrs1)
 
-template <typename MC, typename T, unsigned R, unsigned C, bool RM>
-void do_test_math_matrix_constructor(void)
+template <typename MC, typename T, unsigned R, unsigned C, bool RM, bool V>
+void do_test_math_matrix_constructor_TRCRMV(void)
 {
-	typedef eagine::math::matrix<T,R,C,RM> M;
+	typedef eagine::math::matrix<T,R,C,RM,V> M;
 
 	BOOST_ASSERT(eagine::math::is_matrix_constructor<MC>());
 
@@ -45,222 +45,229 @@ void do_test_math_matrix_constructor(void)
 	));
 }
 
-template <typename T, bool RM>
-void test_math_matrix_constructor(void)
+template <typename T, bool RM, bool V>
+void test_math_matrix_constructor_TRMV(void)
 {
 	// translation
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// translation_I
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation_I<
-			eagine::math::matrix<T,4,4,RM>, 0
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 0
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation_x<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation_I<
-			eagine::math::matrix<T,4,4,RM>, 1
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 1
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation_y<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation_I<
-				eagine::math::matrix<T,4,4,RM>, 2
-		>,T,4,4,RM
+				eagine::math::matrix<T,4,4,RM,V>, 2
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::translation_z<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// rotation_I
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_I<
-			eagine::math::matrix<T,4,4,RM>, 0
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 0
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_x<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::pitch<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_I<
-			eagine::math::matrix<T,4,4,RM>, 1
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 1
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_y<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::yaw<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_I<
-			eagine::math::matrix<T,4,4,RM>, 2
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 2
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_z<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::roll<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// rotation_a
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::rotation_a<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// scale
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// scale_I
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale_I<
-			eagine::math::matrix<T,4,4,RM>, 0
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 0
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale_x<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale_I<
-			eagine::math::matrix<T,4,4,RM>, 1
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 1
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale_y<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale_I<
-			eagine::math::matrix<T,4,4,RM>, 2
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 2
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::scale_z<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// uniform_scale
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::uniform_scale<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// reflection_I
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::reflection_I<
-			eagine::math::matrix<T,4,4,RM>, 0
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 0
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::reflection_x<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::reflection_I<
-			eagine::math::matrix<T,4,4,RM>, 1
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 1
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::reflection_y<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::reflection_I<
-			eagine::math::matrix<T,4,4,RM>, 2
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>, 2
+		>,T,4,4,RM,V
 	>();
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::reflection_z<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// shear
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::shear<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// ortho
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::ortho<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// looking_at_y_up
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::looking_at_y_up<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// looking_at
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::looking_at<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// orbiting_y_up
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::orbiting_y_up<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// perspective
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::perspective<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
 	// screen_stretch
-	do_test_math_matrix_constructor<
+	do_test_math_matrix_constructor_TRCRMV<
 		eagine::math::screen_stretch<
-			eagine::math::matrix<T,4,4,RM>
-		>,T,4,4,RM
+			eagine::math::matrix<T,4,4,RM,V>
+		>,T,4,4,RM,V
 	>();
+}
+
+template <typename T>
+void test_math_matrix_constructor_T(void)
+{
+	test_math_matrix_constructor_TRMV<T, true, true>();
+	test_math_matrix_constructor_TRMV<T,false, true>();
+	test_math_matrix_constructor_TRMV<T, true,false>();
+	test_math_matrix_constructor_TRMV<T,false,false>();
 }
 
 BOOST_AUTO_TEST_CASE(math_is_matrix_constructor)
 {
-	test_math_matrix_constructor<float, true>();
-	test_math_matrix_constructor<float,false>();
-	test_math_matrix_constructor<double, true>();
-	test_math_matrix_constructor<double,false>();
+	test_math_matrix_constructor_T<float>();
+	test_math_matrix_constructor_T<double>();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

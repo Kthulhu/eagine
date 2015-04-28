@@ -194,7 +194,7 @@ operator * (
 // reorder_mat_ctr(translation)
 template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-translation<matrix<T,R,C,!RM>>
+translation<matrix<T,R,C,!RM,V>>
 reorder_mat_ctr(const translation<matrix<T,R,C,RM,V>>& t)
 noexcept
 {
@@ -206,8 +206,8 @@ template <typename X, unsigned I>
 struct translation_I;
 
 // translation along the I-th axis matrix 4x4 row-major
-template <typename T, unsigned I>
-struct translation_I<matrix<T,4,4, true>, I>
+template <typename T, bool V, unsigned I>
+struct translation_I<matrix<T,4,4, true,V>, I>
 {
 	T _d;
 
@@ -225,10 +225,10 @@ struct translation_I<matrix<T,4,4, true>, I>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4, true> operator()(void) const
+	matrix<T,4,4, true,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{T(1),T(0),T(0),v(0)},
 			{T(0),T(1),T(0),v(1)},
 			{T(0),T(0),T(1),v(2)},
@@ -237,7 +237,7 @@ struct translation_I<matrix<T,4,4, true>, I>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4, true> (void) const
+	operator matrix<T,4,4, true,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -245,8 +245,8 @@ struct translation_I<matrix<T,4,4, true>, I>
 };
 
 // translation along the I-th axis matrix 4x4 column-major
-template <typename T, unsigned I>
-struct translation_I<matrix<T,4,4,false>, I>
+template <typename T, bool V, unsigned I>
+struct translation_I<matrix<T,4,4,false,V>, I>
 {
 	T _d;
 
@@ -264,10 +264,10 @@ struct translation_I<matrix<T,4,4,false>, I>
 	{ }
 
 	constexpr inline
-	matrix<T,4,4,false> operator()(void) const
+	matrix<T,4,4,false,V> operator()(void) const
 	noexcept
 	{
-		return matrix<T,4,4,false>{{
+		return matrix<T,4,4,false,V>{{
 			{T(1),T(0),T(0),T(0)},
 			{T(0),T(1),T(0),T(0)},
 			{T(0),T(0),T(1),T(0)},
@@ -276,7 +276,7 @@ struct translation_I<matrix<T,4,4,false>, I>
 	}
 
 	constexpr inline
-	operator matrix<T,4,4,false> (void) const
+	operator matrix<T,4,4,false,V> (void) const
 	noexcept
 	{
 		return (*this)();
@@ -647,7 +647,7 @@ operator * (
 // reorder_mat_ctr(scale)
 template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-scale<matrix<T,R,C,!RM>>
+scale<matrix<T,R,C,!RM,V>>
 reorder_mat_ctr(const scale<matrix<T,R,C,RM,V>>& s)
 noexcept
 {
@@ -1038,7 +1038,7 @@ operator * (
 // reorder_mat_ctr(shear)
 template <typename T, unsigned R, unsigned C, bool RM, bool V>
 static constexpr inline
-shear<matrix<T,R,C,!RM>>
+shear<matrix<T,R,C,!RM,V>>
 reorder_mat_ctr(const shear<matrix<T,R,C,RM,V>>& s)
 noexcept
 {
@@ -1853,7 +1853,7 @@ struct screen_stretch<matrix<T,4,4,RM,V>>
 // reorder_mat_ctr(screen_stretch)
 template <typename T, bool RM, bool V>
 static constexpr inline
-screen_stretch<matrix<T,4,4,!RM>>
+screen_stretch<matrix<T,4,4,!RM,V>>
 reorder_mat_ctr(const screen_stretch<matrix<T,4,4,RM,V>>& c)
 noexcept
 {
