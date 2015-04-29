@@ -551,10 +551,10 @@ BOOST_AUTO_TEST_CASE(math_matrix_scale_I_2)
 	}
 }
 
-template <typename T, bool RM>
-void test_math_matrix_uniform_scale_TI_1(void)
+template <typename T, bool RM, bool V>
+void test_math_matrix_uniform_scale_1_TRMV(void)
 {
-	eagine::math::vector<T, 4> v1{{
+	eagine::math::vector<T, 4, V> v1{{
 		std::rand()/T(1000),
 		std::rand()/T(1000),
 		std::rand()/T(1000),
@@ -563,9 +563,9 @@ void test_math_matrix_uniform_scale_TI_1(void)
 
 	T si = std::rand()%100;
 
-	eagine::math::uniform_scale<eagine::math::matrix<T,4,4,RM>> s(si);
+	eagine::math::uniform_scale<eagine::math::matrix<T,4,4,RM,V>> s(si);
 
-	eagine::math::vector<T, 4> v2 = s*v1;
+	eagine::math::vector<T, 4, V> v2 = s*v1;
 
 	for(unsigned i=0; i<3; ++i)
 	{
@@ -574,22 +574,28 @@ void test_math_matrix_uniform_scale_TI_1(void)
 	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
 }
 
-BOOST_AUTO_TEST_CASE(math_matrix_uniform_scale_I_1)
+template <typename T>
+void test_math_matrix_uniform_scale_1_T(void)
+{
+	test_math_matrix_uniform_scale_1_TRMV<T, true, true>();
+	test_math_matrix_uniform_scale_1_TRMV<T,false, true>();
+	test_math_matrix_uniform_scale_1_TRMV<T, true,false>();
+	test_math_matrix_uniform_scale_1_TRMV<T,false,false>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_uniform_scale_1)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_math_matrix_uniform_scale_TI_1<float, true>();
-		test_math_matrix_uniform_scale_TI_1<float,false>();
-
-		test_math_matrix_uniform_scale_TI_1<double, true>();
-		test_math_matrix_uniform_scale_TI_1<double,false>();
+		test_math_matrix_uniform_scale_1_T<float>();
+		test_math_matrix_uniform_scale_1_T<double>();
 	}
 }
 
-template <typename T, bool RM>
-void test_math_matrix_uniform_scale_TI_2(void)
+template <typename T, bool RM, bool V>
+void test_math_matrix_uniform_scale_2_TRMV(void)
 {
-	eagine::math::vector<T, 4> v1{{
+	eagine::math::vector<T, 4, V> v1{{
 		std::rand()/T(1000),
 		std::rand()/T(1000),
 		std::rand()/T(1000),
@@ -599,11 +605,11 @@ void test_math_matrix_uniform_scale_TI_2(void)
 	T si1 = std::rand()%100;
 	T si2 = std::rand()%100;
 
-	eagine::math::uniform_scale<eagine::math::matrix<T,4,4,RM>> s1(si1);
-	eagine::math::uniform_scale<eagine::math::matrix<T,4,4,RM>> s2(si2);
+	eagine::math::uniform_scale<eagine::math::matrix<T,4,4,RM,V>> s1(si1);
+	eagine::math::uniform_scale<eagine::math::matrix<T,4,4,RM,V>> s2(si2);
 
-	eagine::math::vector<T, 4> v2 = s1*s2*v1;
-	eagine::math::vector<T, 4> v3 = s2*s1*v1;
+	eagine::math::vector<T, 4, V> v2 = s1*s2*v1;
+	eagine::math::vector<T, 4, V> v3 = s2*s1*v1;
 
 	for(unsigned i=0; i<3; ++i)
 	{
@@ -614,22 +620,28 @@ void test_math_matrix_uniform_scale_TI_2(void)
 	BOOST_ASSERT(test_math_close(v3[3], v1[3]));
 }
 
-BOOST_AUTO_TEST_CASE(math_matrix_uniform_scale_I_2)
+template <typename T>
+void test_math_matrix_uniform_scale_2_T(void)
+{
+	test_math_matrix_uniform_scale_2_TRMV<T, true, true>();
+	test_math_matrix_uniform_scale_2_TRMV<T,false, true>();
+	test_math_matrix_uniform_scale_2_TRMV<T, true,false>();
+	test_math_matrix_uniform_scale_2_TRMV<T,false,false>();
+}
+
+BOOST_AUTO_TEST_CASE(math_matrix_uniform_scale_2)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_math_matrix_uniform_scale_TI_2<float, true>();
-		test_math_matrix_uniform_scale_TI_2<float,false>();
-
-		test_math_matrix_uniform_scale_TI_2<double, true>();
-		test_math_matrix_uniform_scale_TI_2<double,false>();
+		test_math_matrix_uniform_scale_2_T<float>();
+		test_math_matrix_uniform_scale_2_T<double>();
 	}
 }
 
-template <typename T, bool RM, unsigned I>
-void test_math_matrix_reflection_TI_1(void)
+template <typename T, bool RM, bool V, unsigned I>
+void test_math_matrix_reflection_1_TRMVI(void)
 {
-	eagine::math::vector<T, 4> v1{{
+	eagine::math::vector<T, 4, V> v1{{
 		std::rand()/T(1000),
 		std::rand()/T(1000),
 		std::rand()/T(1000),
@@ -638,9 +650,9 @@ void test_math_matrix_reflection_TI_1(void)
 
 	bool ri = std::rand()%2==0;
 
-	const eagine::math::reflection_I<eagine::math::matrix<T,4,4,RM>, I> r(ri);
+	const eagine::math::reflection_I<eagine::math::matrix<T,4,4,RM,V>, I> r(ri);
 
-	const eagine::math::vector<T, 4> v2 = r*v1;
+	const eagine::math::vector<T, 4, V> v2 = r*v1;
 
 	for(unsigned i=0; i<3; ++i)
 	{
@@ -649,30 +661,33 @@ void test_math_matrix_reflection_TI_1(void)
 	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
 }
 
+template <typename T, unsigned I>
+void test_math_matrix_reflection_1_TI(void)
+{
+	test_math_matrix_reflection_1_TRMVI<T, true, true, I>();
+	test_math_matrix_reflection_1_TRMVI<T,false, true, I>();
+	test_math_matrix_reflection_1_TRMVI<T, true,false, I>();
+	test_math_matrix_reflection_1_TRMVI<T,false,false, I>();
+}
+
 BOOST_AUTO_TEST_CASE(math_matrix_reflection_I_1)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_math_matrix_reflection_TI_1<float, true, 0>();
-		test_math_matrix_reflection_TI_1<float, true, 1>();
-		test_math_matrix_reflection_TI_1<float, true, 2>();
-		test_math_matrix_reflection_TI_1<float,false, 0>();
-		test_math_matrix_reflection_TI_1<float,false, 1>();
-		test_math_matrix_reflection_TI_1<float,false, 2>();
+		test_math_matrix_reflection_1_TI<float, 0>();
+		test_math_matrix_reflection_1_TI<float, 1>();
+		test_math_matrix_reflection_1_TI<float, 2>();
 
-		test_math_matrix_reflection_TI_1<double, true, 0>();
-		test_math_matrix_reflection_TI_1<double, true, 1>();
-		test_math_matrix_reflection_TI_1<double, true, 2>();
-		test_math_matrix_reflection_TI_1<double,false, 0>();
-		test_math_matrix_reflection_TI_1<double,false, 1>();
-		test_math_matrix_reflection_TI_1<double,false, 2>();
+		test_math_matrix_reflection_1_TI<double, 0>();
+		test_math_matrix_reflection_1_TI<double, 1>();
+		test_math_matrix_reflection_1_TI<double, 2>();
 	}
 }
 
-template <typename T, bool RM, unsigned I>
-void test_math_matrix_reflection_TI_2(void)
+template <typename T, bool RM, bool V, unsigned I>
+void test_math_matrix_reflection_2_TRMVI(void)
 {
-	eagine::math::vector<T, 4> v1{{
+	eagine::math::vector<T, 4, V> v1{{
 		std::rand()/T(1000),
 		std::rand()/T(1000),
 		std::rand()/T(1000),
@@ -682,10 +697,10 @@ void test_math_matrix_reflection_TI_2(void)
 	bool ri1 = std::rand()%2==0;
 	bool ri2 = std::rand()%2==0;
 
-	eagine::math::reflection_I<eagine::math::matrix<T,4,4,RM>, I> r1(ri1);
-	eagine::math::reflection_I<eagine::math::matrix<T,4,4,RM>, I> r2(ri2);
+	eagine::math::reflection_I<eagine::math::matrix<T,4,4,RM,V>, I> r1(ri1);
+	eagine::math::reflection_I<eagine::math::matrix<T,4,4,RM,V>, I> r2(ri2);
 
-	eagine::math::vector<T, 4> v2 = r1*r2*v1;
+	eagine::math::vector<T, 4, V> v2 = r1*r2*v1;
 
 	for(unsigned i=0; i<3; ++i)
 	{
@@ -694,30 +709,33 @@ void test_math_matrix_reflection_TI_2(void)
 	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
 }
 
+template <typename T, unsigned I>
+void test_math_matrix_reflection_2_TI(void)
+{
+	test_math_matrix_reflection_2_TRMVI<T, true, true, I>();
+	test_math_matrix_reflection_2_TRMVI<T,false, true, I>();
+	test_math_matrix_reflection_2_TRMVI<T, true,false, I>();
+	test_math_matrix_reflection_2_TRMVI<T,false,false, I>();
+}
+
 BOOST_AUTO_TEST_CASE(math_matrix_reflection_I_2)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_math_matrix_reflection_TI_2<float, true, 0>();
-		test_math_matrix_reflection_TI_2<float, true, 1>();
-		test_math_matrix_reflection_TI_2<float, true, 2>();
-		test_math_matrix_reflection_TI_2<float,false, 0>();
-		test_math_matrix_reflection_TI_2<float,false, 1>();
-		test_math_matrix_reflection_TI_2<float,false, 2>();
+		test_math_matrix_reflection_1_TI<float, 0>();
+		test_math_matrix_reflection_1_TI<float, 1>();
+		test_math_matrix_reflection_1_TI<float, 2>();
 
-		test_math_matrix_reflection_TI_2<double, true, 0>();
-		test_math_matrix_reflection_TI_2<double, true, 1>();
-		test_math_matrix_reflection_TI_2<double, true, 2>();
-		test_math_matrix_reflection_TI_2<double,false, 0>();
-		test_math_matrix_reflection_TI_2<double,false, 1>();
-		test_math_matrix_reflection_TI_2<double,false, 2>();
+		test_math_matrix_reflection_1_TI<double, 0>();
+		test_math_matrix_reflection_1_TI<double, 1>();
+		test_math_matrix_reflection_1_TI<double, 2>();
 	}
 }
 
-template <typename T, bool RM>
-void test_math_matrix_shear_T_1(void)
+template <typename T, bool RM, bool V>
+void test_math_matrix_shear_1_TRMV(void)
 {
-	eagine::math::vector<T, 4> v1{{
+	eagine::math::vector<T, 4, V> v1{{
 		std::rand()/T(1000),
 		std::rand()/T(1000),
 		std::rand()/T(1000),
@@ -728,9 +746,9 @@ void test_math_matrix_shear_T_1(void)
 	T sy = std::rand()%10;
 	T sz = std::rand()%10;
 
-	eagine::math::shear<eagine::math::matrix<T,4,4,true>> s(sx,sy,sz);
+	eagine::math::shear<eagine::math::matrix<T,4,4,RM,V>> s(sx,sy,sz);
 
-	eagine::math::vector<T, 4> v2 = s*v1;
+	eagine::math::vector<T, 4, V> v2 = s*v1;
 
 	BOOST_ASSERT(test_math_close(v2[0], v1[0]+v1[1]*sx+v1[2]*sx));
 	BOOST_ASSERT(test_math_close(v2[1], v1[0]*sy+v1[1]+v1[2]*sy));
@@ -738,14 +756,21 @@ void test_math_matrix_shear_T_1(void)
 	BOOST_ASSERT(test_math_close(v2[3], v1[3]));
 }
 
+template <typename T>
+void test_math_matrix_shear_1_T(void)
+{
+	test_math_matrix_shear_1_TRMV<T, true, true>();
+	test_math_matrix_shear_1_TRMV<T,false, true>();
+	test_math_matrix_shear_1_TRMV<T, true,false>();
+	test_math_matrix_shear_1_TRMV<T,false,false>();
+}
+
 BOOST_AUTO_TEST_CASE(math_matrix_shear_1)
 {
 	for(unsigned k=0; k<1000; ++k)
 	{
-		test_math_matrix_shear_T_1<float, true>();
-		test_math_matrix_shear_T_1<float,false>();
-		test_math_matrix_shear_T_1<double, true>();
-		test_math_matrix_shear_T_1<double,false>();
+		test_math_matrix_shear_1_T<float>();
+		test_math_matrix_shear_1_T<double>();
 	}
 }
 
