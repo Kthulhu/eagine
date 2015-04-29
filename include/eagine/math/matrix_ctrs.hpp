@@ -1129,10 +1129,10 @@ struct ortho<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4, true> _make(meta::true_type) const
+	matrix<T,4,4, true,V> _make(meta::true_type) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{_m00(),   T(0),   T(0), _m30()},
 			{  T(0), _m11(),   T(0), _m31()},
 			{  T(0),   T(0), _m22(), _m32()},
@@ -1141,10 +1141,10 @@ struct ortho<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,false> _make(meta::false_type) const
+	matrix<T,4,4,false,V> _make(meta::false_type) const
 	noexcept
 	{
-		return matrix<T,4,4,false>{{
+		return matrix<T,4,4,false,V>{{
 			{_m00(),   T(0),   T(0),   T(0)},
 			{  T(0), _m11(),   T(0),   T(0)},
 			{  T(0),   T(0), _m22(),   T(0)},
@@ -1191,24 +1191,24 @@ struct is_matrix_constructor<looking_at_y_up<matrix<T,R,C,RM,V>>>
 template <typename T, bool RM, bool V>
 struct looking_at_y_up<matrix<T,4,4,RM,V>>
 {
-	typedef vector<T,3> _dT;
+	typedef vector<T,3,V> _dT;
 
-	vector<T,3> _e, _t;
+	vector<T,3,V> _e, _t;
 
 	constexpr looking_at_y_up(
-		const vector<T, 3>& eye,
-		const vector<T, 3>& target
+		const vector<T, 3, V>& eye,
+		const vector<T, 3, V>& target
 	) noexcept
 	 : _e(eye)
 	 , _t(target)
 	{ }
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make(const _dT& x, const _dT& y, const _dT& z, const _dT& t)
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{x[0],x[1],x[2], -dot(x,t)},
 			{y[0],y[1],y[2], -dot(y,t)},
 			{z[0],z[1],z[2], -dot(z,t)},
@@ -1217,7 +1217,7 @@ struct looking_at_y_up<matrix<T,4,4,RM,V>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make(const _dT& y, const _dT& z, const _dT& t)
 	noexcept
 	{
@@ -1225,7 +1225,7 @@ struct looking_at_y_up<matrix<T,4,4,RM,V>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make(const _dT& z, const _dT& t)
 	noexcept
 	{
@@ -1233,7 +1233,7 @@ struct looking_at_y_up<matrix<T,4,4,RM,V>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make(const _dT& z)
 	noexcept
 	{
@@ -1241,14 +1241,14 @@ struct looking_at_y_up<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,true> _make(meta::true_type) const
+	matrix<T,4,4,true,V> _make(meta::true_type) const
 	noexcept
 	{
 		return _make(normalized(_e-_t));
 	}
 
 	constexpr inline
-	matrix<T,4,4,false> _make(meta::false_type) const
+	matrix<T,4,4,false,V> _make(meta::false_type) const
 	noexcept
 	{
 		return reorder(_make(meta::true_type()));
@@ -1293,14 +1293,14 @@ struct is_matrix_constructor<looking_at<matrix<T,R,C,RM,V>>>
 template <typename T, bool RM, bool V>
 struct looking_at<matrix<T,4,4,RM,V>>
 {
-	typedef vector<T,3> _dT;
+	typedef vector<T,3,V> _dT;
 
-	vector<T,3> _e, _t, _u;
+	vector<T,3,V> _e, _t, _u;
 
 	constexpr looking_at(
-		const vector<T, 3>& eye,
-		const vector<T, 3>& target,
-		const vector<T, 3>& up
+		const vector<T, 3, V>& eye,
+		const vector<T, 3, V>& target,
+		const vector<T, 3, V>& up
 	) noexcept
 	 : _e(eye)
 	 , _t(target)
@@ -1308,11 +1308,11 @@ struct looking_at<matrix<T,4,4,RM,V>>
 	{ }
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make4(const _dT& e, const _dT& x, const _dT& y, const _dT& z)
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{x[0],x[1],x[2], -dot(x,e)},
 			{y[0],y[1],y[2], -dot(y,e)},
 			{z[0],z[1],z[2], -dot(z,e)},
@@ -1321,7 +1321,7 @@ struct looking_at<matrix<T,4,4,RM,V>>
 	}
 
 	static constexpr inline
-	matrix<T,4,4,true>
+	matrix<T,4,4,true,V>
 	_make3(const _dT& e, const _dT& y, const _dT& z)
 	noexcept
 	{
@@ -1406,16 +1406,16 @@ struct is_matrix_constructor<orbiting_y_up<matrix<T,R,C,RM,V>>>
 template <typename T, bool RM, bool V>
 struct orbiting_y_up<matrix<T,4,4,RM,V>>
 {
-	vector<T,3> _t;
-	vector<T,3> _x, _z, _y;
+	vector<T,3,V> _t;
+	vector<T,3,V> _x, _z, _y;
 	T _r;
 
 	constexpr
 	orbiting_y_up(
-		const vector<T,3>& t,
-		const vector<T,3>& x,
-		const vector<T,3>& y,
-		const vector<T,3>& z,
+		const vector<T,3,V>& t,
+		const vector<T,3,V>& x,
+		const vector<T,3,V>& y,
+		const vector<T,3,V>& z,
 		T r
 	) noexcept
 	 : _t(t)
@@ -1426,7 +1426,7 @@ struct orbiting_y_up<matrix<T,4,4,RM,V>>
 	{ }
 
 	constexpr orbiting_y_up(
-		const vector<T, 3>& t,
+		const vector<T, 3, V>& t,
 		const T rs,
 		const T sa,
 		const T ca,
@@ -1441,7 +1441,7 @@ struct orbiting_y_up<matrix<T,4,4,RM,V>>
 	{ }
 
 	constexpr orbiting_y_up(
-		const vector<T, 3>& target,
+		const vector<T, 3, V>& target,
 		const T radius,
 		angle<T> azimuth,
 		angle<T> elevation
@@ -1456,10 +1456,10 @@ struct orbiting_y_up<matrix<T,4,4,RM,V>>
 	){ }
 
 	constexpr inline
-	matrix<T,4,4,true> _make(meta::true_type) const
+	matrix<T,4,4,true,V> _make(meta::true_type) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{_x[0],_x[1],_x[2],-_r*dot(_x,_z) - dot(_x,_t)},
 			{_y[0],_y[1],_y[2],-_r*dot(_y,_z) - dot(_y,_t)},
 			{_z[0],_z[1],_z[2],-_r*dot(_z,_z) - dot(_z,_t)},
@@ -1468,7 +1468,7 @@ struct orbiting_y_up<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,false> _make(meta::false_type) const
+	matrix<T,4,4,false,V> _make(meta::false_type) const
 	noexcept
 	{
 		return reorder(_make(meta::true_type()));
@@ -1668,10 +1668,10 @@ struct perspective<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4, true> _make(meta::true_type) const
+	matrix<T,4,4, true,V> _make(meta::true_type) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{_m00(),   T(0), _m20(),   T(0)},
 			{  T(0), _m11(), _m21(),   T(0)},
 			{  T(0),   T(0), _m22(), _m32()},
@@ -1680,10 +1680,10 @@ struct perspective<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,false> _make(meta::false_type) const
+	matrix<T,4,4,false,V> _make(meta::false_type) const
 	noexcept
 	{
-		return matrix<T,4,4,false>{{
+		return matrix<T,4,4,false,V>{{
 			{_m00(),   T(0),   T(0),   T(0)},
 			{  T(0), _m11(),   T(0),   T(0)},
 			{_m20(), _m21(), _m22(), _m23()},
@@ -1812,10 +1812,10 @@ struct screen_stretch<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4, true> _make(meta::true_type) const
+	matrix<T,4,4, true,V> _make(meta::true_type) const
 	noexcept
 	{
-		return matrix<T,4,4, true>{{
+		return matrix<T,4,4, true,V>{{
 			{_m00(),   T(0),   T(0), _m30()},
 			{  T(0), _m11(),   T(0), _m31()},
 			{  T(0),   T(0),   T(1),   T(0)},
@@ -1824,10 +1824,10 @@ struct screen_stretch<matrix<T,4,4,RM,V>>
 	}
 
 	constexpr inline
-	matrix<T,4,4,false> _make(meta::false_type) const
+	matrix<T,4,4,false,V> _make(meta::false_type) const
 	noexcept
 	{
-		return matrix<T,4,4,false>{{
+		return matrix<T,4,4,false,V>{{
 			{_m00(),   T(0),   T(0),   T(0)},
 			{  T(0), _m11(),   T(0),   T(0)},
 			{  T(0),   T(0),   T(1),   T(0)},
