@@ -8,20 +8,34 @@ OPT ?= O2
 TIME ?= time
 GNUPLOT ?= gnuplot
 
-SOURCES = $(basename $(wildcard *.cpp))
-DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
-BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var)))
-ASM_FILES= $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _out/$(src)-$(OPT)-$(var).asm))
-TIMES = $(addsuffix .time,$(BENCHMARKS))
-BAK_TIMES = $(foreach src,$(SOURCES), $(foreach var,BASELINE NOSSE SSE, _bak/$(src)-$(OPT)-$(var).time))
-CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES))) _pdf/run-speedup.pdf
+VARIANTS = BASELINE OPT_SIMD OPT_NOSIMD NOOPT_SIMD NOOPT_NOSIMD
 
-OUT_DIRS = _pdf _out _bld _bak
+CXXFLAGS_BASELINE = -DEAGINE_BENCHMARK_BASELINE 
+CXXFLAGS_OPT_SIMD = -msse -DEAGINE_USE_SIMD=1 -DEAGINE_VECT_OPTS=1
+CXXFLAGS_OPT_NOSIMD = -DEAGINE_USE_SIMD=0 -DEAGINE_VECT_OPTS=1
+CXXFLAGS_NOOPT_SIMD = -msse -DEAGINE_USE_SIMD=1 -DEAGINE_VECT_OPTS=0
+CXXFLAGS_NOOPT_NOSIMD = -DEAGINE_USE_SIMD=0 -DEAGINE_VECT_OPTS=0
+
+LDFLAGS_OPT_SIMD = -msse
+LDFLAGS_NOOPT_SIMD = -msse
 
 local_OPTIONS = -std=c++1y -Wall -pedantic -march=native
 local_INCLDIRS = -I../_build/include -I../include -I../implement -I../third_party/include
 local_CXXFLAGS = $(CXXFLAGS) $(local_OPTIONS) $(local_INCLDIRS)
 local_LDFLAGS = $(LDFLAGS) $(local_OPTIONS)
+
+
+SOURCES = array_sum-1024-4f
+#SOURCES = $(basename $(wildcard *.cpp))
+DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
+
+BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,$(VARIANTS), _out/$(src)-$(OPT)-$(var)))
+ASM_FILES= $(foreach src,$(SOURCES), $(foreach var,$(VARIANTS), _out/$(src)-$(OPT)-$(var).asm))
+TIMES = $(addsuffix .time,$(BENCHMARKS))
+BAK_TIMES = $(foreach src,$(SOURCES), $(foreach var,$(VARIANTS), _bak/$(src)-$(OPT)-$(var).time))
+CHARTS = $(addprefix _pdf/,$(addsuffix -$(OPT).pdf,$(SOURCES))) _pdf/run-speedup.pdf
+
+OUT_DIRS = _pdf _out _bld _bak
 
 all: charts
 .PHONY: all
@@ -54,7 +68,7 @@ _pdf/%.pdf: _bld/%-case-times.gp _bld/%-case-times.gp.dat | _pdf
 _bld/%-case-times.gp: ./make-case-times.gp.py | _bld
 	./make-case-times.gp.py _bld/$* _pdf/$* > $@
 
-_bld/%-case-times.gp.dat: _out/%-BASELINE.time _out/%-SSE.time _out/%-NOSSE.time | _bld
+_bld/%-case-times.gp.dat: $(foreach VAR,$(VARIANTS), _out/%-$(VAR).time) | _bld
 	./make-case-times.gp.dat.py $^ > $@
 
 _bld/run-speedup.gp: ./make-run-speedup.gp.py | _bld
@@ -75,42 +89,30 @@ _bak/%.time: _out/%.time | _bak
 _out/%.time: _out/% | _out
 	$(TIME) -f "%x:%S:%U:%e" -o $@ $<
 
-_out/%-$(OPT)-BASELINE: _bld/%-$(OPT)-BASELINE.o _bld/fake_use.o | _out
-	$(CXX) $(local_LDFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $^ -o $@
+define make_var_rules
+_out/%-$(OPT)-$1 : _bld/%-$(OPT)-$1.o _bld/fake_use.o | _out
+	$$(CXX) $$(local_LDFLAGS) $$(LDFLAGS_$1) -$$(OPT) $$^ -o $$@
 
-_out/%-$(OPT)-NOSSE: _bld/%-$(OPT)-NOSSE.o _bld/fake_use.o | _out
-	$(CXX) $(local_LDFLAGS) -DEAGINE_USE_SIMD=0 -$(OPT) $^ -o $@
+_bld/%-$(OPT)-$1.o: %.cpp | _bld
+	$$(CXX) $$(local_CXXFLAGS) $$(CXXFLAGS_$1) -$$(OPT) $$< -c -o $$@
 
-_out/%-$(OPT)-SSE: _bld/%-$(OPT)-SSE.o _bld/fake_use.o | _out
-	$(CXX) $(local_LDFLAGS) -msse -DEAGINE_USE_SIMD=1 -$(OPT) $^ -o $@
+_out/%-$(OPT)-$1.asm: %.cpp | _out
+	$$(CXX) $$(local_CXXFLAGS) $$(CXXFLAGS_$1) -$$(OPT) $$< -S -o $$@
 
-_out/%-$(OPT)-BASELINE.asm: %.cpp | _out
-	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -S -o $@
+endef
 
-_out/%-$(OPT)-NOSSE.asm: %.cpp | _out
-	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SIMD=0 -$(OPT) $< -S -o $@
-
-_out/%-$(OPT)-SSE.asm: %.cpp | _out
-	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SIMD=1 -$(OPT) $< -S -o $@
-
-_bld/%-$(OPT)-BASELINE.o: %.cpp | _bld
-	$(CXX) $(local_CXXFLAGS) -DEAGINE_BENCHMARK_BASELINE -$(OPT) $< -c -o $@
-
-_bld/%-$(OPT)-NOSSE.o: %.cpp | _bld
-	$(CXX) $(local_CXXFLAGS) -DEAGINE_USE_SIMD=0 -$(OPT) $< -c -o $@
-
-_bld/%-$(OPT)-SSE.o: %.cpp | _bld
-	$(CXX) $(local_CXXFLAGS) -msse -DEAGINE_USE_SIMD=1 -$(OPT) $< -c -o $@
+$(foreach VAR,$(VARIANTS), $(eval $(call make_var_rules,$(VAR))))
 
 _bld/fake_use.o: fake_use.cxx | _bld
 	$(CXX) $(local_CXXFLAGS) $< -c -o $@
 
 _bld/%.d: %.cpp | _bld
-	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-BASELINE.o > $@
-	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-NOSSE.o >> $@
-	$(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-SSE.o >> $@
+	rm -f $@
+	$(foreach VAR,$(VARIANTS), $(CXX) $(local_CXXFLAGS) $< -MM -MT _bld/$*-$(OPT)-$(VAR).o >> $@;)
 
-sinclude $(DEPENDENCIES)
+ifneq ($(MAKECMDGOALS),clean)
+	sinclude $(DEPENDENCIES)
+endif
 
 .PHONY: clean
 clean:

@@ -6,7 +6,7 @@
 #include "fake_use.hpp"
 
 #ifndef EAGINE_BR_M
-#define EAGINE_BR_M 100000
+#define EAGINE_BR_M 10000 
 #endif
 
 #ifndef EAGINE_BR_N

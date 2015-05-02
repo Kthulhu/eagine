@@ -12,16 +12,21 @@ for arg in sys.argv[1:]:
 	times[n[-1]] = t[3]
 
 baseline = float(times['BASELINE'])
-sse = float(times['SSE'])
-nosse = float(times['NOSSE'])
 
-print("Baseline\t%f\t0.0" % baseline)
-if sse >= baseline:
-	print("With_SSE\t%f\t%f" % (baseline, sse-baseline))
-else:
-	print("With_SSE\t%f\t%f" % (0, sse))
+labels = {
+	'BASELINE': 'Baseline',
+	'OPT_SIMD': 'SIMD_opt',
+	'NOOPT_SIMD': 'SIMD_noopt',
+	'OPT_NOSIMD': 'PLAIN_opt',
+	'NOOPT_NOSIMD': 'PLAIN_noopt',
+}
 
-if nosse >= baseline:
-	print("No_SSE\t%f\t%f" % (baseline, nosse-baseline))
-else:
-	print("No_SSE\t%f\t%f" % (0, nosse))
+for key in ['BASELINE', 'OPT_SIMD', 'NOOPT_SIMD', 'OPT_NOSIMD', 'NOOPT_NOSIMD']:
+
+	label = labels[key]
+	time = float(times[key])
+
+	if time > baseline:
+		print("%s\t%f\t%f" % (label, baseline, time-baseline))
+	else:
+		print("%s\t%f\t%f" % (label, 0, time))
