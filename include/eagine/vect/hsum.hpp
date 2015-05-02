@@ -23,27 +23,6 @@ private:
 	typedef typename data_param<T, 1, V>::type _dpT;
 	typedef shuffle<T, N, V> _sh;
 
-	template <bool B>
-	static constexpr inline
-	_dT _hlp(
-		_dT v,
-		meta::unsigned_constant<1>,
-		meta::boolean_constant<B>
-	) noexcept
-	{
-		return v;
-	}
-
-	static constexpr inline
-	_dT _hlp(
-		_dpT v,
-		meta::unsigned_constant<2>,
-		meta::boolean_constant<true>
-	) noexcept
-	{
-		return v + _sh::template apply<1,0>(v);
-	}
-
 	template <unsigned M, bool B>
 	static
 	_dT _hlp(
@@ -63,6 +42,28 @@ private:
 			v[i-1] = v[i];
 		}
 		return v;
+	}
+
+#if EAGINE_VECT_OPTS
+	template <bool B>
+	static constexpr inline
+	_dT _hlp(
+		_dT v,
+		meta::unsigned_constant<1>,
+		meta::boolean_constant<B>
+	) noexcept
+	{
+		return v;
+	}
+
+	static constexpr inline
+	_dT _hlp(
+		_dpT v,
+		meta::unsigned_constant<2>,
+		meta::boolean_constant<true>
+	) noexcept
+	{
+		return v + _sh::template apply<1,0>(v);
 	}
 
 	static constexpr inline
@@ -130,6 +131,7 @@ private:
 	{
 		return _hlp8_3(_hlp8_2(_hlp8_1(v)));
 	}
+#endif
 public:
 	static inline
 	_dT apply(_dT v)

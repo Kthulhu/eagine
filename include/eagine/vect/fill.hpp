@@ -32,6 +32,8 @@ struct fill
 	}
 };
 
+#if EAGINE_VECT_OPTS
+
 template <typename T, bool V>
 struct fill<T, 0, V>
 {
@@ -108,6 +110,8 @@ struct fill<T, 8, V>
 			{v,v,v,v,v,v,v,v};
 	}
 };
+
+#endif
 
 } // namespace vect
 } // namespace eagine

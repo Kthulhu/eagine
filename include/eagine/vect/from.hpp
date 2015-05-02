@@ -56,6 +56,8 @@ struct from_saafv
 	}
 };
 
+#if EAGINE_VECT_OPTS
+
 template <typename T, bool V>
 struct from_array<T, 0, V>
 {
@@ -137,6 +139,8 @@ struct from_array<T, 8, V>
 			{d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7]};
 	}
 };
+
+#endif
 
 } // namespace vect
 } // namespace eagine

@@ -32,6 +32,8 @@ struct axis
 	}
 };
 
+#if EAGINE_VECT_OPTS
+
 template <typename T, bool V>
 struct axis<T, 1, 0, V>
 {
@@ -213,6 +215,8 @@ struct axis<T, 4, I, V>
 			{T(0),T(0),T(0),T(0)};
 	}
 };
+
+#endif
 
 } // namespace vect
 } // namespace eagine

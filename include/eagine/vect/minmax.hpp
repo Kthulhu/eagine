@@ -79,6 +79,7 @@ struct hmin
 	}
 };
 
+#if EAGINE_VECT_OPTS
 template <typename T, bool V>
 struct hmin<T, 1, V>
 {
@@ -144,6 +145,7 @@ struct hmin<T, 4, V>
 		return _hlp2(_hlp1(v));
 	}
 };
+#endif
 
 template <typename T, unsigned N, bool V>
 struct max
@@ -208,6 +210,7 @@ struct hmax
 	}
 };
 
+#if EAGINE_VECT_OPTS
 template <typename T, bool V>
 struct hmax<T, 1, V>
 {
@@ -273,6 +276,7 @@ struct hmax<T, 4, V>
 		return _hlp2(_hlp1(v));
 	}
 };
+#endif
 
 } // namespace vect
 } // namespace eagine

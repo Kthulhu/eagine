@@ -20,5 +20,9 @@
 
 #endif
 
+#ifndef EAGINE_VECT_OPTS
+# define EAGINE_VECT_OPTS 1
+#endif
+
 #endif //include guard
 

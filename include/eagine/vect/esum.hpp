@@ -10,7 +10,12 @@
 #ifndef EAGINE_VECT_ESUM_1308281038_HPP
 #define EAGINE_VECT_ESUM_1308281038_HPP
 
+#include <eagine/vect/config.hpp>
+#if EAGINE_VECT_OPTS
 #include <eagine/vect/hsum.hpp>
+#else
+#include <eagine/vect/data.hpp>
+#endif
 
 namespace eagine {
 namespace vect {
@@ -35,6 +40,7 @@ private:
 		return r;
 	}
 
+#if EAGINE_VECT_OPTS
 	template <bool B>
 	static constexpr inline
 	T _hlp(_dpT v, meta::unsigned_constant<1>, meta::boolean_constant<B>)
@@ -51,6 +57,7 @@ private:
 		static_assert(M == N, "");
 		return hsum<T, N, V>::apply(v)[N-1];
 	}
+#endif
 public:
 	static inline
 	T apply(_dpT v)
