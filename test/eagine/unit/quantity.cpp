@@ -18,6 +18,15 @@
 #include <eagine/unit/quantity.hpp>
 #include <eagine/unit/si.hpp>
 
+#include <eagine/unit/si/electric_charge.hpp>
+#include <eagine/unit/si/electric_tension.hpp>
+#include <eagine/unit/si/electrical_capacitance.hpp>
+#include <eagine/unit/si/electrical_conductance.hpp>
+#include <eagine/unit/si/electrical_resistance.hpp>
+#include <eagine/unit/si/force.hpp>
+#include <eagine/unit/si/energy.hpp>
+#include <eagine/unit/si/power.hpp>
+
 #include <eagine/math/difference.hpp>
 
 #include <cstdlib>
@@ -30,48 +39,99 @@ void do_test_unit_quantity(void)
 	using eagine::unit::unit;
 	using eagine::unit::quantity;
 
-	Test<unit<eagine::unit::dimensionless>>()();
+	Test<unit<eagine::unit::dimensionless>>()(false);
 
-	Test<unit<eagine::unit::angle>>()();
-	Test<unit<eagine::unit::solid_angle>>()();
-	Test<unit<eagine::unit::length>>()();
-	Test<unit<eagine::unit::mass>>()();
-	Test<unit<eagine::unit::time>>()();
+	Test<unit<eagine::unit::angle>>()(false);
+	Test<unit<eagine::unit::solid_angle>>()(false);
+	Test<unit<eagine::unit::length>>()(false);
+	Test<unit<eagine::unit::mass>>()(false);
+	Test<unit<eagine::unit::time>>()(false);
 
-	Test<unit<eagine::unit::temperature>>()();
-	Test<unit<eagine::unit::electric_current>>()();
-	Test<unit<eagine::unit::number_of_cycles>>()();
-	Test<unit<eagine::unit::number_of_decays>>()();
-	Test<unit<eagine::unit::luminous_intensity>>()();
-	Test<unit<eagine::unit::amount_of_substance>>()();
+	Test<unit<eagine::unit::temperature>>()(false);
+	Test<unit<eagine::unit::electric_current>>()(false);
+	Test<unit<eagine::unit::number_of_cycles>>()(false);
+	Test<unit<eagine::unit::number_of_decays>>()(false);
+	Test<unit<eagine::unit::luminous_intensity>>()(false);
+	Test<unit<eagine::unit::amount_of_substance>>()(false);
 
-	Test<unit<eagine::unit::acceleration>>()();
-	Test<unit<eagine::unit::electrical_capacitance>>()();
-	Test<unit<eagine::unit::electric_charge>>()();
-	Test<unit<eagine::unit::force>>()();
-	Test<unit<eagine::unit::magnetic_flux_density>>()();
-	Test<unit<eagine::unit::momentum>>()();
-	Test<unit<eagine::unit::radioactivity>>()();
-	Test<unit<eagine::unit::angular_velocity>>()();
-	Test<unit<eagine::unit::electrical_conductance>>()();
-	Test<unit<eagine::unit::electric_tension>>()();
-	Test<unit<eagine::unit::frequency>>()();
-	Test<unit<eagine::unit::magnetic_flux>>()();
-	Test<unit<eagine::unit::power>>()();
-	Test<unit<eagine::unit::velocity>>()();
-	Test<unit<eagine::unit::area>>()();
-	Test<unit<eagine::unit::electrical_resistance>>()();
-	Test<unit<eagine::unit::energy>>()();
-	Test<unit<eagine::unit::inductance>>()();
-	Test<unit<eagine::unit::mass_density>>()();
-	Test<unit<eagine::unit::pressure>>()();
-	Test<unit<eagine::unit::volume>>()();
+	Test<unit<eagine::unit::acceleration>>()(false);
+	Test<unit<eagine::unit::electrical_capacitance>>()(false);
+	Test<unit<eagine::unit::electric_charge>>()(false);
+	Test<unit<eagine::unit::force>>()(false);
+	Test<unit<eagine::unit::magnetic_flux_density>>()(false);
+	Test<unit<eagine::unit::momentum>>()(false);
+	Test<unit<eagine::unit::radioactivity>>()(false);
+	Test<unit<eagine::unit::angular_velocity>>()(false);
+	Test<unit<eagine::unit::electrical_conductance>>()(false);
+	Test<unit<eagine::unit::electric_tension>>()(false);
+	Test<unit<eagine::unit::frequency>>()(false);
+	Test<unit<eagine::unit::magnetic_flux>>()(false);
+	Test<unit<eagine::unit::power>>()(false);
+	Test<unit<eagine::unit::velocity>>()(false);
+	Test<unit<eagine::unit::area>>()(false);
+	Test<unit<eagine::unit::electrical_resistance>>()(false);
+	Test<unit<eagine::unit::energy>>()(false);
+	Test<unit<eagine::unit::inductance>>()(false);
+	Test<unit<eagine::unit::mass_density>>()(false);
+	Test<unit<eagine::unit::pressure>>()(false);
+	Test<unit<eagine::unit::volume>>()(false);
+}
+
+template <template <class> class Test>
+void do_test_unit_scaled_quantity(void)
+{
+	using eagine::unit::unit;
+	using eagine::unit::quantity;
+
+	Test<unit<eagine::unit::dimensionless>>()(true);
+
+	Test<eagine::unit::radian>()(true);
+	Test<eagine::unit::degree>()(true);
+	Test<eagine::unit::gradian>()(true);
+	Test<eagine::unit::quarter>()(true);
+	Test<eagine::unit::turn>()(true);
+	Test<eagine::unit::pi_rad>()(true);
+
+	Test<eagine::unit::gram>()(true);
+	Test<eagine::unit::milligram>()(true);
+	Test<eagine::unit::kilogram>()(true);
+
+	Test<eagine::unit::meter>()(true);
+	Test<eagine::unit::millimeter>()(true);
+	Test<eagine::unit::kilometer>()(true);
+
+	Test<eagine::unit::second>()(true);
+	Test<eagine::unit::minute>()(true);
+	Test<eagine::unit::hour>()(true);
+	Test<eagine::unit::day>()(true);
+
+	Test<eagine::unit::kelvin>()(true);
+
+	Test<eagine::unit::ampere>()(true);
+	Test<eagine::unit::coulomb>()(true);
+	Test<eagine::unit::volt>()(true);
+	Test<eagine::unit::farad>()(true);
+	Test<eagine::unit::siemens>()(true);
+	Test<eagine::unit::ohm>()(true);
+
+	Test<eagine::unit::newton>()(true);
+	Test<eagine::unit::joule>()(true);
+	Test<eagine::unit::watt>()(true);
+
+	Test<eagine::unit::hertz>()(true);
+	Test<eagine::unit::becquerel>()(true);
+
+	Test<eagine::unit::candela>()(true);
+
+	Test<eagine::unit::mole>()(true);
+
+	Test<eagine::unit::steradian>()(true);
 }
 
 template <typename Unit>
 struct test_unit_quantity_default_ctr
 {
-	void operator()(void) const
+	void operator()(bool) const
 	{
 		eagine::unit::quantity<Unit> q;
 		(void)q;
@@ -81,12 +141,13 @@ struct test_unit_quantity_default_ctr
 BOOST_AUTO_TEST_CASE(unit_quantity_default_ctr)
 {
 	do_test_unit_quantity<test_unit_quantity_default_ctr>();
+	do_test_unit_scaled_quantity<test_unit_quantity_default_ctr>();
 }
 
 template <typename Unit>
 struct test_unit_quantity_copy_ctr
 {
-	void operator()(void) const
+	void operator()(bool) const
 	{
 		eagine::unit::quantity<Unit> q1;
 		eagine::unit::quantity<Unit> q2(q1);
@@ -97,12 +158,13 @@ struct test_unit_quantity_copy_ctr
 BOOST_AUTO_TEST_CASE(unit_quantity_copy_ctr)
 {
 	do_test_unit_quantity<test_unit_quantity_copy_ctr>();
+	do_test_unit_scaled_quantity<test_unit_quantity_copy_ctr>();
 }
 
 template <typename Unit>
 struct test_unit_quantity_copy_assign
 {
-	void operator()(void) const
+	void operator()(bool) const
 	{
 		eagine::unit::quantity<Unit> q1;
 		eagine::unit::quantity<Unit> q2;
@@ -114,12 +176,13 @@ struct test_unit_quantity_copy_assign
 BOOST_AUTO_TEST_CASE(unit_quantity_copy_assign)
 {
 	do_test_unit_quantity<test_unit_quantity_copy_assign>();
+	do_test_unit_scaled_quantity<test_unit_quantity_copy_assign>();
 }
 
 template <typename Unit>
 struct test_unit_quantity_add
 {
-	void operator()(void) const
+	void operator()(bool scaled) const
 	{
 		typedef typename eagine::unit::quantity<Unit>::value_type T;
 
@@ -130,10 +193,13 @@ struct test_unit_quantity_add
 
 		using eagine::math::close_to;
 
-		BOOST_ASSERT((
-			value(q3) <<close_to>>
-			(value(q1) + value(q2))
-		));
+		if(!scaled)
+		{
+			BOOST_ASSERT((
+				value(q3) <<close_to>>
+				(value(q1) + value(q2))
+			));
+		}
 	}
 };
 
@@ -145,7 +211,7 @@ BOOST_AUTO_TEST_CASE(unit_quantity_add)
 template <typename Unit>
 struct test_unit_quantity_subtract
 {
-	void operator()(void) const
+	void operator()(bool scaled) const
 	{
 		typedef typename eagine::unit::quantity<Unit>::value_type T;
 
@@ -156,10 +222,13 @@ struct test_unit_quantity_subtract
 
 		using eagine::math::close_to;
 
-		BOOST_ASSERT((
-			value(q3) <<close_to>>
-			(value(q1) - value(q2))
-		));
+		if(!scaled)
+		{
+			BOOST_ASSERT((
+				value(q3) <<close_to>>
+				(value(q1) - value(q2))
+			));
+		}
 	}
 };
 
@@ -174,7 +243,7 @@ struct test_unit_quantity_multiply
 	template <typename Unit2>
 	struct tester
 	{
-		void operator()(void) const
+		void operator()(bool scaled) const
 		{
 			using eagine::unit::operator*;
 
@@ -190,22 +259,33 @@ struct test_unit_quantity_multiply
 
 			using eagine::math::close_to;
 
-			BOOST_ASSERT((
-				value(q3) <<close_to>>
-				(value(q1) * value(q2))
-			));
+			if(!scaled)
+			{
+				BOOST_ASSERT((
+					value(q3) <<close_to>>
+					(value(q1) * value(q2))
+				));
+			}
 		}
 	};
 
-	void operator()(void) const
+	void operator()(bool scaled) const
 	{
-		do_test_unit_quantity<tester>();
+		if(scaled)
+		{
+			do_test_unit_scaled_quantity<tester>();
+		}
+		else
+		{
+			do_test_unit_quantity<tester>();
+		}
 	}
 };
 
 BOOST_AUTO_TEST_CASE(unit_quantity_multiply)
 {
 	do_test_unit_quantity<test_unit_quantity_multiply>();
+	do_test_unit_scaled_quantity<test_unit_quantity_multiply>();
 }
 
 template <typename Unit1>
@@ -214,7 +294,7 @@ struct test_unit_quantity_divide
 	template <typename Unit2>
 	struct tester
 	{
-		void operator()(void) const
+		void operator()(bool scaled) const
 		{
 			using eagine::unit::operator/;
 
@@ -230,22 +310,33 @@ struct test_unit_quantity_divide
 
 			using eagine::math::close_to;
 
-			BOOST_ASSERT((
-				value(q3) <<close_to>>
-				(value(q1) / value(q2))
-			));
+			if(!scaled)
+			{
+				BOOST_ASSERT((
+					value(q3) <<close_to>>
+					(value(q1) / value(q2))
+				));
+			}
 		}
 	};
 
-	void operator()(void) const
+	void operator()(bool scaled) const
 	{
-		do_test_unit_quantity<tester>();
+		if(scaled)
+		{
+			do_test_unit_scaled_quantity<tester>();
+		}
+		else
+		{
+			do_test_unit_quantity<tester>();
+		}
 	}
 };
 
 BOOST_AUTO_TEST_CASE(unit_quantity_divide)
 {
 	do_test_unit_quantity<test_unit_quantity_divide>();
+	do_test_unit_scaled_quantity<test_unit_quantity_divide>();
 }
 
 // TODO
