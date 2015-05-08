@@ -410,22 +410,21 @@ template <typename Scales, typename System>
 struct _sc_unit_sc_hlp
 {
 
-	template <typename Dir, typename T, typename SV>
+	template <typename T, typename SV>
 	static constexpr inline
-	auto _pow(Dir, T v, SV, meta::int_constant<0>)
+	auto _pow(T v, SV, meta::int_constant<0>)
 	{
 		return v;
 	}
 
-	template <typename Dir, typename T, typename SV, int E>
+	template <typename T, typename SV, int E>
 	static constexpr inline
-	auto _pow(Dir dir, T v, SV sv, meta::int_constant<E>)
+	auto _pow(T v, SV sv, meta::int_constant<E>)
 	{
 		return _pow(
-			dir,
-			dir?v*sv:v/sv,
+			(E>0)?v*sv:v/sv,
 			sv,
-			meta::int_constant<E+(dir?-1:1)>()
+			meta::int_constant<E+((E>0)?-1:1)>()
 		);
 	}
 
@@ -453,9 +452,9 @@ struct _sc_unit_sc_hlp
 		return v;
 	}
 
-	template <typename Dir, typename T, typename D, typename P>
+	template <typename Dir, typename T, typename D, int E>
 	static constexpr inline
-	auto _hlp2(Dir dir, T v, dim_pow<D,P>)
+	auto _hlp2(Dir, T v, dim_pow<D,meta::int_constant<E>>)
 	noexcept
 	{
 		typedef typename System
@@ -463,7 +462,10 @@ struct _sc_unit_sc_hlp
 		typedef typename BU::scale BS;
 		typedef get_scale<Scales, BU, BS> BUS;
 
-		return _pow(dir, v, BUS::value, P());
+		return _pow(
+			v, BUS::value,
+			meta::int_constant<(Dir::value?E:-E)>()
+		);
 	}
 
 	template <
