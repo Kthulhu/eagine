@@ -25,11 +25,12 @@ int main(int argc, const char** argv)
 		translation_x<mat> t((T(i-j)));
 		rotation_y<mat> r2((angle<T>(i)));
 		scale_z<mat> s(T(1)/T(1+j));
+		rotation_z<mat> r3((angle<T>(i)));
 
-#if EAGINE_USE_SIMD
-		matrix<T,M,N, true> m = fast_multiply(r1,t,r2,s);
+#if EAGINE_VECT_OPTS
+		matrix<T,M,N, true> m = fast_multiply(r1,t,r2,s,r3);
 #else
-		matrix<T,M,N, true> m = r1()|t()|r2()|s();
+		matrix<T,M,N, true> m = r1()|t()|r2()|s()|r3();
 #endif
 
 		fake_use(&m);

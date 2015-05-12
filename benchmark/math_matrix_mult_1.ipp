@@ -11,37 +11,33 @@
 
 int main(int argc, const char** argv)
 {
+	static const unsigned M = EAGINE_BM_M;
 	static const unsigned N = EAGINE_BM_N;
-	static const unsigned O = 4;
 
-	T data[O][N*N];
+	T data[M*N];
 
-	for(unsigned l=0; l<O; ++l)
-	for(unsigned k=0; k<N*N; ++k)
+	for(unsigned k=0; k<M*N; ++k)
 	{
-		data[l][k] = T(std::rand())/T(1111);
+		data[k] = T(std::rand())/T(1111);
 	}
 
 	for(unsigned j=0; j!=EAGINE_BR_M; ++j)
 	for(unsigned i=0; i!=EAGINE_BR_N; ++i)
 	{
+		data[0] = T(j+1);
 #ifndef EAGINE_BENCHMARK_BASELINE
 		using namespace eagine::math;
 
-		vector<T,N> v1 = vector<T,N>::fill(T(0));
+		auto m1 = matrix<T,M,N, true>::from(data, M*N);
+		auto m2 = matrix<T,M,N,false>::from(data, M*N);
 
-		auto m0 = matrix<T,N,N, true>::from(data[(0+i)%O], N*N);
-		auto m1 = matrix<T,N,N,false>::from(data[(1+i)%O], N*N);
-		auto m2 = matrix<T,N,N,false>::from(data[(2+i)%O], N*N);
-		auto m3 = matrix<T,N,N,false>::from(data[(3+i)%O], N*N);
-
-# if EAGINE_USE_SIMD
-		vector<T,N> v2 = fast_multiply(m0,m1,m2,m3)*v1;
+# if EAGINE_VECT_OPTS
+		matrix<T,M,N, true> m3 = fast_multiply(m1, m2);
 # else
-		vector<T,N> v2 = (m0|m1|m2|m3)*v1;
+		matrix<T,M,N, true> m3 = trivial_multiply(m1, m2);
 # endif
 
-		fake_use(&v2);
+		fake_use(&m3);
 #else
 		fake_use(data);
 

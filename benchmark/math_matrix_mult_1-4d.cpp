@@ -6,5 +6,5 @@
 typedef double T;
 #define EAGINE_BM_M 4
 #define EAGINE_BM_N 4
-#include "math_matrix_mult.ipp"
+#include "math_matrix_mult_1.ipp"
 

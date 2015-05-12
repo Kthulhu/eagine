@@ -947,7 +947,7 @@ static constexpr inline
 matrix<T, N, N, true, V> fast_multiply(
 	const matrix<T, N, N, RM1, V>& m1,
 	const matrix<T, N, N, RM2, V>& m2,
-	const matrix<T, N, N, RM2, V>& m3
+	const matrix<T, N, N, RM3, V>& m3
 ) noexcept
 {
 	typedef meta::boolean_constant<
@@ -1094,6 +1094,17 @@ struct is_matrix_constructor
 // constructed_matrix trait
 template <typename X>
 struct constructed_matrix;
+
+// constructed_matrix trait
+template <
+	typename T,
+	unsigned R,
+	unsigned C,
+	bool RM,
+	bool V
+> struct constructed_matrix<matrix<T,R,C,RM,V>>
+ : matrix<T,R,C,RM,V>
+{ };
 
 // constructed_matrix trait
 template <

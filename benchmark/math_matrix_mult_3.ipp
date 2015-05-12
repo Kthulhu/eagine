@@ -13,7 +13,7 @@ int main(int argc, const char** argv)
 {
 	static const unsigned M = EAGINE_BM_M;
 	static const unsigned N = EAGINE_BM_N;
-	static const unsigned O = 4;
+	static const unsigned O = 5;
 
 	T data[O][M*N];
 
@@ -34,12 +34,12 @@ int main(int argc, const char** argv)
 		auto m1 = matrix<T,M,N,false>::from(data[(1+i)%O], M*N);
 		auto m2 = matrix<T,M,N,false>::from(data[(2+i)%O], M*N);
 		auto m3 = matrix<T,M,N,false>::from(data[(3+i)%O], M*N);
+		auto m4 = matrix<T,M,N,false>::from(data[(4+i)%O], M*N);
 
-# if EAGINE_USE_SIMD
-		matrix<T,M,N, true> m = fast_multiply(m0,m1,m2,m3);
-		//matrix<T,M,N, true> m = m0|m1|m2|m3;
+# if EAGINE_VECT_OPTS
+		matrix<T,M,N, true> m = fast_multiply(m0,m1,m2,m3,m4);
 # else
-		matrix<T,M,N, true> m = m0|m1|m2|m3;
+		matrix<T,M,N, true> m = m0|m1|m2|m3|m4;
 # endif
 
 		fake_use(&m);

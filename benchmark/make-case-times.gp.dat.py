@@ -15,10 +15,10 @@ baseline = float(times['BASELINE'])
 
 labels = {
 	'BASELINE': 'Baseline',
-	'OPT_SIMD': 'SIMD_opt',
-	'NOOPT_SIMD': 'SIMD_noopt',
-	'OPT_NOSIMD': 'PLAIN_opt',
-	'NOOPT_NOSIMD': 'PLAIN_noopt',
+	'OPT_SIMD': 'SIMD_{Opt}',
+	'NOOPT_SIMD': 'SIMD_{NoOpt}',
+	'OPT_NOSIMD': 'Plain_{Opt}',
+	'NOOPT_NOSIMD': 'Plain_{NoOpt}',
 }
 
 for key in ['BASELINE', 'OPT_SIMD', 'NOOPT_SIMD', 'OPT_NOSIMD', 'NOOPT_NOSIMD']:

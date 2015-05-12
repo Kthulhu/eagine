@@ -25,8 +25,28 @@ local_CXXFLAGS = $(CXXFLAGS) $(local_OPTIONS) $(local_INCLDIRS)
 local_LDFLAGS = $(LDFLAGS) $(local_OPTIONS)
 
 
-SOURCES = array_sum-1024-4f
+SOURCES = \
+	math_matrix_mult_1-4f \
+	math_matrix_mult_1-4d \
+	math_matrix_mult_2-4f \
+	math_matrix_mult_2-4d \
+	math_matrix_mult_3-4f \
+	math_matrix_mult_3-4d \
+	math_mat_vec_transf_1-4f \
+	math_mat_vec_transf_1-4d \
+	math_mat_vec_transf_2-4f \
+	math_mat_vec_transf_2-4d \
+	math_mat_vec_transf_3-4f \
+	math_mat_vec_transf_3-4d \
+	math_vector_cross-3f \
+	math_vector_cross-3d \
+	math_vector_normalize-3f \
+	math_vector_normalize-3d \
+	array_sum-1024-4d \
+	array_sum-1024-4f \
+	array_sum-1024-4i
 #SOURCES = $(basename $(wildcard *.cpp))
+
 DEPENDENCIES = $(addprefix _bld/,$(addsuffix .d ,$(SOURCES)))
 
 BENCHMARKS = $(foreach src,$(SOURCES), $(foreach var,$(VARIANTS), _out/$(src)-$(OPT)-$(var)))

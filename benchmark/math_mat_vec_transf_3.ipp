@@ -26,12 +26,12 @@ int main(int argc, const char** argv)
 		translation_x<mat> t((T(i-j)));
 		rotation_y<mat> r2((angle<T>(i)));
 		scale_z<mat> s(T(1)/T(1+j));
+		rotation_z<mat> r3((angle<T>(i)));
 
-#if EAGINE_USE_SIMD
-		//vector<T,N> v2 = (r1*t*r2*s)*v1;
-		vector<T,N> v2 = fast_multiply(r1,t,r2,s)*v1;
+#if EAGINE_VECT_OPTS
+		vector<T,N> v2 = fast_multiply(r1,t,r2,s,r3)*v1;
 #else
-		vector<T,N> v2 = (r1()|t()|r2()|s())*v1;
+		vector<T,N> v2 = (r1()|t()|r2()|s()|r3())*v1;
 #endif
 
 		fake_use(&v2);

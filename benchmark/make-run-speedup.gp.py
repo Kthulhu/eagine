@@ -22,8 +22,9 @@ print('set style fill transparent solid 0.7 border lt -1')
 
 print('plot "%s.gp.dat" \
 	using 2:xtic(1) title col lw 5 lc rgb"#404080", \'\' \
-	using 3:xtic(1) title col lw 1 lc rgb"#A0A0FF", \'\' \
-	using 4:xtic(1) title col lw 2 lc rgb"black"' %
+	using 3:xtic(1) title col lw 3 lc rgb"#8080B0", \'\' \
+	using 4:xtic(1) title col lw 1 lc rgb"#A0A0FF", \'\' \
+	using 5:xtic(1) title col lw 2 lc rgb"black"' %
 	sys.argv[1]
 	
 )

@@ -24,11 +24,12 @@ int main(int argc, const char** argv)
 
 		rotation_x<mat> r1((angle<T>(j)));
 		rotation_y<mat> r2((angle<T>(i)));
+		rotation_z<mat> r3((angle<T>(i)));
 
-#if EAGINE_USE_SIMD
-		vector<T,N> v2 = fast_multiply(r1,r2)*v1;
+#if EAGINE_VECT_OPTS
+		vector<T,N> v2 = fast_multiply(r1,r2,r3)*v1;
 #else
-		vector<T,N> v2 = (r1()|r2())*v1;
+		vector<T,N> v2 = (r1()|r2()|r3())*v1;
 #endif
 
 		fake_use(&v2);

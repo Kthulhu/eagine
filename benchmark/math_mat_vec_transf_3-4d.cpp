@@ -3,8 +3,7 @@
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
-typedef float T;
-#define EAGINE_BM_M 4
+typedef double T;
 #define EAGINE_BM_N 4
-#include "math_matrix_mult.ipp"
+#include "math_mat_vec_transf_3.ipp"
 
