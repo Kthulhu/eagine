@@ -4,7 +4,7 @@
  *
  *  @author Matus Chochlik
  *
- *  Copyright 2011-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2011-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -24,6 +24,11 @@ namespace base {
 typedef char32_t unicode_cp;
 
 std::size_t utf8_bytes_required(
+	const unicode_cp* begin,
+	const unicode_cp* end
+) noexcept;
+
+std::size_t utf8_bytes_required(
 	const unicode_cp* cp_str,
 	std::size_t len
 ) noexcept;
@@ -35,10 +40,28 @@ void convert_code_point_to_utf8(
 ) noexcept;
 
 void convert_code_points_to_utf8(
+	const unicode_cp* begin,
+	const unicode_cp* end,
+	char* dest,
+	std::size_t size
+);
+
+void convert_code_points_to_utf8(
+	const unicode_cp* begin,
+	const unicode_cp* end,
+	vector<char>& result
+);
+
+void convert_code_points_to_utf8(
 	const unicode_cp* cps,
 	std::size_t len,
 	vector<char>& result
 );
+
+std::size_t code_points_required(
+	const char* pos,
+	const char* end
+) noexcept;
 
 std::size_t code_points_required(
 	const char* str,
@@ -50,6 +73,19 @@ unicode_cp convert_utf8_to_code_point(
 	std::size_t len,
 	std::size_t& cp_len
 ) noexcept;
+
+void convert_utf8_to_code_points(
+	const char* pos,
+	const char* end,
+	unicode_cp* dest,
+	std::size_t size
+);
+
+void convert_utf8_to_code_points(
+	const char* pos,
+	const char* end,
+	vector<unicode_cp>& result
+);
 
 void convert_utf8_to_code_points(
 	const char* str,

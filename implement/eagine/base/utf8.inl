@@ -19,14 +19,14 @@ namespace base {
 EAGINE_LIB_FUNC
 std::size_t
 utf8_bytes_required(
-	const unicode_cp* cp_str,
-	std::size_t len
+	const unicode_cp* pos,
+	const unicode_cp* end
 ) noexcept
 {
 	std::size_t result = 0;
-	for(std::size_t i=0; i!=len; ++i)
+	while(pos != end)
 	{
-		unicode_cp cp = *cp_str++;
+		unicode_cp cp = *pos++;
 
 		if((cp & ~0x0000007Fu) == 0)
 		{
@@ -55,6 +55,18 @@ utf8_bytes_required(
 		else EAGINE_ABORT("Invalid code point");
 	}
 	return result;
+}
+//------------------------------------------------------------------------------
+// utf8_bytes_required
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+std::size_t
+utf8_bytes_required(
+	const unicode_cp* cp_str,
+	std::size_t len
+) noexcept
+{
+	return utf8_bytes_required(cp_str, cp_str+len);
 }
 //------------------------------------------------------------------------------
 // convert_code_point_to_utf8
@@ -126,31 +138,58 @@ convert_code_point_to_utf8(
 EAGINE_LIB_FUNC
 void
 convert_code_points_to_utf8(
-	const unicode_cp* cps,
-	std::size_t len,
-	vector<char>& result
+	const unicode_cp* pos,
+	const unicode_cp* end,
+	char* dest,
+	std::size_t dsize
 )
 {
-	std::size_t u8len = utf8_bytes_required(cps, len);
+	std::size_t u8len = utf8_bytes_required(pos, end);
 
-	result.resize(u8len);
+	assert(dsize >= u8len);
 
-	char* cptr = result.data();
 	std::size_t clen = 0;
-	while(len)
+
+	while(pos != end)
 	{
-		convert_code_point_to_utf8(*cps, cptr, clen);
+		convert_code_point_to_utf8(*pos, dest, clen);
 
 		assert(u8len >= clen);
 		assert(clen > 0);
 
 		u8len -= clen;
-		cptr += clen;
+		dest += clen;
 
-		len -= 1;
-		cps += 1;
+		++pos;
 	}
 	assert(u8len == 0);
+}
+//------------------------------------------------------------------------------
+// convert_code_points_to_utf8
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void
+convert_code_points_to_utf8(
+	const unicode_cp* pos,
+	const unicode_cp* end,
+	vector<char>& result
+)
+{
+	result.resize(utf8_bytes_required(pos, end));
+	convert_code_points_to_utf8(pos, end, result.data(), result.size());
+}
+//------------------------------------------------------------------------------
+// convert_code_points_to_utf8
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void
+convert_code_points_to_utf8(
+	const unicode_cp* cps,
+	std::size_t len,
+	vector<char>& result
+)
+{
+	convert_code_points_to_utf8(cps, cps+len, result);
 }
 //------------------------------------------------------------------------------
 // code_points_required
@@ -158,13 +197,15 @@ convert_code_points_to_utf8(
 EAGINE_LIB_FUNC
 std::size_t
 code_points_required(
-	const char* str,
-	std::size_t len
+	const char* pos,
+	const char* end
 ) noexcept
 {
 	static_assert(sizeof(char) == sizeof(unsigned char), "");
-	const unsigned char* pb = reinterpret_cast<const unsigned char*>(str);
+	const unsigned char* pb = reinterpret_cast<const unsigned char*>(pos);
 
+	assert(pos <= end);
+	std::size_t len = std::size_t(end-pos);
 	std::size_t result = 0;
 
 	while(len != 0)
@@ -203,6 +244,18 @@ code_points_required(
 		++result;
 	}
 	return result;
+}
+//------------------------------------------------------------------------------
+// code_points_required
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+std::size_t
+code_points_required(
+	const char* str,
+	std::size_t len
+) noexcept
+{
+	return code_points_required(str, len);
 }
 //------------------------------------------------------------------------------
 // convert_utf8_to_code_point
@@ -299,29 +352,60 @@ convert_utf8_to_code_point(
 EAGINE_LIB_FUNC
 void
 convert_utf8_to_code_points(
+	const char* pos,
+	const char* end,
+	unicode_cp* dest,
+	std::size_t dsize
+)
+{
+	std::size_t len = std::size_t(end-pos);
+
+	std::size_t ulen = code_points_required(pos, end);
+	assert(dsize >= ulen);
+
+	std::size_t cplen = 0;
+
+	while(pos != end)
+	{
+		*dest = convert_utf8_to_code_point(pos, len, cplen);
+		++dest;
+
+		assert(cplen > 0);
+		assert(len >= cplen);
+
+		len -= cplen;
+		pos += cplen;
+
+		ulen -= 1;
+	}
+	assert(ulen == 0);
+}
+//------------------------------------------------------------------------------
+// convert_utf8_to_code_points
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void
+convert_utf8_to_code_points(
+	const char* pos,
+	const char* end,
+	vector<unicode_cp>& result
+)
+{
+	result.resize(code_points_required(pos, end));
+	convert_utf8_to_code_points(pos, end, result.data(), result.size());
+}
+//------------------------------------------------------------------------------
+// convert_utf8_to_code_points
+//------------------------------------------------------------------------------
+EAGINE_LIB_FUNC
+void
+convert_utf8_to_code_points(
 	const char* str,
 	std::size_t len,
 	vector<unicode_cp>& result
 )
 {
-	std::size_t ulen = code_points_required(str, len);
-	result.resize(ulen);
-
-	unicode_cp* cpptr = result.data();
-	std::size_t cplen = 0;
-	while(len)
-	{
-		*cpptr = convert_utf8_to_code_point(str, len, cplen);
-		++cpptr;
-
-		assert(cplen > 0);
-		assert(len >= cplen);
-		len -= cplen;
-		str += cplen;
-
-		ulen -= 1;
-	}
-	assert(ulen == 0);
+	convert_utf8_to_code_points(str, str+len, result);
 }
 //------------------------------------------------------------------------------
 // utf8_validator_to_byte
