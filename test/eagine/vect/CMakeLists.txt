@@ -18,6 +18,7 @@ eagine_vect_exec_test(from)
 eagine_vect_exec_test(shuffle)
 eagine_vect_exec_test(hsum)
 eagine_vect_exec_test(compare)
+eagine_vect_exec_test(abs)
 eagine_vect_exec_test(minmax)
 eagine_vect_exec_test(lerp)
 

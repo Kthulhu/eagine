@@ -122,6 +122,15 @@ static inline T value(const quantity<U, T>& q)
 
 
 
+template <typename U, typename T>
+static constexpr inline
+math::half_difference_op<T> half_difference(
+	const quantity<U, T>& a
+) noexcept
+{
+	return math::half_difference_op<T>{a._v};
+}
+
 template <typename U1, typename U2, typename T>
 static constexpr inline
 math::difference_op<T> difference(

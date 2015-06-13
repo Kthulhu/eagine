@@ -64,6 +64,16 @@ struct half_difference_op
 	T _l;
 };
 
+// half_difference
+template <typename T>
+static constexpr inline
+half_difference_op<T> half_difference(T l)
+noexcept
+{
+	return half_difference_op<T>{l};
+}
+
+
 // operator << 
 template <typename T>
 static constexpr inline
@@ -71,7 +81,7 @@ half_difference_op<T>
 operator << (T l, const difference_operator&)
 noexcept
 {
-	return half_difference_op<T>{l};
+	return half_difference(l);
 }
 
 // operator >> 
