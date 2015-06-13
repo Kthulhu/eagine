@@ -24,14 +24,30 @@ struct equal
 	bool apply(_dpT a, _dpT b)
 	noexcept
 	{
+		bool result = true;
 		for(unsigned i=0; i<N; ++i)
 		{
-			if((a[i] < b[i]) || (a[i] > b[i]))
-			{
-				return false;
-			}
+			result &= (a[i] == b[i]);
 		}
-		return true;
+		return result;
+	}
+};
+
+template <typename T, unsigned N, bool V>
+struct notequal
+{
+	typedef typename data_param<T, N, V>::type _dpT;
+
+	static
+	bool apply(_dpT a, _dpT b)
+	noexcept
+	{
+		bool result = false;
+		for(unsigned i=0; i<N; ++i)
+		{
+			result |= (a[i] != b[i]);
+		}
+		return result;
 	}
 };
 

@@ -255,7 +255,7 @@ code_points_required(
 	std::size_t len
 ) noexcept
 {
-	return code_points_required(str, len);
+	return code_points_required(str, str+len);
 }
 //------------------------------------------------------------------------------
 // convert_utf8_to_code_point

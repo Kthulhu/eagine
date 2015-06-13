@@ -127,9 +127,6 @@ BOOST_AUTO_TEST_CASE(math_not_farther_from_2)
 {
 	for(unsigned i=0; i<1000; ++i)
 	{
-		test_math_not_farther_from_2<short>();
-		test_math_not_farther_from_2<int>();
-		test_math_not_farther_from_2<long>();
 		test_math_not_farther_from_2<float>();
 		test_math_not_farther_from_2<double>();
 	}

@@ -199,6 +199,7 @@ struct test_unit_quantity_add
 				value(q3) <<close_to>>
 				(value(q1) + value(q2))
 			));
+			BOOST_ASSERT((q3 <<close_to>> (q1 + q2)));
 		}
 	}
 };
@@ -228,6 +229,7 @@ struct test_unit_quantity_subtract
 				value(q3) <<close_to>>
 				(value(q1) - value(q2))
 			));
+			BOOST_ASSERT((q3 <<close_to>> (q1 - q2)));
 		}
 	}
 };
@@ -265,6 +267,7 @@ struct test_unit_quantity_multiply
 					value(q3) <<close_to>>
 					(value(q1) * value(q2))
 				));
+				BOOST_ASSERT((q3 <<close_to>> (q1 * q2)));
 			}
 		}
 	};
@@ -316,6 +319,7 @@ struct test_unit_quantity_divide
 					value(q3) <<close_to>>
 					(value(q1) / value(q2))
 				));
+				BOOST_ASSERT((q3 <<close_to>> (q1 / q2)));
 			}
 		}
 	};

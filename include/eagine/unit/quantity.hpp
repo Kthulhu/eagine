@@ -120,13 +120,25 @@ static inline T value(const quantity<U, T>& q)
 	return q._v;
 }
 
+
+
+template <typename U1, typename U2, typename T>
+static constexpr inline
+math::difference_op<T> difference(
+	const quantity<U1, T>& a,
+	const quantity<U2, T>& b
+) noexcept
+{
+	typedef typename value_conv<U2, U1>::type conv;
+	return math::difference_op<T>{a._v, conv::apply(b._v)};
+}
+
 template <typename U1, typename U2, typename T>
 constexpr inline
 bool operator == (const quantity<U1, T>& a, const quantity<U2, T>& b)
 {
 	typedef typename value_conv<U2, U1>::type conv;
-	using math::equal_to;
-	return (a._v <<equal_to>> conv::apply(b._v));
+	return (a._v == conv::apply(b._v));
 }
 
 template <typename U1, typename U2, typename T>
@@ -134,8 +146,7 @@ constexpr inline
 bool operator != (const quantity<U1, T>& a, const quantity<U2, T>& b)
 {
 	typedef typename value_conv<U2, U1>::type conv;
-	using math::equal_to;
-	return not(a._v <<equal_to>> conv::apply(b._v));
+	return a._v != conv::apply(b._v);
 }
 
 template <typename U1, typename U2, typename T>
