@@ -570,7 +570,7 @@ struct vector
 	bool operator != (_cpT a, _cpT b)
 	noexcept
 	{
-		return !vect::equal<T,N,V>::apply(a._v, b._v);
+		return vect::notequal<T,N,V>::apply(a._v, b._v);
 	}
 
 	friend
@@ -806,6 +806,27 @@ noexcept
 {
 	return v;
 }
+
+// difference_op
+template <typename T, unsigned N, bool V>
+struct difference_op<vector<T, N, V>>
+{
+	vector<T, N, V> _l, _r;
+
+	constexpr inline
+	T get(void) const
+	noexcept
+	{
+		return T(distance(_l, _r));
+	}
+
+	constexpr inline
+	operator T (void) const
+	noexcept
+	{
+		return get();
+	}
+};
 
 } // namespace math
 } // namespace eagine

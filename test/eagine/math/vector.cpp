@@ -1048,6 +1048,9 @@ void test_math_vector_equal_TNV(void)
 
 	BOOST_ASSERT((va == vb) == eq);
 	BOOST_ASSERT((vb == va) == eq);
+
+	using eagine::math::close_to;
+	BOOST_ASSERT((va <<close_to>> vb) == eq);
 }
 
 template <typename T, bool V>

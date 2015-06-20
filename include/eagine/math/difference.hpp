@@ -74,7 +74,7 @@ noexcept
 }
 
 
-// operator << 
+// operator <<
 template <typename T>
 static constexpr inline
 half_difference_op<T>
@@ -84,7 +84,7 @@ noexcept
 	return half_difference(l);
 }
 
-// operator >> 
+// operator >>
 template <typename T, typename U>
 static constexpr inline
 difference_op<T>
@@ -110,6 +110,17 @@ struct cmp_less_than
 	}
 };
 
+struct cmp_less_equal
+{
+	template <typename L, typename R>
+	constexpr inline
+	bool operator()(L l, R r) const
+	noexcept
+	{
+		return l <= r;
+	}
+};
+
 struct cmp_greater_than
 {
 	template <typename L, typename R>
@@ -128,7 +139,27 @@ struct operator_ : Cmp
 static constexpr operator_<cmp_less_than> less_than = {};
 static constexpr operator_<cmp_greater_than> greater_than = {};
 
-struct eps { };
+struct zero
+{
+	template <typename X>
+	constexpr inline
+	X operator()(X) const
+	noexcept
+	{
+		return X(0);
+	}
+};
+
+struct eps
+{
+	template <typename X>
+	constexpr inline
+	X operator()(X) const
+	noexcept
+	{
+		return std::numeric_limits<X>::epsilon();
+	}
+};
 
 template <typename T, typename Op>
 struct difference_cmp;
@@ -138,14 +169,28 @@ struct difference_cmp<T, operator_<Cmp>>
 {
 	T _l, _r;
 
-	constexpr inline
-	bool operator()(eps) const
+	template <typename D, typename M>
+	static constexpr inline
+	bool _cmp(D diff, M margin)
 	noexcept
 	{
-		return Cmp()(
-			difference(_l, _r).get(),
-			std::numeric_limits<T>::epsilon()
-		);
+		return Cmp()(diff, margin(diff));
+	}
+
+	template <typename M>
+	static constexpr inline
+	bool apply(T l, T r, M margin)
+	noexcept
+	{
+		return _cmp(difference(l, r).get(), margin);
+	}
+
+	template <typename Margin>
+	constexpr inline
+	bool operator()(Margin margin) const
+	noexcept
+	{
+		return apply(_l, _r, margin);
 	}
 };
 
@@ -169,46 +214,86 @@ noexcept
 
 } // namespace cmp
 
+template <typename Cmp, typename Mgn>
+struct difference_operation
+{
+	Mgn _margin;
+};
 
-struct operator_equal_to;
-struct operator_close_to;
+template <typename T, typename DiffOp>
+struct half_diff_operation
+{
+	DiffOp _op;
+	T _loperand;
+};
+
+template <typename T, typename Cmp, typename Mgn>
+static constexpr inline
+half_diff_operation<T, difference_operation<Cmp, Mgn>>
+operator << (T loperand, const difference_operation<Cmp, Mgn>& operation)
+noexcept
+{
+	return {operation, loperand};
+}
+
+template <typename T, typename DiffOp>
+struct full_diff_operation;
+
+template <typename T, typename Cmp, typename Mgn>
+struct full_diff_operation<T, difference_operation<Cmp, Mgn>>
+{
+	Mgn _margin;
+	T _loperand, _roperand;
+
+	constexpr inline
+	bool operator ()(void) const
+	noexcept
+	{
+		return cmp::difference_cmp<T, cmp::operator_<Cmp>>::apply(
+			_loperand,
+			_roperand,
+			_margin
+		);
+	}
+
+	constexpr inline
+	operator bool (void) const
+	noexcept
+	{
+		return (*this)();
+	}
+
+	constexpr inline
+	bool operator ! (void) const
+	noexcept
+	{
+		return !((*this)());
+	}
+};
+
+template <typename T, typename DiffCmp>
+static constexpr inline
+full_diff_operation<T, DiffCmp>
+operator >> (const half_diff_operation<T, DiffCmp>& lop, T roperand)
+noexcept
+{
+	return {lop._op._margin, lop._loperand, roperand};
+}
+
+static constexpr difference_operation<cmp::cmp_less_equal, cmp::zero>
+	equal_to = {};
+
+static constexpr difference_operation<cmp::cmp_less_equal, cmp::eps>
+	close_to = {};
+
+
 struct operator_not_farther_from;
-
-template <typename T>
-struct half_operation_equal_to
-{
-	T _loperand;
-};
-
-template <typename T>
-struct half_operation_close_to
-{
-	T _loperand;
-};
 
 template <typename T>
 struct half_operation_not_farther_from
 {
 	T _loperand;
 };
-
-template <typename T>
-static constexpr inline
-half_operation_close_to<T>
-operator << (T loperand, const operator_close_to&)
-noexcept
-{
-	return {loperand};
-}
-
-template <typename T>
-static constexpr inline
-half_operation_equal_to<T>
-operator << (T loperand, const operator_equal_to&)
-noexcept
-{
-	return {loperand};
-}
 
 template <typename T>
 static constexpr inline
@@ -234,7 +319,7 @@ struct operation_close_to_operands
 	}
 
 	template <typename X>
-	static constexpr inline 
+	static constexpr inline
 	X _max(X a, X b)
 	noexcept
 	{
@@ -242,7 +327,7 @@ struct operation_close_to_operands
 	}
 
 	template <typename X>
-	static constexpr inline 
+	static constexpr inline
 	auto _dist(X a, X b)
 	noexcept
 	{
@@ -336,51 +421,6 @@ struct operation_close_to_operands
 };
 
 template <typename T>
-struct full_operation_equal_to
-{
-	operation_close_to_operands<T> _private;
-
-	constexpr inline
-	operator bool (void) const
-	noexcept
-	{
-		// TODO: 
-		return not(_private._dist() > 0);
-	}
-};
-
-template <typename T>
-static constexpr inline
-full_operation_equal_to<T>
-operator >> (half_operation_equal_to<T> lop, T roperand)
-noexcept
-{
-	return {{lop._loperand,roperand}};
-}
-
-template <typename T>
-struct full_operation_close_to
-{
-	operation_close_to_operands<T> _private;
-
-	constexpr inline
-	operator bool (void) const
-	noexcept
-	{
-		return _private._eval_1(_private._eps());
-	}
-};
-
-template <typename T>
-static constexpr inline
-full_operation_close_to<T>
-operator >> (half_operation_close_to<T> lop, T roperand)
-noexcept
-{
-	return {{lop._loperand,roperand}};
-}
-
-template <typename T>
 struct full_operation_not_farther_from
 {
 	struct {
@@ -424,32 +464,6 @@ noexcept
 {
 	return {{{lop._loperand,roperand}}};
 }
-
-struct operator_equal_to
-{
-	template <typename T>
-	constexpr inline
-	full_operation_equal_to<T>
-	operator()(T loperand, T roperand) const
-	noexcept
-	{
-		return {{loperand, roperand}};
-	}
-};
-static constexpr operator_equal_to equal_to = {};
-
-struct operator_close_to
-{
-	template <typename T>
-	constexpr inline
-	full_operation_close_to<T>
-	operator()(T loperand, T roperand) const
-	noexcept
-	{
-		return {{loperand, roperand}};
-	}
-};
-static constexpr operator_close_to close_to = {};
 
 struct operator_not_farther_from
 {
