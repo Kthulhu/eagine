@@ -137,6 +137,7 @@ struct operator_ : Cmp
 { };
 
 static constexpr operator_<cmp_less_than> less_than = {};
+static constexpr operator_<cmp_less_equal> less_equal = {};
 static constexpr operator_<cmp_greater_than> greater_than = {};
 
 struct zero
@@ -218,6 +219,18 @@ template <typename Cmp, typename Mgn>
 struct difference_operation
 {
 	Mgn _margin;
+
+	template <typename T>
+	constexpr inline
+	bool operator ()(T loperand, T roperand) const
+	noexcept
+	{
+		return cmp::difference_cmp<T, cmp::operator_<Cmp>>::apply(
+			loperand,
+			roperand,
+			_margin
+		);
+	}
 };
 
 template <typename T, typename DiffOp>
@@ -242,18 +255,14 @@ struct full_diff_operation;
 template <typename T, typename Cmp, typename Mgn>
 struct full_diff_operation<T, difference_operation<Cmp, Mgn>>
 {
-	Mgn _margin;
+	difference_operation<Cmp, Mgn> _diff_op;
 	T _loperand, _roperand;
 
 	constexpr inline
 	bool operator ()(void) const
 	noexcept
 	{
-		return cmp::difference_cmp<T, cmp::operator_<Cmp>>::apply(
-			_loperand,
-			_roperand,
-			_margin
-		);
+		return _diff_op(_loperand, _roperand);
 	}
 
 	constexpr inline
@@ -277,7 +286,7 @@ full_diff_operation<T, DiffCmp>
 operator >> (const half_diff_operation<T, DiffCmp>& lop, T roperand)
 noexcept
 {
-	return {lop._op._margin, lop._loperand, roperand};
+	return {lop._op, lop._loperand, roperand};
 }
 
 static constexpr difference_operation<cmp::cmp_less_equal, cmp::zero>

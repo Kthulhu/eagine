@@ -120,28 +120,6 @@ static inline T value(const quantity<U, T>& q)
 	return q._v;
 }
 
-
-
-template <typename U, typename T>
-static constexpr inline
-math::half_difference_op<T> half_difference(
-	const quantity<U, T>& a
-) noexcept
-{
-	return math::half_difference_op<T>{a._v};
-}
-
-template <typename U1, typename U2, typename T>
-static constexpr inline
-math::difference_op<T> difference(
-	const quantity<U1, T>& a,
-	const quantity<U2, T>& b
-) noexcept
-{
-	typedef typename value_conv<U2, U1>::type conv;
-	return math::difference_op<T>{a._v, conv::apply(b._v)};
-}
-
 template <typename U1, typename U2, typename T>
 constexpr inline
 bool operator == (const quantity<U1, T>& a, const quantity<U2, T>& b)
@@ -279,6 +257,32 @@ operator / (const quantity<U, T>& a, const T& c)
 }
 
 } // namespace quantity
+
+namespace math {
+
+// difference_op
+template <typename U, typename T>
+struct difference_op<unit::quantity<U, T>>
+{
+	unit::quantity<U,T> _l, _r;
+
+	constexpr inline
+	T get(void) const
+	noexcept
+	{
+		using unit::value;
+		return difference(value(_l), value(_r));
+	}
+
+	constexpr inline
+	operator T (void) const
+	noexcept
+	{
+		return get();
+	}
+};
+
+} // namespace math
 } // namespace eagine
 
 #endif //include guard

@@ -1048,9 +1048,6 @@ void test_math_vector_equal_TNV(void)
 
 	BOOST_ASSERT((va == vb) == eq);
 	BOOST_ASSERT((vb == va) == eq);
-
-	using eagine::math::close_to;
-	BOOST_ASSERT((va <<close_to>> vb) == eq);
 }
 
 template <typename T, bool V>
@@ -1140,6 +1137,77 @@ BOOST_AUTO_TEST_CASE(math_vector_noteq)
 		test_math_vector_noteq_T<int>();
 		test_math_vector_noteq_T<float>();
 		test_math_vector_noteq_T<double>();
+	}
+}
+
+template <typename T, unsigned N, bool V>
+void test_math_vector_difference_TNV(void)
+{
+	T a[N], b[N];
+
+	bool eq = std::rand() % 10 == 1;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		a[i] = std::rand() / T(3);
+		b[i] = std::rand() / T(3);
+		if(eq) b[i] = a[i];
+	}
+
+	eq = true;
+
+	for(unsigned i=0; i<N; ++i)
+	{
+		using eagine::math::equal_to;
+
+		eq &= (a[i] <<equal_to>> b[i]);
+	}
+
+	auto va = eagine::math::vector<T, N, V>::from(a, N);
+	auto vb = eagine::math::vector<T, N, V>::from(b, N);
+
+	using eagine::math::close_to;
+	BOOST_ASSERT((va <<close_to>> vb) || !eq);
+	BOOST_ASSERT((vb <<close_to>> va) || !eq);
+
+	using eagine::math::equal_to;
+	BOOST_ASSERT((va <<equal_to>> vb) == eq);
+	BOOST_ASSERT((vb <<equal_to>> va) == eq);
+
+	using eagine::math::to;
+	using namespace eagine::math::cmp;
+
+	BOOST_ASSERT((va <<to>> vb) == (vb <<to>> va));
+	BOOST_ASSERT((va <<to>> vb <<less_equal>> eps()) == eq);
+}
+
+template <typename T, bool V>
+void test_math_vector_difference_TV(void)
+{
+	test_math_vector_difference_TNV<T, 1, V>();
+	test_math_vector_difference_TNV<T, 2, V>();
+	test_math_vector_difference_TNV<T, 3, V>();
+	test_math_vector_difference_TNV<T, 4, V>();
+	test_math_vector_difference_TNV<T, 5, V>();
+	test_math_vector_difference_TNV<T, 6, V>();
+	test_math_vector_difference_TNV<T, 7, V>();
+	test_math_vector_difference_TNV<T, 8, V>();
+}
+
+template <typename T>
+void test_math_vector_difference_T(void)
+{
+	test_math_vector_difference_TV<T, true>();
+	test_math_vector_difference_TV<T,false>();
+}
+
+BOOST_AUTO_TEST_CASE(math_vector_difference)
+{
+	for(unsigned i=0; i<10; ++i)
+	{
+		test_math_vector_difference_T<int>();
+		test_math_vector_difference_T<float>();
+		test_math_vector_difference_T<double>();
 	}
 }
 

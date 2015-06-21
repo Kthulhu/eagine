@@ -10,6 +10,7 @@
 #ifndef EAGINE_MATH_VECTOR_1308281038_HPP
 #define EAGINE_MATH_VECTOR_1308281038_HPP
 
+#include <eagine/vect/abs.hpp>
 #include <eagine/vect/fill.hpp>
 #include <eagine/vect/axis.hpp>
 #include <eagine/vect/from.hpp>
@@ -18,6 +19,7 @@
 #include <eagine/vect/sdiv.hpp>
 #include <eagine/vect/sqrt.hpp>
 #include <eagine/vect/cast.hpp>
+#include <eagine/vect/minmax.hpp>
 #include <eagine/vect/compare.hpp>
 #include <eagine/vect/array_ref.hpp>
 #include <eagine/meta/min_max.hpp>
@@ -809,15 +811,68 @@ noexcept
 
 // difference_op
 template <typename T, unsigned N, bool V>
-struct difference_op<vector<T, N, V>>
+struct difference_op<scalar<T, N, V>>
 {
-	vector<T, N, V> _l, _r;
+	scalar<T, N, V> _l, _r;
+
+	typedef typename scalar<T, N, V>::data_type _vT;
+
+	friend constexpr inline
+	T _diff(_vT a, meta::false_type)
+	noexcept
+	{
+		return a;
+	}
+
+	friend constexpr inline
+	T _diff(_vT a, meta::true_type)
+	noexcept
+	{
+		return vect::hmax<T, N, V>::apply(
+			vect::abs<T, N, V>::apply(a)
+		)[0];
+	}
 
 	constexpr inline
 	T get(void) const
 	noexcept
 	{
-		return T(distance(_l, _r));
+		return _diff(
+			_l.v-_r._v,
+			typename scalar<T, N, V>::is_vectorized()
+		);
+	}
+
+	constexpr inline
+	operator T (void) const
+	noexcept
+	{
+		return get();
+	}
+};
+
+// difference_op
+template <typename T, unsigned N, bool V>
+struct difference_op<vector<T, N, V>>
+{
+	vector<T, N, V> _l, _r;
+
+	typedef typename vector<T, N, V>::data_type _vT;
+
+	static constexpr inline
+	T _diff(_vT a)
+	noexcept
+	{
+		return vect::hmax<T, N, V>::apply(
+			vect::abs<T, N, V>::apply(a)
+		)[0];
+	}
+
+	constexpr inline
+	T get(void) const
+	noexcept
+	{
+		return _diff(_l._v-_r._v);
 	}
 
 	constexpr inline
