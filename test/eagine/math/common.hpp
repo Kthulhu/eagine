@@ -33,8 +33,10 @@ template <typename T>
 inline
 bool test_math_close(T a, T b)
 {
-	using eagine::math::not_farther_from;
-	return (a <<not_farther_from>> b).than(test_math_close_eps(&a));
+	using eagine::math::to;
+	using eagine::math::cmp::less_equal;
+	using eagine::math::cmp::relative;
+	return (a <<to>> b <<less_equal>> relative(test_math_close_eps(&a)));
 }
 
 

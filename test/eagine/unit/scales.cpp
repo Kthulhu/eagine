@@ -123,21 +123,21 @@ BOOST_AUTO_TEST_CASE(unit_scale_invert)
 template <typename Scale, typename T>
 void test_unit_scale_value(T m)
 {
-	using eagine::math::not_farther_from;
+	using eagine::math::to;
+	using eagine::math::cmp::less_than;
+	using eagine::math::cmp::relative;
 
 	T v = T(1);
 
 	BOOST_ASSERT((
-		((v * Scale::value) <<not_farther_from>> (v * m))
-			.than.rel(1e-6)
+		(v * Scale::value) <<to>> (v * m) <<less_than>> relative(1e-6)
 	));
 	BOOST_ASSERT((
-		((v / Scale::value) <<not_farther_from>> (v / m))
-			.than.rel(1e-6)
+		(v / Scale::value) <<to>> (v / m) <<less_than>> relative(1e-6)
 	));
 	BOOST_ASSERT((
-		((v*Scale::value/Scale::value) <<not_farther_from>> (v))
-			.than.rel(1e-6)
+		(v*Scale::value/Scale::value) <<to>> (v)
+			<<less_than>> relative(1e-6)
 	));
 }
 

@@ -91,46 +91,31 @@ BOOST_AUTO_TEST_CASE(math_equal_to_1)
 }
 
 template <typename T>
-void test_math_not_farther_from_1(void)
+void test_math_difference_less_equal_1(void)
 {
-	T a = T(std::rand());
+	T a = T(std::rand() % int(std::numeric_limits<T>::max()/4));
 	T b = -a;
 
-	using eagine::math::not_farther_from;
-	BOOST_ASSERT((a <<not_farther_from>> a).than.eps());
-	BOOST_ASSERT(not_farther_from(a, a).than.eps());
+	using eagine::math::to;
+	using eagine::math::cmp::less_equal;
+	using eagine::math::cmp::epsilon;
+	using eagine::math::cmp::exactly;
+	using eagine::math::cmp::relative;
 
-	BOOST_ASSERT((a <<not_farther_from>> b).than.rel(2));
-	BOOST_ASSERT(not_farther_from(a, b).than.rel(2));
+	BOOST_ASSERT(a <<to>> a <<less_equal>> epsilon());
+	BOOST_ASSERT(a <<to>> b <<less_equal>> exactly(3*a));
+	BOOST_ASSERT(a <<to>> b <<less_equal>> relative(2));
 }
 
-BOOST_AUTO_TEST_CASE(math_not_farther_from_1)
+BOOST_AUTO_TEST_CASE(math_difference_less_equal_1)
 {
 	for(unsigned i=0; i<1000; ++i)
 	{
-		test_math_not_farther_from_1<short>();
-		test_math_not_farther_from_1<int>();
-		test_math_not_farther_from_1<long>();
-		test_math_not_farther_from_1<float>();
-		test_math_not_farther_from_1<double>();
-	}
-}
-
-template <typename T>
-void test_math_not_farther_from_2(void)
-{
-	T a = T(1)/T(1+std::rand());
-
-	using eagine::math::not_farther_from;
-	BOOST_ASSERT((a <<not_farther_from>> T(0)).than(a));
-}
-
-BOOST_AUTO_TEST_CASE(math_not_farther_from_2)
-{
-	for(unsigned i=0; i<1000; ++i)
-	{
-		test_math_not_farther_from_2<float>();
-		test_math_not_farther_from_2<double>();
+		test_math_difference_less_equal_1<short>();
+		test_math_difference_less_equal_1<int>();
+		test_math_difference_less_equal_1<long>();
+		test_math_difference_less_equal_1<float>();
+		test_math_difference_less_equal_1<double>();
 	}
 }
 

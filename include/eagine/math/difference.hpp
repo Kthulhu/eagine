@@ -218,7 +218,7 @@ struct rel_t
 	noexcept
 	{
 		using std::pow;
-		return 2*pow(N(2), -n*T(sizeof(T)*8));
+		return (n<N(2))?2*pow(N(2), -n*N(sizeof(T)*8)):0;
 	}
 
 	template <typename N>
@@ -231,7 +231,7 @@ struct rel_t
 
 	template <typename X, typename V>
 	constexpr inline
-	X operator ()(X, V l, V r) const
+	auto operator ()(X, V l, V r) const
 	noexcept
 	{
 		return X(_get(difference_op<V>::norm(l, r)));
@@ -372,198 +372,6 @@ static constexpr difference_operation<cmp::cmp_less_equal, cmp::zero>
 
 static constexpr difference_operation<cmp::cmp_less_equal, cmp::epsilon>
 	close_to = {};
-
-
-struct operator_not_farther_from;
-
-template <typename T>
-struct half_operation_not_farther_from
-{
-	T _loperand;
-};
-
-template <typename T>
-static constexpr inline
-half_operation_not_farther_from<T>
-operator << (T loperand, const operator_not_farther_from&)
-noexcept
-{
-	return {loperand};
-}
-
-template <typename T>
-struct operation_close_to_operands
-{
-	T _loperand;
-	T _roperand;
-
-	template <typename X>
-	static constexpr inline
-	X _abs(X value)
-	noexcept
-	{
-		return (value>=X(0))?value:-value;
-	}
-
-	template <typename X>
-	static constexpr inline
-	X _max(X a, X b)
-	noexcept
-	{
-		return a > b ? a : b;
-	}
-
-	template <typename X>
-	static constexpr inline
-	auto _dist(X a, X b)
-	noexcept
-	{
-		return _abs(a-b);
-	}
-
-	constexpr inline
-	auto _dist(void) const
-	noexcept
-	{
-		return _dist(_loperand,_roperand);
-	}
-
-	template <typename X>
-	static constexpr inline
-	auto _norm(X a, X b)
-	noexcept
-	{
-		return _max(_abs(a),_abs(b));
-	}
-
-	constexpr inline
-	auto _norm(void) const
-	noexcept
-	{
-		return _norm(_loperand,_roperand);
-	}
-
-	template <typename X>
-	static constexpr inline
-	auto _adjm(T m, X n)
-	noexcept
-	{
-		using std::pow;
-		return m + T(2)*pow(X(2), -n*X(sizeof(T)*8));
-	}
-
-	template <typename X>
-	static constexpr inline
-	X _eps(X*)
-	noexcept
-	{
-		return std::numeric_limits<X>::epsilon();
-	}
-
-	static constexpr inline
-	T _eps(void)
-	noexcept
-	{
-		return _eps(static_cast<T*>(nullptr));
-	}
-
-	template <typename X>
-	constexpr inline
-	bool _nle(X norm, T margin) const
-	noexcept
-	{
-		return	(norm <= _eps()) ||
-			(_dist()/norm <= margin);
-	}
-
-	template <typename X>
-	constexpr inline
-	bool _nleam(X norm, T margin) const
-	noexcept
-	{
-		return	(norm <= _eps()) ||
-			(_dist()/norm <= _adjm(margin, norm));
-	}
-
-	constexpr inline
-	bool _eval_1(T margin) const
-	noexcept
-	{
-		return _nle(T(1), margin);
-	}
-
-	constexpr inline
-	bool _eval_n(T margin) const
-	noexcept
-	{
-		return _nle(_norm(), margin);
-	}
-
-	constexpr inline
-	bool _eval_nam(T margin) const
-	noexcept
-	{
-		return _nleam(_norm(), margin);
-	}
-};
-
-template <typename T>
-struct full_operation_not_farther_from
-{
-	struct {
-		operation_close_to_operands<T> _private;
-
-		constexpr inline
-		bool abs(T margin) const
-		noexcept
-		{
-			return _private._eval_1(margin);
-		}
-
-		constexpr inline
-		bool rel(T margin) const
-		noexcept
-		{
-			return _private._eval_n(margin);
-		}
-
-		constexpr inline
-		bool eps(unsigned mult = 1u) const
-		noexcept
-		{
-			return _private._eval_1(T(_private._eps()*mult));
-		}
-
-		constexpr inline
-		bool operator()(T margin) const
-		noexcept
-		{
-			return _private._eval_nam(margin);
-		}
-	} than;
-};
-
-template <typename T>
-static constexpr inline
-full_operation_not_farther_from<T>
-operator >> (half_operation_not_farther_from<T> lop, T roperand)
-noexcept
-{
-	return {{{lop._loperand,roperand}}};
-}
-
-struct operator_not_farther_from
-{
-	template <typename T>
-	constexpr inline
-	full_operation_not_farther_from<T>
-	operator()(T loperand, T roperand) const
-	noexcept
-	{
-		return {{{loperand, roperand}}};
-	}
-};
-static constexpr operator_not_farther_from not_farther_from = {};
 
 } // namespace math
 } // namespace eagine
