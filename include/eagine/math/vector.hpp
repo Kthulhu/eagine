@@ -813,24 +813,35 @@ noexcept
 template <typename T, unsigned N, bool V>
 struct difference_op<scalar<T, N, V>>
 {
-	scalar<T, N, V> _l, _r;
+	typedef scalar<T, N, V> data_type;
+	data_type _l, _r;
 
 	typedef typename scalar<T, N, V>::data_type _vT;
 
-	friend constexpr inline
+	static constexpr inline
 	T _diff(_vT a, meta::false_type)
 	noexcept
 	{
-		return a;
+		return difference_op<T>::_abs(a);
 	}
 
-	friend constexpr inline
+	static constexpr inline
 	T _diff(_vT a, meta::true_type)
 	noexcept
 	{
 		return vect::hmax<T, N, V>::apply(
 			vect::abs<T, N, V>::apply(a)
 		)[0];
+	}
+
+	static constexpr inline
+	T norm(data_type l, data_type r)
+	noexcept
+	{
+		return difference_op<T>::_max(
+			_diff(l._v),
+			_diff(r._v)
+		);
 	}
 
 	constexpr inline
@@ -855,7 +866,8 @@ struct difference_op<scalar<T, N, V>>
 template <typename T, unsigned N, bool V>
 struct difference_op<vector<T, N, V>>
 {
-	vector<T, N, V> _l, _r;
+	typedef vector<T, N, V> data_type;
+	data_type _l, _r;
 
 	typedef typename vector<T, N, V>::data_type _vT;
 
@@ -866,6 +878,16 @@ struct difference_op<vector<T, N, V>>
 		return vect::hmax<T, N, V>::apply(
 			vect::abs<T, N, V>::apply(a)
 		)[0];
+	}
+
+	static constexpr inline
+	T norm(const data_type& l, const data_type& r)
+	noexcept
+	{
+		return difference_op<T>::_max(
+			_diff(l._v),
+			_diff(r._v)
+		);
 	}
 
 	constexpr inline

@@ -20,14 +20,31 @@ namespace math {
 template <typename T>
 struct difference_op
 {
+	typedef T data_type;
 	T _l, _r;
 
 	template <typename X>
 	static constexpr inline
-	X _abs(X value)
+	auto _abs(X value)
 	noexcept
 	{
 		return (value>=X(0))?value:-value;
+	}
+
+	template <typename X>
+	static constexpr inline
+	auto _max(X a, X b)
+	noexcept
+	{
+		return a > b ? a : b;
+	}
+
+	template <typename X>
+	static constexpr inline
+	auto norm(X a, X b)
+	noexcept
+	{
+		return _max(_abs(a),_abs(b));
 	}
 
 	constexpr inline
@@ -142,9 +159,9 @@ static constexpr operator_<cmp_greater_than> greater_than = {};
 
 struct zero
 {
-	template <typename X>
+	template <typename X, typename U>
 	constexpr inline
-	X operator()(X) const
+	X operator()(X, U, U) const
 	noexcept
 	{
 		return X(0);
@@ -153,12 +170,24 @@ struct zero
 
 struct epsilon
 {
-	template <typename X>
+	template <typename X, typename U>
 	constexpr inline
-	X operator()(X) const
+	X operator()(X, U, U) const
 	noexcept
 	{
 		return std::numeric_limits<X>::epsilon();
+	}
+};
+
+template <template <class> class Margin>
+struct margin_ctr
+{
+	template <typename T>
+	constexpr inline
+	Margin<T> operator ()(T v) const
+	noexcept
+	{
+		return Margin<T>{v};
 	}
 };
 
@@ -167,27 +196,49 @@ struct val_t
 {
 	T _v;
 
-	template <typename X>
+	template <typename X, typename U>
 	constexpr inline
-	X operator()(X) const
+	X operator()(X, U, U) const
 	noexcept
 	{
 		return X(_v);
 	}
 };
 
-struct val_ctr
+static constexpr margin_ctr<val_t> exactly = {};
+
+template <typename T>
+struct rel_t
 {
-	template <typename T>
-	constexpr inline
-	val_t<T> operator ()(T v) const
+	T _v;
+
+	template <typename N>
+	static constexpr inline
+	auto _adjn(N n)
 	noexcept
 	{
-		return val_t<T>{v};
+		using std::pow;
+		return 2*pow(N(2), -n*T(sizeof(T)*8));
+	}
+
+	template <typename N>
+	constexpr inline
+	auto _get(N n) const
+	noexcept
+	{
+		return n*(_v+_adjn(n));
+	}
+
+	template <typename X, typename V>
+	constexpr inline
+	X operator ()(X, V l, V r) const
+	noexcept
+	{
+		return X(_get(difference_op<V>::norm(l, r)));
 	}
 };
 
-static constexpr val_ctr exactly = {};
+static constexpr margin_ctr<rel_t> relative = {};
 
 template <typename T, typename Op>
 struct difference_cmp;
@@ -199,10 +250,10 @@ struct difference_cmp<T, operator_<Cmp>>
 
 	template <typename D, typename M>
 	static constexpr inline
-	bool _cmp(D diff, M margin)
+	bool _cmp(D diff, T l, T r, M margin)
 	noexcept
 	{
-		return Cmp()(diff, margin(diff));
+		return Cmp()(diff, margin(diff, l, r));
 	}
 
 	template <typename M>
@@ -210,7 +261,7 @@ struct difference_cmp<T, operator_<Cmp>>
 	bool apply(T l, T r, M margin)
 	noexcept
 	{
-		return _cmp(difference(l, r).get(), margin);
+		return _cmp(difference(l, r).get(), l, r, margin);
 	}
 
 	template <typename Margin>

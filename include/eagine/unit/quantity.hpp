@@ -264,7 +264,15 @@ namespace math {
 template <typename U, typename T>
 struct difference_op<unit::quantity<U, T>>
 {
-	unit::quantity<U,T> _l, _r;
+	typedef unit::quantity<U,T> data_type;
+	data_type _l, _r;
+
+	static constexpr inline
+	T norm(data_type l, data_type r)
+	noexcept
+	{
+		return difference_op<T>::norm(value(l), value(r));
+	}
 
 	constexpr inline
 	T get(void) const

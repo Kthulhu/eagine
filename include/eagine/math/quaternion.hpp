@@ -168,7 +168,8 @@ rotate(const vector<T, 3, V>& v, const quaternion<T, V>& q)
 template <typename T, bool V>
 struct difference_op<quaternion<T, V>>
 {
-	quaternion<T, V> _l, _r;
+	typedef quaternion<T, V> data_type;
+	data_type _l, _r;
 
 	typedef typename quaternion<T, V>::data_type _vT;
 
@@ -179,6 +180,16 @@ struct difference_op<quaternion<T, V>>
 		return vect::hmax<T, 4, V>::apply(
 			vect::abs<T, 4, V>::apply(a)
 		)[0];
+	}
+
+	static constexpr inline
+	T norm(const data_type& l, const data_type& r)
+	noexcept
+	{
+		return difference_op<T>::_abs(
+			_diff(l._v),
+			_diff(r._v)
+		);
 	}
 
 	constexpr inline

@@ -27,6 +27,7 @@ void test_math_difference_to_1(void)
 
 	(a <<to>> a <<less_than>> epsilon());
 	(a <<to>> T(0) <<less_equal>> exactly(a));
+	(a <<to>> T(0) <<less_equal>> relative(1));
 }
 
 BOOST_AUTO_TEST_CASE(math_difference_to_1)
