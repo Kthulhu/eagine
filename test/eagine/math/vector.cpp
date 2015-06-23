@@ -1178,7 +1178,7 @@ void test_math_vector_difference_TNV(void)
 	using namespace eagine::math::cmp;
 
 	BOOST_ASSERT((va <<to>> vb) == (vb <<to>> va));
-	BOOST_ASSERT((va <<to>> vb <<less_equal>> eps()) == eq);
+	BOOST_ASSERT((va <<to>> vb <<less_equal>> epsilon()) == eq);
 }
 
 template <typename T, bool V>

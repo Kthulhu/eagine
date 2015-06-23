@@ -151,7 +151,7 @@ struct zero
 	}
 };
 
-struct eps
+struct epsilon
 {
 	template <typename X>
 	constexpr inline
@@ -161,6 +161,33 @@ struct eps
 		return std::numeric_limits<X>::epsilon();
 	}
 };
+
+template <typename T>
+struct val_t
+{
+	T _v;
+
+	template <typename X>
+	constexpr inline
+	X operator()(X) const
+	noexcept
+	{
+		return X(_v);
+	}
+};
+
+struct val_ctr
+{
+	template <typename T>
+	constexpr inline
+	val_t<T> operator ()(T v) const
+	noexcept
+	{
+		return val_t<T>{v};
+	}
+};
+
+static constexpr val_ctr exactly = {};
 
 template <typename T, typename Op>
 struct difference_cmp;
@@ -292,7 +319,7 @@ noexcept
 static constexpr difference_operation<cmp::cmp_less_equal, cmp::zero>
 	equal_to = {};
 
-static constexpr difference_operation<cmp::cmp_less_equal, cmp::eps>
+static constexpr difference_operation<cmp::cmp_less_equal, cmp::epsilon>
 	close_to = {};
 
 

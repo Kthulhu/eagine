@@ -25,7 +25,8 @@ void test_math_difference_to_1(void)
 	using eagine::math::to;
 	using namespace eagine::math::cmp;
 
-	(a <<to>> a <<less_than>> eps());
+	(a <<to>> a <<less_than>> epsilon());
+	(a <<to>> T(0) <<less_equal>> exactly(a));
 }
 
 BOOST_AUTO_TEST_CASE(math_difference_to_1)
