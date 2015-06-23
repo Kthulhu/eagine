@@ -1297,7 +1297,10 @@ struct test_math_matrix_elements_1
 		for(unsigned i=0; i<R; ++i)
 		for(unsigned j=0; j<C; ++j)
 		{
-			BOOST_ASSERT(test_math_close(m[RM?i:j][RM?j:i], d[(RM?i:j)*(RM?C:R)+(RM?j:i)]));
+			BOOST_ASSERT(test_math_close(
+				m[RM?i:j][RM?j:i],
+				d[(RM?i:j)*(RM?C:R)+(RM?j:i)]
+			));
 		}
 	}
 };
@@ -1328,7 +1331,10 @@ struct test_math_matrix_elements_2
 		for(unsigned i=0; i<R; ++i)
 		for(unsigned j=0; j<C; ++j)
 		{
-			BOOST_ASSERT(test_math_close(m[RM?i:j][RM?j:i], d[(RM?i:j)*(RM?C:R)+(RM?j:i)]));
+			BOOST_ASSERT(test_math_close(
+				m[RM?i:j][RM?j:i],
+				d[(RM?i:j)*(RM?C:R)+(RM?j:i)]
+			));
 		}
 	}
 };

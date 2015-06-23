@@ -20,7 +20,7 @@ T test_math_close_eps(T*)
 inline
 float test_math_close_eps(float*)
 {
-	return 0.1f;
+	return 1.0f;
 }
 
 inline

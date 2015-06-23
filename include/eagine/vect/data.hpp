@@ -333,7 +333,7 @@ template <unsigned N>
 struct _has_vec_data<double, N>
  : meta::boolean_constant<
 #if defined(__AVX__) && __AVX__
-	((N==2)||(N==4)) ||
+	(N==2) || // TODO
 #endif
 #if defined(__SSE2__) && __SSE2__
 	(N==2) ||
