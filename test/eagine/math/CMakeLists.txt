@@ -8,6 +8,9 @@ eagine_test_dir()
 
 eagine_exec_test(angle)
 
+eagine_exec_test_sse(scalar)
+eagine_exec_test_nosse(scalar)
+
 eagine_exec_test_sse(vector)
 eagine_exec_test_nosse(vector)
 eagine_exec_test_sse(tvec)
