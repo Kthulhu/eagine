@@ -37,17 +37,17 @@ bool test_math_scalar_close(
 template <typename T, bool V>
 void test_math_scalar_default_ctr_TV(void)
 {
-	eagine::math::scalar<T, 1, V> v1; (void)v1;
-	eagine::math::scalar<T, 2, V> v2; (void)v2;
-	eagine::math::scalar<T, 3, V> v3; (void)v3;
-	eagine::math::scalar<T, 4, V> v4; (void)v4;
-	eagine::math::scalar<T, 5, V> v5; (void)v5;
-	eagine::math::scalar<T, 6, V> v6; (void)v6;
-	eagine::math::scalar<T, 7, V> v7; (void)v7;
-	eagine::math::scalar<T, 8, V> v8; (void)v8;
-	eagine::math::scalar<T,11, V> v11; (void)v11;
-	eagine::math::scalar<T,17, V> v17; (void)v17;
-	eagine::math::scalar<T,23, V> v23; (void)v23;
+	eagine::math::scalar<T, 1, V> s1; (void)s1;
+	eagine::math::scalar<T, 2, V> s2; (void)s2;
+	eagine::math::scalar<T, 3, V> s3; (void)s3;
+	eagine::math::scalar<T, 4, V> s4; (void)s4;
+	eagine::math::scalar<T, 5, V> s5; (void)s5;
+	eagine::math::scalar<T, 6, V> s6; (void)s6;
+	eagine::math::scalar<T, 7, V> s7; (void)s7;
+	eagine::math::scalar<T, 8, V> s8; (void)s8;
+	eagine::math::scalar<T,11, V> s11; (void)s11;
+	eagine::math::scalar<T,17, V> s17; (void)s17;
+	eagine::math::scalar<T,23, V> s23; (void)s23;
 
 }
 
@@ -68,38 +68,38 @@ BOOST_AUTO_TEST_CASE(math_scalar_default_ctr)
 template <typename T, bool V>
 void test_math_scalar_copy_ctr_TV(void)
 {
-	eagine::math::scalar<T, 1, V> v1;
-	eagine::math::scalar<T, 1, V> v1c = v1; (void)v1c;
+	eagine::math::scalar<T, 1, V> s1;
+	eagine::math::scalar<T, 1, V> s1c = s1; (void)s1c;
 
-	eagine::math::scalar<T, 2, V> v2;
-	eagine::math::scalar<T, 2, V> v2c = v2; (void)v2c;
+	eagine::math::scalar<T, 2, V> s2;
+	eagine::math::scalar<T, 2, V> s2c = s2; (void)s2c;
 
-	eagine::math::scalar<T, 3, V> v3;
-	eagine::math::scalar<T, 3, V> v3c = v3; (void)v3c;
+	eagine::math::scalar<T, 3, V> s3;
+	eagine::math::scalar<T, 3, V> s3c = s3; (void)s3c;
 
-	eagine::math::scalar<T, 4, V> v4;
-	eagine::math::scalar<T, 4, V> v4c = v4; (void)v4c;
+	eagine::math::scalar<T, 4, V> s4;
+	eagine::math::scalar<T, 4, V> s4c = s4; (void)s4c;
 
-	eagine::math::scalar<T, 5, V> v5;
-	eagine::math::scalar<T, 5, V> v5c = v5; (void)v5c;
+	eagine::math::scalar<T, 5, V> s5;
+	eagine::math::scalar<T, 5, V> s5c = s5; (void)s5c;
 
-	eagine::math::scalar<T, 6, V> v6;
-	eagine::math::scalar<T, 6, V> v6c = v6; (void)v6c;
+	eagine::math::scalar<T, 6, V> s6;
+	eagine::math::scalar<T, 6, V> s6c = s6; (void)s6c;
 
-	eagine::math::scalar<T, 7, V> v7;
-	eagine::math::scalar<T, 7, V> v7c = v7; (void)v7c;
+	eagine::math::scalar<T, 7, V> s7;
+	eagine::math::scalar<T, 7, V> s7c = s7; (void)s7c;
 
-	eagine::math::scalar<T, 8, V> v8;
-	eagine::math::scalar<T, 8, V> v8c = v8; (void)v8c;
+	eagine::math::scalar<T, 8, V> s8;
+	eagine::math::scalar<T, 8, V> s8c = s8; (void)s8c;
 
-	eagine::math::scalar<T,11, V> v11;
-	eagine::math::scalar<T,11, V> v11c = v11; (void)v11c;
+	eagine::math::scalar<T,11, V> s11;
+	eagine::math::scalar<T,11, V> s11c = s11; (void)s11c;
 
-	eagine::math::scalar<T,17, V> v17;
-	eagine::math::scalar<T,17, V> v17c = v17; (void)v17c;
+	eagine::math::scalar<T,17, V> s17;
+	eagine::math::scalar<T,17, V> s17c = s17; (void)s17c;
 
-	eagine::math::scalar<T,23, V> v23;
-	eagine::math::scalar<T,23, V> v23c = v23; (void)v23c;
+	eagine::math::scalar<T,23, V> s23;
+	eagine::math::scalar<T,23, V> s23c = s23; (void)s23c;
 
 
 }
@@ -116,6 +116,57 @@ BOOST_AUTO_TEST_CASE(math_scalar_copy_ctr)
 	test_math_scalar_copy_ctr_T<int>();
 	test_math_scalar_copy_ctr_T<float>();
 	test_math_scalar_copy_ctr_T<double>();
+}
+
+template <typename T, bool V>
+void test_math_scalar_conversion_TV(void)
+{
+	eagine::math::scalar<T, 1, V> s1;
+	T s1v = T(s1); (void)s1v;
+
+	eagine::math::scalar<T, 2, V> s2;
+	T s2v = T(s2); (void)s2v;
+
+	eagine::math::scalar<T, 3, V> s3;
+	T s3v = T(s3); (void)s3v;
+
+	eagine::math::scalar<T, 4, V> s4;
+	T s4v = T(s4); (void)s4v;
+
+	eagine::math::scalar<T, 5, V> s5;
+	T s5v = T(s5); (void)s5v;
+
+	eagine::math::scalar<T, 6, V> s6;
+	T s6v = T(s6); (void)s6v;
+
+	eagine::math::scalar<T, 7, V> s7;
+	T s7v = T(s7); (void)s7v;
+
+	eagine::math::scalar<T, 8, V> s8;
+	T s8v = T(s8); (void)s8v;
+
+	eagine::math::scalar<T, 11, V> s11;
+	T s11v = T(s11); (void)s11v;
+
+	eagine::math::scalar<T, 17, V> s17;
+	T s17v = T(s17); (void)s17v;
+
+	eagine::math::scalar<T, 23, V> s23;
+	T s23v = T(s23); (void)s23v;
+}
+
+template <typename T>
+void test_math_scalar_conversion_T(void)
+{
+	test_math_scalar_conversion_TV<T, true>();
+	test_math_scalar_conversion_TV<T,false>();
+}
+
+BOOST_AUTO_TEST_CASE(math_scalar_conversion)
+{
+	test_math_scalar_conversion_T<int>();
+	test_math_scalar_conversion_T<float>();
+	test_math_scalar_conversion_T<double>();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
