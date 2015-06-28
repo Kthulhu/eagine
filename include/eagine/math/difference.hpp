@@ -368,10 +368,10 @@ noexcept
 }
 
 static constexpr difference_operation<cmp::cmp_less_equal, cmp::zero>
-	equal_to = {};
+	equal_to = {{}};
 
 static constexpr difference_operation<cmp::cmp_less_equal, cmp::epsilon>
-	close_to = {};
+	close_to = {{}};
 
 } // namespace math
 } // namespace eagine
