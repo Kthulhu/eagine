@@ -346,7 +346,7 @@ public:
 
 	template <typename C>
 	manager& remove_if(
-		const base::functor_ref<bool(const Entity&, const C&)>& pred
+		const base::callable_ref<bool(const Entity&, const C&)>& pred
 	)
 	{
 		_call_rem_if<C>(pred);
@@ -355,7 +355,7 @@ public:
 
 	template <typename C>
 	manager& for_single(
-		const base::functor_ref<void(const Entity&, const C&)>& func,
+		const base::callable_ref<void(const Entity&, const C&)>& func,
 		const Entity& ent
 	)
 	{
@@ -365,7 +365,7 @@ public:
 
 	template <typename C>
 	manager& for_single(
-		const base::functor_ref<void(const Entity&, C&)>& func,
+		const base::callable_ref<void(const Entity&, C&)>& func,
 		const Entity& ent
 	)
 	{
@@ -375,7 +375,7 @@ public:
 
 	template <typename C>
 	manager& for_each(
-		const base::functor_ref<void(const Entity&, const C&)>& func
+		const base::callable_ref<void(const Entity&, const C&)>& func
 	)
 	{
 		_call_for_each<C>(func);
@@ -384,7 +384,7 @@ public:
 
 	template <typename C>
 	manager& for_each(
-		const base::functor_ref<void(const Entity&, C&)>& func
+		const base::callable_ref<void(const Entity&, C&)>& func
 	)
 	{
 		_call_for_each<C>(func);
@@ -396,7 +396,7 @@ public:
 		(sizeof...(C) > 1),
 		manager&
 	>::type for_each(
-		const base::functor_ref<void(const Entity&, C&...)>& func
+		const base::callable_ref<void(const Entity&, C&...)>& func
 	)
 	{
 		_call_for_each_m_r<C...>(func);
@@ -408,7 +408,7 @@ public:
 		(sizeof...(C) > 1),
 		manager&
 	>::type for_each(
-		const base::functor_ref<void(const Entity&, C*...)>& func
+		const base::callable_ref<void(const Entity&, C*...)>& func
 	)
 	{
 		_call_for_each_m_p<C...>(func);
@@ -419,7 +419,7 @@ public:
 	manager& for_each_with(const Func& func)
 	{
 		return for_each(
-			base::functor_ref<void(const Entity&, C&...)>(func)
+			base::callable_ref<void(const Entity&, C&...)>(func)
 		);
 	}
 
@@ -427,13 +427,13 @@ public:
 	manager& for_each_with_opt(const Func& func)
 	{
 		return for_each(
-			base::functor_ref<void(const Entity&, C*...)>(func)
+			base::callable_ref<void(const Entity&, C*...)>(func)
 		);
 	}
 
 	template <typename C>
 	manager& parallel_for_each(
-		const base::functor_ref<void(const Entity&, const C&)>& func,
+		const base::callable_ref<void(const Entity&, const C&)>& func,
 		base::parallelizer& prlzr,
 		base::execution_params& param
 	)
@@ -444,7 +444,7 @@ public:
 
 	template <typename C>
 	manager& parallel_for_each(
-		const base::functor_ref<void(const Entity&, C&)>& func,
+		const base::callable_ref<void(const Entity&, C&)>& func,
 		base::parallelizer& prlzr,
 		base::execution_params& param
 	)
@@ -458,7 +458,7 @@ public:
 		(sizeof...(C) > 1),
 		manager&
 	>::type parallel_for_each(
-		const base::functor_ref<void(const Entity&, C&...)>& func,
+		const base::callable_ref<void(const Entity&, C&...)>& func,
 		base::parallelizer& prlzr,
 		base::execution_params& param
 	)
@@ -472,7 +472,7 @@ public:
 		(sizeof...(C) > 1),
 		manager&
 	>::type parallel_for_each(
-		const base::functor_ref<void(const Entity&, C*...)>& func,
+		const base::callable_ref<void(const Entity&, C*...)>& func,
 		base::parallelizer& prlzr,
 		base::execution_params& param
 	)
@@ -489,7 +489,7 @@ public:
 	)
 	{
 		return parallel_for_each(
-			base::functor_ref<void(const Entity&, C&...)>(func),
+			base::callable_ref<void(const Entity&, C&...)>(func),
 			prlzr,
 			param
 		);
@@ -503,7 +503,7 @@ public:
 	)
 	{
 		return parallel_for_each(
-			base::functor_ref<void(const Entity&, C*...)>(func),
+			base::callable_ref<void(const Entity&, C*...)>(func),
 			prlzr,
 			param
 		);

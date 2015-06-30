@@ -2,7 +2,7 @@
  *  @file eagine/base/scope_exit.hpp
  *  @brief On scope exit
  *
- *  Copyright 2012-2014 Matus Chochlik. Distributed under the Boost
+ *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
  *  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -11,7 +11,7 @@
 #ifndef EAGINE_BASE_SCOPE_EXIT_1308281038_HPP
 #define EAGINE_BASE_SCOPE_EXIT_1308281038_HPP
 
-#include <eagine/base/functor.hpp>
+#include <eagine/base/callable.hpp>
 #include <exception>
 #include <cstddef>
 
@@ -21,7 +21,7 @@ namespace base {
 class on_scope_exit
 {
 public:
-	typedef functor_ref<void(void)> action_type;
+	typedef callable_ref<void(void)> action_type;
 private:
 	action_type _on_success;
 	action_type _on_failure;

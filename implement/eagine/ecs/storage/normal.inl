@@ -339,7 +339,7 @@ inline
 void
 normal_component_storage<Entity, Component>::
 remove_if(
-	const base::functor_ref<
+	const base::callable_ref<
 		bool(const Entity&, const Component&)
 	>& predicate
 )
@@ -528,7 +528,7 @@ inline
 bool
 normal_component_storage<Entity, Component>::
 for_single(
-	const base::functor_ref<
+	const base::callable_ref<
 		void(const Entity&, const Component&)
 	>& func,
 	const Entity& ent,
@@ -550,7 +550,7 @@ inline
 bool
 normal_component_storage<Entity, Component>::
 for_single(
-	const base::functor_ref<
+	const base::callable_ref<
 		void(const Entity&, Component&)
 	>& func,
 	const Entity& ent,
@@ -571,7 +571,7 @@ template <typename Entity, typename Component>
 inline
 void
 normal_component_storage<Entity, Component>::
-for_each(const base::functor_ref<void(const Entity&, const Component&) >& func)
+for_each(const base::callable_ref<void(const Entity&, const Component&) >& func)
 {
 	auto adaptor = [this, &func](
 		const Entity& ent,
@@ -591,7 +591,7 @@ template <typename Entity, typename Component>
 inline
 void
 normal_component_storage<Entity, Component>::
-for_each(const base::functor_ref<void(const Entity&, Component&)>& func)
+for_each(const base::callable_ref<void(const Entity&, Component&)>& func)
 {
 	auto adaptor = [this, &func](
 		const Entity& ent,
@@ -612,7 +612,7 @@ inline
 void
 normal_component_storage<Entity, Component>::
 parallel_for_each(
-	const base::functor_ref<
+	const base::callable_ref<
 		void(const Entity&, const Component&)
 	>& func,
 	base::parallelizer& prlzr,
@@ -638,7 +638,7 @@ inline
 void
 normal_component_storage<Entity, Component>::
 parallel_for_each(
-	const base::functor_ref<
+	const base::callable_ref<
 		void(const Entity&, Component&)
 	>& func,
 	base::parallelizer& prlzr,

@@ -146,7 +146,7 @@ public:
 	void reserve(std::size_t count) override;
 
 	void remove_if(
-		const base::functor_ref<
+		const base::callable_ref<
 			bool(const Entity&, const Component&)
 		>& predicate
 	) override;
@@ -179,7 +179,7 @@ public:
 	bool _for_single(const Func&, const Entity&, iter_t*, IsConst);
 
 	bool for_single(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, const Component&)
 		>& func,
 		const Entity& ent,
@@ -187,7 +187,7 @@ public:
 	) override;
 
 	bool for_single(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, Component&)
 		>& func,
 		const Entity& ent,
@@ -198,13 +198,13 @@ public:
 	void _for_each(const Func&, IsConst);
 
 	void for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, const Component&)
 		>& func
 	) override;
 
 	void for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, Component&)
 		>& func
 	) override;
@@ -218,7 +218,7 @@ public:
 	);
 
 	void parallel_for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, const Component&)
 		>& kernel,
 		base::parallelizer&,
@@ -226,7 +226,7 @@ public:
 	) override;
 
 	void parallel_for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, Component&)
 		>& kernel,
 		base::parallelizer&,

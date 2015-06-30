@@ -1,6 +1,6 @@
 /**
- *  @file eagine/base/functor.hpp
- *  @brief Polymorphic functor wrapper.
+ *  @file eagine/base/callable.hpp
+ *  @brief Polymorphic callable wrapper.
  *
  *  Copyright 2012-2015 Matus Chochlik. Distributed under the Boost
  *  Software License, Version 1.0. (See accompanying file
@@ -22,10 +22,10 @@ namespace eagine {
 namespace base {
 
 template <typename FuncSig>
-class functor_ref;
+class callable_ref;
 
 template <typename RV, typename ... P>
-class functor_ref<RV(P...)>
+class callable_ref<RV(P...)>
 {
 private:
 	void* _data;
@@ -66,20 +66,20 @@ private:
 		return obj(std::forward<P>(p)...);
 	}
 public:
-	functor_ref(void)
+	callable_ref(void)
 	noexcept
 	 : _data(nullptr)
 	 , _func(nullptr)
 	{ }
 
-	functor_ref(RV(*func)(P...))
+	callable_ref(RV(*func)(P...))
 	noexcept
 	 : _data(_invptr())
 	 , _func((_func_t)func)
 	{ }
 
 	template <typename T>
-	functor_ref(T* data, RV(*func)(T*, P...))
+	callable_ref(T* data, RV(*func)(T*, P...))
 	noexcept
 	 : _data((void*)data)
 	 , _func((_func_t)func)
@@ -88,7 +88,7 @@ public:
 	}
 
 	template <typename T>
-	functor_ref(T& data, RV(*func)(T*, P...))
+	callable_ref(T& data, RV(*func)(T*, P...))
 	noexcept
 	 : _data((void*)&data)
 	 , _func((_func_t)func)
@@ -109,7 +109,7 @@ public:
 			>::value
 		>::type
 	>
-	functor_ref(
+	callable_ref(
 		C* obj,
 		meta::member_function_constant<MF, Ptr> mfc
 	) noexcept
@@ -122,7 +122,7 @@ public:
 
 	template <typename C>
 	explicit
-	functor_ref(C& obj)
+	callable_ref(C& obj)
 	noexcept
 	 : _data((void*)&obj)
 	 , _func((_func_t)(&_cls_fn_call_op<C>))
@@ -130,13 +130,13 @@ public:
 
 	template <typename C>
 	explicit
-	functor_ref(const C& obj)
+	callable_ref(const C& obj)
 	noexcept
 	 : _data((void*)&obj)
 	 , _func((_func_t)(&_cls_fn_call_op_c<C>))
 	{ }
 
-	bool callable(void) const
+	bool is_callable(void) const
 	noexcept
 	{
 		return _func != nullptr;
@@ -145,13 +145,13 @@ public:
 	explicit operator bool (void) const
 	noexcept
 	{
-		return callable();
+		return is_callable();
 	}
 
 	template <typename ... A>
 	RV operator()(A&&...a) const
 	{
-		assert(callable());
+		assert(is_callable());
 		if(_no_data())
 		{
 			return ((_func_pt)(_func))(
@@ -169,10 +169,10 @@ public:
 };
 
 template <typename F>
-class functor;
+class callable;
 
 template <typename RV, typename ... P>
-class functor<RV(P...)>
+class callable<RV(P...)>
 {
 private:
 	typedef RV (*_func_t)(void*, P ...);
@@ -224,15 +224,15 @@ private:
 	 : meta::remove_reference<T>
 	{ };
 public:
-	functor(void) = default;
-	functor(const functor&) = default;
-	functor(functor&&) = default;
+	callable(void) = default;
+	callable(const callable&) = default;
+	callable(callable&&) = default;
 
-	functor& operator = (const functor&) = default;
-	functor& operator = (functor&&) = default;
+	callable& operator = (const callable&) = default;
+	callable& operator = (callable&&) = default;
 
 	template <typename Func>
-	functor(Func&& func)
+	callable(Func&& func)
 	 : _store(make_shared<_wrap<typename _fix<Func>::type>>(
 		std::forward<Func>(func))
 	), _impl(_store->impl_ptr())
@@ -240,7 +240,7 @@ public:
 	{ }
 
 	template <typename Func, typename Alloc>
-	functor(
+	callable(
 		std::allocator_arg_t,
 		Alloc& alloc,
 		Func&& func
@@ -256,29 +256,29 @@ public:
 	 , _func(_store->func_ptr())
 	{ }
 
-	bool callable(void) const
+	bool is_callable(void) const
 	{
 		return (_store && _impl && _func);
 	}
 
 	explicit operator bool (void) const
 	{
-		return callable();
+		return is_callable();
 	}
 
 	template <typename ... A>
 	RV operator ()(A&& ... a) const
 	{
-		assert(callable());
+		assert(is_callable());
 		return _func(_impl, std::forward<A>(a)...);
 	}
 
-	functor_ref<RV(P...)> ref(void) const
+	callable_ref<RV(P...)> ref(void) const
 	{
-		return functor_ref<RV(P...)>(_impl, _func);
+		return callable_ref<RV(P...)>(_impl, _func);
 	}
 
-	operator functor_ref<RV(P...)> (void) const
+	operator callable_ref<RV(P...)> (void) const
 	{
 		return ref();
 	}

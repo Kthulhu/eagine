@@ -13,7 +13,7 @@
 
 #include <eagine/ecs/storage_capability.hpp>
 #include <eagine/base/access_type.hpp>
-#include <eagine/base/functor.hpp>
+#include <eagine/base/callable.hpp>
 #include <eagine/base/parallel.hpp>
 
 namespace eagine {
@@ -177,7 +177,7 @@ struct component_storage
 	// failure to remove existing component is indicated
 	// by throwing.
 	virtual void remove_if(
-		const base::functor_ref<
+		const base::callable_ref<
 			bool(const Entity&, const Component&)
 		>& predicate
 	) = 0;
@@ -203,7 +203,7 @@ struct component_storage
 
 	// requires can_fetch
 	virtual bool for_single(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, const Component&)
 		>& func,
 		const Entity& ent,
@@ -212,7 +212,7 @@ struct component_storage
 
 	// requires can_modify
 	virtual bool for_single(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, Component&)
 		>& func,
 		const Entity& ent,
@@ -221,21 +221,21 @@ struct component_storage
 
 	// requires can_fetch
 	virtual void for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, const Component&)
 		>& func
 	) = 0;
 
 	// requires can_modify
 	virtual void for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, Component&)
 		>& func
 	) = 0;
 
 	// requires can_fetch
 	virtual void parallel_for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, const Component&)
 		>& kernel,
 		base::parallelizer&,
@@ -247,7 +247,7 @@ struct component_storage
 
 	// requires can_modify
 	virtual void parallel_for_each(
-		const base::functor_ref<
+		const base::callable_ref<
 			void(const Entity&, Component&)
 		>& kernel,
 		base::parallelizer&,

@@ -10,7 +10,7 @@
 #ifndef EAGINE_BASE_PARALLEL_1501121943_HPP
 #define EAGINE_BASE_PARALLEL_1501121943_HPP
 
-#include <eagine/base/functor.hpp>
+#include <eagine/base/callable.hpp>
 #include <eagine/base/future.hpp>
 #include <eagine/base/atomic.hpp>
 #include <eagine/base/vector.hpp>
@@ -58,10 +58,10 @@ class parallel_execution
  : public base_parallel_execution
 {
 private:
-	functor_ref<bool(std::size_t)> _kern;
+	callable_ref<bool(std::size_t)> _kern;
 
 	parallel_execution(
-		const functor_ref<bool(std::size_t)>&,
+		const callable_ref<bool(std::size_t)>&,
 		execution_params&,
 		const allocator<void>&
 	);
@@ -75,10 +75,10 @@ class stateful_parallel_execution
  : public base_parallel_execution
 {
 private:
-	vector<functor<bool(std::size_t)>> _knls;
+	vector<callable<bool(std::size_t)>> _knls;
 
 	stateful_parallel_execution(
-		vector<functor<bool(std::size_t)>>&&,
+		vector<callable<bool(std::size_t)>>&&,
 		execution_params&,
 		const allocator<void>&
 	);
@@ -109,7 +109,7 @@ public:
 
 	parallel_execution
 	execute(
-		const functor_ref<bool(std::size_t)>& kernel,
+		const callable_ref<bool(std::size_t)>& kernel,
 		execution_params& params
 	) const
 	{
@@ -128,7 +128,7 @@ public:
 	) const
 	{
 		return parallel_execution(
-			functor_ref<bool(std::size_t)>(kernel),
+			callable_ref<bool(std::size_t)>(kernel),
 			_prepare_params(params),
 			_alloc
 		);
@@ -136,7 +136,7 @@ public:
 
 	template <typename Kernel>
 	parallel_execution
-	execute(const functor_ref<bool(std::size_t)>& kernel) const
+	execute(const callable_ref<bool(std::size_t)>& kernel) const
 	{
 		execution_params params;
 		return execute(kernel, params);
@@ -151,8 +151,8 @@ public:
 	{
 		_prepare_params(params);
 
-		vector<functor<bool(std::size_t)>> kernels((
-			allocator<functor<bool(std::size_t)>>(_alloc)
+		vector<callable<bool(std::size_t)>> kernels((
+			allocator<callable<bool(std::size_t)>>(_alloc)
 		));
 		kernels.reserve(params._thread_count);
 

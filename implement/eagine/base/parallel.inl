@@ -32,7 +32,7 @@ wait(void)
 EAGINE_LIB_FUNC
 parallel_execution::
 parallel_execution(
-	const functor_ref<bool(std::size_t)>& kern,
+	const callable_ref<bool(std::size_t)>& kern,
 	execution_params& params,
 	const allocator<void>& alloc
 ): base_parallel_execution(alloc)
@@ -61,7 +61,7 @@ parallel_execution(
 EAGINE_LIB_FUNC
 stateful_parallel_execution::
 stateful_parallel_execution(
-	vector<functor<bool(std::size_t)>>&& knls,
+	vector<callable<bool(std::size_t)>>&& knls,
 	execution_params&,
 	const allocator<void>& alloc
 ): base_parallel_execution(alloc)

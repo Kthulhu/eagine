@@ -1139,7 +1139,7 @@ _do_get(T C::* mvp, const Entity& ent, T res)
 	{
 		res = cmp.*mvp;
 	};
-	base::functor<void(const Entity&, const C&)> func(getter);
+	base::callable<void(const Entity&, const C&)> func(getter);
 
 	_call_for_single<C>(func, ent);
 	return res;
@@ -1195,7 +1195,7 @@ parallel_forget(
 	param.invocations = _storages.size();
 
 	prlzr.execute(
-		base::functor_ref<bool(std::size_t)>(func),
+		base::callable_ref<bool(std::size_t)>(func),
 		param
 	).wait();
 }

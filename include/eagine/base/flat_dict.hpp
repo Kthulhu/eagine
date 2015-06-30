@@ -94,7 +94,7 @@ public:
 				return (i+1) < size();
 			};
 
-		functor_ref<bool(std::size_t)> wrap_func(adapt_func);
+		callable_ref<bool(std::size_t)> wrap_func(adapt_func);
 
 		param.invocations = size();
 		prlzr.execute(wrap_func, param).wait();
@@ -255,7 +255,7 @@ public:
 				return (i+1) < size();
 			};
 
-		functor_ref<bool(std::size_t)> wrap_func(adapt_func);
+		callable_ref<bool(std::size_t)> wrap_func(adapt_func);
 
 		param.invocations = size();
 		prlzr.execute(wrap_func, param).wait();
