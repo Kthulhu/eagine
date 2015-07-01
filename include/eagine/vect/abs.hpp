@@ -36,8 +36,7 @@ struct abs
 		_dT c = {};
 		for(unsigned i=0; i<N; ++i)
 		{
-			using std::abs;
-			c[i] = abs(a[i]);
+			c[i] = a[i]<0?-a[i]:a[i];
 		}
 		return c;
 	}
