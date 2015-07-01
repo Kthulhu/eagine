@@ -26,7 +26,13 @@ for key in ['BASELINE', 'OPT_SIMD', 'NOOPT_SIMD', 'OPT_NOSIMD', 'NOOPT_NOSIMD']:
 	label = labels[key]
 	time = float(times[key])
 
+	maxt = max([float(x) for x in times.values()])
+
+	if (time > maxt*0.9):
+		lblpos = time - maxt*0.05
+	else: lblpos = time + maxt*0.05
+
 	if time > baseline:
-		print("%s\t%f\t%f" % (label, baseline, time-baseline))
+		print("%s\t%.2f\t%.2f\t%f" % (label, baseline, time-baseline, lblpos))
 	else:
-		print("%s\t%f\t%f" % (label, 0, time))
+		print("%s\t%.2f\t%.2f\t%f" % (label, 0, time, lblpos))

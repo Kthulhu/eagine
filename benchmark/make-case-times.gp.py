@@ -17,4 +17,6 @@ print('set grid')
 print('set boxwidth 0.9 relative')
 print('set style fill transparent solid 0.7 border lt -1')
 
-print('plot "%s-case-times.gp.dat" using 2 notitle, \'\' using 3:xticlabels(1) notitle' % sys.argv[1])
+print('plot "%s-case-times.gp.dat" using 2 notitle, \\' % sys.argv[1])
+print('\t\'\' using 3:xticlabels(1) notitle, \\')
+print('\t\'\' using 0:4:3 notitle with labels')
