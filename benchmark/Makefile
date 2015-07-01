@@ -42,7 +42,12 @@ SOURCES = \
 	math_vector_cross-3d \
 	math_vector_normalize-3f \
 	math_vector_normalize-3d \
+	array_min-1024-4d \
+	array_min-1024-4f \
+	array_min-1024-4i \
+	array_min-1024-4d \
 	array_max-1024-4f \
+	array_max-1024-4i \
 	array_sum-1024-4d \
 	array_sum-1024-4f \
 	array_sum-1024-4i
