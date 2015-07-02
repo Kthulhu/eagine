@@ -2,7 +2,7 @@
 # Copyright 2014-2015 Matus Chochlik. Distributed under the Boost
 # Software License, Version 1.0. (See accompanying file
 # LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-import sys, os
+import sys, os, math
 
 times = {}
 
@@ -37,7 +37,12 @@ for key in ['BASELINE', 'OPT_SIMD', 'NOOPT_SIMD', 'OPT_NOSIMD', 'NOOPT_NOSIMD']:
 			label,
 			baseline,
 			time-baseline,
-			"%.2f/%.2f" % (time, time-baseline),
+			"%.*f/%.*f" % (
+				max(2-int(math.log10(time)),0),
+				time,
+				max(2-int(math.log10(time-baseline)),0),
+				time-baseline
+			),
 			lblpos
 		))
 	else:
