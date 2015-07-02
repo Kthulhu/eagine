@@ -33,6 +33,18 @@ for key in ['BASELINE', 'OPT_SIMD', 'NOOPT_SIMD', 'OPT_NOSIMD', 'NOOPT_NOSIMD']:
 	else: lblpos = time + maxt*0.05
 
 	if time > baseline:
-		print("%s\t%.2f\t%.2f\t%f" % (label, baseline, time-baseline, lblpos))
+		print("%s\t%.2f\t%.2f\t%s\t%f" % (
+			label,
+			baseline,
+			time-baseline,
+			"%.2f/%.2f" % (time, time-baseline),
+			lblpos
+		))
 	else:
-		print("%s\t%.2f\t%.2f\t%f" % (label, 0, time, lblpos))
+		print("%s\t%.2f\t%.2f\t%.2f\t%f" % (
+			label,
+			time,
+			0,
+			time,
+			lblpos
+		))
