@@ -22,6 +22,9 @@ eagine_exec_test_nosse(vector_swizzles)
 eagine_exec_test_sse(quaternion)
 eagine_exec_test_nosse(quaternion)
 
+eagine_exec_test_sse(plane)
+eagine_exec_test_nosse(plane)
+
 eagine_exec_test_sse(matrix1)
 eagine_exec_test_nosse(matrix1)
 eagine_exec_test_sse(matrix2)
